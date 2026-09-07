@@ -1,0 +1,570 @@
+# regate entry=litert-community/Qwen3.5-0.8B profiles=gpu start=2026-09-07T23:16:38Z free=7294040K thermal=Thermal Status: 0 mem=MemAvailable:    4046028 kB
+# gradle rc=1 end=2026-09-07T23:21:03Z free=5293316K
+09-08 07:13:03.441  2421  2983 E ANM-1   : Qualified network service com.android.qns died.
+09-08 07:13:03.473  2421  2983 I AnomalyReporter: reportAnomaly: Received anomaly event report with eventId= c2d1a639-00e2-4561-9619-6acf37d90590 and description= Qualified network service com.android.qns died.
+09-08 07:13:03.480  2421  2926 E DSM-I-0 : Data service com.google.android.iwlan for transport type WLAN died.
+09-08 07:13:03.480  2421  2926 I AnomalyReporter: reportAnomaly: Received anomaly event report with eventId= fc1956de-c080-45de-8431-a1faab687110 and description= Data service com.google.android.iwlan for transport type WLAN died.
+09-08 07:13:03.481  2421  2501 D NRM-I-0 : Network service ComponentInfo{com.google.android.iwlan/com.google.android.iwlan.IwlanNetworkService} for transport type WLAN died.
+09-08 07:13:03.482  2421  2501 D NRM-I-1 : Network service ComponentInfo{com.google.android.iwlan/com.google.android.iwlan.IwlanNetworkService} for transport type WLAN died.
+09-08 07:13:03.490  2421  2983 E ANM-0   : Qualified network service com.android.qns died.
+09-08 07:13:03.490  2421  2983 I AnomalyReporter: reportAnomaly: Received anomaly event report with eventId= c2d1a639-00e2-4561-9619-6acf37d90590 and description= Qualified network service com.android.qns died.
+09-08 07:13:03.493  2421  2926 E DSM-I-1 : Data service com.google.android.iwlan for transport type WLAN died.
+09-08 07:13:03.493  2421  2926 I AnomalyReporter: reportAnomaly: Received anomaly event report with eventId= fc1956de-c080-45de-8431-a1faab687110 and description= Data service com.google.android.iwlan for transport type WLAN died.
+09-08 07:21:58.026  2421  2982 E DSM-I-0 : Data service com.google.android.iwlan for transport type WLAN died.
+09-08 07:21:58.026  2421  2979 D NRM-I-0 : Network service ComponentInfo{com.google.android.iwlan/com.google.android.iwlan.IwlanNetworkService} for transport type WLAN died.
+09-08 07:21:58.026  2421  2926 E ANM-1   : Qualified network service com.android.qns died.
+09-08 07:21:58.386  2421  2982 I AnomalyReporter: reportAnomaly: Received anomaly event report with eventId= fc1956de-c080-45de-8431-a1faab687110 and description= Data service com.google.android.iwlan for transport type WLAN died.
+09-08 07:21:58.386  2421  2926 I AnomalyReporter: reportAnomaly: Received anomaly event report with eventId= c2d1a639-00e2-4561-9619-6acf37d90590 and description= Qualified network service com.android.qns died.
+09-08 07:21:58.413  2421  2979 D NRM-I-1 : Network service ComponentInfo{com.google.android.iwlan/com.google.android.iwlan.IwlanNetworkService} for transport type WLAN died.
+09-08 07:21:58.453  2421  2926 E ANM-0   : Qualified network service com.android.qns died.
+09-08 07:21:58.457  2421  2982 E DSM-I-1 : Data service com.google.android.iwlan for transport type WLAN died.
+09-08 07:21:58.460  2421  2926 I AnomalyReporter: reportAnomaly: Received anomaly event report with eventId= c2d1a639-00e2-4561-9619-6acf37d90590 and description= Qualified network service com.android.qns died.
+09-08 07:21:58.461  2421  2982 I AnomalyReporter: reportAnomaly: Received anomaly event report with eventId= fc1956de-c080-45de-8431-a1faab687110 and description= Data service com.google.android.iwlan for transport type WLAN died.
+09-08 07:38:21.252  1456  1456 I am_kill : [0,10069,com.google.android.aicore:isolated_service:com.google.android.apps.aicore.service.isolated.AiCoreIsolatedService,0,isolated not needed,73248]
+09-08 07:38:21.341  1456  1536 I am_proc_died: [0,10069,com.google.android.aicore:isolated_service:com.google.android.apps.aicore.service.isolated.AiCoreIsolatedService,0,10]
+09-08 07:38:45.648  1456  2398 I am_proc_died: [0,5237,com.google.android.contactkeys,995,19]
+09-08 07:39:12.290  1456  1536 I am_proc_died: [0,5918,com.android.hotwordenrollment.xgoogle,995,19]
+09-08 07:39:12.321  1456  1536 I am_proc_died: [0,5532,com.google.android.as:captions,995,19]
+09-08 07:39:12.378  1456  2451 I am_proc_died: [0,8225,com.google.android.flipendo,985,19]
+09-08 07:39:12.422  1456  1536 I am_proc_died: [0,8205,com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0,985,19]
+09-08 07:39:12.453  1456  1536 I am_proc_died: [0,8095,com.android.providers.calendar,985,19]
+09-08 07:39:12.507  1456  2588 I am_proc_died: [0,7794,com.google.android.gms:snet,985,19]
+09-08 07:39:18.560  1456  2584 I am_proc_died: [0,7860,com.google.android.apps.maps,985,19]
+09-08 07:39:18.588  1456  3613 I am_proc_died: [0,4697,com.google.android.apps.weather,985,19]
+09-08 07:39:18.617  1456  2547 I am_proc_died: [0,6698,com.google.android.apps.turbo:aab,985,19]
+09-08 07:39:19.254  1456  2547 I am_proc_died: [0,8457,com.google.android.contacts,975,19]
+09-08 07:39:19.299  1456  2547 I am_proc_died: [0,8653,com.google.android.setupwizard,975,19]
+09-08 07:39:19.357  1456  3613 I am_proc_died: [0,8572,com.google.android.apps.youtube.music,975,19]
+09-08 07:39:22.553  1456  2398 I am_proc_died: [0,8548,com.google.android.apps.pixel.dcservice,975,19]
+09-08 07:39:22.600  1456  2398 I am_proc_died: [0,8491,com.google.android.keep,975,19]
+09-08 07:39:22.614  1456  2398 I am_proc_died: [0,8458,com.google.android.apps.dreamliner,975,19]
+09-08 07:39:22.655  1456  2451 I am_proc_died: [0,8406,com.google.android.wfcactivation,975,19]
+09-08 07:40:08.091  1456  1959 I am_kill : [0,11765,io.github.johnrocky.hfmodels.litertlm.test,0,stop io.github.johnrocky.hfmodels.litertlm.test due to finished inst,186484]
+09-08 07:44:33.738  1456  3961 I am_proc_died: [0,8789,com.google.android.apps.pixel.support,985,19]
+09-08 07:44:34.995  1456  2588 I am_proc_died: [0,8735,com.google.ar.core,985,19]
+09-08 07:44:35.019  1456  2588 I am_proc_died: [0,6701,com.google.android.partnersetup,985,19]
+09-08 07:44:35.043  1456  2588 I am_proc_died: [0,8714,com.google.android.apps.carrier.log,985,19]
+09-08 07:44:35.081  1456  2588 I am_proc_died: [0,8375,com.google.android.accessibility.switchaccess,985,19]
+09-08 07:44:35.115  1456  2588 I am_proc_died: [0,9039,com.google.android.apps.nbu.files,975,19]
+09-08 07:44:35.141  1456  4277 I am_proc_died: [0,9017,com.google.android.deskclock,975,19]
+09-08 07:44:35.163  1456 14003 I am_proc_died: [0,8984,com.google.android.tts,975,19]
+09-08 07:44:35.177  1456  4277 I am_proc_died: [0,8963,com.google.android.apps.work.oobconfig,975,19]
+09-08 07:44:35.259  1456  2546 I am_proc_died: [0,7232,com.google.android.googlequicksearchbox:googleapp,975,19]
+09-08 07:44:35.287  1456  2546 I am_kill : [0,11979,com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0,0,isolated not needed,49312]
+09-08 07:44:35.318  1456  2546 I am_proc_died: [0,11979,com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0,0,10]
+09-08 07:45:12.821  1456  1536 I am_kill : [0,12246,io.github.johnrocky.hfmodels.litertlm.test,0,stop io.github.johnrocky.hfmodels.litertlm.test due to finished inst,186144]
+09-08 07:47:33.898  1456  3608 I am_proc_died: [0,9263,com.google.android.apps.tips,985,19]
+09-08 07:47:33.918  1456 14003 I am_proc_died: [0,9107,com.google.android.apps.docs,985,19]
+09-08 07:47:33.975  1456 14003 I am_proc_died: [0,8058,com.google.android.calendar,985,19]
+09-08 07:47:33.992  1456 14003 I am_proc_died: [0,8331,com.google.android.projection.gearhead:projection,985,19]
+09-08 07:47:41.409  1456  3908 I am_proc_died: [0,8928,com.google.android.apps.restore,985,19]
+09-08 07:47:41.427  1456  3961 I am_proc_died: [0,6598,com.google.android.projection.gearhead:provider,975,19]
+09-08 07:47:41.443  1456  3961 I am_proc_died: [0,9673,com.google.android.dialer,975,19]
+09-08 07:47:41.472  1456  3961 I am_proc_died: [0,9603,com.google.android.apps.wearables.maestro.companion,975,19]
+09-08 07:47:41.487  1456  3908 I am_proc_died: [0,9622,com.android.externalstorage,975,19]
+09-08 07:47:41.508  1456  3908 I am_proc_died: [0,9553,com.google.android.documentsui,975,19]
+09-08 07:47:41.554  1456  3908 I am_proc_died: [0,9330,com.google.android.apps.tachyon,975,19]
+09-08 07:47:41.573  1456  2584 I am_proc_died: [0,10161,com.google.android.cellbroadcastreceiver,965,19]
+09-08 07:47:41.624  1456  2584 I am_proc_died: [0,7043,com.google.android.videos,965,19]
+09-08 07:47:41.661  1456  2588 I am_proc_died: [0,9980,com.google.android.photopicker,965,19]
+09-08 07:47:41.731  1456  3613 I am_proc_died: [0,8172,com.google.android.gms.learning,965,19]
+09-08 07:47:42.099  1456  2451 I am_proc_died: [0,9158,com.google.android.youtube,965,19]
+09-08 07:47:42.106  1456  2451 I am_proc_died: [0,9809,com.google.android.marvin.talkback,965,19]
+09-08 07:47:42.136  1456  3959 I am_proc_died: [0,10460,com.google.android.apps.aiwallpapers,955,19]
+09-08 07:47:42.157  1456  3959 I am_proc_died: [0,10349,com.android.calllogbackup,955,19]
+09-08 07:47:42.209  1456  2526 I am_proc_died: [0,10332,com.google.android.accessibility.soundamplifier,955,19]
+09-08 07:48:01.195  1456  2451 I am_proc_died: [0,10243,com.google.android.apps.docs.editors.docs,955,19]
+09-08 07:49:04.142  1456  2526 I am_kill : [0,12795,io.github.johnrocky.hfmodels.litertlm.test,0,stop io.github.johnrocky.hfmodels.litertlm.test due to finished inst,195284]
+09-08 07:51:40.061  1456  3619 I am_proc_died: [0,9909,com.google.android.apps.emojiwallpaper,975,19]
+09-08 07:51:40.161  1456  3619 I am_proc_died: [0,10492,com.android.wallpaperbackup,975,19]
+09-08 07:51:50.321  1456  3608 I am_proc_died: [0,10174,com.google.audio.hearing.visualization.accessibility.scribe,975,19]
+09-08 07:52:02.709  1456  3608 I am_proc_died: [0,11008,com.google.android.apps.privacy.wildlife,965,19]
+09-08 07:52:02.778  1456  2398 I am_proc_died: [0,6757,com.android.chrome,965,19]
+09-08 07:52:12.369  1456  2539 I am_proc_died: [0,10716,com.google.android.apps.wallpaper,965,19]
+09-08 07:52:12.419  1456  1959 I am_proc_died: [0,9521,com.google.pixel.livewallpaper,965,19]
+09-08 07:52:12.428  1456  3466 I am_proc_died: [0,11468,com.google.android.googlequicksearchbox,955,19]
+09-08 07:52:12.499  1456  2584 I am_proc_died: [0,11229,com.google.android.apps.magicportrait,955,19]
+09-08 07:52:12.526  1456  1976 I am_proc_died: [0,9754,com.google.android.apps.wear.companion:persistent,955,19]
+09-08 07:52:12.585  1456  1976 I am_proc_died: [0,9499,com.google.android.apps.wear.companion,905,19]
+09-08 07:52:14.323  1456  2539 I am_proc_died: [0,6605,com.google.android.turboadapter,945,19]
+09-08 07:52:14.571  1456  2539 I am_proc_died: [0,8873,com.google.android.apps.work.clouddpc,945,19]
+09-08 07:52:14.593  1456  3627 I am_proc_died: [0,7429,com.google.android.adservices.api,915,19]
+09-08 07:52:14.625  1456  3608 I am_proc_died: [0,6111,com.android.keychain,905,19]
+09-08 07:52:14.705  1456  4481 I am_proc_died: [0,7488,com.google.android.gm,905,19]
+09-08 07:52:14.726  1456  3594 I am_proc_died: [0,6635,com.google.android.as.oss:learning_bg,905,19]
+09-08 07:52:14.767  1456  3594 I am_proc_died: [0,13299,com.google.android.googlequicksearchbox:googleapp,905,19]
+09-08 07:52:14.809  1456  3594 I am_proc_died: [0,12388,com.android.providers.calendar,905,19]
+09-08 07:52:14.888  1456  3594 I am_proc_died: [0,12360,com.google.android.apps.weather,905,19]
+09-08 07:52:14.920  1456  2451 I am_proc_died: [0,13415,com.google.android.apps.docs,905,19]
+09-08 07:52:14.959  1456  2451 I am_proc_died: [0,13666,com.google.android.tts,905,19]
+09-08 07:52:55.544  1456  1959 I am_proc_died: [0,13959,com.google.android.projection.gearhead:provider,905,19]
+09-08 07:52:58.312  1456  1960 I am_proc_died: [0,14107,com.google.android.contacts:learning_bg,905,19]
+09-08 07:53:02.977  1456  2539 I am_proc_died: [0,14277,com.google.android.apps.tachyon,905,19]
+09-08 07:53:02.997  1456  3959 I am_proc_died: [0,7902,com.google.android.projection.gearhead:car,905,19]
+09-08 07:53:03.071  1456  3627 I am_proc_died: [0,13829,com.google.android.apps.pixel.customizationbundle,905,19]
+09-08 07:53:04.267  1456  2526 I am_proc_died: [0,13723,com.google.android.apps.pixel.support,905,19]
+09-08 07:53:04.307  1456  3627 I am_proc_died: [0,14334,com.google.android.apps.tips,905,19]
+09-08 07:53:04.332  1456  2398 I am_proc_died: [0,14565,com.google.android.apps.subscriptions.red,905,19]
+09-08 07:53:04.403  1456  3627 I am_proc_died: [0,13416,com.google.android.apps.turbo:ssb,905,19]
+09-08 07:53:04.460  1456  2526 I am_proc_died: [0,14814,com.google.android.apps.turbo:aab,905,19]
+09-08 07:53:04.481  1456 14003 I am_proc_died: [0,13988,android.process.media,905,19]
+09-08 07:53:04.571  1456  2584 I am_proc_died: [0,14472,com.google.android.verifier,905,19]
+09-08 07:53:04.606  1456  1536 I am_proc_died: [0,14654,com.google.android.apps.docs.editors.docs,905,19]
+09-08 07:53:04.647  1456  1536 I am_proc_died: [0,14833,com.google.android.apps.pixel.dcservice,905,19]
+09-08 07:53:04.717  1456  1536 I am_proc_died: [0,14361,com.google.android.apps.maps,905,19]
+09-08 07:53:04.761  1456  1765 I am_proc_died: [0,13703,com.google.android.contacts,905,19]
+09-08 07:53:04.812  1456  1765 I am_proc_died: [0,13618,com.google.android.apps.nbu.files,905,19]
+09-08 07:53:04.862  1456  3627 I am_proc_died: [0,14874,com.android.angle,905,19]
+09-08 07:53:04.873  1456  2539 I am_proc_died: [0,13924,com.google.android.dialer,0,10]
+09-08 07:53:06.215  1456  3961 I am_proc_died: [0,10200,com.android.traceur,905,19]
+09-08 07:53:06.255  1456  3961 I am_proc_died: [0,14908,com.google.android.apps.dreamliner,905,19]
+09-08 07:53:06.309  1456  2539 I am_proc_died: [0,14895,com.google.android.accessibility.switchaccess,905,19]
+09-08 07:53:06.368  1456  2539 I am_proc_died: [0,14967,com.google.android.apps.pixel.support:projection,905,19]
+09-08 07:53:06.469  1456  2539 I am_proc_died: [0,14936,com.google.android.apps.pixel.dcservice:projection,905,19]
+09-08 07:53:06.531  1456  2539 I am_proc_died: [0,9072,com.google.android.apps.safetyhub,905,19]
+09-08 07:53:06.572  1456  1977 I am_proc_died: [0,4453,com.google.android.apps.messaging,905,19]
+09-08 07:53:06.653  1456  1977 I am_proc_died: [0,5788,com.google.android.apps.wellbeing,905,19]
+09-08 07:53:07.943  1456  1977 I am_proc_died: [0,15013,com.google.android.apps.privacy.wildlife:projection,905,19]
+09-08 07:53:07.974  1456  3619 I am_proc_died: [0,15042,com.google.android.cellbroadcastreceiver,905,19]
+09-08 07:53:08.010  1456  3619 I am_proc_died: [0,13880,com.google.android.flipendo,905,19]
+09-08 07:53:08.076  1456  1960 I am_proc_died: [0,15233,com.google.android.marvin.talkback,905,19]
+09-08 07:53:10.295  1456  1960 I am_proc_died: [0,15303,com.google.android.projection.gearhead:projection,905,19]
+09-08 07:53:10.362  1456  1960 I am_kill : [0,8360,com.google.android.projection.gearhead:shared,0,Unable to query binder frozen stats,0]
+09-08 07:53:10.371  1456  1959 I am_proc_died: [0,8360,com.google.android.projection.gearhead:shared,0,10]
+09-08 07:53:10.374  1456  4191 I am_proc_died: [0,4600,com.google.android.apps.carrier.carrierwifi,905,10]
+09-08 07:53:10.428  1456  1959 I am_proc_died: [0,6144,com.google.android.odad,905,19]
+09-08 07:53:10.470  1456  2539 I am_proc_died: [0,15205,com.google.android.healthconnect.controller,905,19]
+09-08 07:53:15.882  1456  1959 I am_proc_died: [0,5631,com.google.android.permissioncontroller,905,19]
+09-08 07:53:15.950  1456  1959 I am_proc_died: [0,10087,com.google.android.aicore,905,19]
+09-08 07:53:16.023  1456  3959 I am_proc_died: [0,6112,com.android.vending,905,19]
+09-08 07:53:16.669  1456  3959 I am_proc_died: [0,6226,com.android.vending:background,905,19]
+09-08 07:53:16.672  1456  3613 I am_proc_died: [0,15562,com.google.android.keep,905,19]
+09-08 07:53:16.712  1456  1959 I am_proc_died: [0,5285,android.process.acore,905,19]
+09-08 07:53:16.747  1456  1959 I am_proc_died: [0,13828,com.google.android.settings.intelligence,905,19]
+09-08 07:53:16.809  1456  2526 I am_proc_died: [0,5379,com.google.android.googlequicksearchbox:search,905,19]
+09-08 07:53:16.857  1456  3619 I am_proc_died: [0,16301,com.google.android.googlequicksearchbox:googleapp,905,19]
+09-08 07:53:16.924  1456  2451 I am_proc_died: [0,15074,com.google.android.gms.ui,905,19]
+09-08 07:53:16.942  1456  2451 I am_proc_died: [0,7320,com.google.android.rkpdapp,905,19]
+09-08 07:53:17.026  1456  2451 I am_proc_died: [0,7976,com.google.android.apps.photos,905,19]
+09-08 07:53:17.087  1456  2526 I am_proc_died: [0,7665,com.google.android.gms.unstable,905,19]
+09-08 07:53:21.189  1456  1976 I am_kill : [0,13142,io.github.johnrocky.hfmodels.litertlm.test,0,stop io.github.johnrocky.hfmodels.litertlm.test due to finished inst,116556]
+09-08 07:57:44.990  1456  4191 I am_proc_died: [0,16803,com.google.android.as.oss:learning_bg,925,19]
+09-08 07:57:45.022  1456  1537 I am_proc_died: [0,16992,com.android.vending:background,915,19]
+09-08 07:57:45.063  1456  4191 I am_proc_died: [0,16763,com.google.android.aicore,905,19]
+09-08 07:57:45.085  1456 12300 I am_proc_died: [0,16787,com.google.android.odad,905,19]
+09-08 07:57:45.122  1456  3908 I am_proc_died: [0,16766,com.google.android.keep,905,19]
+09-08 07:57:45.168  1456  3908 I am_proc_died: [0,16726,com.google.android.permissioncontroller,905,19]
+09-08 07:57:45.204  1456  1537 I am_proc_died: [0,16824,com.google.android.apps.wellbeing,905,19]
+09-08 07:57:46.296  1456  4191 I am_proc_died: [0,16723,com.android.keychain,905,19]
+09-08 07:57:46.465  1456  3608 I am_proc_died: [0,17395,com.google.android.youtube,905,19]
+09-08 07:57:46.520  1456  3619 I am_proc_died: [0,16904,com.android.vending,905,19]
+09-08 07:58:44.311  1456  1977 I am_proc_died: [0,5634,com.google.android.euicc,905,19]
+09-08 07:58:44.373  1456  4277 I am_proc_died: [0,17635,com.google.android.googlequicksearchbox:googleapp,905,19]
+09-08 07:58:44.398  1456  4277 I am_kill : [0,17729,com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0,0,isolated not needed,47476]
+09-08 07:58:44.439  1456  4191 I am_proc_died: [0,17209,com.google.android.googlequicksearchbox:search,905,19]
+09-08 07:58:44.459  1456  4191 I am_proc_died: [0,17729,com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0,0,10]
+09-08 07:58:44.467  1456  4277 I am_proc_died: [0,17769,com.google.android.adservices.api,0,10]
+09-08 07:58:44.512  1456  2451 I am_proc_died: [0,4791,com.google.android.gms,905,19]
+09-08 07:58:44.560  1456  2451 I am_proc_died: [0,4598,com.google.android.GoogleCamera,800,10]
+09-08 07:58:46.503  1456  3959 I am_proc_died: [0,16629,com.google.android.apps.carrier.carrierwifi,800,10]
+09-08 07:58:46.537  1456  3959 I am_proc_died: [0,4603,com.google.android.apps.scone,800,10]
+09-08 07:58:54.220  1456  1960 I am_proc_died: [0,6276,com.android.settings,500,10]
+09-08 07:58:54.311  1456  1960 I am_proc_died: [0,4630,com.google.android.apps.messaging:rcs,201,5]
+09-08 07:58:54.331  1456  2588 I am_proc_died: [0,11274,com.google.android.apps.chromecast.app,250,5]
+09-08 07:59:24.053  1456  1960 I am_kill : [0,17041,io.github.johnrocky.hfmodels.litertlm.test,0,stop io.github.johnrocky.hfmodels.litertlm.test due to finished inst,114696]
+09-08 08:09:40.468  1456  1976 I am_proc_died: [0,18241,com.google.android.as.oss:learning_bg,935,19]
+09-08 08:09:52.782  1456  1976 I am_proc_died: [0,18787,com.android.keychain,905,19]
+09-08 08:09:52.830  1456  1976 I am_proc_died: [0,18837,com.google.android.odad,905,19]
+09-08 08:09:52.858  1456  1976 I am_proc_died: [0,18672,android.process.acore,905,19]
+09-08 08:09:52.907  1456  1960 I am_proc_died: [0,18501,com.google.android.keep,905,19]
+09-08 08:09:52.947  1456  1960 I am_proc_died: [0,18891,com.google.android.apps.wellbeing,905,19]
+09-08 08:09:52.990  1456  1960 I am_proc_died: [0,19490,com.google.android.settings.intelligence,905,19]
+09-08 08:09:53.040  1456  1960 I am_proc_died: [0,19663,com.google.android.gm,905,19]
+09-08 08:10:30.432  1456  4275 I am_proc_died: [0,19623,com.google.android.apps.turbo:aab,905,19]
+09-08 08:11:05.934  1456  1960 I am_proc_died: [0,18808,com.google.android.euicc,905,19]
+09-08 08:11:05.971  1456  3908 I am_proc_died: [0,19472,com.google.android.googlequicksearchbox:googleapp,905,19]
+09-08 08:11:06.007  1456  1959 I am_proc_died: [0,19236,com.google.android.googlequicksearchbox:search,905,19]
+09-08 08:11:06.040  1456  1765 I am_proc_died: [0,18913,com.android.vending,905,19]
+09-08 08:11:06.074  1456  1537 I am_proc_died: [0,19007,com.android.vending:background,905,19]
+09-08 08:11:06.123  1456  1537 I am_proc_died: [0,19773,com.anthropic.claude,905,19]
+09-08 08:11:06.159  1456  1537 I am_proc_died: [0,18785,com.google.android.permissioncontroller,905,19]
+09-08 08:11:06.179  1456  2539 I am_proc_died: [0,20071,com.android.chrome,905,19]
+09-08 08:11:06.201  1456  2546 I am_proc_died: [0,20176,com.google.android.as.oss:learning_bg,905,19]
+09-08 08:11:06.237  1456  2546 I am_proc_died: [0,18196,com.google.android.aicore,905,19]
+09-08 08:11:06.269  1456  2539 I am_proc_died: [0,20308,com.google.android.projection.gearhead:car,905,19]
+09-08 08:11:06.344  1456  2539 I am_proc_died: [0,20148,com.google.android.apps.maps,905,19]
+09-08 08:11:06.372  1456  2539 I am_proc_died: [0,18179,com.google.android.apps.messaging,905,19]
+09-08 08:11:06.412  1456  2539 I am_proc_died: [0,18497,com.google.android.apps.tips,905,19]
+09-08 08:11:20.399  1456  2526 I am_proc_died: [0,20151,com.google.android.youtube,905,19]
+09-08 08:11:20.560  1456  2539 I am_proc_died: [0,20428,com.google.android.gms.learning,905,19]
+09-08 08:11:20.584  1456  3961 I am_proc_died: [0,20512,com.google.android.gm,905,19]
+09-08 08:11:20.595  1456  1537 I am_proc_died: [0,18111,com.google.android.gms,905,19]
+09-08 08:11:20.597  1456  2546 I am_proc_died: [0,18001,com.google.android.GoogleCamera,800,10]
+09-08 08:11:20.607  1456  3608 I am_proc_died: [0,18002,com.google.android.apps.carrier.carrierwifi,800,10]
+09-08 08:11:20.612  1456  4481 I am_proc_died: [0,19039,com.android.settings,500,10]
+09-08 08:11:20.636  1456  2526 I am_proc_died: [0,18003,com.google.android.apps.scone,500,10]
+09-08 08:11:20.653  1456  2546 I am_proc_died: [0,18005,com.google.android.apps.chromecast.app,250,5]
+09-08 08:11:20.666  1456  3594 I am_proc_died: [0,18004,com.google.android.apps.messaging:rcs,201,5]
+09-08 08:11:33.140  1456  3608 I am_proc_died: [0,20804,com.google.android.apps.photos,905,19]
+09-08 08:11:33.169  1456  2526 I am_proc_died: [0,20826,com.google.android.GoogleCamera,500,10]
+09-08 08:11:45.244  1456  2526 I am_proc_died: [0,20679,com.google.android.gm,905,19]
+09-08 08:11:45.331  1456  2526 I am_proc_died: [0,20925,com.google.android.apps.carrier.carrierwifi,500,10]
+09-08 08:11:45.358  1456  2526 I am_proc_died: [0,20927,com.google.android.apps.chromecast.app,250,5]
+09-08 08:11:45.536  1456  2526 I am_proc_died: [0,20705,com.google.android.gms,905,19]
+09-08 08:11:45.655  1456  3619 I am_proc_died: [0,20928,com.google.android.apps.messaging:rcs,201,5]
+09-08 08:11:49.314  1456  3619 I am_proc_died: [0,21076,com.google.android.GoogleCamera,500,10]
+09-08 08:11:50.619  1456  3619 I am_proc_died: [0,20926,com.google.android.apps.scone,500,10]
+09-08 08:11:57.880  1456  2526 I am_proc_died: [0,4906,com.google.android.inputmethod.latin,200,7]
+09-08 08:11:59.129  1456  3627 I am_proc_died: [0,4579,com.google.android.gms.persistent,100,5]
+09-08 08:12:00.479  1456  3627 I am_proc_died: [0,5739,com.google.android.mosey,905,19]
+09-08 08:12:01.040  1456  3908 I am_proc_died: [0,21156,com.google.android.apps.carrier.carrierwifi,500,10]
+09-08 08:12:04.827  1456  3594 I am_proc_died: [0,21190,com.google.android.apps.chromecast.app,250,5]
+09-08 08:12:05.126  1456  1960 I am_proc_died: [0,21335,com.google.android.gms,905,19]
+09-08 08:12:05.502  1456  4277 I am_proc_died: [0,21195,com.google.android.GoogleCamera,500,10]
+09-08 08:12:05.599  1456  4277 I am_proc_died: [0,21194,com.google.android.apps.messaging:rcs,201,5]
+09-08 08:12:10.573  1456  1765 I am_proc_died: [0,4936,com.google.android.as,100,5]
+09-08 08:12:10.991  1456  1765 I am_proc_died: [0,5197,com.google.android.as.oss,905,19]
+09-08 08:12:12.396  1456  2584 I am_proc_died: [0,4907,com.google.android.googlequicksearchbox:interactor,100,5]
+09-08 08:12:12.418  1456  8777 I am_kill : [0,5906,com.google.android.googlequicksearchbox:trusted_disable_art_image_:com.google.android.apps.gsa.hotword.hotworddetectionservice.GsaHotwordDetectionService:hotword_detector_0,0,isolated not needed,31336]
+09-08 08:12:12.473  1456  3608 I am_proc_died: [0,5906,com.google.android.googlequicksearchbox:trusted_disable_art_image_:com.google.android.apps.gsa.hotword.hotworddetectionservice.GsaHotwordDetectionService:hotword_detector_0,0,10]
+09-08 08:12:12.624  1456  3466 I am_proc_died: [0,21509,com.google.android.as.oss,250,8]
+09-08 08:12:15.556  1456  3959 I am_proc_died: [0,21458,com.google.android.inputmethod.latin,200,7]
+09-08 08:12:15.781  1456  3627 I am_proc_died: [0,21594,com.google.android.as.oss,250,8]
+09-08 08:12:15.936  1456  3627 I am_proc_died: [0,21642,com.google.android.as.oss:learning_bg,905,19]
+09-08 08:12:18.471  1456 13613 I am_proc_died: [0,21407,com.google.android.gms,100,5]
+09-08 08:12:19.154  1456  2584 I am_proc_died: [0,4918,com.edgeagent.lab,100,6]
+09-08 08:12:20.369  1456  3961 I am_proc_died: [0,4930,com.android.qns,100,6]
+09-08 08:12:20.374  2421  2926 E ANM-0   : Qualified network service com.android.qns died.
+09-08 08:12:20.429  2421  2926 I AnomalyReporter: reportAnomaly: Received anomaly event report with eventId= c2d1a639-00e2-4561-9619-6acf37d90590 and description= Qualified network service com.android.qns died.
+09-08 08:12:20.493  1456  1976 I am_proc_died: [0,5608,com.google.android.apps.turbo,100,6]
+09-08 08:12:20.511  2421  2926 E ANM-1   : Qualified network service com.android.qns died.
+09-08 08:12:20.511  2421  2926 I AnomalyReporter: reportAnomaly: Received anomaly event report with eventId= c2d1a639-00e2-4561-9619-6acf37d90590 and description= Qualified network service com.android.qns died.
+09-08 08:12:20.561  2421  2926 E DSM-I-0 : Data service com.google.android.iwlan for transport type WLAN died.
+09-08 08:12:20.566  2421  2929 D NRM-I-0 : Network service ComponentInfo{com.google.android.iwlan/com.google.android.iwlan.IwlanNetworkService} for transport type WLAN died.
+09-08 08:12:20.567  2421  2929 D NRM-I-1 : Network service ComponentInfo{com.google.android.iwlan/com.google.android.iwlan.IwlanNetworkService} for transport type WLAN died.
+09-08 08:12:20.572  2421  2926 I AnomalyReporter: reportAnomaly: Received anomaly event report with eventId= fc1956de-c080-45de-8431-a1faab687110 and description= Data service com.google.android.iwlan for transport type WLAN died.
+09-08 08:12:20.593  2421  2926 E DSM-I-1 : Data service com.google.android.iwlan for transport type WLAN died.
+09-08 08:12:20.593  2421  2926 I AnomalyReporter: reportAnomaly: Received anomaly event report with eventId= fc1956de-c080-45de-8431-a1faab687110 and description= Data service com.google.android.iwlan for transport type WLAN died.
+09-08 08:12:20.605  1456  3612 I am_proc_died: [0,6115,com.google.android.ext.services,100,5]
+09-08 08:12:20.631  1456  2588 I am_proc_died: [0,4946,com.google.android.iwlan,100,6]
+09-08 08:12:20.692  1456  3608 I am_proc_died: [0,10382,com.google.android.apps.nexuslauncher,0,5]
+09-08 08:12:20.900  1456  2584 I am_proc_died: [0,21644,com.google.android.apps.chromecast.app,0,19]
+09-08 08:12:20.934  1456  3613 I am_proc_died: [0,21704,com.google.android.googlequicksearchbox:search,0,19]
+09-08 08:12:21.008  1456  2547 I am_proc_died: [0,21748,com.google.android.GoogleCamera,0,10]
+09-08 08:12:21.012  1456  2398 I am_proc_died: [0,21188,com.google.android.gms.persistent,0,5]
+09-08 08:12:21.052  1456  1537 I am_proc_died: [0,21749,com.google.android.apps.messaging:rcs,0,19]
+09-08 08:12:21.058  1456 12300 I am_proc_died: [0,21196,com.google.android.apps.scone,0,10]
+09-08 08:12:21.064  1456  1960 I am_proc_died: [0,21709,com.google.android.as.oss,0,19]
+09-08 08:12:21.068  1456  3627 I am_proc_died: [0,21613,com.google.android.apps.carrier.carrierwifi,500,10]
+09-08 08:12:21.537  1456  2398 I am_proc_died: [0,21825,com.google.android.apps.turbo,0,19]
+09-08 08:12:21.573  1456  2398 I am_proc_died: [0,21824,com.google.android.as,0,19]
+09-08 08:12:21.603  1456  2398 I am_proc_died: [0,21826,com.google.android.apps.nexuslauncher,0,19]
+09-08 08:12:23.096  1456  3619 I am_proc_died: [0,19072,io.github.johnrocky.hfmodels.litertlm.test,0,4]
+09-08 08:13:10.136  1456  1702 I am_kill : [0,22562,com.google.android.apps.wallpaper,905,excessive binder traffic during cached,164584]
+09-08 08:13:10.271  1456  2451 I am_proc_died: [0,22562,com.google.android.apps.wallpaper,905,19]
+09-08 08:15:56.456  1456  2546 I am_proc_died: [0,22544,com.google.android.as:captions,975,19]
+09-08 08:16:00.863  1456  2546 I am_kill : [0,24143,io.github.johnrocky.hfmodels.litertlm.test,0,stop io.github.johnrocky.hfmodels.litertlm.test due to finished inst,195060]
+09-08 08:16:48.435 24525 24525 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+09-08 08:16:48.442 24525 24525 I AndroidRuntime: Using default boot image
+09-08 08:16:48.442 24525 24525 I AndroidRuntime: Leaving lock profiling enabled
+09-08 08:16:48.540 24525 24525 D AndroidRuntime: Calling main entry com.android.commands.am.Am
+09-08 08:16:49.198 24536 24553 I hfmodels-a3: START device=Google Pixel 8a sdk=36 build=CP1A.260505.005 litertlm=0.16.1 catalog=hfmodels-bundled entries=[litert-community/DeepSeek-R1-Distill-Qwen-1.5B, litert-community/Falcon-H1-1.5B-Instruct, litert-community/LFM2.5-1.2B-Instruct, litert-community/LFM2.5-1.2B-Thinking, litert-community/LFM2.5-VL-1.6B, litert-community/LFM2.5-VL-3B, litert-community/LFM2.5-VL-450M, litert-community/Ministral-3-3B-Instruct-2512, litert-community/Qwen2.5-1.5B-Instruct, litert-community/Qwen3-0.6B, litert-community/Qwen3-1.7B, litert-community/Qwen3-4B-Instruct-2507, litert-community/Qwen3-4B, litert-community/Qwen3.5-0.8B, litert-community/Qwen3.5-2B, litert-community/Qwen3.5-4B, litert-community/gemma-4-E2B-it-litert-lm, litert-community/gemma-4-E4B-it-litert-lm, litert-community/granite-4.1-3b, litert-community/sarashina2.2-1b-instruct-v0.1]
+09-08 08:16:49.596 24536 24553 I hfmodels-a3: PLAN model=litert-community/Qwen3.5-0.8B commit=4170d2bd variant=int8 profile=gpu files=[Qwen3.5-0.8B_int8.litertlm:963184864:fetch] descriptor=john-rocky/hfmodels-android@16f7776f sha=52fb81ff
+09-08 08:17:58.766   480   480 I lowmemorykiller: Kill 'com.google.android.apps.aiwallpapers' (22682), uid 10137, oom_score_adj 975 to free 67804kB rss, 57408kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: low watermark is breached
+09-08 08:17:58.810  1456  3594 I ActivityManager: Process com.google.android.apps.aiwallpapers (pid 22682) has died: cch  +75 CEM 
+09-08 08:17:58.810  1456  3594 I am_proc_died: [0,22682,com.google.android.apps.aiwallpapers,975,19]
+09-08 08:17:58.810   905   905 I Zygote  : Process 22682 exited due to signal 9 (Killed)
+09-08 08:18:33.762   480   480 I lowmemorykiller: Kill 'com.google.android.apps.emojiwallpaper' (22863), uid 10210, oom_score_adj 965 to free 69532kB rss, 57652kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: low watermark is breached
+09-08 08:18:33.814   480   480 I lowmemorykiller: Kill 'com.google.android.apps.pixel.customizationbundle' (22886), uid 10339, oom_score_adj 965 to free 66084kB rss, 48800kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: low watermark is breached
+09-08 08:18:33.836  1456  1537 I ActivityManager: Process com.google.android.apps.emojiwallpaper (pid 22863) has died: cch  +65 CEM 
+09-08 08:18:33.836  1456  1537 I am_proc_died: [0,22863,com.google.android.apps.emojiwallpaper,965,19]
+09-08 08:18:33.837   905   905 I Zygote  : Process 22863 exited due to signal 9 (Killed)
+09-08 08:18:33.853  1456  4277 I ActivityManager: Process com.google.android.apps.pixel.customizationbundle (pid 22886) has died: cch  +65 CEM 
+09-08 08:18:33.853  1456  4277 I am_proc_died: [0,22886,com.google.android.apps.pixel.customizationbundle,965,19]
+09-08 08:18:33.855   905   905 I Zygote  : Process 22886 exited due to signal 9 (Killed)
+09-08 08:18:33.856   480   480 I lowmemorykiller: Kill 'com.google.pixel.livewallpaper' (22966), uid 10120, oom_score_adj 955 to free 62316kB rss, 44644kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: low watermark is breached
+09-08 08:18:33.874   905   905 I Zygote  : Process 22966 exited due to signal 9 (Killed)
+09-08 08:18:33.874  1456  4277 I ActivityManager: Process com.google.pixel.livewallpaper (pid 22966) has died: cch  +55 CEM 
+09-08 08:18:33.874  1456  4277 I am_proc_died: [0,22966,com.google.pixel.livewallpaper,955,19]
+09-08 08:18:33.875   480   480 I lowmemorykiller: Kill 'com.android.hotwordenrollment.xgoogle' (23370), uid 10140, oom_score_adj 955 to free 56376kB rss, 44268kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: low watermark is breached
+09-08 08:18:33.914  1456  4277 I ActivityManager: Process com.android.hotwordenrollment.xgoogle (pid 23370) has died: cch  +55 CEM 
+09-08 08:18:33.914  1456  4277 I am_proc_died: [0,23370,com.android.hotwordenrollment.xgoogle,955,19]
+09-08 08:18:33.915   905   905 I Zygote  : Process 23370 exited due to signal 9 (Killed)
+09-08 08:18:33.916   480   480 I lowmemorykiller: Kill 'android.process.acore' (22396), uid 10077, oom_score_adj 945 to free 72568kB rss, 43296kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: low watermark is breached
+09-08 08:18:33.948  1456  4277 I ActivityManager: Process android.process.acore (pid 22396) has died: cch  +45 CEM 
+09-08 08:18:33.948  1456  4277 I am_proc_died: [0,22396,android.process.acore,945,19]
+09-08 08:18:33.952   905   905 I Zygote  : Process 22396 exited due to signal 9 (Killed)
+09-08 08:19:30.958   480   480 I lowmemorykiller: Kill 'com.android.chrome' (23471), uid 10191, oom_score_adj 945 to free 46412kB rss, 53000kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: low watermark is breached and swap is low (213396kB < 387732kB)
+09-08 08:19:31.034  1456 12300 I ActivityManager: Process com.android.chrome (pid 23471) has died: cch  +45 CEM 
+09-08 08:19:31.036  1456 12300 I am_proc_died: [0,23471,com.android.chrome,945,19]
+09-08 08:19:31.045   905   905 I Zygote  : Process 23471 exited due to signal 9 (Killed)
+09-08 08:19:55.881   480   480 I lowmemorykiller: Kill 'com.google.android.apps.photos' (22950), uid 10184, oom_score_adj 935 to free 40792kB rss, 75000kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: device is low on swap (0kB < 387732kB) and thrashing (101%)
+09-08 08:19:55.922   480   480 I lowmemorykiller: Kill 'com.android.vending' (22579), uid 10134, oom_score_adj 925 to free 41808kB rss, 113344kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: filecache is low (23484kB < 153600kB) after thrashing
+09-08 08:19:55.971   480   480 I lowmemorykiller: Kill 'com.google.android.gm' (23410), uid 10198, oom_score_adj 925 to free 36220kB rss, 94252kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: filecache is low (25308kB < 153600kB) after thrashing
+09-08 08:19:56.022   480   480 I lowmemorykiller: Kill 'com.android.vending:background' (23043), uid 10134, oom_score_adj 915 to free 32936kB rss, 70904kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: filecache is low (32292kB < 153600kB) after thrashing
+09-08 08:19:56.029   905   905 I Zygote  : Process 22950 exited due to signal 9 (Killed)
+09-08 08:19:56.066  1456  3961 I ActivityManager: Process com.google.android.apps.photos (pid 22950) has died: cch  +35 CEM 
+09-08 08:19:56.066  1456  3961 I am_proc_died: [0,22950,com.google.android.apps.photos,935,19]
+09-08 08:19:56.070   480   480 I lowmemorykiller: Kill 'com.google.android.ext.services' (23955), uid 10252, oom_score_adj 905 to free 31856kB rss, 47624kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: filecache is low (41780kB < 153600kB) after thrashing
+09-08 08:19:56.109  1456  3961 I ActivityManager: Process com.google.android.ext.services (pid 23955) has died: cch CEM 
+09-08 08:19:56.109  1456  3961 I am_proc_died: [0,23955,com.google.android.ext.services,905,19]
+09-08 08:19:56.111   480   480 I lowmemorykiller: Kill 'com.google.android.as.oss:learning_bg' (22363), uid 10128, oom_score_adj 905 to free 37940kB rss, 54516kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: filecache is low (52468kB < 153600kB) after thrashing
+09-08 08:19:56.112   905   905 I Zygote  : Process 23955 exited due to signal 9 (Killed)
+09-08 08:19:56.114   905   905 I Zygote  : Process 23410 exited due to signal 9 (Killed)
+09-08 08:19:56.138   905   905 I Zygote  : Process 22579 exited due to signal 9 (Killed)
+09-08 08:19:56.142  1456  2526 I ActivityManager: Process com.google.android.gm (pid 23410) has died: cch  +25 CEM 
+09-08 08:19:56.143  1456  2526 I am_proc_died: [0,23410,com.google.android.gm,925,19]
+09-08 08:19:56.159  1456  3908 I ActivityManager: Process com.android.vending (pid 22579) has died: cch  +25 CEM 
+09-08 08:19:56.159  1456  3908 I am_proc_died: [0,22579,com.android.vending,925,19]
+09-08 08:19:56.162   480   480 I lowmemorykiller: Kill 'com.google.android.odad' (23996), uid 10165, oom_score_adj 905 to free 35640kB rss, 51412kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: filecache is low (62864kB < 153600kB) after thrashing
+09-08 08:19:56.163  1456  3908 I ActivityManager: Process com.android.vending:background (pid 23043) has died: cch  +15 CEM 
+09-08 08:19:56.163  1456  3908 I am_proc_died: [0,23043,com.android.vending:background,915,19]
+09-08 08:19:56.173   905   905 I Zygote  : Process 22363 exited due to signal 9 (Killed)
+09-08 08:19:56.173   905   905 I Zygote  : Process 23043 exited due to signal 9 (Killed)
+09-08 08:19:56.189  1456  2398 I ActivityManager: Process com.google.android.as.oss:learning_bg (pid 22363) has died: cch CEM 
+09-08 08:19:56.189  1456  2398 I am_proc_died: [0,22363,com.google.android.as.oss:learning_bg,905,19]
+09-08 08:19:56.200   905   905 I Zygote  : Process 23996 exited due to signal 9 (Killed)
+09-08 08:19:56.200  1456  2539 I ActivityManager: Process com.google.android.odad (pid 23996) has died: cch CEM 
+09-08 08:19:56.201  1456  2539 I am_proc_died: [0,23996,com.google.android.odad,905,19]
+09-08 08:19:56.201   480   480 I lowmemorykiller: Kill 'com.google.android.permissioncontroller' (22720), uid 10269, oom_score_adj 905 to free 37328kB rss, 49584kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: filecache is low (68116kB < 153600kB) after thrashing
+09-08 08:19:56.238  1456  3908 I ActivityManager: Process com.google.android.permissioncontroller (pid 22720) has died: cch CEM 
+09-08 08:19:56.238  1456  3908 I am_proc_died: [0,22720,com.google.android.permissioncontroller,905,19]
+09-08 08:19:56.246   905   905 I Zygote  : Process 22720 exited due to signal 9 (Killed)
+09-08 08:19:56.247   480   480 I lowmemorykiller: Kill 'com.google.android.apps.wellbeing' (22581), uid 10161, oom_score_adj 905 to free 48044kB rss, 93548kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: filecache is low (75192kB < 153600kB) after thrashing
+09-08 08:19:56.300   480   480 I lowmemorykiller: Kill 'com.android.keychain' (23944), uid 1000, oom_score_adj 905 to free 31304kB rss, 46808kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: filecache is low (77588kB < 153600kB) after thrashing
+09-08 08:19:56.328   905   905 I Zygote  : Process 22581 exited due to signal 9 (Killed)
+09-08 08:19:56.331  1456  3908 I ActivityManager: Process com.google.android.apps.wellbeing (pid 22581) has died: cch CEM 
+09-08 08:19:56.331  1456  3908 I am_proc_died: [0,22581,com.google.android.apps.wellbeing,905,19]
+09-08 08:19:56.353   480   480 I lowmemorykiller: Kill 'com.google.android.euicc' (22721), uid 10148, oom_score_adj 905 to free 40004kB rss, 49848kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: filecache is low (79360kB < 153600kB) after thrashing
+09-08 08:19:56.360   905   905 I Zygote  : Process 23944 exited due to signal 9 (Killed)
+09-08 08:19:56.386  1456  3612 I ActivityManager: Process com.android.keychain (pid 23944) has died: cch CEM 
+09-08 08:19:56.386  1456  3612 I am_proc_died: [0,23944,com.android.keychain,905,19]
+09-08 08:19:56.403   480   480 I lowmemorykiller: Kill 'com.google.android.googlequicksearchbox:search' (22502), uid 10174, oom_score_adj 905 to free 40344kB rss, 86492kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: filecache is low (80540kB < 153600kB) after thrashing
+09-08 08:19:56.418   905   905 I Zygote  : Process 22721 exited due to signal 9 (Killed)
+09-08 08:19:56.420  1456  3612 I ActivityManager: Process com.google.android.euicc (pid 22721) has died: cch CEM 
+09-08 08:19:56.421  1456  3612 I am_proc_died: [0,22721,com.google.android.euicc,905,19]
+09-08 08:19:56.454   480   480 I lowmemorykiller: Kill 'com.google.android.gms' (22193), uid 10150, oom_score_adj 905 to free 41336kB rss, 93996kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: filecache is low (80780kB < 153600kB) after thrashing
+09-08 08:19:56.500  1456  3612 I ActivityManager: Process com.google.android.googlequicksearchbox:search (pid 22502) has died: cch CEM 
+09-08 08:19:56.505  1456  3612 I am_proc_died: [0,22502,com.google.android.googlequicksearchbox:search,905,19]
+09-08 08:19:56.507   905   905 I Zygote  : Process 22502 exited due to signal 9 (Killed)
+09-08 08:19:56.542  1456  3612 I ActivityManager: Process com.google.android.gms (pid 22193) has died: cch CEM 
+09-08 08:19:56.542  1456  3612 I am_proc_died: [0,22193,com.google.android.gms,905,19]
+09-08 08:19:56.549   905   905 I Zygote  : Process 22193 exited due to signal 9 (Killed)
+09-08 08:19:56.749 21948 23145 I Dck     : [AidlWrapper] Remote died [CONTEXT service_id=289 ]
+09-08 08:19:56.767   480   480 I lowmemorykiller: Kill 'com.google.android.apps.carrier.carrierwifi' (21963), uid 10117, oom_score_adj 800 to free 34644kB rss, 47048kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: filecache is low (104508kB < 153600kB) after thrashing
+09-08 08:19:56.780  1456  1537 I ActivityManager: Process com.google.android.apps.carrier.carrierwifi (pid 21963) has died: svcb SVC 
+09-08 08:19:56.780  1456  1537 I am_proc_died: [0,21963,com.google.android.apps.carrier.carrierwifi,800,10]
+09-08 08:19:56.781   905   905 I Zygote  : Process 21963 exited due to signal 9 (Killed)
+09-08 08:19:56.936   480   480 I lowmemorykiller: Kill 'com.google.android.GoogleCamera' (21935), uid 10168, oom_score_adj 800 to free 67048kB rss, 75232kB swap, 1036kB dmabuf_pss, 1036kB dmabuf_rss; reason: filecache is low (107288kB < 153600kB) after thrashing
+09-08 08:19:56.987   480   480 I lowmemorykiller: Kill 'com.android.settings' (23949), uid 1000, oom_score_adj 800 to free 37628kB rss, 48676kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: filecache is low (107508kB < 153600kB) after thrashing
+09-08 08:19:56.998  1456  3627 I ActivityManager: Process com.google.android.GoogleCamera (pid 21935) has died: svcb SVC 
+09-08 08:19:56.998  1456  3627 I am_proc_died: [0,21935,com.google.android.GoogleCamera,800,10]
+09-08 08:19:57.009   905   905 I Zygote  : Process 21935 exited due to signal 9 (Killed)
+09-08 08:19:57.011  1456  2588 I ActivityManager: Process com.android.settings (pid 23949) has died: svcb SVC 
+09-08 08:19:57.011  1456  2588 I am_proc_died: [0,23949,com.android.settings,800,10]
+09-08 08:19:57.012   905   905 I Zygote  : Process 23949 exited due to signal 9 (Killed)
+09-08 08:19:57.013   480   480 I lowmemorykiller: Kill 'com.google.android.apps.scone' (21959), uid 10155, oom_score_adj 800 to free 49124kB rss, 52372kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: filecache is low (108184kB < 153600kB) after thrashing
+09-08 08:19:57.020  1456  2588 D WindowManager: TaskFragmentOrganizer=android.window.ITaskFragmentOrganizer$Stub$Proxy@228ad46 died
+09-08 08:19:57.043  1456  2588 I ActivityManager: Process com.google.android.apps.scone (pid 21959) has died: svcb SVC 
+09-08 08:19:57.043  1456  2588 I am_proc_died: [0,21959,com.google.android.apps.scone,800,10]
+09-08 08:19:57.044   905   905 I Zygote  : Process 21959 exited due to signal 9 (Killed)
+09-08 08:19:57.052  1456  3608 W AudioService.RecordingActivityMonitor: client died
+09-08 08:19:57.053  1456  2451 W AS.PlaybackActivityMon: client died
+09-08 08:19:57.262   480   480 I lowmemorykiller: Kill 'com.google.android.apps.chromecast.app' (23669), uid 10285, oom_score_adj 250 to free 37176kB rss, 73396kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: filecache is low (120616kB < 153600kB) after thrashing
+09-08 08:19:57.304  1456  3608 I ActivityManager: Process com.google.android.apps.chromecast.app (pid 23669) has died: prcl BFGS
+09-08 08:19:57.305  1456  3608 I am_proc_died: [0,23669,com.google.android.apps.chromecast.app,250,5]
+09-08 08:19:57.307   905   905 I Zygote  : Process 23669 exited due to signal 9 (Killed)
+09-08 08:20:07.554   480   480 I lowmemorykiller: Kill 'com.google.android.apps.chromecast.app' (24663), uid 10285, oom_score_adj 250 to free 145428kB rss, 37684kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: low watermark is breached and swap is low (200kB < 387732kB)
+09-08 08:20:07.591  1456  4277 I ActivityManager: Process com.google.android.apps.chromecast.app (pid 24663) has died: prcl BFGS
+09-08 08:20:07.591  1456  4277 I am_proc_died: [0,24663,com.google.android.apps.chromecast.app,250,5]
+09-08 08:20:07.594   905   905 I Zygote  : Process 24663 exited due to signal 9 (Killed)
+09-08 08:20:07.698   480   480 I lowmemorykiller: Kill 'com.google.android.gms' (24734), uid 10150, oom_score_adj 905 to free 103492kB rss, 39660kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: low watermark is breached and swap is low (384kB < 387732kB)
+09-08 08:20:07.719   905   905 I Zygote  : Process 24734 exited due to signal 9 (Killed)
+09-08 08:20:07.719   480   480 I lowmemorykiller: Kill 'com.google.android.apps.carrier.carrierwifi' (24660), uid 10117, oom_score_adj 500 to free 66932kB rss, 39940kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: low watermark is breached and swap is low (392kB < 387732kB)
+09-08 08:20:07.721  1456  4481 I ActivityManager: Process com.google.android.gms (pid 24734) has died: cch CEM 
+09-08 08:20:07.721  1456  4481 I am_proc_died: [0,24734,com.google.android.gms,905,19]
+09-08 08:20:07.746  1456  4481 I ActivityManager: Process com.google.android.apps.carrier.carrierwifi (pid 24660) has died: svc SVC 
+09-08 08:20:07.746  1456  4481 I am_proc_died: [0,24660,com.google.android.apps.carrier.carrierwifi,500,10]
+09-08 08:20:07.748   905   905 I Zygote  : Process 24660 exited due to signal 9 (Killed)
+09-08 08:20:07.926   480   480 I lowmemorykiller: Kill 'com.google.android.aicore' (24793), uid 10159, oom_score_adj 250 to free 74280kB rss, 39460kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: low watermark is breached and swap is low (168kB < 387732kB)
+09-08 08:20:07.988   905   905 I Zygote  : Process 24793 exited due to signal 9 (Killed)
+09-08 08:20:07.991  1456  4277 I ActivityManager: Process com.google.android.aicore (pid 24793) has died: prcl TRNB
+09-08 08:20:07.991  1456  4277 I am_proc_died: [0,24793,com.google.android.aicore,250,8]
+09-08 08:20:08.040   480   480 I lowmemorykiller: Kill 'com.android.vending' (24803), uid 10134, oom_score_adj 250 to free 111632kB rss, 39408kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: low watermark is breached and swap is low (96kB < 387732kB)
+09-08 08:20:08.148   480   480 I lowmemorykiller: Kill 'com.google.android.as.oss:learning_bg' (24870), uid 10128, oom_score_adj 905 to free 80612kB rss, 39388kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: low watermark is breached and swap is low (252kB < 387732kB)
+09-08 08:20:08.164  1456 12300 I ActivityManager: Process com.android.vending (pid 24803) has died: prcl TRNB
+09-08 08:20:08.164  1456 12300 I am_proc_died: [0,24803,com.android.vending,250,8]
+09-08 08:20:08.166  1456  4277 I ActivityManager: Process com.google.android.as.oss:learning_bg (pid 24870) has died: cch CEM 
+09-08 08:20:08.166  1456  4277 I am_proc_died: [0,24870,com.google.android.as.oss:learning_bg,905,19]
+09-08 08:20:08.166   905   905 I Zygote  : Process 24803 exited due to signal 9 (Killed)
+09-08 08:20:08.166   905   905 I Zygote  : Process 24870 exited due to signal 9 (Killed)
+09-08 08:20:08.215   480   480 I lowmemorykiller: Kill 'com.google.android.apps.scone' (24662), uid 10155, oom_score_adj 250 to free 92980kB rss, 38840kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: low watermark is breached and swap is low (860kB < 387732kB)
+09-08 08:20:08.236  1456  4191 I ActivityManager: Process com.google.android.apps.scone (pid 24662) has died: fg  TRNB
+09-08 08:20:08.236  1456  4191 I am_proc_died: [0,24662,com.google.android.apps.scone,0,8]
+09-08 08:20:08.238   905   905 I Zygote  : Process 24662 exited due to signal 9 (Killed)
+09-08 08:20:08.514   480   480 I lowmemorykiller: Kill 'com.google.android.GoogleCamera' (24661), uid 10168, oom_score_adj 500 to free 90124kB rss, 41080kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: low watermark is breached and swap is low (644kB < 387732kB)
+09-08 08:20:08.530  1456  4191 I ActivityManager: Process com.google.android.GoogleCamera (pid 24661) has died: svc SVC 
+09-08 08:20:08.530  1456  4191 I am_proc_died: [0,24661,com.google.android.GoogleCamera,500,10]
+09-08 08:20:08.534   905   905 I Zygote  : Process 24661 exited due to signal 9 (Killed)
+09-08 08:20:08.534   480   480 I lowmemorykiller: Kill 'com.google.android.apps.carrier.carrierwifi' (24912), uid 10117, oom_score_adj 500 to free 62016kB rss, 39944kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: low watermark is breached and swap is low (260kB < 387732kB)
+09-08 08:20:08.545  1456  4191 I ActivityManager: Process com.google.android.apps.carrier.carrierwifi (pid 24912) has died: svc SVC 
+09-08 08:20:08.546  1456  4191 I am_proc_died: [0,24912,com.google.android.apps.carrier.carrierwifi,500,10]
+09-08 08:20:08.546   905   905 I Zygote  : Process 24912 exited due to signal 9 (Killed)
+09-08 08:20:08.756   480   480 I lowmemorykiller: Kill 'com.google.android.youtube' (24801), uid 10188, oom_score_adj 250 to free 169432kB rss, 37836kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: low watermark is breached and swap is low (188kB < 387732kB)
+09-08 08:20:08.786  1456  4191 I ActivityManager: Process com.google.android.youtube (pid 24801) has died: prcl TRNB
+09-08 08:20:08.786   905   905 I Zygote  : Process 24801 exited due to signal 9 (Killed)
+09-08 08:20:08.786  1456  4191 I am_proc_died: [0,24801,com.google.android.youtube,250,8]
+09-08 08:20:10.980   480   480 I lowmemorykiller: Kill 'com.google.android.apps.photos' (24838), uid 10184, oom_score_adj 250 to free 167012kB rss, 36348kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: low watermark is breached and swap is low (1088kB < 387732kB)
+09-08 08:20:11.029  1456  3908 I ActivityManager: Process com.google.android.apps.photos (pid 24838) has died: prcl TRNB
+09-08 08:20:11.029  1456  3908 I am_proc_died: [0,24838,com.google.android.apps.photos,250,8]
+09-08 08:20:11.033   905   905 I Zygote  : Process 24838 exited due to signal 9 (Killed)
+09-08 08:20:14.572   480   480 I lowmemorykiller: Kill 'com.google.android.gms' (25011), uid 10150, oom_score_adj 905 to free 48736kB rss, 37712kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: device is low on swap (0kB < 387732kB) and thrashing (112%)
+09-08 08:20:14.619   905   905 I Zygote  : Process 25011 exited due to signal 9 (Killed)
+09-08 08:20:14.639  1456  4191 I ActivityManager: Process com.google.android.gms (pid 25011) has died: cch CEM 
+09-08 08:20:14.640  1456  4191 I am_proc_died: [0,25011,com.google.android.gms,905,19]
+09-08 08:20:14.964   480   480 I lowmemorykiller: Kill 'com.google.android.inputmethod.latin' (21909), uid 10185, oom_score_adj 200 to free 44496kB rss, 94204kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: device is low on swap (0kB < 387732kB) and thrashing (312%)
+09-08 08:20:15.013   905   905 I Zygote  : Process 21909 exited due to signal 9 (Killed)
+09-08 08:20:15.014  1456  2547 I ActivityManager: Process com.google.android.inputmethod.latin (pid 21909) has died: prcp IMPB
+09-08 08:20:15.014  1456  2547 I am_proc_died: [0,21909,com.google.android.inputmethod.latin,200,7]
+09-08 08:20:18.794   480   480 I lowmemorykiller: Kill 'com.google.android.gms.persistent' (21948), uid 10150, oom_score_adj 100 to free 75088kB rss, 96220kB swap, 48kB dmabuf_pss, 48kB dmabuf_rss; reason: device is low on swap (0kB < 387732kB) and thrashing (301%)
+09-08 08:20:18.899   905   905 I Zygote  : Process 21948 exited due to signal 9 (Killed)
+09-08 08:20:18.918  1456  4277 I ActivityManager: Process com.google.android.gms.persistent (pid 21948) has died: vis BFGS
+09-08 08:20:18.919  1456  4277 I am_proc_died: [0,21948,com.google.android.gms.persistent,100,5]
+09-08 08:20:18.921  1456 13613 W AS.PlaybackActivityMon: client died
+09-08 08:20:18.924  1456  4191 I MR2ServiceImpl: unregisterManager | Manager com.google.android.gms (id=28,pid=21948,userId=0,uid=10150,targetPkg=com.google.android.gms), user: 0, died: true
+09-08 08:20:18.954  1128 12888 I ResourceManagerMetrics: onProcessTerminated: Application/Process(22193:10150) terminated with reason: 1. TotalClientsCreated: 654  TotalClientsKilled: 6
+09-08 08:20:18.959  1128 12888 I ResourceManagerMetrics: pushCodecUsageMetrics: Pushed APP_MEDIA_CODEC_USAGE_REPORTED atom: Process[pid(22193): uid(10150) is Ended] is Peak { AudioDec[ SW: 1 ] } Peak Pixels: 0. Peak Codec Memory: 0 Total Codecs: 654 Killed Codec: 6. Result: 121
+09-08 08:20:19.131   480   480 I lowmemorykiller: Kill 'com.google.android.mosey' (23197), uid 10242, oom_score_adj 905 to free 48736kB rss, 46076kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: filecache is low (90420kB < 153600kB) after thrashing
+09-08 08:20:19.153  1456  1959 I ActivityManager: Process com.google.android.mosey (pid 23197) has died: cch CEM 
+09-08 08:20:19.153  1456  1959 I am_proc_died: [0,23197,com.google.android.mosey,905,19]
+09-08 08:20:19.153   905   905 I Zygote  : Process 23197 exited due to signal 9 (Killed)
+09-08 08:20:20.111   480   480 I lowmemorykiller: Kill 'com.google.android.apps.carrier.carrierwifi' (25131), uid 10117, oom_score_adj 500 to free 39680kB rss, 39984kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: filecache is low (17796kB < 153600kB) after thrashing
+09-08 08:20:20.138   905   905 I Zygote  : Process 25131 exited due to signal 9 (Killed)
+09-08 08:20:20.141  1456  1959 I ActivityManager: Process com.google.android.apps.carrier.carrierwifi (pid 25131) has died: svc SVC 
+09-08 08:20:20.142  1456  1959 I am_proc_died: [0,25131,com.google.android.apps.carrier.carrierwifi,500,10]
+09-08 08:20:20.848   480   480 I lowmemorykiller: Kill 'com.google.android.as' (21901), uid 10173, oom_score_adj 100 to free 47892kB rss, 93720kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: device is low on swap (0kB < 387732kB) and thrashing (302%)
+09-08 08:20:20.901   905   905 I Zygote  : Process 21901 exited due to signal 9 (Killed)
+09-08 08:20:20.904  1456  2546 W AS.PlaybackActivityMon: client died
+09-08 08:20:20.906  1456  3908 I ActivityManager: Process com.google.android.as (pid 21901) has died: vis BFGS
+09-08 08:20:20.906  1456  3908 I am_proc_died: [0,21901,com.google.android.as,100,5]
+09-08 08:20:20.908  1456  2584 W SoundTriggerService: DETACH       ERROR: Client died for: com.google.android.as
+09-08 08:20:20.948  1456  1456 W ContentCapturePerUserService: remote service died: RemoteContentCaptureService[ComponentInfo{com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiContentCaptureService} 204304134 (unbound)]
+09-08 08:20:21.055   480   480 I lowmemorykiller: Kill 'com.google.android.as.oss' (22280), uid 10128, oom_score_adj 905 to free 42332kB rss, 47732kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: filecache is low (67880kB < 153600kB) after thrashing
+09-08 08:20:21.075   905   905 I Zygote  : Process 22280 exited due to signal 9 (Killed)
+09-08 08:20:21.076  1456 14003 I ActivityManager: Process com.google.android.as.oss (pid 22280) has died: cch CEM 
+09-08 08:20:21.076  1456 14003 I am_proc_died: [0,22280,com.google.android.as.oss,905,19]
+09-08 08:20:21.704   480   480 I lowmemorykiller: Kill 'com.google.android.apps.chromecast.app' (25124), uid 10285, oom_score_adj 250 to free 115548kB rss, 38500kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: filecache is low (147556kB < 153600kB) after thrashing
+09-08 08:20:21.727  1456 14003 I ActivityManager: Process com.google.android.apps.chromecast.app (pid 25124) has died: prcl BFGS
+09-08 08:20:21.727  1456 14003 I am_proc_died: [0,25124,com.google.android.apps.chromecast.app,250,5]
+09-08 08:20:21.727   905   905 I Zygote  : Process 25124 exited due to signal 9 (Killed)
+09-08 08:20:23.380   480   480 I lowmemorykiller: Kill 'com.google.android.googlequicksearchbox:interactor' (21894), uid 10174, oom_score_adj 100 to free 46636kB rss, 132920kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: device is low on swap (0kB < 387732kB) and thrashing (301%)
+09-08 08:20:23.454  1456  3908 W SoundTriggerService: DETACH       ERROR: Client died for: com.google.android.googlequicksearchbox
+09-08 08:20:23.454  1456 14003 W SoundTriggerService: DETACH       ERROR: Client died for: com.google.android.googlequicksearchbox
+09-08 08:20:23.456  1456  2526 I ActivityManager: Process com.google.android.googlequicksearchbox:interactor (pid 21894) has died: vis BFGS
+09-08 08:20:23.462  1456  2526 I am_proc_died: [0,21894,com.google.android.googlequicksearchbox:interactor,100,5]
+09-08 08:20:23.463   905   905 I Zygote  : Process 21894 exited due to signal 9 (Killed)
+09-08 08:20:23.474  1456  8777 I ActivityManager: Killing 23357:com.google.android.googlequicksearchbox:trusted_disable_art_image_:com.google.android.apps.gsa.hotword.hotworddetectionservice.GsaHotwordDetectionService:hotword_detector_0/u0a174i199 (adj 0): isolated not needed
+09-08 08:20:23.476  1456  8777 I am_kill : [0,23357,com.google.android.googlequicksearchbox:trusted_disable_art_image_:com.google.android.apps.gsa.hotword.hotworddetectionservice.GsaHotwordDetectionService:hotword_detector_0,0,isolated not needed,35608]
+09-08 08:20:23.533  1456 14003 I am_proc_died: [0,23357,com.google.android.googlequicksearchbox:trusted_disable_art_image_:com.google.android.apps.gsa.hotword.hotworddetectionservice.GsaHotwordDetectionService:hotword_detector_0,0,10]
+09-08 08:20:23.535   905   905 I Zygote  : Process 23357 exited due to signal 9 (Killed)
+09-08 08:20:24.238   480   480 I lowmemorykiller: Kill 'com.google.android.GoogleCamera' (25126), uid 10168, oom_score_adj 500 to free 88024kB rss, 41112kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: low watermark is breached and swap is low (436kB < 387732kB)
+09-08 08:20:24.265  1456  2526 I ActivityManager: Process com.google.android.GoogleCamera (pid 25126) has died: svc SVC 
+09-08 08:20:24.265  1456  2526 I am_proc_died: [0,25126,com.google.android.GoogleCamera,500,10]
+09-08 08:20:24.266   905   905 I Zygote  : Process 25126 exited due to signal 9 (Killed)
+09-08 08:20:24.770   480   480 I lowmemorykiller: Kill 'com.google.android.apps.scone' (25125), uid 10155, oom_score_adj 500 to free 85976kB rss, 37552kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: low watermark is breached and swap is low (0kB < 387732kB)
+09-08 08:20:24.793  1456  3961 I ActivityManager: Process com.google.android.apps.scone (pid 25125) has died: svc SVC 
+09-08 08:20:24.795  1456  3961 I am_proc_died: [0,25125,com.google.android.apps.scone,500,10]
+09-08 08:20:24.797   905   905 I Zygote  : Process 25125 exited due to signal 9 (Killed)
+09-08 08:20:30.098   480   480 I lowmemorykiller: Kill 'com.google.android.apps.carrier.carrierwifi' (25579), uid 10117, oom_score_adj 500 to free 60016kB rss, 40036kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: low watermark is breached and swap is low (84kB < 387732kB)
+09-08 08:20:30.146  1456  3627 I ActivityManager: Process com.google.android.apps.carrier.carrierwifi (pid 25579) has died: fg  SVC 
+09-08 08:20:30.146  1456  3627 I am_proc_died: [0,25579,com.google.android.apps.carrier.carrierwifi,0,10]
+09-08 08:20:30.147   905   905 I Zygote  : Process 25579 exited due to signal 9 (Killed)
+09-08 08:20:30.542   480   480 I lowmemorykiller: Kill 'com.google.android.apps.wellbeing' (25616), uid 10161, oom_score_adj 905 to free 80060kB rss, 39048kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: low watermark is breached and swap is low (0kB < 387732kB)
+09-08 08:20:30.575  1456  2546 I ActivityManager: Process com.google.android.apps.wellbeing (pid 25616) has died: cch CEM 
+09-08 08:20:30.575  1456  2546 I am_proc_died: [0,25616,com.google.android.apps.wellbeing,905,19]
+09-08 08:20:30.576   905   905 I Zygote  : Process 25616 exited due to signal 9 (Killed)
+09-08 08:20:32.364   480   480 I lowmemorykiller: Kill 'com.google.android.inputmethod.latin' (25360), uid 10185, oom_score_adj 200 to free 123880kB rss, 39864kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: device is low on swap (0kB < 387732kB) and thrashing (303%)
+09-08 08:20:32.394  1456  3961 I ActivityManager: Process com.google.android.inputmethod.latin (pid 25360) has died: prcp IMPB
+09-08 08:20:32.397  1456  3961 I am_proc_died: [0,25360,com.google.android.inputmethod.latin,200,7]
+09-08 08:20:32.400   905   905 I Zygote  : Process 25360 exited due to signal 9 (Killed)
+09-08 08:20:33.300   480   480 I lowmemorykiller: Kill 'com.edgeagent.lab' (21920), uid 10335, oom_score_adj 100 to free 37984kB rss, 47820kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: device is low on swap (12kB < 387732kB) and thrashing (302%)
+09-08 08:20:33.323  1456  3466 I ActivityManager: Process com.edgeagent.lab (pid 21920) has died: vis IMPF
+09-08 08:20:33.323  1456  3466 I am_proc_died: [0,21920,com.edgeagent.lab,100,6]
+09-08 08:20:33.338   905   905 I Zygote  : Process 21920 exited due to signal 9 (Killed)
+09-08 08:20:33.794   480   480 I lowmemorykiller: Kill 'com.google.android.apps.chromecast.app' (25688), uid 10285, oom_score_adj 250 to free 72604kB rss, 47244kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: low watermark is breached and swap is low (0kB < 387732kB)
+09-08 08:20:33.816  1456  3594 I ActivityManager: Process com.google.android.apps.chromecast.app (pid 25688) has died: prcl BFGS
+09-08 08:20:33.816  1456  3594 I am_proc_died: [0,25688,com.google.android.apps.chromecast.app,250,5]
+09-08 08:20:33.817   905   905 I Zygote  : Process 25688 exited due to signal 9 (Killed)
+09-08 08:20:35.159   480   480 I lowmemorykiller: Kill 'com.google.android.gms.persistent' (25113), uid 10150, oom_score_adj 100 to free 93988kB rss, 45824kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: device is low on swap (0kB < 387732kB) and thrashing (305%)
+09-08 08:20:35.238  1456  3594 I ActivityManager: Process com.google.android.gms.persistent (pid 25113) has died: vis BFGS
+09-08 08:20:35.238  1456  3594 I am_proc_died: [0,25113,com.google.android.gms.persistent,100,5]
+09-08 08:20:35.247   905   905 I Zygote  : Process 25113 exited due to signal 9 (Killed)
+09-08 08:20:35.257  1456 13613 I MR2ServiceImpl: unregisterManager | Manager com.google.android.gms (id=29,pid=25113,userId=0,uid=10150,targetPkg=com.google.android.gms), user: 0, died: true
+09-08 08:20:36.384   480   480 I lowmemorykiller: Kill 'com.google.android.googlequicksearchbox:interactor' (25749), uid 10174, oom_score_adj 100 to free 65428kB rss, 43068kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: device is low on swap (0kB < 387732kB) and thrashing (301%)
+09-08 08:20:36.429  1456  2398 I ActivityManager: Process com.google.android.googlequicksearchbox:interactor (pid 25749) has died: vis BFGS
+09-08 08:20:36.429  1456  2398 I am_proc_died: [0,25749,com.google.android.googlequicksearchbox:interactor,100,5]
+09-08 08:20:36.453   905   905 I Zygote  : Process 25749 exited due to signal 9 (Killed)
+09-08 08:20:37.140   480   480 I lowmemorykiller: Kill 'com.android.qns' (21923), uid 1000, oom_score_adj 100 to free 35352kB rss, 48528kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: device is low on swap (0kB < 387732kB) and thrashing (301%)
+09-08 08:20:37.219   905   905 I Zygote  : Process 21923 exited due to signal 9 (Killed)
+09-08 08:20:37.246  1456  3613 I ActivityManager: Process com.android.qns (pid 21923) has died: vis IMPF
+09-08 08:20:37.247  2421  2501 E ANM-0   : Qualified network service com.android.qns died.
+09-08 08:20:37.253  1456  3613 I am_proc_died: [0,21923,com.android.qns,100,6]
+09-08 08:20:37.280  2421  2501 I AnomalyReporter: reportAnomaly: Received anomaly event report with eventId= c2d1a639-00e2-4561-9619-6acf37d90590 and description= Qualified network service com.android.qns died.
+09-08 08:20:37.321  2421  2501 E ANM-1   : Qualified network service com.android.qns died.
+09-08 08:20:37.322  2421  2501 I AnomalyReporter: reportAnomaly: Received anomaly event report with eventId= c2d1a639-00e2-4561-9619-6acf37d90590 and description= Qualified network service com.android.qns died.
+09-08 08:20:37.696   480   480 I lowmemorykiller: Kill 'com.google.android.apps.turbo' (23016), uid 10135, oom_score_adj 100 to free 32408kB rss, 47216kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: device is low on swap (0kB < 387732kB) and thrashing (301%)
+09-08 08:20:37.796  1456 12300 I ActivityManager: Process com.google.android.apps.turbo (pid 23016) has died: vis IMPF
+09-08 08:20:37.796  1456 12300 I am_proc_died: [0,23016,com.google.android.apps.turbo,100,6]
+09-08 08:20:37.800   905   905 I Zygote  : Process 23016 exited due to signal 9 (Killed)
+09-08 08:20:38.440   480   480 I lowmemorykiller: Kill 'com.google.android.gms' (25282), uid 10150, oom_score_adj 500 to free 57648kB rss, 45968kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: device is low on swap (40kB < 387732kB) and thrashing (266%)
+09-08 08:20:38.503   480   480 I lowmemorykiller: Kill 'com.google.android.mosey' (25528), uid 10242, oom_score_adj 905 to free 49024kB rss, 41812kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: low watermark is breached and swap is low (132kB < 387732kB)
+09-08 08:20:38.505   905   905 I Zygote  : Process 25282 exited due to signal 9 (Killed)
+09-08 08:20:38.507  1456  3619 I ActivityManager: Process com.google.android.gms (pid 25282) has died: svc SVC 
+09-08 08:20:38.507  1456  3619 I am_proc_died: [0,25282,com.google.android.gms,500,10]
+09-08 08:20:38.537   905   905 I Zygote  : Process 25528 exited due to signal 9 (Killed)
+09-08 08:20:38.539  1456  3613 I ActivityManager: Process com.google.android.mosey (pid 25528) has died: cch CEM 
+09-08 08:20:38.539  1456  3613 I am_proc_died: [0,25528,com.google.android.mosey,905,19]
+09-08 08:20:38.620   480   480 I lowmemorykiller: Kill 'com.google.android.GoogleCamera' (25794), uid 10168, oom_score_adj 500 to free 87940kB rss, 40696kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: low watermark is breached and swap is low (220kB < 387732kB)
+09-08 08:20:38.653   905   905 I Zygote  : Process 25794 exited due to signal 9 (Killed)
+09-08 08:20:38.654  1456  3613 I ActivityManager: Process com.google.android.GoogleCamera (pid 25794) has died: svc SVC 
+09-08 08:20:38.654  1456  3613 I am_proc_died: [0,25794,com.google.android.GoogleCamera,500,10]
+09-08 08:20:40.455   480   480 I lowmemorykiller: Kill 'com.google.android.as' (25659), uid 10173, oom_score_adj 100 to free 72040kB rss, 52364kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: device is low on swap (36kB < 387732kB) and thrashing (301%)
+09-08 08:20:40.502  1456  4191 I ActivityManager: Process com.google.android.as (pid 25659) has died: vis BFGS
+09-08 08:20:40.502  1456  4191 I am_proc_died: [0,25659,com.google.android.as,100,5]
+09-08 08:20:40.532  1456  1959 W AS.PlaybackActivityMon: client died
+09-08 08:20:40.547   905   905 I Zygote  : Process 25659 exited due to signal 9 (Killed)
+09-08 08:20:40.551   480   480 I lowmemorykiller: Kill 'android.process.acore' (25883), uid 10077, oom_score_adj 905 to free 49180kB rss, 39332kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: low watermark is breached and swap is low (60kB < 387732kB)
+09-08 08:20:40.552  1456 13613 W SoundTriggerService: DETACH       ERROR: Client died for: com.google.android.as
+09-08 08:20:40.573  1456  4191 I ActivityManager: Process android.process.acore (pid 25883) has died: cch CEM 
+09-08 08:20:40.574  1456  4191 I am_proc_died: [0,25883,android.process.acore,905,19]
+09-08 08:20:40.575   905   905 I Zygote  : Process 25883 exited due to signal 9 (Killed)
+09-08 08:20:40.710  1456  1456 W ContentCapturePerUserService: remote service died: RemoteContentCaptureService[ComponentInfo{com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiContentCaptureService} 204304134 (unbound)]
+09-08 08:20:42.087   480   480 I lowmemorykiller: Kill 'com.google.android.apps.carrier.carrierwifi' (25917), uid 10117, oom_score_adj 500 to free 50684kB rss, 39944kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: low watermark is breached and swap is low (0kB < 387732kB)
+09-08 08:20:42.109  1456  2398 I ActivityManager: Process com.google.android.apps.carrier.carrierwifi (pid 25917) has died: svc SVC 
+09-08 08:20:42.109  1456  2398 I am_proc_died: [0,25917,com.google.android.apps.carrier.carrierwifi,500,10]
+09-08 08:20:42.118   905   905 I Zygote  : Process 25917 exited due to signal 9 (Killed)
+09-08 08:20:43.267   480   480 I lowmemorykiller: Kill 'com.google.android.apps.scone' (25578), uid 10155, oom_score_adj 500 to free 57524kB rss, 41820kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: device is low on swap (80kB < 387732kB) and thrashing (155%)
+09-08 08:20:43.300  1456  2398 I ActivityManager: Process com.google.android.apps.scone (pid 25578) has died: svc SVC 
+09-08 08:20:43.300  1456  2398 I am_proc_died: [0,25578,com.google.android.apps.scone,500,10]
+09-08 08:20:43.305   905   905 I Zygote  : Process 25578 exited due to signal 9 (Killed)
+09-08 08:20:45.664   480   480 I lowmemorykiller: Kill 'com.google.android.apps.turbo' (25932), uid 10135, oom_score_adj 100 to free 40284kB rss, 40668kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: device is low on swap (0kB < 387732kB) and thrashing (304%)
+09-08 08:20:45.723  1456  2398 I ActivityManager: Process com.google.android.apps.turbo (pid 25932) has died: vis IMPF
+09-08 08:20:45.723  1456  2398 I am_proc_died: [0,25932,com.google.android.apps.turbo,100,6]
+09-08 08:20:45.732   905   905 I Zygote  : Process 25932 exited due to signal 9 (Killed)
+09-08 08:20:46.852   480   480 I lowmemorykiller: Kill 'com.google.android.iwlan' (21927), uid 1000, oom_score_adj 100 to free 31824kB rss, 48320kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: device is low on swap (0kB < 387732kB) and thrashing (302%)
+09-08 08:20:46.917  1456  2398 I ActivityManager: Process com.google.android.iwlan (pid 21927) has died: vis IMPF
+09-08 08:20:46.930  1456  2398 I am_proc_died: [0,21927,com.google.android.iwlan,100,6]
+09-08 08:20:46.932  2421  2933 E DSM-I-0 : Data service com.google.android.iwlan for transport type WLAN died.
+09-08 08:20:46.937   905   905 I Zygote  : Process 21927 exited due to signal 9 (Killed)
+09-08 08:20:46.938  2421  2929 D NRM-I-1 : Network service ComponentInfo{com.google.android.iwlan/com.google.android.iwlan.IwlanNetworkService} for transport type WLAN died.
+09-08 08:20:46.939  2421  2929 D NRM-I-0 : Network service ComponentInfo{com.google.android.iwlan/com.google.android.iwlan.IwlanNetworkService} for transport type WLAN died.
+09-08 08:20:46.940  1456  1537 D ConnectivityService: ConnectivityDiagnosticsCallback IBinder died.
+09-08 08:20:46.941  1456  4481 D ConnectivityService: ConnectivityDiagnosticsCallback IBinder died.
+09-08 08:20:46.951  2421  2933 I AnomalyReporter: reportAnomaly: Received anomaly event report with eventId= fc1956de-c080-45de-8431-a1faab687110 and description= Data service com.google.android.iwlan for transport type WLAN died.
+09-08 08:20:46.954  2421  2933 E DSM-I-1 : Data service com.google.android.iwlan for transport type WLAN died.
+09-08 08:20:46.954  2421  2933 I AnomalyReporter: reportAnomaly: Received anomaly event report with eventId= fc1956de-c080-45de-8431-a1faab687110 and description= Data service com.google.android.iwlan for transport type WLAN died.
+09-08 08:20:47.769   480   480 I lowmemorykiller: Kill 'io.github.johnrocky.hfmodels.litertlm.test' (24536), uid 10442, oom_score_adj 0 to free 5091676kB rss, 2893268kB swap, 0kB dmabuf_pss, 0kB dmabuf_rss; reason: device is low on swap (0kB < 387732kB) and thrashing (308%)
+09-08 08:20:47.819   905   905 I Zygote  : Process 24536 exited due to signal 9 (Killed)
+09-08 08:20:49.823  1456  1537 I ActivityManager: Process io.github.johnrocky.hfmodels.litertlm.test (pid 24536) has died: fg  FGS 
+09-08 08:20:49.823  1456  1537 I am_proc_died: [0,24536,io.github.johnrocky.hfmodels.litertlm.test,0,4]
+09-08 08:20:49.865 24525 24525 I AndroidRuntime: VM exiting with result code 0.

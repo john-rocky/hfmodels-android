@@ -186,7 +186,11 @@ internal class Resolver(
                 ok.filter { it.defaultSelectable }.let { d -> if (d.isNotEmpty()) d else ok }.maxWithOrNull(compareBy<Profile> { it.priority }.thenByDescending { it.id })
             }
             BackendPolicy.Auto -> {
-                val selectable = candidates.filter { it.defaultSelectable }
+                // A profile with a FAIL record and no PASS is never auto-selected (a process death on the reference device is
+                // recorded that way); Require / RequireProfile can still name it knowingly.
+                val failedOnly = candidates.filter { p -> p.verification.any { it.result == "FAIL" } && p.verification.none { it.result == "PASS" } }
+                failedOnly.forEach { p -> excluded += p.id to "a verification record says FAIL and none says PASS (${p.verification.first { it.result == "FAIL" }.device}); not auto-selected" }
+                val selectable = candidates.filter { it.defaultSelectable && it !in failedOnly }
                 candidates.filter { !it.defaultSelectable }.forEach { excluded += it.id to "default_selectable=false" }
                 selectable.firstOrNull { it.id == variant.defaultProfile }
                     ?: selectable.maxWithOrNull(compareBy<Profile> { it.priority }.thenByDescending { it.id })

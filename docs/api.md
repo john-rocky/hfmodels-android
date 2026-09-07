@@ -59,7 +59,7 @@ object Tasks { val Chat: Task<ChatModel> }                                      
 
 ```kotlin
 data class LoadOptions(
-    val backendPolicy: BackendPolicy = BackendPolicy.Auto,      // Auto = the descriptor's default profile, then its fallbacks
+    val backendPolicy: BackendPolicy = BackendPolicy.Auto,      // Auto = the descriptor's default profile, then priority; a profile whose only verification record is FAIL is skipped (0.1.1)
     val requiredInputs: Set<InputKind>? = null,                 // e.g. setOf(InputKind.IMAGE): fail instead of picking a text-only profile
     val networkPolicy: NetworkPolicy = NetworkPolicy.Any,       // Unmetered: DOWNLOAD_POLICY_BLOCKED on metered; Offline: zero requests, OFFLINE_CACHE_MISS if not cached
     val maxDownloadBytes: Long? = null,                         // DOWNLOAD_POLICY_BLOCKED when the plan needs more

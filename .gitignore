@@ -21,3 +21,7 @@ local.properties
 
 # Local Maven staging used by the E1 harness (published by ./gradlew publishToLocalRepo)
 local-maven/
+
+# Gate scratch: per-entry gradle output and the unfiltered logcat captures (megabytes); the filtered .log files are the record
+litertlm/results/_*
+litertlm/results/*.full.log

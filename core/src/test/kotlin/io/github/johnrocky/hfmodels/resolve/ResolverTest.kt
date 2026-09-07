@@ -177,6 +177,16 @@ class ResolverTest {
         val plan = resolver.inspect(ModelRef("org/model"), FakeChat, LoadOptions())
         assertEquals("gpu", plan.profile.id)
         assertTrue(plan.excludedProfiles.any { it.first == "npu" && it.second.contains("NPU") })
+        // A GPU profile whose only record is a FAIL (the process died on the reference phone) is skipped by Auto even as the
+        // default profile, and still available to Require(GPU) / RequireProfile.
+        val gpuFail = """,{"id": "gpu_fail", "priority": 200, "files": ["weights"], "enabled_inputs": ["text"], "components": {"language": "gpu"}, "requirements": {"min_android_api": 31, "abis": ["arm64-v8a"]}, "fallback_profiles": ["cpu"], "default_selectable": true,
+           "verification": [{"level": "MAINTAINER_TESTED", "device": "Pixel 8a", "os_build": "CP1A.260505.005", "runtime": "litert_lm 0.16.1", "result": "FAIL", "date": "2026-09-08"}]}"""
+        hub.repo("org/model", "e".repeat(40)) { files["model.litertlm"] = weights; files["hfmodels.json"] = Fixtures.chat("org/model", extraProfile = gpuFail, fileSha = sha256Hex(weights), bytes = weights.size.toLong()).replace("\"default_profile\": \"cpu\"", "\"default_profile\": \"gpu_fail\"").toByteArray() }
+        val auto = resolver.inspect(ModelRef("org/model"), FakeChat, LoadOptions())
+        assertEquals("gpu", auto.profile.id)
+        assertTrue(auto.excludedProfiles.any { it.first == "gpu_fail" && it.second.contains("FAIL") })
+        assertEquals("gpu_fail", resolver.inspect(ModelRef("org/model"), FakeChat, LoadOptions(backendPolicy = BackendPolicy.RequireProfile("gpu_fail"))).profile.id)
+        assertEquals("gpu_fail", resolver.inspect(ModelRef("org/model"), FakeChat, LoadOptions(backendPolicy = BackendPolicy.Require(BackendKind.GPU))).profile.id)
     }
 
     @Test fun offlineNeedsABindingAndUsesTheCachedDescriptorWithZeroRequests() {

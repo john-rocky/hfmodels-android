@@ -3,7 +3,7 @@
   "catalog_id": "hfmodels-bundled",
   "origin": {
     "repo": "john-rocky/hfmodels-android",
-    "commit": "d26f33e70498416f65f4134318da69c128f5693f"
+    "commit": "16f7776f73ea7c39f6bb244f60e614edcc6a9567"
   },
   "entries": [
     {
@@ -69,7 +69,18 @@
                 "fallback_profiles": [
                   "cpu"
                 ],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-08",
+                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
               },
               {
                 "id": "cpu",
@@ -90,7 +101,18 @@
                   ]
                 },
                 "fallback_profiles": [],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-08",
+                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
               }
             ],
             "handler_config": {
@@ -113,7 +135,7 @@
       "model_id": "litert-community/Falcon-H1-1.5B-Instruct",
       "model_commit": "972bf1777202caf538af00aeac605dde823f3c16",
       "path": "catalog/entries/litert-community__Falcon-H1-1.5B-Instruct.json",
-      "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json. A hybrid attention / Mamba-2 model: the bundle declares fp32 activations for the GPU, and the manifest lists gpu and cpu as verified to generate.",
+      "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json. A hybrid attention / Mamba-2 model: the bundle declares fp32 activations for the GPU, and the manifest lists gpu and cpu as verified to generate. On the Pixel 8a (8 GB) the gpu profile ended the test process before any result (the same signature as the Qwen3.5 int8 bundles: fp32 activations declared for the GPU); cpu answered. The gpu profile stays in the descriptor with that FAIL record, so Auto never picks it and the default profile is cpu.",
       "descriptor": {
         "schema_version": 1,
         "model_id": "litert-community/Falcon-H1-1.5B-Instruct",
@@ -149,7 +171,7 @@
                 "sha256": "f499623a4d6fb6df8c2cf6ce388a0d460bcb81f416fd5c69e4281906f48fb931"
               }
             ],
-            "default_profile": "gpu",
+            "default_profile": "cpu",
             "profiles": [
               {
                 "id": "gpu",
@@ -172,7 +194,18 @@
                 "fallback_profiles": [
                   "cpu"
                 ],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "FAIL",
+                    "date": "2026-09-08",
+                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate-deaths.log"
+                  }
+                ]
               },
               {
                 "id": "cpu",
@@ -193,7 +226,18 @@
                   ]
                 },
                 "fallback_profiles": [],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-08",
+                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-regate-<entry>_cpu.log"
+                  }
+                ]
               }
             ],
             "handler_config": {
@@ -513,7 +557,18 @@
                 "fallback_profiles": [
                   "cpu"
                 ],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-08",
+                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
               },
               {
                 "id": "cpu",
@@ -534,7 +589,18 @@
                   ]
                 },
                 "fallback_profiles": [],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-08",
+                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
               }
             ],
             "handler_config": {
@@ -1030,7 +1096,18 @@
                 "fallback_profiles": [
                   "cpu"
                 ],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-08",
+                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
               },
               {
                 "id": "cpu",
@@ -1053,7 +1130,18 @@
                   ]
                 },
                 "fallback_profiles": [],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-08",
+                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
               }
             ],
             "handler_config": {
@@ -1212,7 +1300,18 @@
                 "fallback_profiles": [
                   "cpu"
                 ],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-08",
+                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
               },
               {
                 "id": "cpu",
@@ -1235,7 +1334,18 @@
                   ]
                 },
                 "fallback_profiles": [],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-08",
+                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
               }
             ],
             "handler_config": {
@@ -1391,7 +1501,18 @@
                 "fallback_profiles": [
                   "cpu"
                 ],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-08",
+                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
               },
               {
                 "id": "cpu",
@@ -1412,7 +1533,18 @@
                   ]
                 },
                 "fallback_profiles": [],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-08",
+                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
               }
             ],
             "handler_config": {
@@ -1606,7 +1738,18 @@
                 "fallback_profiles": [
                   "cpu"
                 ],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-08",
+                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
               },
               {
                 "id": "cpu",
@@ -1627,7 +1770,18 @@
                   ]
                 },
                 "fallback_profiles": [],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-08",
+                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
               }
             ],
             "handler_config": {
@@ -1790,7 +1944,18 @@
                 "fallback_profiles": [
                   "cpu"
                 ],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-08",
+                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
               },
               {
                 "id": "cpu",
@@ -1811,7 +1976,18 @@
                   ]
                 },
                 "fallback_profiles": [],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-08",
+                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
               }
             ],
             "handler_config": {
@@ -1974,7 +2150,18 @@
                 "fallback_profiles": [
                   "cpu"
                 ],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-08",
+                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
               },
               {
                 "id": "cpu",
@@ -1995,7 +2182,18 @@
                   ]
                 },
                 "fallback_profiles": [],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-08",
+                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
               }
             ],
             "handler_config": {
@@ -2068,7 +2266,18 @@
                 "fallback_profiles": [
                   "cpu"
                 ],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-08",
+                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
               },
               {
                 "id": "cpu",
@@ -2089,7 +2298,18 @@
                   ]
                 },
                 "fallback_profiles": [],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-08",
+                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
               }
             ],
             "handler_config": {
@@ -2111,7 +2331,7 @@
       "model_id": "litert-community/Qwen3.5-0.8B",
       "model_commit": "4170d2bdf04cea39fea276a986325628d7794e23",
       "path": "catalog/entries/litert-community__Qwen3.5-0.8B.json",
-      "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json. The packaged chat template closes the think block in the generation prompt, so the model answers without reasoning and no channel is declared; the vl_int8 variant adds the vision encoder (fp16) with the encoder kept on the CPU until a GPU run is verified.",
+      "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json. The packaged chat template closes the think block in the generation prompt, so the model answers without reasoning and no channel is declared; the vl_int8 variant adds the vision encoder (fp16) with the encoder kept on the CPU until a GPU run is verified. On the Pixel 8a (8 GB) the gpu profile killed the test process during Engine.initialize (lowmemorykiller, 5.1 GB rss + 2.9 GB swap: the bundle declares fp32 activations); cpu answered. The gpu profile stays in the descriptor with that FAIL record, so Auto never picks it and the default profile is cpu.",
       "descriptor": {
         "schema_version": 1,
         "model_id": "litert-community/Qwen3.5-0.8B",
@@ -2147,7 +2367,7 @@
                 "sha256": "684d4d34adf7176eb47f6026ff65c33d42584737254e5524a8d1ad62edc21b98"
               }
             ],
-            "default_profile": "gpu",
+            "default_profile": "cpu",
             "profiles": [
               {
                 "id": "gpu",
@@ -2170,7 +2390,18 @@
                 "fallback_profiles": [
                   "cpu"
                 ],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "FAIL",
+                    "date": "2026-09-08",
+                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate-deaths.log"
+                  }
+                ]
               },
               {
                 "id": "cpu",
@@ -2191,7 +2422,18 @@
                   ]
                 },
                 "fallback_profiles": [],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-08",
+                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-regate-<entry>_cpu.log"
+                  }
+                ]
               }
             ],
             "handler_config": {
@@ -2224,7 +2466,7 @@
                 "sha256": "e3360b658c929ff35ab740a21f5e4b688096a72e351b8d347e26ccda314121b7"
               }
             ],
-            "default_profile": "gpu",
+            "default_profile": "cpu",
             "profiles": [
               {
                 "id": "gpu",
@@ -2264,355 +2506,6 @@
                 "components": {
                   "language": "cpu",
                   "vision": "cpu"
-                },
-                "requirements": {
-                  "min_android_api": 31,
-                  "abis": [
-                    "arm64-v8a"
-                  ]
-                },
-                "fallback_profiles": [],
-                "default_selectable": true
-              }
-            ],
-            "handler_config": {
-              "metadata_source": "litertlm_manifest",
-              "context_tokens": 4096,
-              "manifest_min_runtime_version": "0.15.0"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "model_id": "litert-community/Qwen3.5-2B",
-      "model_commit": "bc88739e98b5f0584626410b4e307d035220295e",
-      "path": "catalog/entries/litert-community__Qwen3.5-2B.json",
-      "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json. The packaged chat template closes the think block in the generation prompt, so the model answers without reasoning and no channel is declared; the vl_int8 variant adds the vision encoder (fp16, static 512x512) with the encoder kept on the CPU until a GPU run is verified.",
-      "descriptor": {
-        "schema_version": 1,
-        "model_id": "litert-community/Qwen3.5-2B",
-        "tasks": [
-          "chat"
-        ],
-        "default_variant": "int8",
-        "license": {
-          "id": "apache-2.0",
-          "url": "https://huggingface.co/Qwen/Qwen3.5-2B/blob/main/LICENSE"
-        },
-        "variants": [
-          {
-            "id": "int8",
-            "runtime": "litert_lm",
-            "handler": {
-              "id": "litertlm.conversation",
-              "abi": 1
-            },
-            "runtime_range": {
-              "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
-            },
-            "inputs": [
-              "text"
-            ],
-            "files": [
-              {
-                "id": "weights",
-                "role": "model",
-                "path": "Qwen3.5-2B_int8.litertlm",
-                "bytes": 2116592816,
-                "sha256": "86c97baba6d3fb4109588562f0b9411e502c883be7fc2479f93ce3a6ea3efb6b"
-              }
-            ],
-            "default_profile": "gpu",
-            "profiles": [
-              {
-                "id": "gpu",
-                "priority": 100,
-                "files": [
-                  "weights"
-                ],
-                "enabled_inputs": [
-                  "text"
-                ],
-                "components": {
-                  "language": "gpu"
-                },
-                "requirements": {
-                  "min_android_api": 31,
-                  "abis": [
-                    "arm64-v8a"
-                  ]
-                },
-                "fallback_profiles": [
-                  "cpu"
-                ],
-                "default_selectable": true
-              },
-              {
-                "id": "cpu",
-                "priority": 50,
-                "files": [
-                  "weights"
-                ],
-                "enabled_inputs": [
-                  "text"
-                ],
-                "components": {
-                  "language": "cpu"
-                },
-                "requirements": {
-                  "min_android_api": 31,
-                  "abis": [
-                    "arm64-v8a"
-                  ]
-                },
-                "fallback_profiles": [],
-                "default_selectable": true
-              }
-            ],
-            "handler_config": {
-              "metadata_source": "litertlm_manifest",
-              "context_tokens": 4096,
-              "manifest_min_runtime_version": null
-            }
-          },
-          {
-            "id": "vl_int8",
-            "runtime": "litert_lm",
-            "handler": {
-              "id": "litertlm.conversation",
-              "abi": 1
-            },
-            "runtime_range": {
-              "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
-            },
-            "inputs": [
-              "text",
-              "image"
-            ],
-            "files": [
-              {
-                "id": "weights",
-                "role": "model",
-                "path": "Qwen3.5-2B-VL_int8.litertlm",
-                "bytes": 3148905040,
-                "sha256": "f8821e403dcfc939a033f6b2c9633a5d6b78c29a380ca825e0b90a62df61afe5"
-              }
-            ],
-            "default_profile": "gpu",
-            "profiles": [
-              {
-                "id": "gpu",
-                "priority": 100,
-                "files": [
-                  "weights"
-                ],
-                "enabled_inputs": [
-                  "text",
-                  "image"
-                ],
-                "components": {
-                  "language": "gpu",
-                  "vision": "cpu"
-                },
-                "requirements": {
-                  "min_android_api": 31,
-                  "abis": [
-                    "arm64-v8a"
-                  ]
-                },
-                "fallback_profiles": [
-                  "cpu"
-                ],
-                "default_selectable": true
-              },
-              {
-                "id": "cpu",
-                "priority": 50,
-                "files": [
-                  "weights"
-                ],
-                "enabled_inputs": [
-                  "text",
-                  "image"
-                ],
-                "components": {
-                  "language": "cpu",
-                  "vision": "cpu"
-                },
-                "requirements": {
-                  "min_android_api": 31,
-                  "abis": [
-                    "arm64-v8a"
-                  ]
-                },
-                "fallback_profiles": [],
-                "default_selectable": true
-              }
-            ],
-            "handler_config": {
-              "metadata_source": "litertlm_manifest",
-              "context_tokens": 4096,
-              "manifest_min_runtime_version": null
-            }
-          }
-        ]
-      }
-    },
-    {
-      "model_id": "litert-community/Qwen3.5-4B",
-      "model_commit": "f06d1275eb219ff140d11d08b586cf9bb55b8fd6",
-      "path": "catalog/entries/litert-community__Qwen3.5-4B.json",
-      "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json. The packaged chat template closes the think block in the generation prompt, so the model answers without reasoning and no channel is declared. The int8 file (4.4 GB) is listed for devices with more memory; the default is the mixed int4 file.",
-      "descriptor": {
-        "schema_version": 1,
-        "model_id": "litert-community/Qwen3.5-4B",
-        "tasks": [
-          "chat"
-        ],
-        "default_variant": "mixed_int4",
-        "license": {
-          "id": "apache-2.0",
-          "url": "https://huggingface.co/Qwen/Qwen3.5-4B/blob/main/LICENSE"
-        },
-        "variants": [
-          {
-            "id": "mixed_int4",
-            "runtime": "litert_lm",
-            "handler": {
-              "id": "litertlm.conversation",
-              "abi": 1
-            },
-            "runtime_range": {
-              "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
-            },
-            "inputs": [
-              "text"
-            ],
-            "files": [
-              {
-                "id": "weights",
-                "role": "model",
-                "path": "Qwen3.5-4B_mixed_int4.litertlm",
-                "bytes": 2754365536,
-                "sha256": "176b5a2b6c20bde7739fba98e653a04f5d5b4a753a4b9dd0ff529aba7c35be99"
-              }
-            ],
-            "default_profile": "gpu",
-            "profiles": [
-              {
-                "id": "gpu",
-                "priority": 100,
-                "files": [
-                  "weights"
-                ],
-                "enabled_inputs": [
-                  "text"
-                ],
-                "components": {
-                  "language": "gpu"
-                },
-                "requirements": {
-                  "min_android_api": 31,
-                  "abis": [
-                    "arm64-v8a"
-                  ]
-                },
-                "fallback_profiles": [
-                  "cpu"
-                ],
-                "default_selectable": true
-              },
-              {
-                "id": "cpu",
-                "priority": 50,
-                "files": [
-                  "weights"
-                ],
-                "enabled_inputs": [
-                  "text"
-                ],
-                "components": {
-                  "language": "cpu"
-                },
-                "requirements": {
-                  "min_android_api": 31,
-                  "abis": [
-                    "arm64-v8a"
-                  ]
-                },
-                "fallback_profiles": [],
-                "default_selectable": true
-              }
-            ],
-            "handler_config": {
-              "metadata_source": "litertlm_manifest",
-              "context_tokens": 4096,
-              "manifest_min_runtime_version": "0.15.0"
-            }
-          },
-          {
-            "id": "int8",
-            "runtime": "litert_lm",
-            "handler": {
-              "id": "litertlm.conversation",
-              "abi": 1
-            },
-            "runtime_range": {
-              "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
-            },
-            "inputs": [
-              "text"
-            ],
-            "files": [
-              {
-                "id": "weights",
-                "role": "model",
-                "path": "Qwen3.5-4B_int8.litertlm",
-                "bytes": 4407428464,
-                "sha256": "f0abbbc69b4126ddcb208a75e8904ecadff87aa24202e3de6ffd518c198af1ec"
-              }
-            ],
-            "default_profile": "gpu",
-            "profiles": [
-              {
-                "id": "gpu",
-                "priority": 100,
-                "files": [
-                  "weights"
-                ],
-                "enabled_inputs": [
-                  "text"
-                ],
-                "components": {
-                  "language": "gpu"
-                },
-                "requirements": {
-                  "min_android_api": 31,
-                  "abis": [
-                    "arm64-v8a"
-                  ]
-                },
-                "fallback_profiles": [
-                  "cpu"
-                ],
-                "default_selectable": true
-              },
-              {
-                "id": "cpu",
-                "priority": 50,
-                "files": [
-                  "weights"
-                ],
-                "enabled_inputs": [
-                  "text"
-                ],
-                "components": {
-                  "language": "cpu"
                 },
                 "requirements": {
                   "min_android_api": 31,
@@ -3026,7 +2919,18 @@
                 "fallback_profiles": [
                   "cpu"
                 ],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-08",
+                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
               },
               {
                 "id": "cpu",
@@ -3047,7 +2951,18 @@
                   ]
                 },
                 "fallback_profiles": [],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-08",
+                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
               }
             ],
             "handler_config": {
@@ -3198,7 +3113,18 @@
                 "fallback_profiles": [
                   "cpu"
                 ],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-08",
+                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
               },
               {
                 "id": "cpu",
@@ -3219,7 +3145,18 @@
                   ]
                 },
                 "fallback_profiles": [],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-08",
+                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
               }
             ],
             "handler_config": {

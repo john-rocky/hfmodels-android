@@ -1,0 +1,28 @@
+[
+  {
+    "model_id": "litert-community/Qwen3.5-0.8B",
+    "model_commit": "4170d2bdf04cea39fea276a986325628d7794e23",
+    "variant": "int8",
+    "profile": "cpu",
+    "level": "MAINTAINER_TESTED",
+    "device": "Pixel 8a",
+    "os_build": "CP1A.260505.005",
+    "runtime": "litert_lm 0.16.1",
+    "result": "PASS",
+    "date": "2026-09-08",
+    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-regate-<entry>_cpu.log"
+  },
+  {
+    "model_id": "litert-community/Falcon-H1-1.5B-Instruct",
+    "model_commit": "972bf1777202caf538af00aeac605dde823f3c16",
+    "variant": "int8",
+    "profile": "cpu",
+    "level": "MAINTAINER_TESTED",
+    "device": "Pixel 8a",
+    "os_build": "CP1A.260505.005",
+    "runtime": "litert_lm 0.16.1",
+    "result": "PASS",
+    "date": "2026-09-08",
+    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-regate-<entry>_cpu.log"
+  }
+]

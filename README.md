@@ -29,15 +29,28 @@ That one line brings `hfmodels-core`, `litertlm-android` and `kotlinx-coroutines
 
 A model loads when its repo carries `hfmodels.json` (the publisher's declaration) or when the SDK's bundled catalog has an entry for it. The catalog pins each model to one commit and never re-hosts a file. The bundled catalog is public: <https://raw.githubusercontent.com/john-rocky/hfmodels-android/main/core/src/main/assets/hfmodels/catalog.json> (entries and their curated specs under `catalog/`).
 
-| id | variant (default) | profiles | verified on (2026-09-07, Pixel 8a, Android 16 CP1A.260505.005, LiteRT-LM 0.16.1) |
+| id | variant (default) | profiles | verified on a Pixel 8a (Android 16 CP1A.260505.005, LiteRT-LM 0.16.1; 2026-09-07 for the first five rows, 2026-09-08 for the rest) |
 |---|---|---|---|
 | `litert-community/Qwen2.5-1.5B-Instruct` | `q8` (1.6 GB, text, 4096 tokens) | `cpu` (default), `gpu` | both answered; first GPU load compiles kernels for about a minute |
 | `litert-community/LFM2.5-1.2B-Instruct` | `int4_gpu` (0.7 GB, text); also `int4`, `int8` | `gpu` (default), `cpu` | both answered (`int4_gpu`) |
 | `litert-community/LFM2.5-VL-1.6B` | `int4` (1.3 GB, text + image); also `int8` | `gpu` (language on GPU, vision on CPU; default), `cpu` | both answered text and an image question (`int4`) |
 | `litert-community/gemma-4-E2B-it-litert-lm` | `default` (2.6 GB, text + image) | `gpu` (default), `gpu_vision_cpu`, `cpu` | all three answered text and an image question |
 | `litert-community/gemma-4-E4B-it-litert-lm` | `default` (3.7 GB, text + image) | `gpu` (default), `gpu_vision_cpu`, `cpu` | all three answered; on this 8 GB phone the first chunk took 11-15 s on `gpu` and `cpu` (2.7 s on `gpu_vision_cpu`) |
+| `litert-community/Qwen3-0.6B` | `int4` (0.3 GB, text); also `mixed_int4` — thinking | `gpu` (default), `cpu` | both answered; the reasoning (515 / 979 chars) arrived in `channels["thought"]`, none of it in the text |
+| `litert-community/LFM2.5-VL-450M` | `int4` (0.4 GB, text + image); also `int8` | `gpu` (language on GPU, vision on CPU; default), `cpu` | both answered text and an image question |
+| `litert-community/LFM2.5-1.2B-Thinking` | `int4_gpu` (0.7 GB, text); also `int4`, `int8_gpu`, `int8` — thinking | `gpu` (default), `cpu` | both answered; reasoning (426 / 420 chars) in the channel |
+| `litert-community/sarashina2.2-1b-instruct-v0.1` | `int4` (0.9 GB, text, Japanese / English); also `int8` | `gpu` (default), `cpu` | both answered |
+| `litert-community/Qwen3-1.7B` | `int4` (1.0 GB, text); also `int8` — thinking | `gpu` (default), `cpu` | both answered; reasoning (402 / 478 chars) in the channel |
+| `litert-community/DeepSeek-R1-Distill-Qwen-1.5B` | `q8` (1.8 GB, text, 4096 tokens) — thinking, prompt pre-opens the channel | `gpu` (default), `cpu` | both answered; reasoning (167 / 215 chars) in the channel; first GPU load 52 s |
+| `litert-community/granite-4.1-3b` | `int4` (2.2 GB, text); also `int8` | `gpu` (default), `cpu` | both answered |
+| `litert-community/Ministral-3-3B-Instruct-2512` | `q4_block32` (2.3 GB, text, 4096 tokens) | `gpu` (default), `cpu` | both answered |
+| `litert-community/LFM2.5-VL-3B` | `int4` (2.4 GB, text + image); also `int8` | `gpu` (language on GPU, vision on CPU; default), `cpu` | both answered text and an image question |
+| `litert-community/Qwen3-4B-Instruct-2507` | `mixed_int4` (2.7 GB, text) | `gpu` (default), `cpu` | both answered; first chunk 4.5 s on `gpu`, 26 s on `cpu` |
+| `litert-community/Qwen3-4B` | `mixed_int4` (2.7 GB, text) — thinking | `gpu` (default), `cpu` | both answered; reasoning (436 / 430 chars) in the channel; first chunk 3.9 s on `gpu`, 20 s on `cpu` |
+| `litert-community/Qwen3.5-0.8B` | `int8` (1.0 GB, text); also `vl_int8` (text + image) | `cpu` (default), `gpu` | `cpu` answered (first chunk 1.8 s); `gpu` killed the process during initialize on this 8 GB phone (recorded as FAIL, never auto-selected) |
+| `litert-community/Falcon-H1-1.5B-Instruct` | `int8` (1.7 GB, text) | `cpu` (default), `gpu` | `cpu` answered (first chunk 3.5 s); `gpu` ended the process before any result (FAIL, never auto-selected) |
 
-Each cell is one run of the catalog gate (`tools/gate.sh`): a real download from the Hub with Range resume and a sha256 check, `prepare` on the named profile, one text turn (and one image turn for VLM profiles). The records are in `verification/` and inside the bundled catalog; the log is `litertlm/results/2026-09-07-4C131JEKB15210-0.16.1-a3-gate.log`. One phone, one day: not a promise for other devices.
+Each cell is one run of the catalog gate (`tools/gate.sh`): a real download from the Hub with Range resume and a sha256 check, `prepare` on the named profile, one text turn (and one image turn for VLM profiles; for a thinking model the turn also has to put its reasoning in `channels` and none of the markers in the text). The records are in `verification/` and inside the bundled catalog; the logs are `litertlm/results/2026-09-07-4C131JEKB15210-0.16.1-a3-gate.log` and `…/2026-09-08-…-a3-gate.log`. One phone, one day: not a promise for other devices. "Thinking" rows reason on every turn by default and get a 2,048-token output cap. A profile whose only record is a FAIL is skipped by `BackendPolicy.Auto` and stays available to `Require(GPU)` / `RequireProfile` for a phone with more memory; the two Qwen3.5 int8 bundles above 1 GB (2B, 4B) have specs but no entry yet, because their GPU run died the same way and their CPU weight cache (about 3.4 times the file) did not fit the free space of the gate phone.
 
 Development shortcut: a copy of the file pushed into the app's external files directory (`adb push <file> /sdcard/Android/data/<applicationId>/files/`) is hashed and imported instead of downloaded; a file that does not match the descriptor's sha256 is ignored. `adb logcat -s hfmodels` prints one line per stage (`download`, `side-loaded`, `ready … profile=… prepare_ms=…`).
 

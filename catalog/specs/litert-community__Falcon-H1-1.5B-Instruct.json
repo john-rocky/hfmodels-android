@@ -9,7 +9,7 @@
     "id": "falcon-llm-license",
     "url": "https://falconllm.tii.ae/falcon-terms-and-conditions.html"
   },
-  "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json. A hybrid attention / Mamba-2 model: the bundle declares fp32 activations for the GPU, and the manifest lists gpu and cpu as verified to generate.",
+  "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json. A hybrid attention / Mamba-2 model: the bundle declares fp32 activations for the GPU, and the manifest lists gpu and cpu as verified to generate. On the Pixel 8a (8 GB) the gpu profile ended the test process before any result (the same signature as the Qwen3.5 int8 bundles: fp32 activations declared for the GPU); cpu answered. The gpu profile stays in the descriptor with that FAIL record, so Auto never picks it and the default profile is cpu.",
   "variants": [
     {
       "id": "int8",
@@ -32,7 +32,7 @@
           "path": "Falcon-H1-1.5B-Instruct_int8.litertlm"
         }
       ],
-      "default_profile": "gpu",
+      "default_profile": "cpu",
       "profiles": [
         {
           "id": "gpu",

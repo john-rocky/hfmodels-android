@@ -11,7 +11,7 @@ export JAVA_HOME="${JAVA_HOME:-/Library/Java/JavaVirtualMachines/temurin-17.jdk/
 ENTRIES=("$@")
 [ ${#ENTRIES[@]} -eq 0 ] && ENTRIES=($(python3 "$HERE/catalog_order.py" "$ROOT/core/src/main/assets/hfmodels/catalog.json"))
 OUT="$ROOT/litertlm/results"; mkdir -p "$OUT"
-DEV=$(adb shell getprop ro.product.model | tr -d '\r' | tr ' ' '_')
+DEV=$(adb shell getprop ro.product.model | tr -d '\r')
 LOG="$OUT/$(date +%Y-%m-%d)-$ANDROID_SERIAL-$(grep '^litertlmVersion=' "$ROOT/gradle.properties" | cut -d= -f2)-a3-gate.log"
 {
   echo "# hfmodels A3 catalog gate  date=$(date -u +%FT%TZ) serial=$ANDROID_SERIAL device=$DEV build=$(adb shell getprop ro.build.display.id | tr -d '\r') android=$(adb shell getprop ro.build.version.release | tr -d '\r')"
@@ -21,12 +21,21 @@ cd "$ROOT"
 for e in "${ENTRIES[@]}"; do
   echo "# entry=$e start=$(date -u +%FT%TZ) free=$(adb shell df /data | tail -1 | awk '{print $4}')K thermal=$(adb shell dumpsys thermalservice | grep -m1 'Thermal Status' | tr -d '\r')" | tee -a "$LOG"
   adb logcat -c
+  GOUT="$OUT/_gate_gradle_$(echo "$e" | tr '/' '_').out"
   ./gradlew --no-daemon -q :litertlm:connectedDebugAndroidTest -Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true \
     -Pandroid.testInstrumentationRunnerArguments.class=io.github.johnrocky.hfmodels.litertlm.CatalogGateTest \
-    -Pandroid.testInstrumentationRunnerArguments.entries="$e" > "$OUT/_gate_gradle.out" 2>&1
-  echo "# gradle rc=$? end=$(date -u +%FT%TZ)" | tee -a "$LOG"
+    -Pandroid.testInstrumentationRunnerArguments.entries="$e" > "$GOUT" 2>&1
+  RC=$?
+  echo "# gradle rc=$RC end=$(date -u +%FT%TZ)" | tee -a "$LOG"
   # never list a tag twice in -s (the last priority wins): hfmodels-a3:I already includes E
-  adb logcat -d -b main,system,crash -s hfmodels-a3:I hfmodels:I AndroidRuntime:E DEBUG:F >> "$LOG"
+  adb logcat -d -b main,system,crash -s hfmodels-a3:I hfmodels:I AndroidRuntime:E DEBUG:F lmkd:I > "$OUT/_gate_logcat.tmp"
+  cat "$OUT/_gate_logcat.tmp" >> "$LOG"
+  if [ $RC -ne 0 ] && ! grep -q "RESULT ok=.* model=$e " "$OUT/_gate_logcat.tmp"; then
+    # The test process died before it could print a RESULT (an OOM kill leaves no Java exception and no tombstone):
+    # record the death as the harness saw it, one FAIL per profile of the default variant, so the catalog carries it.
+    python3 "$HERE/gate_death.py" "$ROOT/core/src/main/assets/hfmodels/catalog.json" "$e" "$DEV" "$(adb shell getprop ro.build.display.id | tr -d '\r')" "$(grep '^litertlmVersion=' "$ROOT/gradle.properties" | cut -d= -f2)" | tee -a "$LOG"
+    echo "# NOTE the entry's cached file was not evicted (the test died); it is kept for a re-run, delete it by hand if space is short" | tee -a "$LOG"
+  fi
   grep -E 'RESULT|EVICT|PLAN' "$LOG" | grep -F "model=$e" | cut -c34-300 | tail -8
 done
 echo "log: $LOG"

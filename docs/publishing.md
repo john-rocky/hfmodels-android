@@ -31,7 +31,7 @@ Load with `ModelRef("<owner>/<name>")`. Pin `revision` to the commit that carrie
 
 ## 4. Verify on a device, and say so
 
-Run the SDK's catalog gate or your own app and record the result as a verification record (`verification/*.json`: model, commit, variant, profile, device, OS build, runtime, PASS / FAIL, date). `tools/build_catalog.py` merges records into `profiles[].verification`; the SDK reports the level (`PUBLISHER_TESTED` / `MAINTAINER_TESTED` / `UNVERIFIED`) and never auto-selects an NPU profile without a PASS. A PASS on one phone says nothing about another: records carry the exact device and OS build.
+Run the SDK's catalog gate or your own app and record the result as a verification record (`verification/*.json`: model, commit, variant, profile, device, OS build, runtime, PASS / FAIL, date). `tools/build_catalog.py` merges records into `profiles[].verification`; the SDK reports the level (`PUBLISHER_TESTED` / `MAINTAINER_TESTED` / `UNVERIFIED`), never auto-selects an NPU profile without a PASS, and never auto-selects a profile whose records say FAIL and none PASS (a process death in the gate is recorded that way by `tools/gate_death.py`; `Require` / `RequireProfile` can still name the profile). A PASS on one phone says nothing about another: records carry the exact device and OS build.
 
 ## Rules the SDK enforces
 

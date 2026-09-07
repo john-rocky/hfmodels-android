@@ -9,7 +9,7 @@
     "id": "apache-2.0",
     "url": "https://huggingface.co/Qwen/Qwen3.5-0.8B/blob/main/LICENSE"
   },
-  "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json. The packaged chat template closes the think block in the generation prompt, so the model answers without reasoning and no channel is declared; the vl_int8 variant adds the vision encoder (fp16) with the encoder kept on the CPU until a GPU run is verified.",
+  "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json. The packaged chat template closes the think block in the generation prompt, so the model answers without reasoning and no channel is declared; the vl_int8 variant adds the vision encoder (fp16) with the encoder kept on the CPU until a GPU run is verified. On the Pixel 8a (8 GB) the gpu profile killed the test process during Engine.initialize (lowmemorykiller, 5.1 GB rss + 2.9 GB swap: the bundle declares fp32 activations); cpu answered. The gpu profile stays in the descriptor with that FAIL record, so Auto never picks it and the default profile is cpu.",
   "variants": [
     {
       "id": "int8",
@@ -32,7 +32,7 @@
           "path": "Qwen3.5-0.8B_int8.litertlm"
         }
       ],
-      "default_profile": "gpu",
+      "default_profile": "cpu",
       "profiles": [
         {
           "id": "gpu",
@@ -105,7 +105,7 @@
           "path": "Qwen3.5-0.8B-VL_int8.litertlm"
         }
       ],
-      "default_profile": "gpu",
+      "default_profile": "cpu",
       "profiles": [
         {
           "id": "gpu",
