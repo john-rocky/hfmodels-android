@@ -85,6 +85,7 @@ class HfModels internal constructor(
     suspend fun <M : PreparedModel> download(plan: ModelPlan<M>, onProgress: (LoadEvent) -> Unit = {}): LocalModel<M> {
         checkOpen()
         val policy = plan.options.networkPolicy
+        sideLoadAll(plan)
         val toFetch = plan.files.filter { !store.isCached(it.artifactRef()) }
         val need = toFetch.sumOf { it.bytes - store.bytesPresent(it.artifactRef()) }
         if (toFetch.isNotEmpty()) {
@@ -129,8 +130,11 @@ class HfModels internal constructor(
                 override val sdkVersion: String get() = HfModelsVersion.SDK_VERSION
                 override fun onModelClosed(model: PreparedModel) { releaseSlot(model) }
             }
+            val t0 = System.nanoTime()
             val model = withContext(Dispatchers.IO) { plan.task.handler.prepare(local, host, onProgress) }
             active = model
+            log.i("ready ${plan.ref.repoId}@${plan.modelOrigin.commit.take(8)} variant=${plan.variant.id} profile=${model.info.profileId} " +
+                model.info.components.entries.joinToString(" ") { "${it.key}=${it.value.initialized}" } + " prepare_ms=${(System.nanoTime() - t0) / 1_000_000}")
             if (plan.bindingSource != BindingSource.EXPLICIT_REVISION && plan.descriptorOrigin.commit != "explicit") {
                 bindings.write(Bindings.Binding(plan.ref.repoId, plan.modelOrigin.commit, plan.descriptorSha256, plan.descriptorOrigin.repo, plan.descriptorOrigin.commit, plan.descriptorOrigin.path, java.time.Instant.now().toString()))
             }
@@ -206,6 +210,31 @@ class HfModels internal constructor(
     }
 
     /** Free bytes under the cache root; null when unknown (a stubbed StatFs in JVM tests reports 0). */
+    /**
+     * Side-load shortcut: a copy the developer pushed into the app's external files directory
+     * (`adb push <file> /sdcard/Android/data/<applicationId>/files/`) is hashed and imported instead of
+     * downloaded. A file whose size or sha256 does not match is left alone and the download proceeds.
+     */
+    private suspend fun sideLoadAll(plan: ModelPlan<*>) {
+        for (f in plan.files) {
+            val ref = f.artifactRef()
+            if (store.isCached(ref)) continue
+            val name = f.path.substringAfterLast('/')
+            val pushed = sideLoadCandidates(name).firstOrNull { it.isFile && it.length() == f.bytes } ?: continue
+            try {
+                withContext(Dispatchers.IO) { runInterruptible { store.importVerified(ref, pushed, log) } }
+                log.i("side-loaded $name from ${pushed.path} (sha256 verified)")
+            } catch (e: ModelException) {
+                log.w("side-load candidate ${pushed.path} rejected (${e.code}); downloading instead")
+            }
+        }
+    }
+
+    private fun sideLoadCandidates(name: String): List<File> {
+        val ext = appContext?.getExternalFilesDir(null) ?: return emptyList()
+        return listOf(File(ext, name), File(File(ext, "hfmodels"), name))
+    }
+
     private fun freeBytes(): Long? = try { root.mkdirs(); android.os.StatFs(root.path).availableBytes.takeIf { it > 0 } } catch (_: Throwable) { null }
 
     private fun isMetered(): Boolean {

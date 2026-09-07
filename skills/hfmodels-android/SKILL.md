@@ -30,9 +30,14 @@ Ids that work today without touching the model repo: `catalog/entries/*.json` (Q
 
 ## Step 1: decide
 
-1. Confirm the target is an Android app (`com.android.application`), `minSdk >= 31`, arm64.
+1. Confirm the target is an Android app (`com.android.application`), `minSdk >= 31` (raise it if lower; the SDK declares 31), arm64.
 2. Pick the id. Default: `litert-community/Qwen2.5-1.5B-Instruct` (1.6 GB, text). A VLM (image + text): `litert-community/LFM2.5-VL-1.6B`.
 3. Backend: leave `BackendPolicy.Auto` (the descriptor's default profile). `Require(GPU)` only when the user asked; a GPU first load compiles kernels for up to a minute on a Pixel 8a.
+4. Model delivery: the first `fromPretrained` downloads the file into the app's private storage (1.6 GB takes about 3 minutes on Wi-Fi). **Development shortcut**: if the exact file is already on this machine (`ls ~/.cache/huggingface/hub/models--<owner>--<name>/snapshots/*/`), push it right after the first install and the SDK imports it instead of downloading (it hashes the copy; a wrong file is ignored and downloaded):
+   ```sh
+   adb push <path>/<file>.litertlm /sdcard/Android/data/<applicationId>/files/     # after the app is installed
+   ```
+   Start the push in the background while you write code. Do not `adb shell mkdir` a subdirectory for it.
 
 ## Step 2: integrate
 
@@ -48,12 +53,61 @@ Ids that work today without touching the model repo: `catalog/entries/*.json` (Q
 5. Release: `withContext(NonCancellable) { chat.closeAndJoin() }` when the screen goes away or the user asks.
 6. Errors: catch `ModelException`, show `"${e.code}: ${e.reason}"`, and act per `docs/errors.md`.
 
-`samples/chat/src/main/kotlin/.../MainActivity.kt` is the whole pattern in one file.
+A Compose app needs only this ViewModel (a `Log.i("e1", …)` of the reply is the usual test hook):
+
+```kotlin
+class ChatViewModel(app: Application) : AndroidViewModel(app) {
+    private val models = HfModels(app)
+    private var chat: ChatModel? = null
+    private var session: ChatSession? = null
+    private var job: Job? = null
+    var status by mutableStateOf("Not loaded"); private set
+    var transcript by mutableStateOf(""); private set
+    var generating by mutableStateOf(false); private set
+    val ready get() = chat != null
+
+    fun load() = viewModelScope.launch {
+        try {
+            chat = models.fromPretrained(ModelRef("litert-community/Qwen2.5-1.5B-Instruct"), Tasks.Chat) { e -> status = e.toString() }
+            status = "Ready (" + chat!!.info.profileId + ")"
+        } catch (e: ModelException) { status = "${e.code}: ${e.reason}" }
+    }
+
+    fun send(prompt: String) {
+        val model = chat ?: return
+        transcript += "You: $prompt\nModel: "; generating = true
+        job = viewModelScope.launch {
+            val reply = StringBuilder()
+            try {
+                val s = session?.takeIf { it.state == SessionState.READY }
+                    ?: model.createConversation(ConversationConfig(systemInstruction = Contents.of("You are a helpful assistant."))).also { session = it }
+                s.stream(Contents.of(Content.Text(prompt))).collect { m ->
+                    val t = m.contents.contents.filterIsInstance<Content.Text>().joinToString("") { it.text }
+                    reply.append(t); transcript += t
+                }
+                Log.i("e1", "prompt=\"$prompt\" reply=\"${reply.toString().trim()}\"")
+            } catch (e: ModelException) { transcript += "[${e.code}: ${e.reason}]" }
+            finally { transcript += "\n\n"; generating = false }
+        }
+    }
+
+    fun stop() { job?.cancel() }   // cancelling the collector stops the model on the native side
+
+    override fun onCleared() {
+        val c = chat; chat = null
+        GlobalScope.launch { withContext(NonCancellable) { c?.closeAndJoin(); models.closeAndJoin() } }
+    }
+}
+```
+
+Screen: a Load button + status text, a scrolling transcript, an input row with Send / Stop. **In an edge-to-edge Compose app (targetSdk 35+) put the input row inside a column with `Modifier.imePadding()`; otherwise the keyboard covers the Send button** (and an `adb shell input tap` on it lands on the keyboard).
+
+`samples/chat/src/main/kotlin/.../MainActivity.kt` is the same pattern with plain Views.
 
 ## Step 3: verify, in this order
 
 1. `./gradlew assembleDebug` must pass.
-2. On a connected device (`export ANDROID_SERIAL=<serial>`), install, load the id, send `What is 17 + 25? Answer briefly.` and read the answer in the UI or in `adb logcat -s hfmodels`. The first load downloads the file (1.6 GB for Qwen; minutes on Wi-Fi); the second load is offline.
+2. On a connected device (`export ANDROID_SERIAL=<serial>`): install, push the model if you have it (Step 1.4), open the chat screen and press Load. Watch `adb logcat -s hfmodels` — the SDK prints one line per stage (`download …` / `side-loaded …` / `ready … profile=cpu prepare_ms=…`); poll that instead of dumping the UI. Then type the prompt and press Send. When driving the UI from adb: `input text 'What%sis%s17%s+%s25?%sAnswer%sbriefly.'`, then hide the keyboard (`adb shell input keyevent 4` while the keyboard is up) before tapping Send at the bounds from `uiautomator dump`, and read the reply from your own `e1` log line.
 3. No device: say so. Report "build verified; device check not run" and hand over the exact steps. Never present an unverified integration as verified.
 
 ## Troubleshooting

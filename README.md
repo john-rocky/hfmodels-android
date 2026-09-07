@@ -39,6 +39,8 @@ A model loads when its repo carries `hfmodels.json` (the publisher's declaration
 
 Each cell is one run of the catalog gate (`tools/gate.sh`): a real download from the Hub with Range resume and a sha256 check, `prepare` on the named profile, one text turn (and one image turn for VLM profiles). The records are in `verification/` and inside the bundled catalog; the log is `litertlm/results/2026-09-07-4C131JEKB15210-0.16.1-a3-gate.log`. One phone, one day: not a promise for other devices.
 
+Development shortcut: a copy of the file pushed into the app's external files directory (`adb push <file> /sdcard/Android/data/<applicationId>/files/`) is hashed and imported instead of downloaded; a file that does not match the descriptor's sha256 is ignored. `adb logcat -s hfmodels` prints one line per stage (`download`, `side-loaded`, `ready … profile=… prepare_ms=…`).
+
 `ModelRef(id, revision = "<commit>", variant = "<id>")` pins more. Without a revision the first successful load binds the id to the commit it resolved, and later loads (also offline) use that binding until you call `unbind`.
 
 ## What the five lines replace
