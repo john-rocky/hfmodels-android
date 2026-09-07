@@ -145,6 +145,19 @@ class HfModelsTest {
         slow.close()
     }
 
+    @Test fun importFileSideLoadsOnlyAMatchingFile() = runBlocking {
+        val plan = models.inspect(ModelRef("org/model", revision = commit), FakeChat, LoadOptions(descriptorJson = String(hub.repos["org/model"]!!.files["hfmodels.json"]!!), networkPolicy = NetworkPolicy.Offline))
+        assertTrue(hub.requests.isEmpty())   // explicit commit + explicit descriptor + Offline = zero requests
+        val wrong = tmp.newFile("wrong.litertlm").apply { writeBytes(ByteArray(weights.size)) }
+        try { models.importFile(plan, "weights", wrong); fail() } catch (e: ModelException) { assertEquals(ErrorCode.CHECKSUM_MISMATCH, e.code) }
+        val right = tmp.newFile("right.litertlm").apply { writeBytes(weights) }
+        val cached = models.importFile(plan, "weights", right)
+        assertTrue(cached.readBytes().contentEquals(weights))
+        val local = models.download(models.inspect(ModelRef("org/model", revision = commit), FakeChat, LoadOptions(descriptorJson = String(hub.repos["org/model"]!!.files["hfmodels.json"]!!), networkPolicy = NetworkPolicy.Offline)))
+        assertEquals(cached, local.files["weights"])
+        assertTrue(hub.requests.isEmpty())
+    }
+
     @Test fun closedClientRefuses() = runBlocking {
         models.close()
         try { models.inspect(ModelRef("org/model"), FakeChat); fail() } catch (e: ModelException) { assertEquals(ErrorCode.MODEL_CLOSED, e.code) }

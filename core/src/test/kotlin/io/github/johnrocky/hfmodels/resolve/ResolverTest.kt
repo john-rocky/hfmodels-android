@@ -52,6 +52,7 @@ object FakeChat : Task<FakePrepared> {
         override val runtimeVersion = "0.16.1"
         override fun prepare(local: LocalModel<FakePrepared>, host: PrepareHost, onProgress: (LoadEvent) -> Unit): FakePrepared {
             val p = local.plan
+            onProgress(LoadEvent.Initializing(p.profile.id))
             return FakePrepared(
                 PreparedModelInfo(p.ref.repoId, p.modelOrigin.commit, p.descriptorSha256, p.descriptorOrigin, p.bindingSource, p.variant.id, p.profile.id, host.sdkVersion, id, abi, runtime, runtimeVersion,
                     p.variant.inputs, p.enabledInputs, p.options.backendPolicy, emptyMap(), p.excludedProfiles, emptyList(), p.verification, emptyList(), local.files.mapValues { it.value.path }),

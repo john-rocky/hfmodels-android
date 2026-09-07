@@ -91,6 +91,9 @@ class HfModels internal constructor(
             if (policy == NetworkPolicy.Offline) throw ModelException(ErrorCode.OFFLINE_CACHE_MISS, "${toFetch.size} file(s) of ${plan.ref.repoId} are not cached and the network policy is Offline", details = mapOf("files" to toFetch.joinToString { it.path }))
             if (policy == NetworkPolicy.Unmetered && isMetered()) throw ModelException(ErrorCode.DOWNLOAD_POLICY_BLOCKED, "the active network is metered and the policy is Unmetered; $need bytes would be fetched", details = mapOf("bytes" to need.toString()))
             plan.options.maxDownloadBytes?.let { max -> if (need > max) throw ModelException(ErrorCode.DOWNLOAD_POLICY_BLOCKED, "this load would fetch $need bytes, more than maxDownloadBytes=$max", details = mapOf("bytes" to need.toString(), "max" to max.toString())) }
+            // Refuse up front rather than fill the disk and fail (spec §10): the files plus a small margin must fit now.
+            val free = freeBytes()
+            if (free != null && free < need + STORAGE_MARGIN) throw ModelException(ErrorCode.STORAGE_FULL, "need $need bytes plus a ${STORAGE_MARGIN shr 20} MiB margin, only $free bytes free under ${root.path}; nothing was downloaded", details = mapOf("need" to need.toString(), "free" to free.toString()))
             onProgress(LoadEvent.DownloadStarted(plan.totalBytes))
         }
         val token = plan.options.credentials?.tokenFor(plan.ref.repoId)
@@ -120,7 +123,6 @@ class HfModels internal constructor(
         val plan = local.plan
         slotLock.withLock {
             active?.let { throw ModelException(ErrorCode.MODEL_BUSY, "another model (${it.info.repoId}) is open; close it first (one native model per client)", details = mapOf("open" to it.info.repoId)) }
-            onProgress(LoadEvent.Initializing(plan.profile.id))
             val host = object : PrepareHost {
                 override val cacheDir: File get() = this@HfModels.cacheDir
                 override val log: HfLog get() = this@HfModels.log
@@ -143,6 +145,34 @@ class HfModels internal constructor(
         val plan = inspect(ref, task, options)
         val local = download(plan, onProgress)
         return prepare(local, onProgress)
+    }
+
+    /**
+     * Side-load a file the plan needs from local storage (a developer `adb push`, an in-app import).
+     * The file is hashed and copied into the cache only when it matches the plan's sha256. Returns
+     * the cached file. Everything else (descriptor, commit, profile) still goes through [inspect].
+     */
+    suspend fun importFile(plan: ModelPlan<*>, fileId: String, source: File): File {
+        checkOpen()
+        val f = plan.files.firstOrNull { it.id == fileId } ?: throw ModelException(ErrorCode.INVALID_INPUT, "plan has no file '$fileId' (have: ${plan.files.map { it.id }})")
+        return withContext(Dispatchers.IO) { runInterruptible { store.importVerified(f.artifactRef(), source, log) } }
+    }
+
+    /**
+     * Remove the plan's files from the cache (spec §10: explicit, never automatic). Refused with
+     * MODEL_BUSY while a model prepared from this repo is open. Returns the bytes freed.
+     */
+    fun evict(plan: ModelPlan<*>): Long {
+        checkOpen()
+        active?.let { if (it.info.repoId == plan.ref.repoId) throw ModelException(ErrorCode.MODEL_BUSY, "${it.info.repoId} is open; close it before evicting its files") }
+        var freed = 0L
+        for (f in plan.files) {
+            val ref = f.artifactRef()
+            val dir = store.blobDir(ref)
+            if (dir.exists()) freed += dir.walkTopDown().filter { it.isFile }.sumOf { it.length() }
+            store.evict(ref)
+        }
+        return freed
     }
 
     /** The saved binding for an id, if any: the commit a revision-less load will use. */
@@ -174,6 +204,9 @@ class HfModels internal constructor(
     private fun checkOpen() {
         if (closed.get()) throw ModelException(ErrorCode.MODEL_CLOSED, "this HfModels client is closed")
     }
+
+    /** Free bytes under the cache root; null when unknown (a stubbed StatFs in JVM tests reports 0). */
+    private fun freeBytes(): Long? = try { root.mkdirs(); android.os.StatFs(root.path).availableBytes.takeIf { it > 0 } } catch (_: Throwable) { null }
 
     private fun isMetered(): Boolean {
         val cm = appContext?.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager ?: return false
@@ -248,6 +281,7 @@ class HfModels internal constructor(
 
     private companion object {
         const val MAX_ATTEMPTS = 3
+        const val STORAGE_MARGIN = 256L shl 20
         const val PROGRESS_BYTES = 1L shl 20
         const val PROGRESS_NS = 100_000_000L
     }

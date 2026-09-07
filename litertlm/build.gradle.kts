@@ -14,7 +14,10 @@ android {
         minSdk = 31
         consumerProguardFiles("consumer-rules.pro")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        // The exact runtime this handler was compiled against; compared with the descriptor's runtime_range.
+        buildConfigField("String", "LITERTLM_VERSION", "\"$litertlmVersion\"")
     }
+    buildFeatures { buildConfig = true }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17

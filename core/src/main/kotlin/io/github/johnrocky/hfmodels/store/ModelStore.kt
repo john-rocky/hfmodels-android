@@ -241,6 +241,35 @@ class ModelStore(
         return Result(final, Result.Status.DOWNLOADED, downloaded, resumedFrom)
     }
 
+    /**
+     * Side-load: hash [source] and, when it matches [ref], copy it into the blob directory with a
+     * sidecar (atomic rename). Nothing is written when the hash differs.
+     */
+    @Throws(ModelException::class)
+    fun importVerified(ref: ArtifactRef, source: File, log: HfLog): File {
+        if (isCached(ref)) return fileFor(ref)
+        if (!source.isFile) throw ModelException(ErrorCode.INVALID_INPUT, "not a file: ${source.path}")
+        val size = source.length()
+        val hex = hashFile(source, size).hex()
+        if (hex != ref.sha256 || (ref.sizeBytes != null && size != ref.sizeBytes)) throw ModelException(
+            ErrorCode.CHECKSUM_MISMATCH, "'${source.name}': expected sha256 ${ref.sha256} / ${ref.sizeBytes ?: "?"} bytes, got $hex / $size bytes; nothing imported",
+            details = mapOf("expected_sha256" to ref.sha256, "actual_sha256" to hex, "actual_bytes" to size.toString()),
+        )
+        val dir = blobDir(ref)
+        if (!dir.isDirectory && !dir.mkdirs()) throw ModelException(ErrorCode.STORAGE_FULL, "cannot create ${dir.path}")
+        val tmp = File(dir, ref.file + ".import")
+        try {
+            source.inputStream().use { i -> tmp.outputStream().use { o -> i.copyTo(o, bufferBytes) } }
+        } catch (e: IOException) {
+            tmp.delete()
+            throw ModelException(ErrorCode.STORAGE_FULL, "copy failed: ${e.message}", cause = e)
+        }
+        Files.move(tmp.toPath(), fileFor(ref).toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE)
+        sidecar(ref).writeText(FlatJson.write(mapOf("sha256" to ref.sha256, "size_bytes" to size, "source_url" to ref.sourceUrl, "repo_id" to ref.repoId, "commit" to ref.commit, "path" to ref.path, "imported_from" to source.path, "verified_at" to java.time.Instant.now().toString())))
+        log.i("imported ${ref.file}: $size bytes, sha256 ok, from ${source.path}")
+        return fileFor(ref)
+    }
+
     /** Remove the blob directory (file, sidecar, partial). Returns true if anything was deleted. */
     fun evict(ref: ArtifactRef): Boolean {
         val dir = blobDir(ref)
