@@ -1,0 +1,11 @@
+# hfmodels for Android
+
+> Hugging Face model id in, LiteRT-LM inference out: download, verify, initialize, stream, cancel, release — one Gradle dependency, five lines of Kotlin.
+
+- [README](README.md): Gradle lines, the five-line call, what it replaces, ids that work today
+- [Skill](skills/hfmodels-android/SKILL.md): the procedure a coding agent follows, with finish conditions
+- [Error codes](docs/errors.md): every ModelException.code and the fix
+- [Publisher guide](docs/publishing.md): how a model repo becomes loadable by id (hfmodels.json)
+- [Tested runtime matrix](tested-runtime-matrix.json): verified runtime versions per device, with logs
+- [Bundled catalog entries](catalog/entries/): ids the SDK resolves without touching the model repo
+- [Sample app](samples/chat/): the chat screen on the SDK

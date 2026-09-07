@@ -19,3 +19,4 @@ rootProject.name = "hfmodels-android"
 include(":core")
 include(":litertlm")
 include(":probes:coexist")
+include(":samples:chat")
