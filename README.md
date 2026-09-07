@@ -4,9 +4,9 @@ An independent, third-party library: give it a Hugging Face model id; get a mode
 
 ```kotlin
 val models = HfModels(applicationContext)
-val chat = models.fromPretrained(ModelRef("litert-community/Qwen2.5-1.5B-Instruct"), Tasks.Chat) { event -> show(event) }
+val chat = models.fromPretrained(ModelRef("litert-community/gemma-4-E2B-it-litert-lm"), Tasks.Chat) { event -> show(event) }
 val session = chat.createConversation(ConversationConfig(systemInstruction = Contents.of("You are a helpful assistant.")))
-session.stream(Contents.of(Content.Text("What is 17 + 25? Answer briefly."))).collect { message -> append(message) }
+session.stream(Contents.of("What is 17 + 25? Answer briefly.")).collect { message -> append(message) }
 withContext(NonCancellable) { chat.closeAndJoin() }
 ```
 

@@ -33,9 +33,9 @@ Ids that work today without touching the model repo: `catalog/entries/*.json` (Q
 ## Step 1: decide
 
 1. Confirm the target is an Android app (`com.android.application`), `minSdk >= 31` (raise it if lower; the SDK declares 31), arm64.
-2. Pick the id. Default: `litert-community/Qwen2.5-1.5B-Instruct` (1.6 GB, text). A VLM (image + text): `litert-community/LFM2.5-VL-1.6B`.
+2. Pick the id from the current generation. Default: `litert-community/gemma-4-E2B-it-litert-lm` (2.6 GB, text + image, the most-downloaded LiteRT-LM bundle). Small and fast: `litert-community/LFM2.5-1.2B-Instruct` (0.7 GB, text). Both are 2026 models verified on all their profiles (README table). `Qwen2.5-1.5B-Instruct` is in the catalog because the measured comparison used it; do not pick it as a default for a new app.
 3. Backend: leave `BackendPolicy.Auto` (the descriptor's default profile). `Require(GPU)` only when the user asked; a GPU first load compiles kernels for up to a minute on a Pixel 8a.
-4. Model delivery: the first `fromPretrained` downloads the file into the app's private storage (1.6 GB takes about 3 minutes on Wi-Fi). **Development shortcut**: if the exact file is already on this machine (`ls ~/.cache/huggingface/hub/models--<owner>--<name>/snapshots/*/`), push it right after the first install and the SDK imports it instead of downloading (it hashes the copy; a wrong file is ignored and downloaded):
+4. Model delivery: the first `fromPretrained` downloads the file into the app's private storage (1.6 GB took about 3 minutes on Wi-Fi in our runs; scale by size). **Development shortcut**: if the exact file is already on this machine (`ls ~/.cache/huggingface/hub/models--<owner>--<name>/snapshots/*/`), push it right after the first install and the SDK imports it instead of downloading (it hashes the copy; a wrong file is ignored and downloaded):
    ```sh
    adb push <path>/<file>.litertlm /sdcard/Android/data/<applicationId>/files/     # after the app is installed
    ```
@@ -47,7 +47,7 @@ Ids that work today without touching the model repo: `catalog/entries/*.json` (Q
 2. Load once, off the main thread, and show `LoadEvent`s:
    ```kotlin
    val models = HfModels(applicationContext)
-   val chat = models.fromPretrained(ModelRef("litert-community/Qwen2.5-1.5B-Instruct"), Tasks.Chat) { e -> status.text = e.toString() }
+   val chat = models.fromPretrained(ModelRef("litert-community/gemma-4-E2B-it-litert-lm"), Tasks.Chat) { e -> status.text = e.toString() }
    val session = chat.createConversation(ConversationConfig(systemInstruction = Contents.of("You are a helpful assistant.")))
    ```
 3. Send: `session.stream(Contents.of(prompt)).collect { m -> append(m.contents.contents.filterIsInstance<Content.Text>().joinToString("") { it.text }) }` — chunks are incremental: append, never replace.
@@ -93,7 +93,7 @@ class ChatViewModel(app: Application) : AndroidViewModel(app) {
 
     fun load() = viewModelScope.launch {
         try {
-            chat = models.fromPretrained(ModelRef("litert-community/Qwen2.5-1.5B-Instruct"), Tasks.Chat) { e -> status = e.toString() }
+            chat = models.fromPretrained(ModelRef("litert-community/gemma-4-E2B-it-litert-lm"), Tasks.Chat) { e -> status = e.toString() }
             status = "Ready (" + chat!!.info.profileId + ")"
         } catch (e: ModelException) { status = "${e.code}: ${e.reason}" }
     }
