@@ -91,6 +91,16 @@ val chat = models.prepare(local)                                                
 - `close()` returns at once; `closeAndJoin()` waits, children first, then the Engine. Idempotent.
 - `info: PreparedModelInfo` reports commit, descriptor origin, variant, profile, requested / initialized backend per component, and `observed = UNKNOWN` on this runtime version (it exposes no execution report; "initialized on GPU" is not a claim that every op ran there).
 
+## For coding agents
+
+`AGENTS.md` is the entry point, `docs/api.md` the complete public surface with imports, `docs/errors.md` the error table, and `skills/hfmodels-android/SKILL.md` the procedure with its three finish conditions (builds; answers a fixed prompt on a connected device; Stop / Release / re-create wired). To give an agent the procedure inside your app's repository:
+
+```sh
+mkdir -p .claude/skills/hfmodels-android && curl -fsSL https://raw.githubusercontent.com/john-rocky/hfmodels-android/main/skills/hfmodels-android/SKILL.md -o .claude/skills/hfmodels-android/SKILL.md
+```
+
+`.claude/skills/` is where Claude Code loads project skills; an agent that reads `AGENTS.md`-style files instead can be pointed at the same URL. `llms.txt` lists every document above as an absolute URL.
+
 ## Publishing a model
 
 A repo becomes loadable by id with one file, `hfmodels.json`, generated (not typed) from the files' Hub metadata: `docs/publishing.md`.
@@ -103,7 +113,7 @@ litertlm/    hfmodels-litertlm: Tasks.Chat, ChatModel / ChatSession on LiteRT-LM
 samples/chat the chat screen on the SDK (id in, chat out)
 catalog/     specs (curated) -> entries (generated) -> the bundled asset; tools/ generate and gate them
 probes/      the runtime coexistence probe (LiteRT-LM + LiteRT in one release APK) and its logs
-docs/        errors.md, publishing.md; skills/ the agent procedure; tested-runtime-matrix.json the verified matrix
+docs/        api.md (the complete surface), errors.md, publishing.md; skills/ the agent procedure; tested-runtime-matrix.json the verified matrix
 ```
 
 ## License

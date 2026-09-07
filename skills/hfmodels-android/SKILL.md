@@ -13,11 +13,13 @@ An integration is done when three things hold, in this order:
 
 Scope: an app that already exists, a model that is registered (its repo carries `hfmodels.json`, or it is in the bundled catalog). Anything else fails with a typed `ModelException`; `docs/errors.md` says what to do.
 
-## Step 0: resolve versions from the repository, never from memory
+## Step 0: versions and the API, from the files, never from memory
 
-Read `gradle.properties` (`litertlmVersion`, `coroutinesVersion`) and `tested-runtime-matrix.json` (verified runtime + device rows). The dependency is `io.github.john-rocky.hfmodels:hfmodels-litertlm:<version from gradle.properties or the README>` from Maven Central; LiteRT-LM and kotlinx-coroutines 1.11.0 come with it as `api` dependencies — do not add or pin them yourself, and do not add `com.google.ai.edge.litert:litert` unless the app uses LiteRT's CompiledModel (that AAR needs `android.uniquePackageNames=false` on AGP 9).
+- Dependency: `io.github.john-rocky.hfmodels:hfmodels-litertlm:0.1.0` from Maven Central (newest: <https://central.sonatype.com/artifact/io.github.john-rocky.hfmodels/hfmodels-litertlm>; inside the SDK repository the pins are `gradle.properties` and the verified combinations `tested-runtime-matrix.json`). The Kotlin package is `io.github.johnrocky.hfmodels` (no hyphen; the Maven group has one).
+- It brings LiteRT-LM 0.16.1 and kotlinx-coroutines 1.11.0 as `api` dependencies — do not add or pin them yourself, and do not add `com.google.ai.edge.litert:litert` unless the app uses LiteRT's CompiledModel (that AAR needs `android.uniquePackageNames=false` on AGP 9).
+- `docs/api.md` is the complete public surface with imports and signatures, including the four runtime types an app touches (`Contents`, `Content`, `ConversationConfig`, `Message`). Read it instead of unzipping the sources jar or running `javap` on the runtime — there is nothing else to find.
 
-Ids that work today without touching the model repo: `catalog/entries/*.json` (Qwen2.5-1.5B-Instruct q8, LFM2.5-1.2B-Instruct, LFM2.5-VL-1.6B, gemma-4-E2B-it, gemma-4-E4B-it — see the README table for which profiles were verified on which device).
+Ids that work today without touching the model repo: `catalog/entries/*.json` (Qwen2.5-1.5B-Instruct q8, LFM2.5-1.2B-Instruct, LFM2.5-VL-1.6B, gemma-4-E2B-it, gemma-4-E4B-it — see the README table for which profiles were verified on which device). Thinking models (Qwen3, DeepSeek-R1-Distill, `*-Thinking`) are not in the catalog and 0.1.0 has no thinking-channel handling: if the user asks for one, say so and offer a catalogued instruct model instead of forcing it through `descriptorJson`.
 
 ## Traps: your training data is stale here
 
@@ -26,7 +28,7 @@ Ids that work today without touching the model repo: `catalog/entries/*.json` (Q
 - `Engine`, `Conversation`, `sendMessageAsync` are behind the SDK. Do not call them directly: the runtime's Flow drops `trySend` results and has an empty `awaitClose`, so a cancelled collector alone does not stop decoding; the SDK's `ChatSession.stream` does.
 - A cancelled session is not reusable (the runtime documents the state as poisoned). After Stop, `createConversation()` again; keep your own transcript if you want history (`initialMessages`).
 - R8: the SDK's consumer rules keep what the runtime's JNI looks up by name. Do not add `-keep` rules for the runtime yourself, and do not strip the SDK's.
-- Guessing a newer version when resolution fails: a missing artifact more likely means a wrong coordinate. Re-read `gradle.properties`.
+- Guessing a newer version when resolution fails: a missing artifact more likely means a wrong coordinate (`io.github.john-rocky.hfmodels`, hyphen) or a missing `mavenCentral()`. Re-read Step 0.
 
 ## Step 1: decide
 
@@ -48,14 +50,37 @@ Ids that work today without touching the model repo: `catalog/entries/*.json` (Q
    val chat = models.fromPretrained(ModelRef("litert-community/Qwen2.5-1.5B-Instruct"), Tasks.Chat) { e -> status.text = e.toString() }
    val session = chat.createConversation(ConversationConfig(systemInstruction = Contents.of("You are a helpful assistant.")))
    ```
-3. Send: `session.stream(Contents.of(Content.Text(prompt))).collect { m -> append(m.contents.contents.filterIsInstance<Content.Text>().joinToString("") { it.text }) }` — chunks are incremental: append, never replace.
+3. Send: `session.stream(Contents.of(prompt)).collect { m -> append(m.contents.contents.filterIsInstance<Content.Text>().joinToString("") { it.text }) }` — chunks are incremental: append, never replace.
 4. Stop: cancel the collecting `Job`. Then `createConversation()` again before the next send (check `session.state == SessionState.READY`).
 5. Release: `withContext(NonCancellable) { chat.closeAndJoin() }` when the screen goes away or the user asks.
 6. Errors: catch `ModelException`, show `"${e.code}: ${e.reason}"`, and act per `docs/errors.md`.
 
-A Compose app needs only this ViewModel (a `Log.i("e1", …)` of the reply is the usual test hook):
+A Compose app needs only this ViewModel (the `Log.i("e1", …)` of the reply is the test hook Step 3 greps; any tag works as long as you grep the same one):
 
 ```kotlin
+import android.app.Application
+import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import com.google.ai.edge.litertlm.Content
+import com.google.ai.edge.litertlm.Contents
+import com.google.ai.edge.litertlm.ConversationConfig
+import io.github.johnrocky.hfmodels.HfModels
+import io.github.johnrocky.hfmodels.ModelException
+import io.github.johnrocky.hfmodels.ModelRef
+import io.github.johnrocky.hfmodels.Tasks
+import io.github.johnrocky.hfmodels.litertlm.ChatModel
+import io.github.johnrocky.hfmodels.litertlm.ChatSession
+import io.github.johnrocky.hfmodels.litertlm.SessionState
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
 class ChatViewModel(app: Application) : AndroidViewModel(app) {
     private val models = HfModels(app)
     private var chat: ChatModel? = null
@@ -81,7 +106,7 @@ class ChatViewModel(app: Application) : AndroidViewModel(app) {
             try {
                 val s = session?.takeIf { it.state == SessionState.READY }
                     ?: model.createConversation(ConversationConfig(systemInstruction = Contents.of("You are a helpful assistant."))).also { session = it }
-                s.stream(Contents.of(Content.Text(prompt))).collect { m ->
+                s.stream(Contents.of(prompt)).collect { m ->
                     val t = m.contents.contents.filterIsInstance<Content.Text>().joinToString("") { it.text }
                     reply.append(t); transcript += t
                 }
@@ -115,7 +140,7 @@ Screen: a Load button + status text, a scrolling transcript, an input row with S
 | Symptom | Cause, fix |
 |---|---|
 | `The 'org.jetbrains.kotlin.android' plugin is no longer required` | standalone Kotlin plugin on AGP 9: remove it |
-| `Could not resolve io.github.john-rocky.hfmodels:...` | repository missing (`mavenCentral()` / the local repo this session names), or a guessed version: re-read `gradle.properties` |
+| `Could not resolve io.github.john-rocky.hfmodels:...` | repository missing (`mavenCentral()` / the local repo this session names), or a guessed version or group: re-read Step 0 |
 | `MODEL_NOT_REGISTERED` | the id has no `hfmodels.json` and no catalog entry: pick a catalogued id or ask the publisher |
 | `STORAGE_FULL` before any download | not enough free space for the file plus 256 MiB: free space, or `models.evict(plan)` |
 | `SESSION_INVALIDATED` on the turn after Stop | expected: `createConversation()` again |
