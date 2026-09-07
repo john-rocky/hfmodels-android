@@ -1,0 +1,98 @@
+{
+  "model_id": "litert-community/Qwen2.5-1.5B-Instruct",
+  "model_commit": "19edb84c69a0212f29a6ef17ba0d6f278b6a1614",
+  "gated": false,
+  "path": "catalog/entries/litert-community__Qwen2.5-1.5B-Instruct.json",
+  "provenance": "External descriptor for a Google-published bundle (litert-community/Qwen2.5-1.5B-Instruct, ungated). The q8 / 4096-token file is the one on-device-recipes verified on a Pixel 8a (LiteRT-LM 0.16.1, 2026-09-05); the f32 file (6.2 GB) is left out on purpose.",
+  "descriptor": {
+    "schema_version": 1,
+    "model_id": "litert-community/Qwen2.5-1.5B-Instruct",
+    "tasks": [
+      "chat"
+    ],
+    "default_variant": "q8",
+    "license": {
+      "id": "apache-2.0",
+      "url": "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct/blob/main/LICENSE"
+    },
+    "variants": [
+      {
+        "id": "q8",
+        "runtime": "litert_lm",
+        "handler": {
+          "id": "litertlm.conversation",
+          "abi": 1
+        },
+        "runtime_range": {
+          "min_inclusive": "0.16.0",
+          "max_exclusive": "0.18.0"
+        },
+        "inputs": [
+          "text"
+        ],
+        "files": [
+          {
+            "id": "weights",
+            "role": "model",
+            "path": "Qwen2.5-1.5B-Instruct_multi-prefill-seq_q8_ekv4096.litertlm",
+            "bytes": 1597931520,
+            "sha256": "faa60663b333290c1496c499828b21d3e3254a788cacd8cce917ce0f761a2dc9"
+          }
+        ],
+        "default_profile": "cpu",
+        "profiles": [
+          {
+            "id": "cpu",
+            "priority": 50,
+            "files": [
+              "weights"
+            ],
+            "enabled_inputs": [
+              "text"
+            ],
+            "components": {
+              "language": "cpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "fallback_profiles": [],
+            "default_selectable": true,
+            "context_tokens": 4096
+          },
+          {
+            "id": "gpu",
+            "priority": 100,
+            "files": [
+              "weights"
+            ],
+            "enabled_inputs": [
+              "text"
+            ],
+            "components": {
+              "language": "gpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "fallback_profiles": [
+              "cpu"
+            ],
+            "default_selectable": true,
+            "context_tokens": 4096
+          }
+        ],
+        "handler_config": {
+          "metadata_source": "publisher_declared",
+          "context_tokens": 4096
+        }
+      }
+    ]
+  }
+}

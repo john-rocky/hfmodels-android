@@ -1,0 +1,894 @@
+{
+  "schema_version": 1,
+  "catalog_id": "hfmodels-bundled",
+  "origin": {
+    "repo": "john-rocky/hfmodels-android",
+    "commit": "0000000000000000000000000000000000000000"
+  },
+  "entries": [
+    {
+      "model_id": "litert-community/LFM2.5-1.2B-Instruct",
+      "model_commit": "c412baa473f5e27afe3d3255caee1bf818d0f095",
+      "path": "catalog/entries/litert-community__LFM2.5-1.2B-Instruct.json",
+      "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json; the bundle declares a <think> channel in its template, which the runtime handles; the SDK does not enable thinking.",
+      "descriptor": {
+        "schema_version": 1,
+        "model_id": "litert-community/LFM2.5-1.2B-Instruct",
+        "tasks": [
+          "chat"
+        ],
+        "default_variant": "int4_gpu",
+        "license": {
+          "id": "lfm-1.0",
+          "url": "https://huggingface.co/LiquidAI/LFM2.5-1.2B-Instruct/blob/main/LICENSE"
+        },
+        "variants": [
+          {
+            "id": "int4_gpu",
+            "runtime": "litert_lm",
+            "handler": {
+              "id": "litertlm.conversation",
+              "abi": 1
+            },
+            "runtime_range": {
+              "min_inclusive": "0.16.0",
+              "max_exclusive": "0.18.0"
+            },
+            "inputs": [
+              "text"
+            ],
+            "files": [
+              {
+                "id": "weights",
+                "role": "model",
+                "path": "LFM2.5-1.2B-Instruct_int4_gpu.litertlm",
+                "bytes": 736220768,
+                "sha256": "36f7f0221bcc42c75291da1d7e3422901024a5b06b9bfa3c02d7feface04f70a"
+              }
+            ],
+            "default_profile": "gpu",
+            "profiles": [
+              {
+                "id": "gpu",
+                "priority": 100,
+                "files": [
+                  "weights"
+                ],
+                "enabled_inputs": [
+                  "text"
+                ],
+                "components": {
+                  "language": "gpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [
+                  "cpu"
+                ],
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-07",
+                    "evidence": "litertlm/results/2026-09-07-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
+              },
+              {
+                "id": "cpu",
+                "priority": 50,
+                "files": [
+                  "weights"
+                ],
+                "enabled_inputs": [
+                  "text"
+                ],
+                "components": {
+                  "language": "cpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [],
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-07",
+                    "evidence": "litertlm/results/2026-09-07-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
+              }
+            ],
+            "handler_config": {
+              "metadata_source": "litertlm_manifest",
+              "channels": [
+                {
+                  "name": "thought",
+                  "start": "<think>",
+                  "end": "</think>"
+                }
+              ],
+              "context_tokens": 4096,
+              "manifest_min_runtime_version": "0.15.0"
+            }
+          },
+          {
+            "id": "int4",
+            "runtime": "litert_lm",
+            "handler": {
+              "id": "litertlm.conversation",
+              "abi": 1
+            },
+            "runtime_range": {
+              "min_inclusive": "0.16.0",
+              "max_exclusive": "0.18.0"
+            },
+            "inputs": [
+              "text"
+            ],
+            "files": [
+              {
+                "id": "weights",
+                "role": "model",
+                "path": "LFM2.5-1.2B-Instruct_int4.litertlm",
+                "bytes": 736015744,
+                "sha256": "a28b5c59ac204e2e51c1f98d2d6db6982f0e12da59a268fe498edcb33237e906"
+              }
+            ],
+            "default_profile": "cpu",
+            "profiles": [
+              {
+                "id": "cpu",
+                "priority": 50,
+                "files": [
+                  "weights"
+                ],
+                "enabled_inputs": [
+                  "text"
+                ],
+                "components": {
+                  "language": "cpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [],
+                "default_selectable": true
+              }
+            ],
+            "handler_config": {
+              "metadata_source": "litertlm_manifest",
+              "channels": [
+                {
+                  "name": "thought",
+                  "start": "<think>",
+                  "end": "</think>"
+                }
+              ],
+              "context_tokens": 4096,
+              "manifest_min_runtime_version": "0.15.0"
+            }
+          },
+          {
+            "id": "int8",
+            "runtime": "litert_lm",
+            "handler": {
+              "id": "litertlm.conversation",
+              "abi": 1
+            },
+            "runtime_range": {
+              "min_inclusive": "0.16.0",
+              "max_exclusive": "0.18.0"
+            },
+            "inputs": [
+              "text"
+            ],
+            "files": [
+              {
+                "id": "weights",
+                "role": "model",
+                "path": "LFM2.5-1.2B-Instruct_int8.litertlm",
+                "bytes": 1247091440,
+                "sha256": "e002a91545cec6328be2a86e9b8b4fccb2dd9dde7e6c8b29d730f915a0a697fe"
+              }
+            ],
+            "default_profile": "cpu",
+            "profiles": [
+              {
+                "id": "cpu",
+                "priority": 50,
+                "files": [
+                  "weights"
+                ],
+                "enabled_inputs": [
+                  "text"
+                ],
+                "components": {
+                  "language": "cpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [],
+                "default_selectable": true
+              }
+            ],
+            "handler_config": {
+              "metadata_source": "litertlm_manifest",
+              "channels": [
+                {
+                  "name": "thought",
+                  "start": "<think>",
+                  "end": "</think>"
+                }
+              ],
+              "context_tokens": 4096,
+              "manifest_min_runtime_version": "0.15.0"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "litert-community/LFM2.5-VL-1.6B",
+      "model_commit": "a2178688655510ef6c3043ce4bdfc2ce9a917689",
+      "path": "catalog/entries/litert-community__LFM2.5-VL-1.6B.json",
+      "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json. The vision encoder does not compile on the Pixel GPU delegate, so the gpu profile runs the language graph on the GPU and the vision encoder on the CPU (litertlm-chat-android, Pixel 8a, 2026-08-13).",
+      "descriptor": {
+        "schema_version": 1,
+        "model_id": "litert-community/LFM2.5-VL-1.6B",
+        "tasks": [
+          "chat"
+        ],
+        "default_variant": "int4",
+        "license": {
+          "id": "lfm-1.0",
+          "url": "https://huggingface.co/LiquidAI/LFM2.5-VL-1.6B/blob/main/LICENSE"
+        },
+        "variants": [
+          {
+            "id": "int4",
+            "runtime": "litert_lm",
+            "handler": {
+              "id": "litertlm.conversation",
+              "abi": 1
+            },
+            "runtime_range": {
+              "min_inclusive": "0.16.0",
+              "max_exclusive": "0.18.0"
+            },
+            "inputs": [
+              "text",
+              "image"
+            ],
+            "files": [
+              {
+                "id": "weights",
+                "role": "model",
+                "path": "LFM2.5-VL-1.6B_int4.litertlm",
+                "bytes": 1298142592,
+                "sha256": "44816005b42bef8887bc3dc40b7d6483ea4dd8569fb1591f00faa33ef3043e8d"
+              }
+            ],
+            "default_profile": "gpu",
+            "profiles": [
+              {
+                "id": "gpu",
+                "priority": 100,
+                "files": [
+                  "weights"
+                ],
+                "enabled_inputs": [
+                  "text",
+                  "image"
+                ],
+                "components": {
+                  "language": "gpu",
+                  "vision": "cpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [
+                  "cpu"
+                ],
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-07",
+                    "evidence": "litertlm/results/2026-09-07-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
+              },
+              {
+                "id": "cpu",
+                "priority": 50,
+                "files": [
+                  "weights"
+                ],
+                "enabled_inputs": [
+                  "text",
+                  "image"
+                ],
+                "components": {
+                  "language": "cpu",
+                  "vision": "cpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [],
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-07",
+                    "evidence": "litertlm/results/2026-09-07-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
+              }
+            ],
+            "handler_config": {
+              "metadata_source": "litertlm_manifest",
+              "context_tokens": 4096,
+              "manifest_min_runtime_version": "0.16.0"
+            }
+          },
+          {
+            "id": "int8",
+            "runtime": "litert_lm",
+            "handler": {
+              "id": "litertlm.conversation",
+              "abi": 1
+            },
+            "runtime_range": {
+              "min_inclusive": "0.16.0",
+              "max_exclusive": "0.18.0"
+            },
+            "inputs": [
+              "text",
+              "image"
+            ],
+            "files": [
+              {
+                "id": "weights",
+                "role": "model",
+                "path": "LFM2.5-VL-1.6B_int8.litertlm",
+                "bytes": 1808995712,
+                "sha256": "d6a254aa3edefab51684918e7c717d096c60e495c085fcc35fd845fb8c80c8bd"
+              }
+            ],
+            "default_profile": "gpu",
+            "profiles": [
+              {
+                "id": "gpu",
+                "priority": 100,
+                "files": [
+                  "weights"
+                ],
+                "enabled_inputs": [
+                  "text",
+                  "image"
+                ],
+                "components": {
+                  "language": "gpu",
+                  "vision": "cpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [
+                  "cpu"
+                ],
+                "default_selectable": true
+              },
+              {
+                "id": "cpu",
+                "priority": 50,
+                "files": [
+                  "weights"
+                ],
+                "enabled_inputs": [
+                  "text",
+                  "image"
+                ],
+                "components": {
+                  "language": "cpu",
+                  "vision": "cpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [],
+                "default_selectable": true
+              }
+            ],
+            "handler_config": {
+              "metadata_source": "litertlm_manifest",
+              "context_tokens": 4096,
+              "manifest_min_runtime_version": "0.16.0"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "litert-community/Qwen2.5-1.5B-Instruct",
+      "model_commit": "19edb84c69a0212f29a6ef17ba0d6f278b6a1614",
+      "path": "catalog/entries/litert-community__Qwen2.5-1.5B-Instruct.json",
+      "provenance": "External descriptor for a Google-published bundle (litert-community/Qwen2.5-1.5B-Instruct, ungated). The q8 / 4096-token file is the one on-device-recipes verified on a Pixel 8a (LiteRT-LM 0.16.1, 2026-09-05); the f32 file (6.2 GB) is left out on purpose.",
+      "descriptor": {
+        "schema_version": 1,
+        "model_id": "litert-community/Qwen2.5-1.5B-Instruct",
+        "tasks": [
+          "chat"
+        ],
+        "default_variant": "q8",
+        "license": {
+          "id": "apache-2.0",
+          "url": "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct/blob/main/LICENSE"
+        },
+        "variants": [
+          {
+            "id": "q8",
+            "runtime": "litert_lm",
+            "handler": {
+              "id": "litertlm.conversation",
+              "abi": 1
+            },
+            "runtime_range": {
+              "min_inclusive": "0.16.0",
+              "max_exclusive": "0.18.0"
+            },
+            "inputs": [
+              "text"
+            ],
+            "files": [
+              {
+                "id": "weights",
+                "role": "model",
+                "path": "Qwen2.5-1.5B-Instruct_multi-prefill-seq_q8_ekv4096.litertlm",
+                "bytes": 1597931520,
+                "sha256": "faa60663b333290c1496c499828b21d3e3254a788cacd8cce917ce0f761a2dc9"
+              }
+            ],
+            "default_profile": "cpu",
+            "profiles": [
+              {
+                "id": "cpu",
+                "priority": 50,
+                "files": [
+                  "weights"
+                ],
+                "enabled_inputs": [
+                  "text"
+                ],
+                "components": {
+                  "language": "cpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [],
+                "default_selectable": true,
+                "context_tokens": 4096,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-07",
+                    "evidence": "litertlm/results/2026-09-07-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
+              },
+              {
+                "id": "gpu",
+                "priority": 100,
+                "files": [
+                  "weights"
+                ],
+                "enabled_inputs": [
+                  "text"
+                ],
+                "components": {
+                  "language": "gpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [
+                  "cpu"
+                ],
+                "default_selectable": true,
+                "context_tokens": 4096,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-07",
+                    "evidence": "litertlm/results/2026-09-07-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
+              }
+            ],
+            "handler_config": {
+              "metadata_source": "publisher_declared",
+              "context_tokens": 4096
+            }
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "litert-community/gemma-4-E2B-it-litert-lm",
+      "model_commit": "b3ca0d2f076785a8f4b2219ddbd2bdb99954eae1",
+      "path": "catalog/entries/litert-community__gemma-4-E2B-it-litert-lm.json",
+      "provenance": "External descriptor for a Google-published bundle (litert-community/gemma-4-E2B-it-litert-lm, ungated on 2026-09-07). The SDK points at the repo's own file at this commit; it does not re-host it. Profiles were verified on a Pixel 8a with the SDK's catalog gate (see verification/).",
+      "descriptor": {
+        "schema_version": 1,
+        "model_id": "litert-community/gemma-4-E2B-it-litert-lm",
+        "tasks": [
+          "chat"
+        ],
+        "default_variant": "default",
+        "license": {
+          "id": "gemma",
+          "url": "https://ai.google.dev/gemma/terms"
+        },
+        "variants": [
+          {
+            "id": "default",
+            "runtime": "litert_lm",
+            "handler": {
+              "id": "litertlm.conversation",
+              "abi": 1
+            },
+            "runtime_range": {
+              "min_inclusive": "0.16.0",
+              "max_exclusive": "0.18.0"
+            },
+            "inputs": [
+              "text",
+              "image"
+            ],
+            "files": [
+              {
+                "id": "weights",
+                "role": "model",
+                "path": "gemma-4-E2B-it.litertlm",
+                "bytes": 2588147712,
+                "sha256": "181938105e0eefd105961417e8da75903eacda102c4fce9ce90f50b97139a63c"
+              }
+            ],
+            "default_profile": "gpu",
+            "profiles": [
+              {
+                "id": "gpu",
+                "priority": 100,
+                "files": [
+                  "weights"
+                ],
+                "enabled_inputs": [
+                  "text",
+                  "image"
+                ],
+                "components": {
+                  "language": "gpu",
+                  "vision": "gpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [
+                  "gpu_vision_cpu",
+                  "cpu"
+                ],
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-07",
+                    "evidence": "litertlm/results/2026-09-07-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
+              },
+              {
+                "id": "gpu_vision_cpu",
+                "priority": 90,
+                "files": [
+                  "weights"
+                ],
+                "enabled_inputs": [
+                  "text",
+                  "image"
+                ],
+                "components": {
+                  "language": "gpu",
+                  "vision": "cpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [
+                  "cpu"
+                ],
+                "default_selectable": false,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-07",
+                    "evidence": "litertlm/results/2026-09-07-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
+              },
+              {
+                "id": "cpu",
+                "priority": 50,
+                "files": [
+                  "weights"
+                ],
+                "enabled_inputs": [
+                  "text",
+                  "image"
+                ],
+                "components": {
+                  "language": "cpu",
+                  "vision": "cpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [],
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-07",
+                    "evidence": "litertlm/results/2026-09-07-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
+              }
+            ],
+            "handler_config": {
+              "metadata_source": "publisher_declared"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "litert-community/gemma-4-E4B-it-litert-lm",
+      "model_commit": "2eee7ac325f20eb8c9ac1d0e972f7c84663062da",
+      "path": "catalog/entries/litert-community__gemma-4-E4B-it-litert-lm.json",
+      "provenance": "External descriptor for a Google-published bundle (litert-community/gemma-4-E4B-it-litert-lm, ungated on 2026-09-07). The SDK points at the repo's own file at this commit; it does not re-host it. Profiles were verified on a Pixel 8a with the SDK's catalog gate (see verification/).",
+      "descriptor": {
+        "schema_version": 1,
+        "model_id": "litert-community/gemma-4-E4B-it-litert-lm",
+        "tasks": [
+          "chat"
+        ],
+        "default_variant": "default",
+        "license": {
+          "id": "gemma",
+          "url": "https://ai.google.dev/gemma/terms"
+        },
+        "variants": [
+          {
+            "id": "default",
+            "runtime": "litert_lm",
+            "handler": {
+              "id": "litertlm.conversation",
+              "abi": 1
+            },
+            "runtime_range": {
+              "min_inclusive": "0.16.0",
+              "max_exclusive": "0.18.0"
+            },
+            "inputs": [
+              "text",
+              "image"
+            ],
+            "files": [
+              {
+                "id": "weights",
+                "role": "model",
+                "path": "gemma-4-E4B-it.litertlm",
+                "bytes": 3659530240,
+                "sha256": "0b2a8980ce155fd97673d8e820b4d29d9c7d99b8fa6806f425d969b145bd52e0"
+              }
+            ],
+            "default_profile": "gpu",
+            "profiles": [
+              {
+                "id": "gpu",
+                "priority": 100,
+                "files": [
+                  "weights"
+                ],
+                "enabled_inputs": [
+                  "text",
+                  "image"
+                ],
+                "components": {
+                  "language": "gpu",
+                  "vision": "gpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [
+                  "gpu_vision_cpu",
+                  "cpu"
+                ],
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-07",
+                    "evidence": "litertlm/results/2026-09-07-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
+              },
+              {
+                "id": "gpu_vision_cpu",
+                "priority": 90,
+                "files": [
+                  "weights"
+                ],
+                "enabled_inputs": [
+                  "text",
+                  "image"
+                ],
+                "components": {
+                  "language": "gpu",
+                  "vision": "cpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [
+                  "cpu"
+                ],
+                "default_selectable": false,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-07",
+                    "evidence": "litertlm/results/2026-09-07-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
+              },
+              {
+                "id": "cpu",
+                "priority": 50,
+                "files": [
+                  "weights"
+                ],
+                "enabled_inputs": [
+                  "text",
+                  "image"
+                ],
+                "components": {
+                  "language": "cpu",
+                  "vision": "cpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [],
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 8a",
+                    "os_build": "CP1A.260505.005",
+                    "runtime": "litert_lm 0.16.1",
+                    "result": "PASS",
+                    "date": "2026-09-07",
+                    "evidence": "litertlm/results/2026-09-07-4C131JEKB15210-0.16.1-a3-gate.log"
+                  }
+                ]
+              }
+            ],
+            "handler_config": {
+              "metadata_source": "publisher_declared"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

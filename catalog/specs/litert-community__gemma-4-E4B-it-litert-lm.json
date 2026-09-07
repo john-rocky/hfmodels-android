@@ -1,0 +1,118 @@
+{
+  "model_id": "litert-community/gemma-4-E4B-it-litert-lm",
+  "revision": "2eee7ac325f20eb8c9ac1d0e972f7c84663062da",
+  "tasks": [
+    "chat"
+  ],
+  "default_variant": "default",
+  "license": {
+    "id": "gemma",
+    "url": "https://ai.google.dev/gemma/terms"
+  },
+  "provenance": "External descriptor for a Google-published bundle (litert-community/gemma-4-E4B-it-litert-lm, ungated on 2026-09-07). The SDK points at the repo's own file at this commit; it does not re-host it. Profiles were verified on a Pixel 8a with the SDK's catalog gate (see verification/).",
+  "variants": [
+    {
+      "id": "default",
+      "runtime": "litert_lm",
+      "handler": {
+        "id": "litertlm.conversation",
+        "abi": 1
+      },
+      "runtime_range": {
+        "min_inclusive": "0.16.0",
+        "max_exclusive": "0.18.0"
+      },
+      "inputs": [
+        "text",
+        "image"
+      ],
+      "files": [
+        {
+          "id": "weights",
+          "role": "model",
+          "path": "gemma-4-E4B-it.litertlm"
+        }
+      ],
+      "default_profile": "gpu",
+      "profiles": [
+        {
+          "id": "gpu",
+          "priority": 100,
+          "files": [
+            "weights"
+          ],
+          "enabled_inputs": [
+            "text",
+            "image"
+          ],
+          "components": {
+            "language": "gpu",
+            "vision": "gpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "fallback_profiles": [
+            "gpu_vision_cpu",
+            "cpu"
+          ],
+          "default_selectable": true
+        },
+        {
+          "id": "gpu_vision_cpu",
+          "priority": 90,
+          "files": [
+            "weights"
+          ],
+          "enabled_inputs": [
+            "text",
+            "image"
+          ],
+          "components": {
+            "language": "gpu",
+            "vision": "cpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "fallback_profiles": [
+            "cpu"
+          ],
+          "default_selectable": false
+        },
+        {
+          "id": "cpu",
+          "priority": 50,
+          "files": [
+            "weights"
+          ],
+          "enabled_inputs": [
+            "text",
+            "image"
+          ],
+          "components": {
+            "language": "cpu",
+            "vision": "cpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "fallback_profiles": [],
+          "default_selectable": true
+        }
+      ],
+      "handler_config": {
+        "metadata_source": "publisher_declared"
+      }
+    }
+  ]
+}

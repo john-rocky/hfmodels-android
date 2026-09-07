@@ -1,0 +1,183 @@
+{
+  "model_id": "litert-community/LFM2.5-VL-1.6B",
+  "model_commit": "a2178688655510ef6c3043ce4bdfc2ce9a917689",
+  "gated": false,
+  "path": "catalog/entries/litert-community__LFM2.5-VL-1.6B.json",
+  "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json. The vision encoder does not compile on the Pixel GPU delegate, so the gpu profile runs the language graph on the GPU and the vision encoder on the CPU (litertlm-chat-android, Pixel 8a, 2026-08-13).",
+  "descriptor": {
+    "schema_version": 1,
+    "model_id": "litert-community/LFM2.5-VL-1.6B",
+    "tasks": [
+      "chat"
+    ],
+    "default_variant": "int4",
+    "license": {
+      "id": "lfm-1.0",
+      "url": "https://huggingface.co/LiquidAI/LFM2.5-VL-1.6B/blob/main/LICENSE"
+    },
+    "variants": [
+      {
+        "id": "int4",
+        "runtime": "litert_lm",
+        "handler": {
+          "id": "litertlm.conversation",
+          "abi": 1
+        },
+        "runtime_range": {
+          "min_inclusive": "0.16.0",
+          "max_exclusive": "0.18.0"
+        },
+        "inputs": [
+          "text",
+          "image"
+        ],
+        "files": [
+          {
+            "id": "weights",
+            "role": "model",
+            "path": "LFM2.5-VL-1.6B_int4.litertlm",
+            "bytes": 1298142592,
+            "sha256": "44816005b42bef8887bc3dc40b7d6483ea4dd8569fb1591f00faa33ef3043e8d"
+          }
+        ],
+        "default_profile": "gpu",
+        "profiles": [
+          {
+            "id": "gpu",
+            "priority": 100,
+            "files": [
+              "weights"
+            ],
+            "enabled_inputs": [
+              "text",
+              "image"
+            ],
+            "components": {
+              "language": "gpu",
+              "vision": "cpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "fallback_profiles": [
+              "cpu"
+            ],
+            "default_selectable": true
+          },
+          {
+            "id": "cpu",
+            "priority": 50,
+            "files": [
+              "weights"
+            ],
+            "enabled_inputs": [
+              "text",
+              "image"
+            ],
+            "components": {
+              "language": "cpu",
+              "vision": "cpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "fallback_profiles": [],
+            "default_selectable": true
+          }
+        ],
+        "handler_config": {
+          "metadata_source": "litertlm_manifest",
+          "context_tokens": 4096,
+          "manifest_min_runtime_version": "0.16.0"
+        }
+      },
+      {
+        "id": "int8",
+        "runtime": "litert_lm",
+        "handler": {
+          "id": "litertlm.conversation",
+          "abi": 1
+        },
+        "runtime_range": {
+          "min_inclusive": "0.16.0",
+          "max_exclusive": "0.18.0"
+        },
+        "inputs": [
+          "text",
+          "image"
+        ],
+        "files": [
+          {
+            "id": "weights",
+            "role": "model",
+            "path": "LFM2.5-VL-1.6B_int8.litertlm",
+            "bytes": 1808995712,
+            "sha256": "d6a254aa3edefab51684918e7c717d096c60e495c085fcc35fd845fb8c80c8bd"
+          }
+        ],
+        "default_profile": "gpu",
+        "profiles": [
+          {
+            "id": "gpu",
+            "priority": 100,
+            "files": [
+              "weights"
+            ],
+            "enabled_inputs": [
+              "text",
+              "image"
+            ],
+            "components": {
+              "language": "gpu",
+              "vision": "cpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "fallback_profiles": [
+              "cpu"
+            ],
+            "default_selectable": true
+          },
+          {
+            "id": "cpu",
+            "priority": 50,
+            "files": [
+              "weights"
+            ],
+            "enabled_inputs": [
+              "text",
+              "image"
+            ],
+            "components": {
+              "language": "cpu",
+              "vision": "cpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "fallback_profiles": [],
+            "default_selectable": true
+          }
+        ],
+        "handler_config": {
+          "metadata_source": "litertlm_manifest",
+          "context_tokens": 4096,
+          "manifest_min_runtime_version": "0.16.0"
+        }
+      }
+    ]
+  }
+}

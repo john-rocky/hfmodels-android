@@ -1,0 +1,206 @@
+{
+  "model_id": "litert-community/LFM2.5-1.2B-Instruct",
+  "revision": "c412baa473f5e27afe3d3255caee1bf818d0f095",
+  "tasks": [
+    "chat"
+  ],
+  "default_variant": "int4_gpu",
+  "license": {
+    "id": "lfm-1.0",
+    "url": "https://huggingface.co/LiquidAI/LFM2.5-1.2B-Instruct/blob/main/LICENSE"
+  },
+  "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json; the bundle declares a <think> channel in its template, which the runtime handles; the SDK does not enable thinking.",
+  "variants": [
+    {
+      "id": "int4_gpu",
+      "runtime": "litert_lm",
+      "handler": {
+        "id": "litertlm.conversation",
+        "abi": 1
+      },
+      "runtime_range": {
+        "min_inclusive": "0.16.0",
+        "max_exclusive": "0.18.0"
+      },
+      "inputs": [
+        "text"
+      ],
+      "files": [
+        {
+          "id": "weights",
+          "role": "model",
+          "path": "LFM2.5-1.2B-Instruct_int4_gpu.litertlm"
+        }
+      ],
+      "default_profile": "gpu",
+      "profiles": [
+        {
+          "id": "gpu",
+          "priority": 100,
+          "files": [
+            "weights"
+          ],
+          "enabled_inputs": [
+            "text"
+          ],
+          "components": {
+            "language": "gpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "fallback_profiles": [
+            "cpu"
+          ],
+          "default_selectable": true
+        },
+        {
+          "id": "cpu",
+          "priority": 50,
+          "files": [
+            "weights"
+          ],
+          "enabled_inputs": [
+            "text"
+          ],
+          "components": {
+            "language": "cpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "fallback_profiles": [],
+          "default_selectable": true
+        }
+      ],
+      "handler_config": {
+        "metadata_source": "litertlm_manifest",
+        "channels": [
+          {
+            "name": "thought",
+            "start": "<think>",
+            "end": "</think>"
+          }
+        ]
+      }
+    },
+    {
+      "id": "int4",
+      "runtime": "litert_lm",
+      "handler": {
+        "id": "litertlm.conversation",
+        "abi": 1
+      },
+      "runtime_range": {
+        "min_inclusive": "0.16.0",
+        "max_exclusive": "0.18.0"
+      },
+      "inputs": [
+        "text"
+      ],
+      "files": [
+        {
+          "id": "weights",
+          "role": "model",
+          "path": "LFM2.5-1.2B-Instruct_int4.litertlm"
+        }
+      ],
+      "default_profile": "cpu",
+      "profiles": [
+        {
+          "id": "cpu",
+          "priority": 50,
+          "files": [
+            "weights"
+          ],
+          "enabled_inputs": [
+            "text"
+          ],
+          "components": {
+            "language": "cpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "fallback_profiles": [],
+          "default_selectable": true
+        }
+      ],
+      "handler_config": {
+        "metadata_source": "litertlm_manifest",
+        "channels": [
+          {
+            "name": "thought",
+            "start": "<think>",
+            "end": "</think>"
+          }
+        ]
+      }
+    },
+    {
+      "id": "int8",
+      "runtime": "litert_lm",
+      "handler": {
+        "id": "litertlm.conversation",
+        "abi": 1
+      },
+      "runtime_range": {
+        "min_inclusive": "0.16.0",
+        "max_exclusive": "0.18.0"
+      },
+      "inputs": [
+        "text"
+      ],
+      "files": [
+        {
+          "id": "weights",
+          "role": "model",
+          "path": "LFM2.5-1.2B-Instruct_int8.litertlm"
+        }
+      ],
+      "default_profile": "cpu",
+      "profiles": [
+        {
+          "id": "cpu",
+          "priority": 50,
+          "files": [
+            "weights"
+          ],
+          "enabled_inputs": [
+            "text"
+          ],
+          "components": {
+            "language": "cpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "fallback_profiles": [],
+          "default_selectable": true
+        }
+      ],
+      "handler_config": {
+        "metadata_source": "litertlm_manifest",
+        "channels": [
+          {
+            "name": "thought",
+            "start": "<think>",
+            "end": "</think>"
+          }
+        ]
+      }
+    }
+  ]
+}
