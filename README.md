@@ -43,7 +43,7 @@ Each cell is one run of the catalog gate (`tools/gate.sh`): a real download from
 
 ## What the five lines replace
 
-The same feature written directly on the runtime — the shape found in most public apps that download a `.litertlm` from Hugging Face — and what each part still lacks:
+The same feature written directly on the runtime — the shape found in most public apps that download a `.litertlm` from Hugging Face — and what each part still lacks. Of 328 public Kotlin repositories on GitHub that link the runtime and fetch a `.litertlm` from Hugging Face (code search, shallow clones, static scan, 2026-09-07; a repository counts as having an item when the pattern appears anywhere in its files), 14 % send a Range header, 22 % check a sha256, 28 % rename an atomically written temp file into place, 28 % call `cancelProcess()`, 27 % carry an R8 keep for the runtime, 4 % pin kotlinx-coroutines >= 1.11.0, 42 % dispatch the download or the engine load off the main thread, and 64 % declare `libOpenCL.so`; the median repository lacks 6 of the 8.
 
 ```kotlin
 // 1. download: URL guessed from the repo name + "resolve/main"; no Range resume, no sha256, a truncated file
