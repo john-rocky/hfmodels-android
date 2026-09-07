@@ -40,4 +40,4 @@ Run the SDK's catalog gate or your own app and record the result as a verificati
 
 ## Catalog entries (repos you cannot edit)
 
-`catalog/entries/*.json` are external descriptors for repos whose owners did not add `hfmodels.json`. Each pins one model commit and records its own origin (this repository) separately from the model origin, so the lock and the report say where each came from. Open a pull request with a spec under `catalog/specs/` and the generated entry.
+`catalog/entries/*.json` are external descriptors for repos whose owners did not add `hfmodels.json`; the bundled asset built from them is public at <https://raw.githubusercontent.com/john-rocky/hfmodels-android/main/core/src/main/assets/hfmodels/catalog.json>. Each pins one model commit and records its own origin (this repository) separately from the model origin, so the lock and the report say where each came from. Open a pull request with a spec under `catalog/specs/` and the generated entry.

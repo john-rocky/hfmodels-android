@@ -27,7 +27,7 @@ That one line brings `hfmodels-core`, `litertlm-android` and `kotlinx-coroutines
 
 ## Ids that load today
 
-A model loads when its repo carries `hfmodels.json` (the publisher's declaration) or when the SDK's bundled catalog has an entry for it. The catalog pins each model to one commit and never re-hosts a file.
+A model loads when its repo carries `hfmodels.json` (the publisher's declaration) or when the SDK's bundled catalog has an entry for it. The catalog pins each model to one commit and never re-hosts a file. The bundled catalog is public: <https://raw.githubusercontent.com/john-rocky/hfmodels-android/main/core/src/main/assets/hfmodels/catalog.json> (entries and their curated specs under `catalog/`).
 
 | id | variant (default) | profiles | verified on (2026-09-07, Pixel 8a, Android 16 CP1A.260505.005, LiteRT-LM 0.16.1) |
 |---|---|---|---|
