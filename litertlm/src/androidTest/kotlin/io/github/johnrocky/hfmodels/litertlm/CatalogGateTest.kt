@@ -34,6 +34,9 @@ import org.junit.runner.RunWith
  *   image     path of a test image on the device (default /data/local/tmp/hfmodels/sample.png)
  * One RESULT line per (entry, variant, profile) under tag "hfmodels-a3"; tools/gate_to_verification.py
  * turns them into verification records. Times are one-shot wall clock.
+ * A load with a thinking channel passes only when none of the channel markers leaked into the text,
+ * and, for a model that reasons by default, when the reasoning arrived in Message.channels
+ * (thought_chars / thought_chunks are logged).
  */
 @RunWith(AndroidJUnit4::class)
 class CatalogGateTest {
@@ -86,10 +89,14 @@ class CatalogGateTest {
                                 s2.closeAndJoin()
                             }
                             s.closeAndJoin()
-                            val ok = r.text.contains("42") && (InputKind.IMAGE !in model.enabledInputs || !image.isFile || imageReply.isNotBlank())
+                            val thinking = model.thinking
+                            val markers = thinking.channels.flatMap { listOf(it.start, it.end) }.map { it.trim() }.filter { it.isNotEmpty() }
+                            val thinkingOk = markers.none { r.text.contains(it) } && (!thinking.reasonsByDefault || r.thought.isNotBlank())
+                            val ok = r.text.contains("42") && thinkingOk && (InputKind.IMAGE !in model.enabledInputs || !image.isFile || imageReply.isNotBlank())
                             if (!ok) failures++
                             Log.i(TAG, "RESULT ok=$ok $label download_ms=$downloadMs prepare_ms=$prepareMs first_chunk_ms=${r.firstChunkMs} gen_ms=${r.totalMs} chunks=${r.chunks} " +
-                                "initialized=${model.info.components.map { "${it.key}=${it.value.initialized}" }} fallback=${model.info.fallbackHistory} reply=${q(r.text)} image_reply=${q(imageReply)} total_ms=${SystemClock.elapsedRealtime() - t0} " +
+                                "initialized=${model.info.components.map { "${it.key}=${it.value.initialized}" }} fallback=${model.info.fallbackHistory} reply=${q(r.text)} image_reply=${q(imageReply)} " +
+                                "thinking=${thinking.source}/${thinking.prefilled}/${if (thinking.reasonsByDefault) "default" else "off"} thought_chars=${r.thought.length} thought_chunks=${r.thoughtChunks} thought=${q(r.thought)} total_ms=${SystemClock.elapsedRealtime() - t0} " +
                                 "sdk=${model.info.sdkVersion} runtime=${model.info.runtime} ${model.info.runtimeVersion} device=${Build.MODEL} build=${Build.DISPLAY}")
                         } finally {
                             model.closeAndJoin()
@@ -114,12 +121,13 @@ class CatalogGateTest {
         assertTrue("$failures gate failure(s); see logcat -s hfmodels-a3", failures == 0)
     }
 
-    private class Collected(val text: String, val chunks: Int, val firstChunkMs: Long, val totalMs: Long)
+    private class Collected(val text: String, val chunks: Int, val firstChunkMs: Long, val totalMs: Long, val thought: String, val thoughtChunks: Int)
+    /** Text and channel content are both incremental: append each chunk's piece. */
     private suspend fun collect(s: ChatSession, contents: Contents): Collected {
-        val sb = StringBuilder(); var n = 0; var first = -1L
+        val sb = StringBuilder(); val th = StringBuilder(); var n = 0; var first = -1L; var thoughtChunks = 0
         val t0 = SystemClock.elapsedRealtime()
-        withTimeout(600_000) { s.stream(contents).collect { m -> if (n == 0) first = SystemClock.elapsedRealtime() - t0; sb.append(m.contents.contents.filterIsInstance<Content.Text>().joinToString("") { it.text }); n++ } }
-        return Collected(sb.toString(), n, first, SystemClock.elapsedRealtime() - t0)
+        withTimeout(600_000) { s.stream(contents).collect { m -> if (n == 0) first = SystemClock.elapsedRealtime() - t0; sb.append(m.text); m.channels.values.firstOrNull()?.let { th.append(it); thoughtChunks++ }; n++ } }
+        return Collected(sb.toString(), n, first, SystemClock.elapsedRealtime() - t0, th.toString(), thoughtChunks)
     }
     private fun q(s: String) = "\"" + s.take(120).replace("\n", " ").replace("\"", "'") + "\""
 

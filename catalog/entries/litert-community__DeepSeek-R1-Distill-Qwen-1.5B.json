@@ -1,0 +1,104 @@
+{
+  "model_id": "litert-community/DeepSeek-R1-Distill-Qwen-1.5B",
+  "model_commit": "2f8b8ee90d8f93b15305b699e8772b277d074a9a",
+  "gated": false,
+  "path": "catalog/entries/litert-community__DeepSeek-R1-Distill-Qwen-1.5B.json",
+  "provenance": "External descriptor for a Google-published bundle (litert-community/DeepSeek-R1-Distill-Qwen-1.5B, ungated). The repo ships no litertlm_manifest.json; backends are declared here and verified by the catalog gate. The bundle's structured template pre-opens the think block (<think> followed by a newline) and declares no channel, so handler_config.channels declares it: the runtime then starts the capture on the prompt and diverts the reasoning into Message.channels.",
+  "descriptor": {
+    "schema_version": 1,
+    "model_id": "litert-community/DeepSeek-R1-Distill-Qwen-1.5B",
+    "tasks": [
+      "chat"
+    ],
+    "default_variant": "q8",
+    "license": {
+      "id": "mit",
+      "url": "https://huggingface.co/deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B/blob/main/LICENSE"
+    },
+    "variants": [
+      {
+        "id": "q8",
+        "runtime": "litert_lm",
+        "handler": {
+          "id": "litertlm.conversation",
+          "abi": 1
+        },
+        "runtime_range": {
+          "min_inclusive": "0.16.0",
+          "max_exclusive": "0.18.0"
+        },
+        "inputs": [
+          "text"
+        ],
+        "files": [
+          {
+            "id": "weights",
+            "role": "model",
+            "path": "DeepSeek-R1-Distill-Qwen-1.5B_multi-prefill-seq_q8_ekv4096.litertlm",
+            "bytes": 1833451520,
+            "sha256": "69b35f01759eed765641ab4af589bbe98131fd2825662a086d9037409b8c1295"
+          }
+        ],
+        "default_profile": "gpu",
+        "profiles": [
+          {
+            "id": "gpu",
+            "priority": 100,
+            "files": [
+              "weights"
+            ],
+            "enabled_inputs": [
+              "text"
+            ],
+            "components": {
+              "language": "gpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "fallback_profiles": [
+              "cpu"
+            ],
+            "default_selectable": true
+          },
+          {
+            "id": "cpu",
+            "priority": 50,
+            "files": [
+              "weights"
+            ],
+            "enabled_inputs": [
+              "text"
+            ],
+            "components": {
+              "language": "cpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "fallback_profiles": [],
+            "default_selectable": true
+          }
+        ],
+        "handler_config": {
+          "metadata_source": "publisher_declared",
+          "context_tokens": 4096,
+          "channels": [
+            {
+              "name": "thought",
+              "start": "<think>\n",
+              "end": "\n</think>"
+            }
+          ],
+          "thinking_default": true
+        }
+      }
+    ]
+  }
+}

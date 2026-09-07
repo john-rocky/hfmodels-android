@@ -1,0 +1,311 @@
+{
+  "model_id": "litert-community/LFM2.5-1.2B-Thinking",
+  "model_commit": "b7d18a2f8de7697cecb0f31b9319c6ba739e5e01",
+  "gated": false,
+  "path": "catalog/entries/litert-community__LFM2.5-1.2B-Thinking.json",
+  "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json. A thinking model: the bundle declares the <think> channel and its generation prompt ends bare, so the model emits the opener itself; handler_config.channels spells the same channel so the SDK applies it to every conversation and reports the reasoning in Message.channels.",
+  "descriptor": {
+    "schema_version": 1,
+    "model_id": "litert-community/LFM2.5-1.2B-Thinking",
+    "tasks": [
+      "chat"
+    ],
+    "default_variant": "int4_gpu",
+    "license": {
+      "id": "lfm-1.0",
+      "url": "https://huggingface.co/LiquidAI/LFM2.5-1.2B-Thinking/blob/main/LICENSE"
+    },
+    "variants": [
+      {
+        "id": "int4_gpu",
+        "runtime": "litert_lm",
+        "handler": {
+          "id": "litertlm.conversation",
+          "abi": 1
+        },
+        "runtime_range": {
+          "min_inclusive": "0.16.0",
+          "max_exclusive": "0.18.0"
+        },
+        "inputs": [
+          "text"
+        ],
+        "files": [
+          {
+            "id": "weights",
+            "role": "model",
+            "path": "LFM2.5-1.2B-Thinking_int4_gpu.litertlm",
+            "bytes": 736220768,
+            "sha256": "75408d4047f15f054403e3d29826b2324c4b8709648c99221daab571f70a6bfd"
+          }
+        ],
+        "default_profile": "gpu",
+        "profiles": [
+          {
+            "id": "gpu",
+            "priority": 100,
+            "files": [
+              "weights"
+            ],
+            "enabled_inputs": [
+              "text"
+            ],
+            "components": {
+              "language": "gpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "fallback_profiles": [
+              "cpu"
+            ],
+            "default_selectable": true
+          },
+          {
+            "id": "cpu",
+            "priority": 50,
+            "files": [
+              "weights"
+            ],
+            "enabled_inputs": [
+              "text"
+            ],
+            "components": {
+              "language": "cpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "fallback_profiles": [],
+            "default_selectable": true
+          }
+        ],
+        "handler_config": {
+          "metadata_source": "litertlm_manifest",
+          "channels": [
+            {
+              "name": "thought",
+              "start": "<think>",
+              "end": "</think>"
+            }
+          ],
+          "thinking_default": true,
+          "context_tokens": 4096,
+          "manifest_min_runtime_version": "0.16.0"
+        }
+      },
+      {
+        "id": "int4",
+        "runtime": "litert_lm",
+        "handler": {
+          "id": "litertlm.conversation",
+          "abi": 1
+        },
+        "runtime_range": {
+          "min_inclusive": "0.16.0",
+          "max_exclusive": "0.18.0"
+        },
+        "inputs": [
+          "text"
+        ],
+        "files": [
+          {
+            "id": "weights",
+            "role": "model",
+            "path": "LFM2.5-1.2B-Thinking_int4.litertlm",
+            "bytes": 736015744,
+            "sha256": "f4f091503ef33c9ad70e2a58f9cbad03a71b3d4d9fe4266b684e8889ec371669"
+          }
+        ],
+        "default_profile": "cpu",
+        "profiles": [
+          {
+            "id": "cpu",
+            "priority": 50,
+            "files": [
+              "weights"
+            ],
+            "enabled_inputs": [
+              "text"
+            ],
+            "components": {
+              "language": "cpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "fallback_profiles": [],
+            "default_selectable": true
+          }
+        ],
+        "handler_config": {
+          "metadata_source": "litertlm_manifest",
+          "channels": [
+            {
+              "name": "thought",
+              "start": "<think>",
+              "end": "</think>"
+            }
+          ],
+          "thinking_default": true,
+          "context_tokens": 4096,
+          "manifest_min_runtime_version": "0.14.0"
+        }
+      },
+      {
+        "id": "int8_gpu",
+        "runtime": "litert_lm",
+        "handler": {
+          "id": "litertlm.conversation",
+          "abi": 1
+        },
+        "runtime_range": {
+          "min_inclusive": "0.16.0",
+          "max_exclusive": "0.18.0"
+        },
+        "inputs": [
+          "text"
+        ],
+        "files": [
+          {
+            "id": "weights",
+            "role": "model",
+            "path": "LFM2.5-1.2B-Thinking_int8_gpu.litertlm",
+            "bytes": 1244763648,
+            "sha256": "11faec13dca0699dae1a43da30f0b5d57c64627edf6c4a6fa16b45b716db1a92"
+          }
+        ],
+        "default_profile": "gpu",
+        "profiles": [
+          {
+            "id": "gpu",
+            "priority": 100,
+            "files": [
+              "weights"
+            ],
+            "enabled_inputs": [
+              "text"
+            ],
+            "components": {
+              "language": "gpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "fallback_profiles": [
+              "cpu"
+            ],
+            "default_selectable": true
+          },
+          {
+            "id": "cpu",
+            "priority": 50,
+            "files": [
+              "weights"
+            ],
+            "enabled_inputs": [
+              "text"
+            ],
+            "components": {
+              "language": "cpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "fallback_profiles": [],
+            "default_selectable": true
+          }
+        ],
+        "handler_config": {
+          "metadata_source": "litertlm_manifest",
+          "channels": [
+            {
+              "name": "thought",
+              "start": "<think>",
+              "end": "</think>"
+            }
+          ],
+          "thinking_default": true,
+          "context_tokens": 4096,
+          "manifest_min_runtime_version": "0.16.0"
+        }
+      },
+      {
+        "id": "int8",
+        "runtime": "litert_lm",
+        "handler": {
+          "id": "litertlm.conversation",
+          "abi": 1
+        },
+        "runtime_range": {
+          "min_inclusive": "0.16.0",
+          "max_exclusive": "0.18.0"
+        },
+        "inputs": [
+          "text"
+        ],
+        "files": [
+          {
+            "id": "weights",
+            "role": "model",
+            "path": "LFM2.5-1.2B-Thinking_int8.litertlm",
+            "bytes": 1244594224,
+            "sha256": "91c044a117066c16e4e318ffc0ac0b2976b4a0af7fbd464054589c34e9220b28"
+          }
+        ],
+        "default_profile": "cpu",
+        "profiles": [
+          {
+            "id": "cpu",
+            "priority": 50,
+            "files": [
+              "weights"
+            ],
+            "enabled_inputs": [
+              "text"
+            ],
+            "components": {
+              "language": "cpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "fallback_profiles": [],
+            "default_selectable": true
+          }
+        ],
+        "handler_config": {
+          "metadata_source": "litertlm_manifest",
+          "channels": [
+            {
+              "name": "thought",
+              "start": "<think>",
+              "end": "</think>"
+            }
+          ],
+          "thinking_default": true,
+          "context_tokens": 4096,
+          "manifest_min_runtime_version": "0.14.0"
+        }
+      }
+    ]
+  }
+}

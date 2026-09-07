@@ -1,0 +1,185 @@
+{
+  "model_id": "litert-community/Qwen3-1.7B",
+  "model_commit": "73fbc3fe8271c162a603ee66f6e7ed25b6211195",
+  "gated": false,
+  "path": "catalog/entries/litert-community__Qwen3-1.7B.json",
+  "provenance": "External descriptor for a mixed repo (litert-community/Qwen3-1.7B, ungated, no litertlm_manifest.json): backends are declared here and verified by the catalog gate. Qwen3 thinks by default. The int4 file declares the thought channel in its own header; the int8 file does not, so handler_config.channels spells it for both.",
+  "descriptor": {
+    "schema_version": 1,
+    "model_id": "litert-community/Qwen3-1.7B",
+    "tasks": [
+      "chat"
+    ],
+    "default_variant": "int4",
+    "license": {
+      "id": "apache-2.0",
+      "url": "https://huggingface.co/Qwen/Qwen3-1.7B/blob/main/LICENSE"
+    },
+    "variants": [
+      {
+        "id": "int4",
+        "runtime": "litert_lm",
+        "handler": {
+          "id": "litertlm.conversation",
+          "abi": 1
+        },
+        "runtime_range": {
+          "min_inclusive": "0.16.0",
+          "max_exclusive": "0.18.0"
+        },
+        "inputs": [
+          "text"
+        ],
+        "files": [
+          {
+            "id": "weights",
+            "role": "model",
+            "path": "Qwen3-1.7B_dynamic_wi4b32_afp32.litertlm",
+            "bytes": 977184032,
+            "sha256": "2eeffef7b51bc3e1225ea69fe7aa5f417397934b56a5b6c20cc068d6fd2c918b"
+          }
+        ],
+        "default_profile": "gpu",
+        "profiles": [
+          {
+            "id": "gpu",
+            "priority": 100,
+            "files": [
+              "weights"
+            ],
+            "enabled_inputs": [
+              "text"
+            ],
+            "components": {
+              "language": "gpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "fallback_profiles": [
+              "cpu"
+            ],
+            "default_selectable": true
+          },
+          {
+            "id": "cpu",
+            "priority": 50,
+            "files": [
+              "weights"
+            ],
+            "enabled_inputs": [
+              "text"
+            ],
+            "components": {
+              "language": "cpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "fallback_profiles": [],
+            "default_selectable": true
+          }
+        ],
+        "handler_config": {
+          "metadata_source": "publisher_declared",
+          "channels": [
+            {
+              "name": "thought",
+              "start": "<think>\n",
+              "end": "\n</think>"
+            }
+          ],
+          "thinking_default": true
+        }
+      },
+      {
+        "id": "int8",
+        "runtime": "litert_lm",
+        "handler": {
+          "id": "litertlm.conversation",
+          "abi": 1
+        },
+        "runtime_range": {
+          "min_inclusive": "0.16.0",
+          "max_exclusive": "0.18.0"
+        },
+        "inputs": [
+          "text"
+        ],
+        "files": [
+          {
+            "id": "weights",
+            "role": "model",
+            "path": "Qwen3_1.7B.litertlm",
+            "bytes": 2056729520,
+            "sha256": "66064a4e9269cb693e124c4e3040bcb8a446b10bca42663896329495add3861c"
+          }
+        ],
+        "default_profile": "gpu",
+        "profiles": [
+          {
+            "id": "gpu",
+            "priority": 100,
+            "files": [
+              "weights"
+            ],
+            "enabled_inputs": [
+              "text"
+            ],
+            "components": {
+              "language": "gpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "fallback_profiles": [
+              "cpu"
+            ],
+            "default_selectable": true
+          },
+          {
+            "id": "cpu",
+            "priority": 50,
+            "files": [
+              "weights"
+            ],
+            "enabled_inputs": [
+              "text"
+            ],
+            "components": {
+              "language": "cpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "fallback_profiles": [],
+            "default_selectable": true
+          }
+        ],
+        "handler_config": {
+          "metadata_source": "publisher_declared",
+          "channels": [
+            {
+              "name": "thought",
+              "start": "<think>\n",
+              "end": "\n</think>"
+            }
+          ],
+          "thinking_default": true
+        }
+      }
+    ]
+  }
+}

@@ -13,6 +13,8 @@ android {
         versionCode = 1
         versionName = "0.1"
         ndk { abiFilters += setOf("arm64-v8a") }
+        // For the drop-in device check (src/androidTest/.../ChatDeviceCheck.kt); an app copies these two lines and the file.
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -34,4 +36,7 @@ dependencies {
     // (hfmodels-core, litertlm-android and kotlinx-coroutines 1.11.0 come with it).
     implementation(project(":litertlm"))
     implementation("androidx.activity:activity:1.10.1")
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.junit)
 }

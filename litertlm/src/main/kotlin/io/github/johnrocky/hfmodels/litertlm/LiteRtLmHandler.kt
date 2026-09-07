@@ -1,8 +1,12 @@
 package io.github.johnrocky.hfmodels.litertlm
 
 import com.google.ai.edge.litertlm.Backend
+import com.google.ai.edge.litertlm.Channel
+import com.google.ai.edge.litertlm.ConversationConfig
 import com.google.ai.edge.litertlm.Engine
 import com.google.ai.edge.litertlm.EngineConfig
+import com.google.ai.edge.litertlm.ExperimentalApi
+import com.google.ai.edge.litertlm.Message
 import io.github.johnrocky.hfmodels.BackendKind
 import io.github.johnrocky.hfmodels.BackendPolicy
 import io.github.johnrocky.hfmodels.ComponentReport
@@ -16,13 +20,19 @@ import io.github.johnrocky.hfmodels.PrepareHost
 import io.github.johnrocky.hfmodels.PreparedModelInfo
 import io.github.johnrocky.hfmodels.descriptor.Profile
 import java.io.File
+import org.json.JSONObject
 
 /**
  * `litertlm.conversation` ABI 1: a `.litertlm` bundle (file role `model`) opened with LiteRT-LM's
  * `Engine`. `handler_config` keys read here:
  *  - `metadata_source`: `litertlm_manifest` | `publisher_declared` (report only on 0.16.x: the
  *    Maven runtime exposes no ModelInfo, so declared inputs are trusted and reported as such);
- *  - `context_tokens` (optional int): the bundle's max_num_tokens when the descriptor fixes it.
+ *  - `context_tokens` (optional int): the bundle's max_num_tokens when the descriptor fixes it;
+ *  - `channels` (optional array of `{name, start, end}`): the reasoning channel(s) every conversation
+ *    applies. When absent, the bundle's own `LlmMetadata.channels` declaration is used; the result
+ *    and whether the rendered generation prompt already opens the channel are reported in
+ *    [ChatModel.thinking];
+ *  - `thinking_default` (optional bool): the model reasons on every turn unless asked not to.
  */
 internal object LiteRtLmHandler : Handler<ChatModel> {
     override val id = "litertlm.conversation"
@@ -41,6 +51,23 @@ internal object LiteRtLmHandler : Handler<ChatModel> {
                 details = mapOf("requested" to requested.toString(), "declared" to declaredContext.toString()),
             )
         } ?: declaredContext
+
+        // Channels: the descriptor's word first, else the bundle's own declaration. Read before any native call.
+        val notes = ArrayList<String>()
+        val descriptorChannels = descriptorChannels(plan.variant.handlerConfig)
+        val bundle = runCatching { LitertlmBundle.read(modelFile) }.onFailure {
+            host.log.w("bundle header of ${modelFile.name} not readable: ${it.message}")
+            notes += "bundle header not readable (${it.message}); channels come from the descriptor only"
+        }.getOrNull()
+        val bundleChannels = bundle?.channels?.map { Channel(it.name, it.start, it.end) } ?: emptyList()
+        val (channels, channelSource) = when {
+            descriptorChannels.isNotEmpty() -> descriptorChannels to "descriptor"
+            bundleChannels.isNotEmpty() -> bundleChannels to "bundle"
+            else -> emptyList<Channel>() to "none"
+        }
+        if (descriptorChannels.isNotEmpty() && bundleChannels.isNotEmpty() && descriptorChannels != bundleChannels) {
+            notes += "descriptor channels ${channels.describe()} override the bundle's ${bundleChannels.describe()}"
+        }
 
         val fallbackHistory = ArrayList<String>()
         var profile: Profile = plan.profile
@@ -74,13 +101,14 @@ internal object LiteRtLmHandler : Handler<ChatModel> {
                 profile = next
                 continue
             }
+            val thinking = if (channels.isEmpty()) ThinkingInfo.NONE else probeThinking(engine, channels, channelSource, bundle, plan.variant.handlerConfig.optBoolean("thinking_default", false), host, notes)
             val components = LinkedHashMap<String, ComponentReport>()
             components["language"] = ComponentReport(requested = plan.profile.components["language"]!!, initialized = language)
             vision?.let { components["vision"] = ComponentReport(requested = plan.profile.components["vision"] ?: it, initialized = it) }
-            val notes = ArrayList<String>()
             notes += "observed backend is UNKNOWN: litertlm-android $runtimeVersion exposes no per-component execution report; 'initialized' is the backend the Engine was configured with"
             if (runtimeVersion.startsWith("0.16.")) notes += "no runtime metadata check on litertlm-android $runtimeVersion (Capabilities has no input-modality API); declared inputs come from the descriptor (${plan.variant.handlerConfig.optString("metadata_source", "publisher_declared")})"
             if (fallbackHistory.isNotEmpty()) notes += "fallback applied: " + fallbackHistory.joinToString(" | ")
+            if (thinking.channels.isNotEmpty()) notes += "thinking: channels=${thinking.channels.describe()} source=${thinking.source} prefilled=${thinking.prefilled} reasons_by_default=${thinking.reasonsByDefault}"
             val info = PreparedModelInfo(
                 repoId = plan.ref.repoId, commit = plan.modelOrigin.commit, descriptorSha256 = plan.descriptorSha256, descriptorOrigin = plan.descriptorOrigin,
                 bindingSource = plan.bindingSource, variantId = plan.variant.id, profileId = profile.id, sdkVersion = host.sdkVersion,
@@ -89,9 +117,45 @@ internal object LiteRtLmHandler : Handler<ChatModel> {
                 components = components, excludedProfiles = plan.excludedProfiles, fallbackHistory = fallbackHistory, verification = plan.verification,
                 notes = notes, files = local.files.mapValues { it.value.absolutePath },
             )
-            return LiteRtLmChatModel(engine, info, profile.enabledInputs, plan.options, host)
+            return LiteRtLmChatModel(engine, info, profile.enabledInputs, thinking, plan.options, host)
         }
     }
+
+    /** `handler_config.channels`: `[{"name": "thought", "start": "<think>", "end": "</think>"}]`. */
+    private fun descriptorChannels(hc: JSONObject): List<Channel> {
+        val arr = hc.optJSONArray("channels") ?: return emptyList()
+        return List(arr.length()) { i ->
+            val o = arr.optJSONObject(i) ?: throw ModelException(ErrorCode.MANIFEST_INVALID, "handler_config.channels[$i] is not an object")
+            val name = o.optString("name", ""); val start = o.optString("start", ""); val end = o.optString("end", "")
+            if (name.isEmpty() || start.isEmpty()) throw ModelException(ErrorCode.MANIFEST_INVALID, "handler_config.channels[$i] needs a non-empty name and start")
+            Channel(name, start, end)
+        }
+    }
+
+    /**
+     * Renders the generation prompt the runtime itself would send for a first user turn (a throwaway
+     * Conversation, closed at once; no token is generated) and applies the runtime's open-channel rule
+     * to it. Falls back to the bundle's structured `model.prefix` when the render is unavailable.
+     */
+    @OptIn(ExperimentalApi::class)
+    private fun probeThinking(engine: Engine, channels: List<Channel>, source: String, bundle: LitertlmBundle?, reasonsByDefault: Boolean, host: PrepareHost, notes: MutableList<String>): ThinkingInfo {
+        val rendered = runCatching {
+            val conv = engine.createConversation(ConversationConfig(channels = channels))
+            try { conv.renderMessageIntoString(Message.user(PROBE_TEXT)) } finally { runCatching { conv.close() } }
+        }.onFailure { host.log.w("thinking probe: the runtime did not render the generation prompt: ${it.message}") }.getOrNull()
+        val prompt = rendered ?: bundle?.modelPrefix?.takeIf { it.isNotEmpty() }
+        if (rendered == null) notes += if (prompt != null) "thinking: generation prompt taken from the bundle's model prefix (runtime render unavailable)" else "thinking: generation prompt unknown (runtime render unavailable, no structured prefix)"
+        return ThinkingInfo(
+            channels = channels,
+            source = source,
+            prefilled = prompt?.let { openChannelName(it, channels.map { c -> ChannelMarkers(c.channelName, c.start, c.end) }) != null },
+            generationPromptTail = prompt?.takeLast(TAIL_CHARS)?.escape(),
+            reasonsByDefault = reasonsByDefault,
+        )
+    }
+
+    private fun List<Channel>.describe() = joinToString(",", "[", "]") { "${it.channelName} ${it.start.escape()}..${it.end.escape()}" }
+    private fun String.escape() = replace("\n", "\\n")
 
     /** The next fallback profile (spec §9.3): same variant, listed on the failed profile, eligible, files already local, at most 3 tries, image capability kept. */
     private fun nextFallback(plan: io.github.johnrocky.hfmodels.ModelPlan<ChatModel>, failed: Profile, local: LocalModel<ChatModel>, attempts: Int): Profile? {
@@ -112,4 +176,7 @@ internal object LiteRtLmHandler : Handler<ChatModel> {
         BackendKind.GPU -> Backend.GPU()
         BackendKind.NPU -> Backend.NPU()
     }
+
+    private const val PROBE_TEXT = "Hello"
+    private const val TAIL_CHARS = 48
 }

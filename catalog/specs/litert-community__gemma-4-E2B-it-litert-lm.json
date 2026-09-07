@@ -9,7 +9,7 @@
     "id": "gemma",
     "url": "https://ai.google.dev/gemma/terms"
   },
-  "provenance": "External descriptor for a Google-published bundle (litert-community/gemma-4-E2B-it-litert-lm, ungated on 2026-09-07). The SDK points at the repo's own file at this commit; it does not re-host it. Profiles were verified on a Pixel 8a with the SDK's catalog gate (see verification/).",
+  "provenance": "External descriptor for a Google-published bundle (litert-community/gemma-4-E2B-it-litert-lm, ungated on 2026-09-07). The SDK points at the repo's own file at this commit; it does not re-host it. Profiles were verified on a Pixel 8a with the SDK's catalog gate (see verification/). The bundle declares its thought channel (<|channel>thought ... <channel|>) in its own header; it is spelled here so the descriptor is complete. Gemma 4 does not reason unless thinking is enabled, so no thinking_default.",
   "variants": [
     {
       "id": "default",
@@ -111,7 +111,14 @@
         }
       ],
       "handler_config": {
-        "metadata_source": "publisher_declared"
+        "metadata_source": "publisher_declared",
+        "channels": [
+          {
+            "name": "thought",
+            "start": "<|channel>thought\n",
+            "end": "<channel|>"
+          }
+        ]
       }
     }
   ]

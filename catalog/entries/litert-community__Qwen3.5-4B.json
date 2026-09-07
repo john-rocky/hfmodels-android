@@ -1,0 +1,173 @@
+{
+  "model_id": "litert-community/Qwen3.5-4B",
+  "model_commit": "f06d1275eb219ff140d11d08b586cf9bb55b8fd6",
+  "gated": false,
+  "path": "catalog/entries/litert-community__Qwen3.5-4B.json",
+  "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json. The packaged chat template closes the think block in the generation prompt, so the model answers without reasoning and no channel is declared. The int8 file (4.4 GB) is listed for devices with more memory; the default is the mixed int4 file.",
+  "descriptor": {
+    "schema_version": 1,
+    "model_id": "litert-community/Qwen3.5-4B",
+    "tasks": [
+      "chat"
+    ],
+    "default_variant": "mixed_int4",
+    "license": {
+      "id": "apache-2.0",
+      "url": "https://huggingface.co/Qwen/Qwen3.5-4B/blob/main/LICENSE"
+    },
+    "variants": [
+      {
+        "id": "mixed_int4",
+        "runtime": "litert_lm",
+        "handler": {
+          "id": "litertlm.conversation",
+          "abi": 1
+        },
+        "runtime_range": {
+          "min_inclusive": "0.16.0",
+          "max_exclusive": "0.18.0"
+        },
+        "inputs": [
+          "text"
+        ],
+        "files": [
+          {
+            "id": "weights",
+            "role": "model",
+            "path": "Qwen3.5-4B_mixed_int4.litertlm",
+            "bytes": 2754365536,
+            "sha256": "176b5a2b6c20bde7739fba98e653a04f5d5b4a753a4b9dd0ff529aba7c35be99"
+          }
+        ],
+        "default_profile": "gpu",
+        "profiles": [
+          {
+            "id": "gpu",
+            "priority": 100,
+            "files": [
+              "weights"
+            ],
+            "enabled_inputs": [
+              "text"
+            ],
+            "components": {
+              "language": "gpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "fallback_profiles": [
+              "cpu"
+            ],
+            "default_selectable": true
+          },
+          {
+            "id": "cpu",
+            "priority": 50,
+            "files": [
+              "weights"
+            ],
+            "enabled_inputs": [
+              "text"
+            ],
+            "components": {
+              "language": "cpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "fallback_profiles": [],
+            "default_selectable": true
+          }
+        ],
+        "handler_config": {
+          "metadata_source": "litertlm_manifest",
+          "context_tokens": 4096,
+          "manifest_min_runtime_version": "0.15.0"
+        }
+      },
+      {
+        "id": "int8",
+        "runtime": "litert_lm",
+        "handler": {
+          "id": "litertlm.conversation",
+          "abi": 1
+        },
+        "runtime_range": {
+          "min_inclusive": "0.16.0",
+          "max_exclusive": "0.18.0"
+        },
+        "inputs": [
+          "text"
+        ],
+        "files": [
+          {
+            "id": "weights",
+            "role": "model",
+            "path": "Qwen3.5-4B_int8.litertlm",
+            "bytes": 4407428464,
+            "sha256": "f0abbbc69b4126ddcb208a75e8904ecadff87aa24202e3de6ffd518c198af1ec"
+          }
+        ],
+        "default_profile": "gpu",
+        "profiles": [
+          {
+            "id": "gpu",
+            "priority": 100,
+            "files": [
+              "weights"
+            ],
+            "enabled_inputs": [
+              "text"
+            ],
+            "components": {
+              "language": "gpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "fallback_profiles": [
+              "cpu"
+            ],
+            "default_selectable": true
+          },
+          {
+            "id": "cpu",
+            "priority": 50,
+            "files": [
+              "weights"
+            ],
+            "enabled_inputs": [
+              "text"
+            ],
+            "components": {
+              "language": "cpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "fallback_profiles": [],
+            "default_selectable": true
+          }
+        ],
+        "handler_config": {
+          "metadata_source": "litertlm_manifest",
+          "context_tokens": 4096,
+          "manifest_min_runtime_version": "0.15.0"
+        }
+      }
+    ]
+  }
+}

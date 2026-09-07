@@ -24,6 +24,7 @@ import io.github.johnrocky.hfmodels.Tasks
 import io.github.johnrocky.hfmodels.litertlm.ChatModel
 import io.github.johnrocky.hfmodels.litertlm.ChatSession
 import io.github.johnrocky.hfmodels.litertlm.SessionState
+import io.github.johnrocky.hfmodels.litertlm.text
 import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -108,7 +109,8 @@ class MainActivity : ComponentActivity() {
                 chat = model
                 val i = model.info
                 status.text = "Ready: ${i.repoId}@${i.commit.take(8)} ${i.variantId}/${i.profileId} " +
-                    i.components.entries.joinToString(" ") { "${it.key}=${it.value.initialized}" } + " (LiteRT-LM ${i.runtimeVersion})"
+                    i.components.entries.joinToString(" ") { "${it.key}=${it.value.initialized}" } + " (LiteRT-LM ${i.runtimeVersion})" +
+                    if (model.thinking.channels.isEmpty()) "" else " thinking=${model.thinking.source}/${if (model.thinking.reasonsByDefault) "default" else "off"}"
                 session = model.createConversation(ConversationConfig(systemInstruction = Contents.of("You are a helpful assistant.")))
                 send.isEnabled = true; release.isEnabled = true
                 image.isEnabled = InputKind.IMAGE in model.enabledInputs
@@ -149,7 +151,10 @@ class MainActivity : ComponentActivity() {
                     ConversationConfig(systemInstruction = Contents.of("You are a helpful assistant.")),
                 ).also { session = it }
                 val contents = if (img != null) Contents.of(Content.ImageFile(img.absolutePath), Content.Text(text)) else Contents.of(Content.Text(text))
-                s.stream(contents).collect { m -> append(m.contents.contents.filterIsInstance<Content.Text>().joinToString("") { it.text }) }
+                // The answer is m.text; a thinking model's reasoning streams separately in m.channels (incremental, like the text) and is not shown inline.
+                val reasoning = StringBuilder()
+                s.stream(contents).collect { m -> append(m.text); m.channels.values.firstOrNull()?.let { reasoning.append(it) } }
+                if (reasoning.isNotEmpty()) append("\n[${reasoning.length} characters of reasoning kept out of the answer]")
             } catch (e: ModelException) {
                 append("[${e.code}: ${e.reason}]")
             } finally {

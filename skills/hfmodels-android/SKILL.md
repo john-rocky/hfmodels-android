@@ -19,7 +19,7 @@ Scope: an app that already exists, a model that is registered (its repo carries 
 - It brings LiteRT-LM 0.16.1 and kotlinx-coroutines 1.11.0 as `api` dependencies — do not add or pin them yourself, and do not add `com.google.ai.edge.litert:litert` unless the app uses LiteRT's CompiledModel (that AAR needs `android.uniquePackageNames=false` on AGP 9).
 - `docs/api.md` is the complete public surface with imports and signatures, including the four runtime types an app touches (`Contents`, `Content`, `ConversationConfig`, `Message`). Read it instead of unzipping the sources jar or running `javap` on the runtime — there is nothing else to find.
 
-Ids that work today without touching the model repo: `catalog/entries/*.json` (Qwen2.5-1.5B-Instruct q8, LFM2.5-1.2B-Instruct, LFM2.5-VL-1.6B, gemma-4-E2B-it, gemma-4-E4B-it — see the README table for which profiles were verified on which device). Thinking models (Qwen3, DeepSeek-R1-Distill, `*-Thinking`) are not in the catalog and 0.1.0 has no thinking-channel handling: if the user asks for one, say so and offer a catalogued instruct model instead of forcing it through `descriptorJson`.
+Ids that work today without touching the model repo: `catalog/entries/*.json` — the README table says which profiles were verified on which device; only those rows count as "works". Thinking models (Qwen3, DeepSeek-R1-Distill, `*-Thinking`): 0.1.0 has no thinking-channel handling, so on 0.1.0 say so and offer a catalogued instruct model instead of forcing one through `descriptorJson`; from 0.1.1 the catalog carries them and the reasoning arrives in `m.channels["thought"]` while `m.text` is the answer (`docs/api.md`, "Thinking models" — read it before touching one).
 
 ## Traps: your training data is stale here
 
@@ -50,7 +50,7 @@ Ids that work today without touching the model repo: `catalog/entries/*.json` (Q
    val chat = models.fromPretrained(ModelRef("litert-community/gemma-4-E2B-it-litert-lm"), Tasks.Chat) { e -> status.text = e.toString() }
    val session = chat.createConversation(ConversationConfig(systemInstruction = Contents.of("You are a helpful assistant.")))
    ```
-3. Send: `session.stream(Contents.of(prompt)).collect { m -> append(m.contents.contents.filterIsInstance<Content.Text>().joinToString("") { it.text }) }` — chunks are incremental: append, never replace.
+3. Send: `session.stream(Contents.of(prompt)).collect { m -> append(m.contents.contents.filterIsInstance<Content.Text>().joinToString("") { it.text }) }` — chunks are incremental: append, never replace. (0.1.1: `append(m.text)` with `import io.github.johnrocky.hfmodels.litertlm.text`; a thinking model's reasoning streams piece by piece in `m.channels["thought"]`, never in the text — append it too if you show it.)
 4. Stop: cancel the collecting `Job`. Then `createConversation()` again before the next send (check `session.state == SessionState.READY`).
 5. Release: `withContext(NonCancellable) { chat.closeAndJoin() }` when the screen goes away or the user asks.
 6. Errors: catch `ModelException`, show `"${e.code}: ${e.reason}"`, and act per `docs/errors.md`.
@@ -132,8 +132,20 @@ Screen: a Load button + status text, a scrolling transcript, an input row with S
 ## Step 3: verify, in this order
 
 1. `./gradlew assembleDebug` must pass.
-2. On a connected device (`export ANDROID_SERIAL=<serial>`): install, push the model if you have it (Step 1.4), open the chat screen and press Load. Watch `adb logcat -s hfmodels` — the SDK prints one line per stage (`download …` / `side-loaded …` / `ready … profile=cpu prepare_ms=…`); poll that instead of dumping the UI — in a foreground loop (`until adb logcat -d -s hfmodels | grep -q ready; do sleep 5; done`), never by parking the wait in a background task and ending your turn. Then type the prompt and press Send. When driving the UI from adb: `input text 'What%sis%s17%s+%s25?%sAnswer%sbriefly.'`, then hide the keyboard (`adb shell input keyevent 4` while the keyboard is up) before tapping Send at the bounds from `uiautomator dump`, and read the reply from your own `e1` log line.
-3. No device: say so. Report "build verified; device check not run" and hand over the exact steps. Never present an unverified integration as verified.
+2. **The device check, as a test, not by driving the UI** (SDK 0.1.1 or newer; on 0.1.0 skip to 3). Copy the drop-in file into the app and run it against the app's model id:
+   ```sh
+   mkdir -p app/src/androidTest/kotlin && curl -fsSL https://raw.githubusercontent.com/john-rocky/hfmodels-android/main/samples/chat/src/androidTest/kotlin/io/github/johnrocky/hfmodels/check/ChatDeviceCheck.kt -o app/src/androidTest/kotlin/ChatDeviceCheck.kt
+   # app/build.gradle.kts: defaultConfig { testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner" }
+   #                       dependencies { androidTestImplementation("androidx.test:runner:1.7.0"); androidTestImplementation("androidx.test.ext:junit:1.3.0") }
+   export ANDROID_SERIAL=<serial>
+   ./gradlew :app:connectedDebugAndroidTest -Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true \
+     -Pandroid.testInstrumentationRunnerArguments.class=io.github.johnrocky.hfmodels.check.ChatDeviceCheck \
+     -Pandroid.testInstrumentationRunnerArguments.model=<the id the app loads>
+   adb logcat -d -s hfmodels-check | grep RESULT
+   ```
+   The gradle task fails unless every step passed; the last line is `RESULT ok=true model=… device=…`. It runs in the app's own process and leaves the model file where the app's `fromPretrained` finds it, so a first download happens once. Keep the file in the app (it is the regression test the user will want).
+3. On a connected device (`export ANDROID_SERIAL=<serial>`), the app's own screen once: install, push the model if you have it (Step 1.4), open the chat screen and press Load. Watch `adb logcat -s hfmodels` — the SDK prints one line per stage (`download …` / `side-loaded …` / `ready … profile=cpu prepare_ms=…`); poll that instead of dumping the UI — in a foreground loop (`until adb logcat -d -s hfmodels | grep -q ready; do sleep 5; done`), never by parking the wait in a background task and ending your turn. Then type the prompt and press Send. When driving the UI from adb: `input text 'What%sis%s17%s+%s25?%sAnswer%sbriefly.'`, then hide the keyboard (`adb shell input keyevent 4` while the keyboard is up) before tapping Send at the bounds from `uiautomator dump`, and read the reply from your own `e1` log line. When step 2 passed, this is a smoke of the screen wiring only; do not repeat the model checks by hand.
+4. No device: say so. Report "build verified; device check not run" and hand over the exact steps. Never present an unverified integration as verified.
 
 ## Troubleshooting
 
@@ -147,3 +159,4 @@ Screen: a Load button + status text, a scrolling transcript, an input row with S
 | model keeps decoding after Stop | the runtime flow was collected directly: use `ChatSession.stream` |
 | every launch loads slowly | the compile cache is in `cacheDir/hfmodels`; do not clear it between launches |
 | app killed while loading | not enough free RAM for the bundle: pick a smaller variant or model |
+| a thinking model answers with an empty string, or `<think>` shows in the text | 0.1.0 has no channel handling (upgrade to 0.1.1); on 0.1.1 an empty answer is the output cap hit inside the reasoning: raise `GenerationOptions(maxOutputTokens = …)`, never lower it |

@@ -1,0 +1,103 @@
+{
+  "model_id": "litert-community/Qwen3-4B",
+  "model_commit": "84cc5a35c9c65cd18fcd65bb1f3a7d77a4acfe6e",
+  "gated": false,
+  "path": "catalog/entries/litert-community__Qwen3-4B.json",
+  "provenance": "External descriptor for a Google-published bundle (litert-community/Qwen3-4B, ungated, no litertlm_manifest.json): backends are declared here and verified by the catalog gate. Qwen3 thinks by default and the bundle declares no channel, so handler_config.channels spells it. The 5.7 GB int8 file is left out: it does not fit the 8 GB phone the gate runs on.",
+  "descriptor": {
+    "schema_version": 1,
+    "model_id": "litert-community/Qwen3-4B",
+    "tasks": [
+      "chat"
+    ],
+    "default_variant": "mixed_int4",
+    "license": {
+      "id": "apache-2.0",
+      "url": "https://huggingface.co/Qwen/Qwen3-4B/blob/main/LICENSE"
+    },
+    "variants": [
+      {
+        "id": "mixed_int4",
+        "runtime": "litert_lm",
+        "handler": {
+          "id": "litertlm.conversation",
+          "abi": 1
+        },
+        "runtime_range": {
+          "min_inclusive": "0.16.0",
+          "max_exclusive": "0.18.0"
+        },
+        "inputs": [
+          "text"
+        ],
+        "files": [
+          {
+            "id": "weights",
+            "role": "model",
+            "path": "qwen3_4b_mixed_int4.litertlm",
+            "bytes": 2659057664,
+            "sha256": "f0794bc77efeaaf4f7af815f04c483b19b8f2ae4a102cef1b7b760a25848a18e"
+          }
+        ],
+        "default_profile": "gpu",
+        "profiles": [
+          {
+            "id": "gpu",
+            "priority": 100,
+            "files": [
+              "weights"
+            ],
+            "enabled_inputs": [
+              "text"
+            ],
+            "components": {
+              "language": "gpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "fallback_profiles": [
+              "cpu"
+            ],
+            "default_selectable": true
+          },
+          {
+            "id": "cpu",
+            "priority": 50,
+            "files": [
+              "weights"
+            ],
+            "enabled_inputs": [
+              "text"
+            ],
+            "components": {
+              "language": "cpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "fallback_profiles": [],
+            "default_selectable": true
+          }
+        ],
+        "handler_config": {
+          "metadata_source": "publisher_declared",
+          "channels": [
+            {
+              "name": "thought",
+              "start": "<think>\n",
+              "end": "\n</think>"
+            }
+          ],
+          "thinking_default": true
+        }
+      }
+    ]
+  }
+}

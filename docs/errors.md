@@ -25,7 +25,7 @@ Every failure is a `ModelException` with a `code` (below), a `reason`, `retryabl
 | `OFFLINE_CACHE_MISS` | `NetworkPolicy.Offline`, and the descriptor, binding or a file is not cached. | Load once online (this saves the binding), or pin a commit and side-load with `importFile`. |
 | `UNSUPPORTED_INPUT` | The content kind is not enabled by this load (image on a text-only profile, audio, two images). | Check `ChatModel.enabledInputs`; load with `requiredInputs = setOf(TEXT, IMAGE)` for a VLM. |
 | `INVALID_INPUT` | Image missing / undecodable / over `maxImageBytes` or `maxImagePixels`. | Resize or fix the file. The session stays READY. |
-| `UNSUPPORTED_CONFIGURATION` | A `ConversationConfig` feature outside this release (tools, response format, LoRA, channels, thinking), or `contextTokens` above the declared maximum. | Remove the option. Nothing was passed to the runtime. |
+| `UNSUPPORTED_CONFIGURATION` | A `ConversationConfig` feature outside this release (tools, response format, LoRA; 0.1.0 also refused channels and thinking), or `contextTokens` above the declared maximum. | Remove the option. Nothing was passed to the runtime. |
 | `CONTEXT_LIMIT_EXCEEDED` | The prompt plus history exceed the context. | Start a new conversation or shorten the input. |
 | `MODEL_BUSY` | A second `prepare` while a model is open, or a second generation while one runs. | Close / wait; one native model per client, one generation per model. |
 | `MODEL_CLOSED` | The client, model or session is closing or closed. | Create a new one. |

@@ -1,0 +1,169 @@
+{
+  "model_id": "litert-community/LFM2.5-VL-450M",
+  "revision": "52cc7a762b850c370c6a5b817418e80f25ade9d8",
+  "tasks": [
+    "chat"
+  ],
+  "default_variant": "int4",
+  "license": {
+    "id": "lfm-1.0",
+    "url": "https://huggingface.co/LiquidAI/LFM2.5-VL-450M/blob/main/LICENSE"
+  },
+  "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json. The vision encoder runs on the CPU in every profile, as for LFM2.5-VL-1.6B, whose encoder does not compile on the Pixel GPU delegate; the language graph runs on the GPU in the gpu profile.",
+  "variants": [
+    {
+      "id": "int4",
+      "runtime": "litert_lm",
+      "handler": {
+        "id": "litertlm.conversation",
+        "abi": 1
+      },
+      "runtime_range": {
+        "min_inclusive": "0.16.0",
+        "max_exclusive": "0.18.0"
+      },
+      "inputs": [
+        "text",
+        "image"
+      ],
+      "files": [
+        {
+          "id": "weights",
+          "role": "model",
+          "path": "LFM2.5-VL-450M_int4.litertlm"
+        }
+      ],
+      "default_profile": "gpu",
+      "profiles": [
+        {
+          "id": "gpu",
+          "priority": 100,
+          "files": [
+            "weights"
+          ],
+          "enabled_inputs": [
+            "text",
+            "image"
+          ],
+          "components": {
+            "language": "gpu",
+            "vision": "cpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "fallback_profiles": [
+            "cpu"
+          ],
+          "default_selectable": true
+        },
+        {
+          "id": "cpu",
+          "priority": 50,
+          "files": [
+            "weights"
+          ],
+          "enabled_inputs": [
+            "text",
+            "image"
+          ],
+          "components": {
+            "language": "cpu",
+            "vision": "cpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "fallback_profiles": [],
+          "default_selectable": true
+        }
+      ],
+      "handler_config": {
+        "metadata_source": "litertlm_manifest"
+      }
+    },
+    {
+      "id": "int8",
+      "runtime": "litert_lm",
+      "handler": {
+        "id": "litertlm.conversation",
+        "abi": 1
+      },
+      "runtime_range": {
+        "min_inclusive": "0.16.0",
+        "max_exclusive": "0.18.0"
+      },
+      "inputs": [
+        "text",
+        "image"
+      ],
+      "files": [
+        {
+          "id": "weights",
+          "role": "model",
+          "path": "LFM2.5-VL-450M_int8.litertlm"
+        }
+      ],
+      "default_profile": "gpu",
+      "profiles": [
+        {
+          "id": "gpu",
+          "priority": 100,
+          "files": [
+            "weights"
+          ],
+          "enabled_inputs": [
+            "text",
+            "image"
+          ],
+          "components": {
+            "language": "gpu",
+            "vision": "cpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "fallback_profiles": [
+            "cpu"
+          ],
+          "default_selectable": true
+        },
+        {
+          "id": "cpu",
+          "priority": 50,
+          "files": [
+            "weights"
+          ],
+          "enabled_inputs": [
+            "text",
+            "image"
+          ],
+          "components": {
+            "language": "cpu",
+            "vision": "cpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "fallback_profiles": [],
+          "default_selectable": true
+        }
+      ],
+      "handler_config": {
+        "metadata_source": "litertlm_manifest"
+      }
+    }
+  ]
+}

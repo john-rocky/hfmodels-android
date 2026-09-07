@@ -11,3 +11,4 @@
 - [Tested runtime matrix](https://raw.githubusercontent.com/john-rocky/hfmodels-android/main/tested-runtime-matrix.json): verified runtime versions per device, with logs
 - [Bundled catalog](https://raw.githubusercontent.com/john-rocky/hfmodels-android/main/core/src/main/assets/hfmodels/catalog.json): the ids the SDK resolves without touching the model repo (curated specs under https://github.com/john-rocky/hfmodels-android/tree/main/catalog)
 - [Sample app](https://github.com/john-rocky/hfmodels-android/tree/main/samples/chat): the chat screen on the SDK
+- [Device check, drop-in](https://raw.githubusercontent.com/john-rocky/hfmodels-android/main/samples/chat/src/androidTest/kotlin/io/github/johnrocky/hfmodels/check/ChatDeviceCheck.kt): one file to copy into an app's androidTest; proves load / answer / Stop / release on the connected phone and prints RESULT lines (0.1.1+)

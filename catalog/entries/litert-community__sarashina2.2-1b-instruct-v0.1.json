@@ -1,0 +1,173 @@
+{
+  "model_id": "litert-community/sarashina2.2-1b-instruct-v0.1",
+  "model_commit": "3fe4df268f1bb37a049777bf69747b4b5b4fb710",
+  "gated": false,
+  "path": "catalog/entries/litert-community__sarashina2.2-1b-instruct-v0.1.json",
+  "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json. A Japanese / English instruct model on the structured template; no channel.",
+  "descriptor": {
+    "schema_version": 1,
+    "model_id": "litert-community/sarashina2.2-1b-instruct-v0.1",
+    "tasks": [
+      "chat"
+    ],
+    "default_variant": "int4",
+    "license": {
+      "id": "mit",
+      "url": "https://huggingface.co/sbintuitions/sarashina2.2-1b-instruct-v0.1/blob/main/LICENSE"
+    },
+    "variants": [
+      {
+        "id": "int4",
+        "runtime": "litert_lm",
+        "handler": {
+          "id": "litertlm.conversation",
+          "abi": 1
+        },
+        "runtime_range": {
+          "min_inclusive": "0.16.0",
+          "max_exclusive": "0.18.0"
+        },
+        "inputs": [
+          "text"
+        ],
+        "files": [
+          {
+            "id": "weights",
+            "role": "model",
+            "path": "sarashina2.2-1b-instruct-v0.1_int4.litertlm",
+            "bytes": 903657808,
+            "sha256": "7313d5f3442f0b412d975ba6fbc4567a5c2c076f6cd49038e55a3f82522f02b7"
+          }
+        ],
+        "default_profile": "gpu",
+        "profiles": [
+          {
+            "id": "gpu",
+            "priority": 100,
+            "files": [
+              "weights"
+            ],
+            "enabled_inputs": [
+              "text"
+            ],
+            "components": {
+              "language": "gpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "fallback_profiles": [
+              "cpu"
+            ],
+            "default_selectable": true
+          },
+          {
+            "id": "cpu",
+            "priority": 50,
+            "files": [
+              "weights"
+            ],
+            "enabled_inputs": [
+              "text"
+            ],
+            "components": {
+              "language": "cpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "fallback_profiles": [],
+            "default_selectable": true
+          }
+        ],
+        "handler_config": {
+          "metadata_source": "litertlm_manifest",
+          "context_tokens": 4096,
+          "manifest_min_runtime_version": "0.16.0"
+        }
+      },
+      {
+        "id": "int8",
+        "runtime": "litert_lm",
+        "handler": {
+          "id": "litertlm.conversation",
+          "abi": 1
+        },
+        "runtime_range": {
+          "min_inclusive": "0.16.0",
+          "max_exclusive": "0.18.0"
+        },
+        "inputs": [
+          "text"
+        ],
+        "files": [
+          {
+            "id": "weights",
+            "role": "model",
+            "path": "sarashina2.2-1b-instruct-v0.1_int8.litertlm",
+            "bytes": 1504709824,
+            "sha256": "6b9967b24dbf7af4252a671f9f255400905ed940f47ddeccc86eb10d2b96bee5"
+          }
+        ],
+        "default_profile": "gpu",
+        "profiles": [
+          {
+            "id": "gpu",
+            "priority": 100,
+            "files": [
+              "weights"
+            ],
+            "enabled_inputs": [
+              "text"
+            ],
+            "components": {
+              "language": "gpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "fallback_profiles": [
+              "cpu"
+            ],
+            "default_selectable": true
+          },
+          {
+            "id": "cpu",
+            "priority": 50,
+            "files": [
+              "weights"
+            ],
+            "enabled_inputs": [
+              "text"
+            ],
+            "components": {
+              "language": "cpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "fallback_profiles": [],
+            "default_selectable": true
+          }
+        ],
+        "handler_config": {
+          "metadata_source": "litertlm_manifest",
+          "context_tokens": 4096,
+          "manifest_min_runtime_version": "0.16.0"
+        }
+      }
+    ]
+  }
+}
