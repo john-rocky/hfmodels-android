@@ -15,7 +15,7 @@ Scope: an app that already exists, a model that is registered (its repo carries 
 
 ## Step 0: resolve versions from the repository, never from memory
 
-Read `gradle.properties` (`litertlmVersion`, `coroutinesVersion`) and `tested-runtime-matrix.json` (verified runtime + device rows). The dependency is the SDK's `hfmodels-litertlm` artifact; LiteRT-LM and kotlinx-coroutines 1.11.0 come with it as `api` dependencies — do not add or pin them yourself, and do not add `com.google.ai.edge.litert:litert` unless the app uses LiteRT's CompiledModel (that AAR needs `android.uniquePackageNames=false` on AGP 9).
+Read `gradle.properties` (`litertlmVersion`, `coroutinesVersion`) and `tested-runtime-matrix.json` (verified runtime + device rows). The dependency is `io.github.john-rocky.hfmodels:hfmodels-litertlm:<version from gradle.properties or the README>` from Maven Central; LiteRT-LM and kotlinx-coroutines 1.11.0 come with it as `api` dependencies — do not add or pin them yourself, and do not add `com.google.ai.edge.litert:litert` unless the app uses LiteRT's CompiledModel (that AAR needs `android.uniquePackageNames=false` on AGP 9).
 
 Ids that work today without touching the model repo: `catalog/entries/*.json` (Qwen2.5-1.5B-Instruct q8, LFM2.5-1.2B-Instruct, LFM2.5-VL-1.6B, gemma-4-E2B-it, gemma-4-E4B-it — see the README table for which profiles were verified on which device).
 
@@ -115,7 +115,7 @@ Screen: a Load button + status text, a scrolling transcript, an input row with S
 | Symptom | Cause, fix |
 |---|---|
 | `The 'org.jetbrains.kotlin.android' plugin is no longer required` | standalone Kotlin plugin on AGP 9: remove it |
-| `Could not resolve io.github.johnrocky.hfmodels:...` | repository missing (`mavenCentral()` / the local repo this session names), or a guessed version: re-read `gradle.properties` |
+| `Could not resolve io.github.john-rocky.hfmodels:...` | repository missing (`mavenCentral()` / the local repo this session names), or a guessed version: re-read `gradle.properties` |
 | `MODEL_NOT_REGISTERED` | the id has no `hfmodels.json` and no catalog entry: pick a catalogued id or ask the publisher |
 | `STORAGE_FULL` before any download | not enough free space for the file plus 256 MiB: free space, or `models.evict(plan)` |
 | `SESSION_INVALIDATED` on the turn after Stop | expected: `createConversation()` again |

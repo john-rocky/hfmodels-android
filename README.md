@@ -1,6 +1,6 @@
 # hfmodels for Android
 
-Give it a Hugging Face model id; get a model you can chat with, on the phone, offline after one download.
+An independent, third-party library: give it a Hugging Face model id; get a model you can chat with, on the phone, offline after one download. Not affiliated with Google, Hugging Face or the model publishers.
 
 ```kotlin
 val models = HfModels(applicationContext)
@@ -12,15 +12,15 @@ withContext(NonCancellable) { chat.closeAndJoin() }
 
 Under the hood it is Google's LiteRT-LM runtime (`com.google.ai.edge.litertlm`). The SDK adds the part the runtime leaves to every app: resolving the id to an immutable commit, downloading with resume and a sha256 check, choosing a backend profile the device can run, initializing, a streaming Flow whose cancel really stops the model, and a release that waits for the native side. The `Contents` / `Content` / `Message` / `ConversationConfig` types are the runtime's own, so nothing has to be unlearned.
 
-**Status: private preview (working title). Not on Maven Central yet.** Verified on one device; see the table and `tested-runtime-matrix.json`.
+**Status: 0.1.0, early.** One device verified (the table below and `tested-runtime-matrix.json`); the API may still move before 1.0.
 
 ## Add it
 
 ```kotlin
-// settings.gradle.kts: repositories google() and mavenCentral() (plus the local repo named by whoever gave you this build)
+// settings.gradle.kts: repositories google() and mavenCentral()
 // app/build.gradle.kts
 android { defaultConfig { minSdk = 31 } }
-dependencies { implementation("io.github.johnrocky.hfmodels:hfmodels-litertlm:0.1.0-local") }
+dependencies { implementation("io.github.john-rocky.hfmodels:hfmodels-litertlm:0.1.0") }
 ```
 
 That one line brings `hfmodels-core`, `litertlm-android` and `kotlinx-coroutines-android 1.11.0` (the version the runtime's bytecode needs; its POM understates it). Toolchain this was built with: AGP 9.3.1, Gradle 9.7.0, compileSdk 36, JDK 17, Kotlin built into AGP (do not apply the standalone Kotlin plugin). The SDK's manifest declares the GPU's `uses-native-library` entries and `INTERNET` (the first download only); its consumer R8 rules keep what the runtime's JNI looks up by name — with `minifyEnabled true` and nothing else, generation works.
@@ -42,6 +42,10 @@ Each cell is one run of the catalog gate (`tools/gate.sh`): a real download from
 Development shortcut: a copy of the file pushed into the app's external files directory (`adb push <file> /sdcard/Android/data/<applicationId>/files/`) is hashed and imported instead of downloaded; a file that does not match the descriptor's sha256 is ignored. `adb logcat -s hfmodels` prints one line per stage (`download`, `side-loaded`, `ready … profile=… prepare_ms=…`).
 
 `ModelRef(id, revision = "<commit>", variant = "<id>")` pins more. Without a revision the first successful load binds the id to the commit it resolved, and later loads (also offline) use that binding until you call `unbind`.
+
+## What it changed for a coding agent, measured
+
+One phone, one day, one task: on a Pixel 8a (Android 16), with the same host, the same model (`litert-community/Qwen2.5-1.5B-Instruct`, q8) and Claude Fable 5.1 driving Claude Code for three runs per arm, adding an offline chat screen to an existing Compose app took a mean of 339 s from start to the first correct reply on the phone with this SDK and its skill, against 877 s for the same agent given the official LiteRT-LM Android documentation and the on-device-recipes skill in the same hour (61 % less), and against 521 s for that hand-roll arm's best set earlier the same day (35 % less). Writing the code took the same time in both arms; the difference came from what the SDK and the skill carry as procedure and guarantee: how the weight reaches the phone, a `ready` line to wait on, the Compose input row and the Send sequence. Two Codex runs per arm pointed the same way (37 % less). Defects in the final apps on the eight-item checklist below: 0 with the SDK, 2 with the recipe, median 6 across the 328 public repositories. The pre-registered protocol, the transcripts and the numbers per run are in the evaluation record (kept with the author; to be published with the record). These are numbers about one phone and one host, not about anyone else's.
 
 ## What the five lines replace
 

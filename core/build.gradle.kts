@@ -1,7 +1,7 @@
 // hfmodels-core: ModelRef, resolver, HF client, cache, report, errors. No runtime dependency.
 plugins {
     id("com.android.library")
-    id("maven-publish")
+    id("com.vanniktech.maven.publish") version "0.33.0"
 }
 
 val coroutinesVersion: String = providers.gradleProperty("coroutinesVersion").get()
@@ -22,9 +22,6 @@ android {
     testOptions {
         unitTests.isReturnDefaultValues = true
     }
-    publishing {
-        singleVariant("release") { withSourcesJar() }
-    }
 }
 
 
@@ -36,16 +33,27 @@ dependencies {
     testImplementation("org.json:json:20250517")
 }
 
-publishing {
-    publications {
-        register<MavenPublication>("release") {
-            groupId = "io.github.johnrocky.hfmodels"
-            artifactId = "hfmodels-core"
-            version = project.findProperty("hfmodelsVersion") as String? ?: "0.1.0-SNAPSHOT"
-            afterEvaluate { from(components["release"]) }
+mavenPublishing {
+    // Maven Central (Central Portal). Credentials and the signing key come from ~/.gradle/gradle.properties
+    // (mavenCentralUsername / mavenCentralPassword / signingInMemoryKey / signingInMemoryKeyPassword), never from this file.
+    publishToMavenCentral()
+    signAllPublications()
+    coordinates("io.github.john-rocky.hfmodels", "hfmodels-core", project.findProperty("hfmodelsVersion") as String? ?: "0.1.0")
+    pom {
+        name.set("hfmodels-core")
+        description.set("hfmodels core: Hugging Face model ids to verified local files, descriptor and catalog readers, typed errors (no runtime dependency)")
+        url.set("https://github.com/john-rocky/hfmodels-android")
+        licenses { license { name.set("Apache-2.0"); url.set("https://www.apache.org/licenses/LICENSE-2.0.txt") } }
+        developers { developer { id.set("john-rocky"); name.set("Daisuke Majima"); url.set("https://github.com/john-rocky") } }
+        scm {
+            url.set("https://github.com/john-rocky/hfmodels-android")
+            connection.set("scm:git:https://github.com/john-rocky/hfmodels-android.git")
+            developerConnection.set("scm:git:git@github.com:john-rocky/hfmodels-android.git")
         }
     }
-    repositories {
-        maven { name = "local"; url = uri(rootProject.layout.projectDirectory.dir("local-maven")) }
-    }
+}
+
+// The E1 harness resolves the SDK from a local directory: ./gradlew publishAllPublicationsToLocalRepository -PhfmodelsVersion=0.1.0-local
+publishing {
+    repositories { maven { name = "local"; url = uri(rootProject.layout.projectDirectory.dir("local-maven")) } }
 }

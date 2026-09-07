@@ -1,7 +1,7 @@
 // hfmodels-litertlm: the LiteRT-LM adapter (ChatModel / ChatSession) on top of hfmodels-core.
 plugins {
     id("com.android.library")
-    id("maven-publish")
+    id("com.vanniktech.maven.publish") version "0.33.0"
 }
 
 val litertlmVersion: String = providers.gradleProperty("litertlmVersion").get()
@@ -21,9 +21,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-    }
-    publishing {
-        singleVariant("release") { withSourcesJar() }
     }
     // litertlm-android 0.17.0 ships Kotlin 2.4 metadata, which the Kotlin built into AGP 9.3.1 refuses.
     // -PskipKotlinMetadataCheck=true is a re-gate switch, not a supported configuration.
@@ -47,16 +44,27 @@ dependencies {
     androidTestImplementation(libs.junit)
 }
 
-publishing {
-    publications {
-        register<MavenPublication>("release") {
-            groupId = "io.github.johnrocky.hfmodels"
-            artifactId = "hfmodels-litertlm"
-            version = project.findProperty("hfmodelsVersion") as String? ?: "0.1.0-SNAPSHOT"
-            afterEvaluate { from(components["release"]) }
+mavenPublishing {
+    // Maven Central (Central Portal). Credentials and the signing key come from ~/.gradle/gradle.properties
+    // (mavenCentralUsername / mavenCentralPassword / signingInMemoryKey / signingInMemoryKeyPassword), never from this file.
+    publishToMavenCentral()
+    signAllPublications()
+    coordinates("io.github.john-rocky.hfmodels", "hfmodels-litertlm", project.findProperty("hfmodelsVersion") as String? ?: "0.1.0")
+    pom {
+        name.set("hfmodels-litertlm")
+        description.set("hfmodels adapter for Google's LiteRT-LM runtime: ChatModel / ChatSession with a managed streaming bridge, cancel and release")
+        url.set("https://github.com/john-rocky/hfmodels-android")
+        licenses { license { name.set("Apache-2.0"); url.set("https://www.apache.org/licenses/LICENSE-2.0.txt") } }
+        developers { developer { id.set("john-rocky"); name.set("Daisuke Majima"); url.set("https://github.com/john-rocky") } }
+        scm {
+            url.set("https://github.com/john-rocky/hfmodels-android")
+            connection.set("scm:git:https://github.com/john-rocky/hfmodels-android.git")
+            developerConnection.set("scm:git:git@github.com:john-rocky/hfmodels-android.git")
         }
     }
-    repositories {
-        maven { name = "local"; url = uri(rootProject.layout.projectDirectory.dir("local-maven")) }
-    }
+}
+
+// The E1 harness resolves the SDK from a local directory: ./gradlew publishAllPublicationsToLocalRepository -PhfmodelsVersion=0.1.0-local
+publishing {
+    repositories { maven { name = "local"; url = uri(rootProject.layout.projectDirectory.dir("local-maven")) } }
 }
