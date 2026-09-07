@@ -1,0 +1,204 @@
+{
+  "$comment": "What was verified with which exact runtime, read from the AARs (javap on classes.jar, strings on the JNI .so) and from named devices. Not a compatibility promise for anything not listed. Dates are the day the row was measured.",
+  "toolchain": {
+    "agp": "9.3.1",
+    "gradle": "9.7.0",
+    "compileSdk": 36,
+    "minSdk": 31,
+    "jdk": "17 (temurin-17.0.16)",
+    "kotlin": "built into AGP 9.3.1 (2.2.x); the standalone org.jetbrains.kotlin.android plugin must not be applied",
+    "gradle_properties": {
+      "android.uniquePackageNames": "false (litert 2.2.0 and litert-api 2.2.0 both declare namespace com.google.ai.edge.litert; AGP 9 rejects that by default, measured 2026-09-07)"
+    }
+  },
+  "pins": {
+    "com.google.ai.edge.litertlm:litertlm-android": "0.16.1",
+    "org.jetbrains.kotlinx:kotlinx-coroutines-android": "1.11.0",
+    "com.google.ai.edge.litert:litert": "2.2.0",
+    "com.google.ai.edge.litert:litert-api": "2.2.0 (transitive from litert)"
+  },
+  "runtimes": {
+    "litertlm-android": {
+      "0.16.1": {
+        "source": "https://dl.google.com/android/maven2/com/google/ai/edge/litertlm/litertlm-android/0.16.1/litertlm-android-0.16.1.aar",
+        "aar_bytes": 20189426,
+        "github_tag": "v0.16.1 (2026-08-18)",
+        "min_sdk": 24,
+        "pom_deps": {
+          "gson": "2.13.2",
+          "kotlin-reflect": "2.2.21",
+          "kotlinx-coroutines-android": "1.9.0"
+        },
+        "coroutines_floor": "1.11.0 (bytecode calls SendChannel.close$default; the POM's 1.9.0 crashes at end of turn, LiteRT-LM #3334)",
+        "jni": {
+          "arm64-v8a": "liblitertlm_jni.so 21529648 bytes, LiteRT statically linked, DT_NEEDED = android z GLESv2 EGL dl GLESv3 log m c"
+        },
+        "jni_findclass": [
+          "InputData$Audio",
+          "InputData$Image",
+          "InputData$Text",
+          "LiteRtLmJniException",
+          "BenchmarkInfo"
+        ],
+        "proguard_txt": false,
+        "capabilities_api": [
+          "hasSpeculativeDecodingSupport()"
+        ],
+        "model_info_api": false,
+        "engine_config": "EngineConfig(modelPath, backend, visionBackend, audioBackend, maxNumTokens, maxNumImages, cacheDir)",
+        "conversation_config": "ConversationConfig(systemInstruction, initialMessages, tools, samplerConfig, automaticToolCalling, channels, extraContext, loraConfig, prefillPrefaceOnInit, maxOutputToken, thinkingConfig, enableResponseFormat) — no enableSpeculativeDecoding in the AAR (main has it)",
+        "send_message_async": "sendMessageAsync(message, callback, extraContext, repetitionPenaltyConfig, noRepeatNgramConfig, suppressTokensConfig, maxOutputToken, thinkingConfig, responseFormat); the Flow overload wraps it with trySend-result dropped and an empty awaitClose",
+        "cancel": "Conversation.cancelProcess(); reaches the callback as onError(CancellationException)",
+        "backends": [
+          "CPU(threadCount)",
+          "GPU()",
+          "NPU(nativeLibraryDir)",
+          "GOOGLE_TENSOR()"
+        ],
+        "kotlin_metadata": "compiles with the Kotlin built into AGP 9.3.1"
+      },
+      "0.17.0": {
+        "source": "https://dl.google.com/android/maven2/com/google/ai/edge/litertlm/litertlm-android/0.17.0/litertlm-android-0.17.0.aar",
+        "aar_bytes": 20492644,
+        "github_tag": "none on 2026-09-07 (AAR published 2026-09-04 ahead of a tag)",
+        "min_sdk": 24,
+        "pom_deps": {
+          "gson": "2.14.0",
+          "kotlin-reflect": "2.4.0",
+          "kotlinx-coroutines-android": "1.11.0"
+        },
+        "jni": {
+          "arm64-v8a": "liblitertlm_jni.so 21802960 bytes"
+        },
+        "jni_findclass": [
+          "InputData$Audio",
+          "InputData$Image",
+          "InputData$Text",
+          "LiteRtLmJniException",
+          "BenchmarkInfo",
+          "EmbeddingResponse"
+        ],
+        "proguard_txt": false,
+        "capabilities_api": [
+          "hasSpeculativeDecodingSupport()",
+          "supportsThinking()",
+          "supportsFunctionCalling()",
+          "inputModalities(): SupportedModalities{text,vision,audio,video}",
+          "defaultSamplerParams(): SamplerParameters",
+          "maxVisionTokenBudget()"
+        ],
+        "model_info_api": false,
+        "new_top_level_classes_vs_0_16_1": [
+          "EmbeddingEngine",
+          "EmbeddingEngineConfig",
+          "EmbeddingOptions",
+          "EmbeddingResponse",
+          "SamplerParameters",
+          "SupportedModalities"
+        ],
+        "engine_config": "same constructor as 0.16.1",
+        "conversation_config": "same constructor as 0.16.1",
+        "kotlin_metadata": "2.4.0; the Kotlin built into AGP 9.3.1 refuses it ('binary version of its metadata is 2.4.0, expected version is 2.2.0'); -Xskip-metadata-version-check compiles it (re-gate only, not a supported configuration)"
+      }
+    },
+    "litert": {
+      "2.2.0": {
+        "source": "https://dl.google.com/android/maven2/com/google/ai/edge/litert/litert/2.2.0/litert-2.2.0.aar",
+        "aar_bytes": 11761541,
+        "min_sdk": 24,
+        "pom_deps": {
+          "litert-api": "2.2.0"
+        },
+        "jni": {
+          "arm64-v8a": [
+            "libLiteRt.so 5508376",
+            "libLiteRtClGlAccelerator.so 3105544"
+          ]
+        },
+        "manifest": "declares uses-native-library for libOpenCL.so, libOpenCL-car.so, libOpenCL-pixel.so, libvndksupport.so, libcdsprpc.so, libedgetpu_*.so and the MediaTek neuron/apuware/mvpu libraries (all required=false), uses-feature android.hardware.npu, and uses-permission FOREGROUND_SERVICE + FOREGROUND_SERVICE_DATA_SYNC; all of it merges into the app manifest",
+        "proguard_txt": "keeps only org.tensorflow.lite.annotations.UsedByReflection",
+        "namespace": "com.google.ai.edge.litert (same as litert-api)"
+      }
+    },
+    "litert-api": {
+      "2.2.0": {
+        "source": "https://dl.google.com/android/maven2/com/google/ai/edge/litert/litert-api/2.2.0/litert-api-2.2.0.aar",
+        "aar_bytes": 934666,
+        "min_sdk": 24,
+        "pom_deps": {
+          "lifecycle-runtime": "2.10.0",
+          "guava": "33.5.0-android",
+          "kotlinx-coroutines-guava": "1.8.0",
+          "com.google.android.play:ai-delivery": "0.1.1-alpha01"
+        },
+        "transitive_from_ai_delivery": {
+          "androidx.work:work-runtime": "2.9.1",
+          "androidx.room:room-runtime": "2.5.0",
+          "extra_permissions_merged": [
+            "WAKE_LOCK",
+            "ACCESS_NETWORK_STATE",
+            "RECEIVE_BOOT_COMPLETED"
+          ]
+        },
+        "jni": {
+          "arm64-v8a": "liblitert_jni.so 528696 bytes; dlopens libLiteRt.so"
+        },
+        "jni_findclass": [
+          "LiteRtException",
+          "TensorBufferRequirements",
+          "TensorType",
+          "TensorType$ElementType",
+          "TensorType$Layout"
+        ],
+        "proguard_txt": "keeps only org.tensorflow.lite.annotations.UsedByReflection",
+        "r8": "with proguard-android-optimize.txt and no app rules the process dies in androidx.startup (WorkManager) before any app code: Room 2.5.0's consumer rule keeps WorkDatabase_Impl but not its <init>(). Needs -keep class * extends androidx.room.RoomDatabase { <init>(); } (measured 2026-09-07, Pixel 8a)",
+        "compiled_model_api": "CompiledModel.create(path | assets, Options(vararg Accelerator), Environment?) ; Accelerator = NONE CPU GPU NPU ; TensorBuffer.writeFloat/readFloat"
+      }
+    }
+  },
+  "devices": [
+    {
+      "device": "Pixel 8a",
+      "serial_note": "one unit, Tensor G3",
+      "os": "Android 16",
+      "build": "CP1A.260505.005",
+      "date": "2026-09-07",
+      "harness": "probes/coexist/run.sh keepwork-keepjni (release APK, R8 with proguard-android-optimize.txt, litertlm/consumer-rules.pro + probes/coexist/proguard-work.pro)",
+      "litertlm_android": "0.16.1",
+      "litert": "2.2.0",
+      "kotlinx_coroutines": "1.11.0",
+      "model": "litert-community/Qwen2.5-1.5B-Instruct q8 (faa60663…) via /data/local/tmp; litert-community/yolox-nano-litert@50af9253 yolox_nano.tflite",
+      "checks": {
+        "litertlm_cpu": "PASS (load 7595 ms, 11 decode tokens, one-shot)",
+        "litert_gpu_yolox": "PASS (3 detections)",
+        "litertlm_gpu": "PASS (first load 48892 ms = OpenCL kernel build, LITERT_CL delegate on 1359/1359 decode + 1409/1409 prefill nodes)",
+        "litert_cpu_yolox": "PASS",
+        "both_open_gpu": "PASS (LiteRT-LM GPU engine and CompiledModel GPU open at once, used alternately)",
+        "litertlm_stream_cpu": "PASS (10 chunks)"
+      },
+      "r8_without_keeps": "nokeep: process dies in androidx.startup (WorkManager/Room from litert-api's Play ai-delivery); keepwork only: SIGABRT in nativeConversationGetBenchmarkInfo (BenchmarkInfo stripped); narrow keep (5 FindClass classes): SIGABRT in streaming (JniMessageCallbackImpl.onMessage renamed)",
+      "evidence": "probes/coexist/results/2026-09-07-4C131JEKB15210-0.16.1-*.log"
+    },
+    {
+      "device": "Pixel 8a",
+      "os": "Android 16",
+      "build": "CP1A.260505.005",
+      "date": "2026-09-07",
+      "harness": "probes/coexist/run.sh keepwork-keepjni 0.17.0 (adds -PskipKotlinMetadataCheck=true)",
+      "litertlm_android": "0.17.0",
+      "litert": "2.2.0",
+      "kotlinx_coroutines": "1.11.0",
+      "model": "same as the 0.16.1 row",
+      "checks": {
+        "litertlm_cpu": "PASS",
+        "litert_gpu_yolox": "PASS",
+        "litertlm_gpu": "PASS (load 4628 ms with a warm cache)",
+        "litert_cpu_yolox": "PASS",
+        "both_open_gpu": "PASS",
+        "litertlm_stream_cpu": "PASS"
+      },
+      "caveat": "compiled with -Xskip-metadata-version-check because the AAR carries Kotlin 2.4.0 metadata; not the pinned configuration",
+      "evidence": "probes/coexist/results/2026-09-07-4C131JEKB15210-0.17.0-keepwork-keepjni.log"
+    }
+  ]
+}

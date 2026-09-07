@@ -1,0 +1,7 @@
+# hfmodels A0 coexist probe  cfg=keepwork + the NARROW keep (5 FindClass classes only; litertlm/consumer-rules.pro as first written)  date=2026-09-07T03:17:20Z serial=4C131JEKB15210 litertlm=0.16.1 (0.17.0 identical at 03:18:52Z)
+# The four sync checks passed (RESULT lines were lost to a logcat filter bug in the harness, see run.sh), then the streaming callback check aborted:
+DEBUG   :     from com.google.ai.edge.litertlm.BenchmarkInfo com.google.ai.edge.litertlm.LiteRtLmJni.nativeConversationGetBenchmarkInfo(long)'
+DEBUG   :     in call to NewObjectV
+DEBUG   : Abort message: 'JNI DETECTED ERROR IN APPLICATION: mid == null
+DEBUG   : Abort message: 'Throwing new exception 'no non-static method "Leb0;.onDone()V"' with unexpected pending exception: java.lang.NoSuchMethodError: no non-static method "Leb0;.onMessage(Ljava/lang/String;)V"
+DEBUG   : Abort message: 'Throwing new exception 'no non-static method "Lr30;.onDone()V"' with unexpected pending exception: java.lang.NoSuchMethodError: no non-static method "Lr30;.onMessage(Ljava/lang/String;)V"

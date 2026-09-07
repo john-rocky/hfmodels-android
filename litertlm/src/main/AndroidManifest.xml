@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <!-- Required by the LiteRT-LM GPU backend on Android 12+ (Engine.initialize() succeeds without
+             them and the first message fails with "Can not find OpenCL library"). Merged into apps. -->
+        <uses-native-library android:name="libOpenCL.so" android:required="false" />
+        <uses-native-library android:name="libOpenCL-pixel.so" android:required="false" />
+        <uses-native-library android:name="libvndksupport.so" android:required="false" />
+    </application>
+</manifest>

@@ -1,0 +1,23 @@
+# Gradle / IDE
+build/
+.gradle/
+.kotlin/
+local.properties
+.idea/
+*.iml
+.DS_Store
+
+# Model weights and images are never committed; tests read them from the device
+*.litertlm
+*.tflite
+*.bin
+*.png
+*.jpg
+
+# Build outputs
+*.apk
+*.aab
+*.aar
+
+# Local Maven staging used by the E1 harness (published by ./gradlew publishToLocalRepo)
+local-maven/

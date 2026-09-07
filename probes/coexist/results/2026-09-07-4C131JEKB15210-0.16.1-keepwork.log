@@ -1,0 +1,57 @@
+# hfmodels A0 coexist probe  date=2026-09-07T03:16:43Z serial=4C131JEKB15210 cfg=keepwork props=-PkeepWork=true
+# device=Pixel 8a build=CP1A.260505.005 android=16 thermal=Thermal Status: 0
+# apk bytes=32230036 sha256=c2503963ea1639dfb6f1158b1e6374c6979a5d078cf2f3bf282eb3dd2ba6dd90 git=n/a
+# so=lib/arm64-v8a/libLiteRt.so lib/arm64-v8a/libLiteRtClGlAccelerator.so lib/arm64-v8a/liblitert_jni.so lib/arm64-v8a/liblitertlm_jni.so 
+--------- beginning of crash
+09-07 12:16:59.957  7387  7387 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+09-07 12:16:59.957  7387  7387 F DEBUG   : Build fingerprint: 'google/akita/akita:16/CP1A.260505.005/15081906:user/release-keys'
+09-07 12:16:59.957  7387  7387 F DEBUG   : Kernel Release: '6.1.145-android14-11-gfa1d6308d1fe-ab14691759'
+09-07 12:16:59.957  7387  7387 F DEBUG   : Revision: 'MP1.0'
+09-07 12:16:59.957  7387  7387 F DEBUG   : ABI: 'arm64'
+09-07 12:16:59.957  7387  7387 F DEBUG   : Timestamp: 2026-09-07 12:16:59.342904085+0900
+09-07 12:16:59.957  7387  7387 F DEBUG   : Process uptime: 11s
+09-07 12:16:59.957  7387  7387 F DEBUG   : Executable: /system/bin/app_process64
+09-07 12:16:59.957  7387  7387 F DEBUG   : Cmdline: io.github.johnrocky.hfmodels.probe.coexist
+09-07 12:16:59.957  7387  7387 F DEBUG   : pid: 7303, tid: 7328, name: Thread-2  >>> io.github.johnrocky.hfmodels.probe.coexist <<<
+09-07 12:16:59.957  7387  7387 F DEBUG   : uid: 10396
+09-07 12:16:59.957  7387  7387 F DEBUG   : tagged_addr_ctrl: 0000000000000001 (PR_TAGGED_ADDR_ENABLE)
+09-07 12:16:59.957  7387  7387 F DEBUG   : pac_enabled_keys: 000000000000000f (PR_PAC_APIAKEY, PR_PAC_APIBKEY, PR_PAC_APDAKEY, PR_PAC_APDBKEY)
+09-07 12:16:59.957  7387  7387 F DEBUG   : esr: 0000000092000006 (Data Abort Exception 0x24)
+09-07 12:16:59.957  7387  7387 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+09-07 12:16:59.957  7387  7387 F DEBUG   : Abort message: 'JNI DETECTED ERROR IN APPLICATION: mid == null
+09-07 12:16:59.957  7387  7387 F DEBUG   :     in call to NewObjectV
+09-07 12:16:59.957  7387  7387 F DEBUG   :     from com.google.ai.edge.litertlm.BenchmarkInfo com.google.ai.edge.litertlm.LiteRtLmJni.nativeConversationGetBenchmarkInfo(long)'
+09-07 12:16:59.957  7387  7387 F DEBUG   :     x0  0000000000000000  x1  0000000000001ca0  x2  0000000000000006  x3  0000006dad2b9fb0
+09-07 12:16:59.957  7387  7387 F DEBUG   :     x4  5151441f43445342  x5  5151441f43445342  x6  5151441f43445342  x7  7f7f7f7f7f7f7f7f
+09-07 12:16:59.957  7387  7387 F DEBUG   :     x8  00000000000000f0  x9  966ee8dddfe84193  x10 0000000000000001  x11 00000070876ecab0
+09-07 12:16:59.957  7387  7387 F DEBUG   :     x12 000000006a9e2cab  x13 000000007fffffff  x14 00000000097d8614  x15 0000246b21ecaad0
+09-07 12:16:59.957  7387  7387 F DEBUG   :     x16 0000007087754130  x17 000000708773bfc0  x18 0000006d4db14000  x19 0000000000001c87
+09-07 12:16:59.957  7387  7387 F DEBUG   :     x20 0000000000001ca0  x21 00000000ffffffff  x22 0000006dec410000  x23 0000006dad2bb200
+09-07 12:16:59.957  7387  7387 F DEBUG   :     x24 0000006dec410000  x25 0000006dad2bb200  x26 0000006dad2ba1c0  x27 0000007095fa4e40
+09-07 12:16:59.957  7387  7387 F DEBUG   :     x28 0000007095fa4e80  x29 0000006dad2ba030
+09-07 12:16:59.957  7387  7387 F DEBUG   :     lr  00000070876d495c  sp  0000006dad2b9fb0  pc  00000070876d4980  pst 0000000000001000
+09-07 12:16:59.957  7387  7387 F DEBUG   :     esr 0000000092000006  vg  0000000000000002
+09-07 12:16:59.957  7387  7387 F DEBUG   : 22 total frames
+09-07 12:16:59.957  7387  7387 F DEBUG   : backtrace:
+09-07 12:16:59.957  7387  7387 F DEBUG   :       #00 pc 0000000000077980  /apex/com.android.runtime/lib64/bionic/libc.so (abort+160) (BuildId: 43764f6fa9e16b18fa315be8700f5d9c)
+09-07 12:16:59.957  7387  7387 F DEBUG   :       #01 pc 000000000060c628  /apex/com.android.art/lib64/libart.so (art::Runtime::Abort(char const*)+612) (BuildId: cecb684d19b4f44ee3cbd66142c315f4)
+09-07 12:16:59.957  7387  7387 F DEBUG   :       #02 pc 000000000001644c  /apex/com.android.art/lib64/libbase.so (android::base::SetAborter(std::__1::function<void (char const*)>&&)::$_0::__invoke(char const*)+84) (BuildId: 6fabc39c947e59790084bf0be7368dcb)
+09-07 12:16:59.957  7387  7387 F DEBUG   :       #03 pc 0000000000015b8c  /apex/com.android.art/lib64/libbase.so (android::base::LogMessage::~LogMessage()+556) (BuildId: 6fabc39c947e59790084bf0be7368dcb)
+09-07 12:16:59.957  7387  7387 F DEBUG   :       #04 pc 000000000037e74c  /apex/com.android.art/lib64/libart.so (art::JavaVMExt::JniAbort(char const*, char const*)+1116) (BuildId: cecb684d19b4f44ee3cbd66142c315f4)
+09-07 12:16:59.957  7387  7387 F DEBUG   :       #05 pc 00000000002a0a08  /apex/com.android.art/lib64/libart.so (art::JNI<false>::NewObjectV(_JNIEnv*, _jclass*, _jmethodID*, std::__va_list)+1140) (BuildId: cecb684d19b4f44ee3cbd66142c315f4)
+09-07 12:16:59.957  7387  7387 F DEBUG   :       #06 pc 000000000063d064  /data/app/~~6YD9CNPJAtxemRGn43DKOA==/io.github.johnrocky.hfmodels.probe.coexist-S0WHg3SpBYgOgm-mHp11Xg==/base.apk!liblitertlm_jni.so (offset 0xa20000) (BuildId: f67124c0097e4b504202f1c6783aa111)
+09-07 12:16:59.957  7387  7387 F DEBUG   :       #07 pc 0000000000636fbc  /data/app/~~6YD9CNPJAtxemRGn43DKOA==/io.github.johnrocky.hfmodels.probe.coexist-S0WHg3SpBYgOgm-mHp11Xg==/base.apk!liblitertlm_jni.so (offset 0xa20000) (Java_com_google_ai_edge_litertlm_LiteRtLmJni_nativeConversationGetBenchmarkInfo+688) (BuildId: f67124c0097e4b504202f1c6783aa111)
+09-07 12:16:59.957  7387  7387 F DEBUG   :       #08 pc 0000000000d42b6c  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (art_jni_trampoline+108)
+09-07 12:16:59.957  7387  7387 F DEBUG   :       #09 pc 000000000072bb3c  /apex/com.android.art/lib64/libart.so (nterp_helper+2732) (BuildId: cecb684d19b4f44ee3cbd66142c315f4)
+09-07 12:16:59.957  7387  7387 F DEBUG   :       #10 pc 0000000000115122  /data/app/~~6YD9CNPJAtxemRGn43DKOA==/io.github.johnrocky.hfmodels.probe.coexist-S0WHg3SpBYgOgm-mHp11Xg==/base.apk (io.github.johnrocky.hfmodels.probe.coexist.ProbeActivity.b+198)
+09-07 12:16:59.957  7387  7387 F DEBUG   :       #11 pc 000000000072b884  /apex/com.android.art/lib64/libart.so (nterp_helper+2036) (BuildId: cecb684d19b4f44ee3cbd66142c315f4)
+09-07 12:16:59.957  7387  7387 F DEBUG   :       #12 pc 00000000000c007c  /data/app/~~6YD9CNPJAtxemRGn43DKOA==/io.github.johnrocky.hfmodels.probe.coexist-S0WHg3SpBYgOgm-mHp11Xg==/base.apk (g40.l+1068)
+09-07 12:16:59.957  7387  7387 F DEBUG   :       #13 pc 000000000072b884  /apex/com.android.art/lib64/libart.so (nterp_helper+2036) (BuildId: cecb684d19b4f44ee3cbd66142c315f4)
+09-07 12:16:59.957  7387  7387 F DEBUG   :       #14 pc 000000000005dd34  /data/app/~~6YD9CNPJAtxemRGn43DKOA==/io.github.johnrocky.hfmodels.probe.coexist-S0WHg3SpBYgOgm-mHp11Xg==/base.apk (m9.run+928)
+09-07 12:16:59.957  7387  7387 F DEBUG   :       #15 pc 0000000000319d10  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (java.lang.Thread.run+64)
+09-07 12:16:59.957  7387  7387 F DEBUG   :       #16 pc 00000000002aaf94  /apex/com.android.art/lib64/libart.so (art_quick_invoke_stub+612) (BuildId: cecb684d19b4f44ee3cbd66142c315f4)
+09-07 12:16:59.957  7387  7387 F DEBUG   :       #17 pc 00000000002a9268  /apex/com.android.art/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+148) (BuildId: cecb684d19b4f44ee3cbd66142c315f4)
+09-07 12:16:59.957  7387  7387 F DEBUG   :       #18 pc 00000000004e1a68  /apex/com.android.art/lib64/libart.so (art::Thread::CreateCallback(void*)+1384) (BuildId: cecb684d19b4f44ee3cbd66142c315f4)
+09-07 12:16:59.957  7387  7387 F DEBUG   :       #19 pc 00000000004e14ec  /apex/com.android.art/lib64/libart.so (art::Thread::CreateCallbackWithUffdGc(void*)+12) (BuildId: cecb684d19b4f44ee3cbd66142c315f4)
+09-07 12:16:59.957  7387  7387 F DEBUG   :       #20 pc 000000000008a714  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*) (.__uniq.67847048707805468364044055584648682506)+180) (BuildId: 43764f6fa9e16b18fa315be8700f5d9c)
+09-07 12:16:59.957  7387  7387 F DEBUG   :       #21 pc 000000000007b3b4  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+68) (BuildId: 43764f6fa9e16b18fa315be8700f5d9c)

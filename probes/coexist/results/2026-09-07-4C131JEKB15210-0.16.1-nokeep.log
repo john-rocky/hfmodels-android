@@ -1,0 +1,34 @@
+# hfmodels A0 coexist probe  date=2026-09-07T03:04:04Z serial=4C131JEKB15210 cfg=nokeep props=none
+# device=Pixel 8a build=CP1A.260505.005 android=16 thermal=Thermal Status: 0
+# apk bytes=32164499 sha256=ff2a5dc9ba7aa50f430bb9e10322dd90e3c5c3b945c5187e3d91d06997af1865 git=n/a
+# so=lib/arm64-v8a/libLiteRt.so lib/arm64-v8a/libLiteRtClGlAccelerator.so lib/arm64-v8a/liblitert_jni.so lib/arm64-v8a/liblitertlm_jni.so 
+--------- beginning of crash
+09-07 12:04:09.278  2774  2774 E AndroidRuntime: FATAL EXCEPTION: main
+09-07 12:04:09.278  2774  2774 E AndroidRuntime: Process: io.github.johnrocky.hfmodels.probe.coexist, PID: 2774
+09-07 12:04:09.278  2774  2774 E AndroidRuntime: java.lang.RuntimeException: Unable to get provider androidx.startup.InitializationProvider
+09-07 12:04:09.278  2774  2774 E AndroidRuntime: 	at android.app.ActivityThread.installProvider(ActivityThread.java:9007)
+09-07 12:04:09.278  2774  2774 E AndroidRuntime: 	at android.app.ActivityThread.installContentProviders(ActivityThread.java:8507)
+09-07 12:04:09.278  2774  2774 E AndroidRuntime: 	at android.app.ActivityThread.handleBindApplication(ActivityThread.java:8157)
+09-07 12:04:09.278  2774  2774 E AndroidRuntime: 	at android.app.ActivityThread.-$$Nest$mhandleBindApplication(ActivityThread.java:0)
+09-07 12:04:09.278  2774  2774 E AndroidRuntime: 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2716)
+09-07 12:04:09.278  2774  2774 E AndroidRuntime: 	at android.os.Handler.dispatchMessageImpl(Handler.java:142)
+09-07 12:04:09.278  2774  2774 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:125)
+09-07 12:04:09.278  2774  2774 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:269)
+09-07 12:04:09.278  2774  2774 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:367)
+09-07 12:04:09.278  2774  2774 E AndroidRuntime: 	at android.app.ActivityThread.main(ActivityThread.java:9333)
+09-07 12:04:09.278  2774  2774 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+09-07 12:04:09.278  2774  2774 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:566)
+09-07 12:04:09.278  2774  2774 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:929)
+09-07 12:04:09.278  2774  2774 E AndroidRuntime: Caused by: y8: java.lang.RuntimeException: Failed to create an instance of class androidx.work.impl.WorkDatabase.canonicalName
+09-07 12:04:09.278  2774  2774 E AndroidRuntime: 	at d2.g(r8-map-id-0d3569061bd4e41f2dcc2db6f0b0c2416d6632e46fa716422b3226730ca114e6:191)
+09-07 12:04:09.278  2774  2774 E AndroidRuntime: 	at d2.f(r8-map-id-0d3569061bd4e41f2dcc2db6f0b0c2416d6632e46fa716422b3226730ca114e6:85)
+09-07 12:04:09.278  2774  2774 E AndroidRuntime: 	at androidx.startup.InitializationProvider.onCreate(r8-map-id-0d3569061bd4e41f2dcc2db6f0b0c2416d6632e46fa716422b3226730ca114e6:96)
+09-07 12:04:09.278  2774  2774 E AndroidRuntime: 	at android.content.ContentProvider.attachInfo(ContentProvider.java:2695)
+09-07 12:04:09.278  2774  2774 E AndroidRuntime: 	at android.content.ContentProvider.attachInfo(ContentProvider.java:2664)
+09-07 12:04:09.278  2774  2774 E AndroidRuntime: 	at android.app.ActivityThread.installProvider(ActivityThread.java:9004)
+09-07 12:04:09.278  2774  2774 E AndroidRuntime: 	... 12 more
+09-07 12:04:09.278  2774  2774 E AndroidRuntime: Caused by: java.lang.RuntimeException: Failed to create an instance of class androidx.work.impl.WorkDatabase.canonicalName
+09-07 12:04:09.278  2774  2774 E AndroidRuntime: 	at fk0.i(r8-map-id-0d3569061bd4e41f2dcc2db6f0b0c2416d6632e46fa716422b3226730ca114e6:1090)
+09-07 12:04:09.278  2774  2774 E AndroidRuntime: 	at androidx.work.WorkManagerInitializer.b(r8-map-id-0d3569061bd4e41f2dcc2db6f0b0c2416d6632e46fa716422b3226730ca114e6:86)
+09-07 12:04:09.278  2774  2774 E AndroidRuntime: 	at d2.g(r8-map-id-0d3569061bd4e41f2dcc2db6f0b0c2416d6632e46fa716422b3226730ca114e6:177)
+09-07 12:04:09.278  2774  2774 E AndroidRuntime: 	... 17 more
