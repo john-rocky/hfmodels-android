@@ -107,7 +107,7 @@ Screen: a Load button + status text, a scrolling transcript, an input row with S
 ## Step 3: verify, in this order
 
 1. `./gradlew assembleDebug` must pass.
-2. On a connected device (`export ANDROID_SERIAL=<serial>`): install, push the model if you have it (Step 1.4), open the chat screen and press Load. Watch `adb logcat -s hfmodels` — the SDK prints one line per stage (`download …` / `side-loaded …` / `ready … profile=cpu prepare_ms=…`); poll that instead of dumping the UI. Then type the prompt and press Send. When driving the UI from adb: `input text 'What%sis%s17%s+%s25?%sAnswer%sbriefly.'`, then hide the keyboard (`adb shell input keyevent 4` while the keyboard is up) before tapping Send at the bounds from `uiautomator dump`, and read the reply from your own `e1` log line.
+2. On a connected device (`export ANDROID_SERIAL=<serial>`): install, push the model if you have it (Step 1.4), open the chat screen and press Load. Watch `adb logcat -s hfmodels` — the SDK prints one line per stage (`download …` / `side-loaded …` / `ready … profile=cpu prepare_ms=…`); poll that instead of dumping the UI — in a foreground loop (`until adb logcat -d -s hfmodels | grep -q ready; do sleep 5; done`), never by parking the wait in a background task and ending your turn. Then type the prompt and press Send. When driving the UI from adb: `input text 'What%sis%s17%s+%s25?%sAnswer%sbriefly.'`, then hide the keyboard (`adb shell input keyevent 4` while the keyboard is up) before tapping Send at the bounds from `uiautomator dump`, and read the reply from your own `e1` log line.
 3. No device: say so. Report "build verified; device check not run" and hand over the exact steps. Never present an unverified integration as verified.
 
 ## Troubleshooting
