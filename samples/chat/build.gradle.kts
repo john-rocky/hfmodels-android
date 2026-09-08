@@ -32,7 +32,7 @@ android {
 
 dependencies {
     // In an app outside this repo these two lines become
-    //   implementation("io.github.john-rocky.hfmodels:hfmodels-litertlm:0.1.0")
+    //   implementation("io.github.john-rocky.hfmodels:hfmodels-litertlm:0.1.1")
     // (hfmodels-core, litertlm-android and kotlinx-coroutines 1.11.0 come with it).
     implementation(project(":litertlm"))
     implementation("androidx.activity:activity:1.10.1")

@@ -49,7 +49,7 @@ mavenPublishing {
     // (mavenCentralUsername / mavenCentralPassword / signingInMemoryKey / signingInMemoryKeyPassword), never from this file.
     publishToMavenCentral()
     signAllPublications()
-    coordinates("io.github.john-rocky.hfmodels", "hfmodels-litertlm", project.findProperty("hfmodelsVersion") as String? ?: "0.1.0")
+    coordinates("io.github.john-rocky.hfmodels", "hfmodels-litertlm", project.findProperty("hfmodelsVersion") as String? ?: "0.1.1")
     pom {
         name.set("hfmodels-litertlm")
         description.set("hfmodels adapter for Google's LiteRT-LM runtime: ChatModel / ChatSession with a managed streaming bridge, cancel and release")
@@ -64,7 +64,7 @@ mavenPublishing {
     }
 }
 
-// The E1 harness resolves the SDK from a local directory: ./gradlew publishAllPublicationsToLocalRepository -PhfmodelsVersion=0.1.0-local
+// The E1 harness resolves the SDK from a local directory: ./gradlew publishAllPublicationsToLocalRepository -PhfmodelsVersion=0.1.1-local
 publishing {
     repositories { maven { name = "local"; url = uri(rootProject.layout.projectDirectory.dir("local-maven")) } }
 }

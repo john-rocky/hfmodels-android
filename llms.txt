@@ -1,6 +1,6 @@
 # hfmodels for Android
 
-> Hugging Face model id in, LiteRT-LM inference out: download, verify, initialize, stream, cancel, release — one Gradle dependency, five lines of Kotlin. Maven Central `io.github.john-rocky.hfmodels:hfmodels-litertlm:0.1.0`; Kotlin package `io.github.johnrocky.hfmodels`.
+> Hugging Face model id in, LiteRT-LM inference out: download, verify, initialize, stream, cancel, release — one Gradle dependency, five lines of Kotlin. Maven Central `io.github.john-rocky.hfmodels:hfmodels-litertlm:0.1.1`; Kotlin package `io.github.johnrocky.hfmodels`.
 
 - [README](https://raw.githubusercontent.com/john-rocky/hfmodels-android/main/README.md): Gradle lines, the five-line call, what it replaces, ids that work today
 - [API, complete](https://raw.githubusercontent.com/john-rocky/hfmodels-android/main/docs/api.md): every public type with imports and signatures, the runtime types an app touches, the logcat lines

@@ -2,7 +2,7 @@
 
 Read this first if you are a coding agent asked to add an on-device LLM to an Android app with this SDK.
 
-1. `README.md` is the integration guide: the Gradle lines, the five-line call, the ids that work today, and what the SDK does that hand-rolled code usually does not. The dependency is `io.github.john-rocky.hfmodels:hfmodels-litertlm:0.1.0` (Maven group with a hyphen; Kotlin package `io.github.johnrocky.hfmodels` without). Inside this repository the runtime pins are `gradle.properties` and the verified combinations `tested-runtime-matrix.json`; never quote a version from memory.
+1. `README.md` is the integration guide: the Gradle lines, the five-line call, the ids that work today, and what the SDK does that hand-rolled code usually does not. The dependency is `io.github.john-rocky.hfmodels:hfmodels-litertlm:0.1.1` (Maven group with a hyphen; Kotlin package `io.github.johnrocky.hfmodels` without). Inside this repository the runtime pins are `gradle.properties` and the verified combinations `tested-runtime-matrix.json`; never quote a version from memory.
 2. `docs/api.md` is the complete public surface with imports and signatures, including the runtime types an app touches (`Contents`, `Content`, `ConversationConfig`, `Message`). Read it instead of unzipping the sources jar or running `javap`.
 3. `skills/hfmodels-android/SKILL.md` is the step-by-step procedure with the three finish conditions. Follow it in order; do not skip the device check.
 4. `docs/errors.md` maps every `ModelException.code` to the fix. When a load fails, read the code, not the stack trace.

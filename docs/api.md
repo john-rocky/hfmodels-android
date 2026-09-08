@@ -1,6 +1,6 @@
 # Public API, complete
 
-Everything an app calls, with the exact imports. This page is the whole surface: the sources jar and the runtime AAR add nothing an app needs, so there is no reason to unzip or `javap` them. The Maven group is `io.github.john-rocky.hfmodels` (hyphen); the Kotlin package is `io.github.johnrocky.hfmodels` (no hyphen). Members marked **0.1.1** are in `main` and in 0.1.1 or newer; 0.1.0 (Maven Central) does not have them.
+Everything an app calls, with the exact imports. This page is the whole surface: the sources jar and the runtime AAR add nothing an app needs, so there is no reason to unzip or `javap` them. The Maven group is `io.github.john-rocky.hfmodels` (hyphen); the Kotlin package is `io.github.johnrocky.hfmodels` (no hyphen). Members marked **0.1.1** arrived in 0.1.1; 0.1.0 does not have them.
 
 ```kotlin
 import io.github.johnrocky.hfmodels.HfModels
@@ -186,4 +186,4 @@ Failures are WARN/ERROR lines under the same tag with the `ErrorCode`. The runti
 
 ## Version
 
-`HfModelsVersion.SDK_VERSION` (also `info.sdkVersion`). Maven Central: <https://central.sonatype.com/artifact/io.github.john-rocky.hfmodels/hfmodels-litertlm>. Inside this repository the runtime pins are `gradle.properties`; the verified combinations are `tested-runtime-matrix.json`. Released: 0.1.0. In `main`: 0.1.1-SNAPSHOT (thinking channels, `Message.text`, `GenerationOptions` with `null` defaults, the drop-in device check `samples/chat/src/androidTest/.../ChatDeviceCheck.kt`).
+`HfModelsVersion.SDK_VERSION` (also `info.sdkVersion`). Maven Central: <https://central.sonatype.com/artifact/io.github.john-rocky.hfmodels/hfmodels-litertlm>. Inside this repository the runtime pins are `gradle.properties`; the verified combinations are `tested-runtime-matrix.json`. Released: 0.1.1 (thinking channels, `Message.text`, `GenerationOptions` with `null` defaults, the FAIL-record rule in `Auto`, the drop-in device check `samples/chat/src/androidTest/.../ChatDeviceCheck.kt`); 0.1.0 is the previous release.

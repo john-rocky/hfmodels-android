@@ -12,7 +12,7 @@ withContext(NonCancellable) { chat.closeAndJoin() }
 
 Under the hood it is Google's LiteRT-LM runtime (`com.google.ai.edge.litertlm`). The SDK adds the part the runtime leaves to every app: resolving the id to an immutable commit, downloading with resume and a sha256 check, choosing a backend profile the device can run, initializing, a streaming Flow whose cancel really stops the model, and a release that waits for the native side. The `Contents` / `Content` / `Message` / `ConversationConfig` types are the runtime's own, so nothing has to be unlearned.
 
-**Status: 0.1.0, early.** One device verified (the table below and `tested-runtime-matrix.json`); the API may still move before 1.0. `main` carries 0.1.1-SNAPSHOT: thinking models (their reasoning arrives in `Message.channels`, not in the text), `Message.text`, and a drop-in device check for any app (`samples/chat/src/androidTest/.../ChatDeviceCheck.kt`).
+**Status: 0.1.1, early.** One device verified (the table below and `tested-runtime-matrix.json`); the API may still move before 1.0. 0.1.1 adds thinking models (their reasoning arrives in `Message.channels`, not in the text), `Message.text`, a resolver that never auto-selects a profile whose only device record is a FAIL, and a drop-in device check for any app (`samples/chat/src/androidTest/.../ChatDeviceCheck.kt`).
 
 ## Add it
 
@@ -20,7 +20,7 @@ Under the hood it is Google's LiteRT-LM runtime (`com.google.ai.edge.litertlm`).
 // settings.gradle.kts: repositories google() and mavenCentral()
 // app/build.gradle.kts
 android { defaultConfig { minSdk = 31 } }
-dependencies { implementation("io.github.john-rocky.hfmodels:hfmodels-litertlm:0.1.0") }
+dependencies { implementation("io.github.john-rocky.hfmodels:hfmodels-litertlm:0.1.1") }
 ```
 
 That one line brings `hfmodels-core`, `litertlm-android` and `kotlinx-coroutines-android 1.11.0` (the version the runtime's bytecode needs; its POM understates it). Toolchain this was built with: AGP 9.3.1, Gradle 9.7.0, compileSdk 36, JDK 17, Kotlin built into AGP (do not apply the standalone Kotlin plugin). The SDK's manifest declares the GPU's `uses-native-library` entries and `INTERNET` (the first download only); its consumer R8 rules keep what the runtime's JNI looks up by name — with `minifyEnabled true` and nothing else, generation works.

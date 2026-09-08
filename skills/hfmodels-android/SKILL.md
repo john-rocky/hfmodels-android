@@ -15,7 +15,7 @@ Scope: an app that already exists, a model that is registered (its repo carries 
 
 ## Step 0: versions and the API, from the files, never from memory
 
-- Dependency: `io.github.john-rocky.hfmodels:hfmodels-litertlm:0.1.0` from Maven Central (newest: <https://central.sonatype.com/artifact/io.github.john-rocky.hfmodels/hfmodels-litertlm>; inside the SDK repository the pins are `gradle.properties` and the verified combinations `tested-runtime-matrix.json`). The Kotlin package is `io.github.johnrocky.hfmodels` (no hyphen; the Maven group has one).
+- Dependency: `io.github.john-rocky.hfmodels:hfmodels-litertlm:0.1.1` from Maven Central (newest: <https://central.sonatype.com/artifact/io.github.john-rocky.hfmodels/hfmodels-litertlm>; inside the SDK repository the pins are `gradle.properties` and the verified combinations `tested-runtime-matrix.json`). The Kotlin package is `io.github.johnrocky.hfmodels` (no hyphen; the Maven group has one).
 - It brings LiteRT-LM 0.16.1 and kotlinx-coroutines 1.11.0 as `api` dependencies — do not add or pin them yourself, and do not add `com.google.ai.edge.litert:litert` unless the app uses LiteRT's CompiledModel (that AAR needs `android.uniquePackageNames=false` on AGP 9).
 - `docs/api.md` is the complete public surface with imports and signatures, including the four runtime types an app touches (`Contents`, `Content`, `ConversationConfig`, `Message`). Read it instead of unzipping the sources jar or running `javap` on the runtime — there is nothing else to find.
 
