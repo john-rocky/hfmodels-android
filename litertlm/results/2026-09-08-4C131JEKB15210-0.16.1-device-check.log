@@ -1,0 +1,11 @@
+# samples/chat ChatDeviceCheck  date=2026-09-08T01:35:45Z serial=4C131JEKB15210 build=CP1A.260505.005 git=046da93
+--------- beginning of main
+09-08 10:34:29.166 14539 14560 I hfmodels: resolve litert-community/LFM2.5-1.2B-Instruct: commit=f45d8d8a via RESOLVED_BRANCH, descriptor=litert-community/LFM2.5-1.2B-Instruct@f45d8d8a/hfmodels.json sha=9f96a19c
+09-08 10:34:29.223 14539 14560 I hfmodels: download LFM2.5-1.2B-Instruct_int4_gpu.litertlm <- https://huggingface.co/litert-community/LFM2.5-1.2B-Instruct/resolve/f45d8d8abe93bff4026efee20fa483150ce8e687/LFM2.5-1.2B-Instruct_int4_gpu.litertlm
+09-08 10:35:24.884 14539 14560 I hfmodels: downloaded LFM2.5-1.2B-Instruct_int4_gpu.litertlm: 736220768 bytes, sha256 ok
+09-08 10:35:41.062 14539 14556 I hfmodels: ready litert-community/LFM2.5-1.2B-Instruct@f45d8d8a variant=int4_gpu profile=gpu language=GPU prepare_ms=16150
+09-08 10:35:41.068 14539 14556 I hfmodels-check: RESULT step=load ok=true model=litert-community/LFM2.5-1.2B-Instruct profile=gpu initialized=[language=GPU] thinking=descriptor load_ms=72771 last_event=Ready
+09-08 10:35:42.628 14539 14556 I hfmodels-check: RESULT step=answer ok=true model=litert-community/LFM2.5-1.2B-Instruct expect="42" chunks=8 first_chunk_ms=1243 total_ms=1551 state=READY thought_chars=0 reply="17 + 25 equals 42."
+09-08 10:35:43.977 14539 14556 I hfmodels-check: RESULT step=stop ok=true model=litert-community/LFM2.5-1.2B-Instruct chunks_at_stop=5 state=INVALID
+09-08 10:35:44.559 14539 14556 I hfmodels-check: RESULT step=release ok=true model=litert-community/LFM2.5-1.2B-Instruct close_ms=579
+09-08 10:35:44.560 14539 14556 I hfmodels-check: RESULT ok=true model=litert-community/LFM2.5-1.2B-Instruct failed=[] sdk=0.1.1 runtime=litert_lm 0.16.1 device=Pixel 8a build=CP1A.260505.005
