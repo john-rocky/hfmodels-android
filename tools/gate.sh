@@ -12,7 +12,7 @@ ENTRIES=("$@")
 [ ${#ENTRIES[@]} -eq 0 ] && ENTRIES=($(python3 "$HERE/catalog_order.py" "$ROOT/core/src/main/assets/hfmodels/catalog.json"))
 OUT="$ROOT/litertlm/results"; mkdir -p "$OUT"
 DEV=$(adb shell getprop ro.product.model | tr -d '\r')
-LOG="$OUT/$(date +%Y-%m-%d)-$ANDROID_SERIAL-$(grep '^litertlmVersion=' "$ROOT/gradle.properties" | cut -d= -f2)-a3-gate.log"
+LOG="$OUT/$(date +%Y-%m-%d-%H%M)-$ANDROID_SERIAL-$(grep '^litertlmVersion=' "$ROOT/gradle.properties" | cut -d= -f2)-a3-gate.log"
 {
   echo "# hfmodels A3 catalog gate  date=$(date -u +%FT%TZ) serial=$ANDROID_SERIAL device=$DEV build=$(adb shell getprop ro.build.display.id | tr -d '\r') android=$(adb shell getprop ro.build.version.release | tr -d '\r')"
   echo "# git=$(git -C "$ROOT" rev-parse --short HEAD) catalog=$(shasum -a 256 "$ROOT/core/src/main/assets/hfmodels/catalog.json" | cut -c1-12) free_before=$(adb shell df /data | tail -1 | awk '{print $4}')K thermal=$(adb shell dumpsys thermalservice | grep -m1 'Thermal Status' | tr -d '\r')"
