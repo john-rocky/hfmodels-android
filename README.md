@@ -179,6 +179,39 @@ Development shortcut: a copy of the file pushed into the app's external files di
 
 `ModelRef(id, revision = "<commit>", variant = "<id>")` pins more. Without a revision the first successful load binds the id to the commit it resolved, and later loads (also offline) use that binding until you call `unbind`.
 
+## Typed decisions (0.1.2, in development on this branch)
+
+The second thing the SDK runs: a decision model that answers typed questions about a state without generating text. One forward per question; the answer is a calibrated probability, not a sentence to parse. The request and answer forms are the `/v1/systemone` ones (`state`, `questions` with `type` / `instructions` / `criteria`; answers with `choice` / `score` / `noul`, `probabilities`, `confidence`), so a request written for a server is handed to the phone unchanged.
+
+```kotlin
+// implementation("io.github.john-rocky.hfmodels:hfmodels-litert:<version>")   (+ android.uniquePackageNames=false, see docs/api.md)
+val model = models.fromPretrained(ModelRef("<owner>/<name>"), EncoderDecisions)
+val d = model.decide(
+    mapOf("subject" to "Duplicate charge", "body" to "Please refund the duplicate charge."),
+    mapOf(
+        "department" to Question.Choice("Which department should handle this request?", linkedMapOf("billing" to "invoices, payments, refunds", "technical" to "bugs, outages", "other" to "everything else")),
+        "urgency" to Question.Score("How urgent is this request?", listOf("not urgent", "soon", "critical deadline or blocking issue")),
+        "refund_requested" to Question.Noul("Does the user explicitly request a refund?"),
+    ),
+)
+(d.answers["department"] as Answer.Choice).choice        // billing (p=0.68)
+(d.answers["refund_requested"] as Answer.Noul).noul      // 0.91
+d.timing.questionMs                                       // per question, on this phone
+```
+
+The first models are the `laya` decision encoders (`convaiinnovations/laya`, Apache-2.0; ModernBERT-large for English, mmBERT-base for 100+ languages) converted to LiteRT graphs and run by `CompiledModel` (the `hfmodels-litert` module; `docs/api.md`, "Typed decisions"). The host side (the tokenizer, the sequence, the calibration and rounding) is a port of the publisher's code and is checked against it: 209 English and 201 multilingual captured rows give the same token ids and marker positions, and decode the captured logits to the same rounded answers (`litert/src/test/.../LayaParityTest.kt`, run with the publisher's tokenizer files). What the phone then computes is compared with the publisher's official `predict` on the same rows, and with it again on the 144 rows of a public decision fixture (SemIf `authored144`, three-option choice questions), in the device gate (`tools/decide_gate.sh`, one log per run under `litert/results/`).
+
+| variant (window) | file | Galaxy S26 SM-S942Q, Android 16 BP4A.251205.006, LiteRT 2.2.0, 2026-09-21: one question, GPU FP32 | CPU (4 threads) | captured rows: argmax / max Δp | authored144: agreement with the official answers / accuracy of both | log |
+|---|---|---|---|---|---|---|
+| `ml_s256_fp32` multilingual (256) | 1.29 GB | median 54 ms (min 52, p90 57 in the first 60 rows; 55 / 117 over all 201 rows as the phone warmed) | 222 ms | 201/201 identical / 0.0001 | 144/144 / 0.590 | `…-1412-…-ml_s256_fp32-gpu.log`, `…-1440-…`, `…-1421-…-cpu.log` |
+| `en_s256_fp32` English (256) | 1.68 GB | median 127 ms (min 120, p90 129 in 60 rows; 133 / 290 over 140 rows) | not run | 140/140 (rows within 256 tokens) / 0.0000 | 144/144 / 0.611 | `…-1414-…-en_s256_fp32-gpu.log`, `…-1442-…` |
+| `en_s512_fp32` English (512) | 1.69 GB | median 442 ms (min 291, p90 573 in 60 rows; 493 / 612 over 209 rows) | not run | 209/209 / 0.0001 | 144/144 / 0.611 | `…-1415-…-en_s512_fp32-gpu.log`, `…-1443-…` |
+| `en_s512_wfp16` English (512, float16 weights) | 843 MB | does not compile on the GPU (the accelerator leaves its 130 DEQUANTIZE / EMBEDDING_LOOKUP nodes to the CPU, then fails: `litert/results/…-1411-…-en_s512_wfp16-gpu.log`) | 1,326 ms | 30/30 / 0.0005 | 24/24 / 0.708 (24 rows) | `…-1417-…-en_s512_wfp16-cpu.log` |
+
+Each cell is one run of the gate in one process: side-load and sha256 check, tokenizer load, compile, the captured rows one question at a time (the median is over those forwards, warm), then four questions about one state seven times, then the 144 fixture rows, then release. Four questions about one state cost four forwards on an encoder: `decide(state, 4 questions)` and four `decide(state, 1 question)` took the same time within noise (the shared part, tokenizing the state, is about 2 ms), so `prefill` is an API for the language-model path that is not in this release rather than a saving here. Later runs in the same session were slower (the p90 column; the phone reported thermal status 1 at 40 °C by the end): one phone, one afternoon, not a benchmark. Accuracy on the fixture is the publisher's model's, reproduced on the phone, and it is what a 400M-parameter zero-shot encoder does on three-option evidence questions; the authored144 rows are not what the model was trained for.
+
+`samples/decide` is three screens on this API with the milliseconds on screen: a voice gate (each utterance the recognizer finalizes: is it a question or a request for the assistant), the clipboard before a paste (what the text holds, which pieces the chosen purpose needs, then the spans from GLiNER2.5-Small-LiteRT), and a query against passages (does it answer, how relevant, ranked). Its README has the push lines and what the screens showed. **Development state:** the converted graphs are not on the Hub yet, so the sample side-loads them with an explicit descriptor (`catalog/dev/`); the tokenizer and config files download from the publisher's repo at the pinned commit. Language-model bundles as a decision backend (scoring a prompt's continuations after one prefill) are not in this release: the LiteRT-LM Kotlin API exposes no scoring or checkpoint call; `Tasks.Chat` remains the way to use them.
+
 ## What it changed for a coding agent, measured
 
 One phone, one day, one task: on a Pixel 8a (Android 16), with the same host, the same model (`litert-community/Qwen2.5-1.5B-Instruct`, q8) and Claude Fable 5.1 driving Claude Code for three runs per arm, adding an offline chat screen to an existing Compose app took a mean of 339 s from start to the first correct reply on the phone with this SDK and its skill, against 877 s for the same agent given the official LiteRT-LM Android documentation and the on-device-recipes skill in the same hour (61 % less), and against 521 s for that hand-roll arm's best set earlier the same day (35 % less). Writing the code took the same time in both arms; the difference came from what the SDK and the skill carry as procedure and guarantee: how the weight reaches the phone, a `ready` line to wait on, the Compose input row and the Send sequence. Two Codex runs per arm pointed the same way (37 % less). Defects in the final apps on the eight-item checklist below: 0 with the SDK, 2 with the recipe, median 6 across the 328 public repositories. The pre-registered protocol, the transcripts and the numbers per run are in the evaluation record (kept with the author; to be published with the record). These are numbers about one phone and one host, not about anyone else's.
@@ -265,8 +298,10 @@ A repo becomes loadable by id with one file, `hfmodels.json`, generated (not typ
 ```
 core/        hfmodels-core: ModelRef, HfModels (inspect / download / prepare), descriptor + catalog readers, Hub client, content-addressed store, errors
 litertlm/    hfmodels-litertlm: Tasks.Chat, ChatModel / ChatSession on LiteRT-LM, consumer R8 rules, GPU manifest entries
+litert/      hfmodels-litert: EncoderDecisions / TypedDecisions on LiteRT CompiledModel (decision encoders), the host-side parity test, the device gate; results/ its logs
 samples/chat the chat screen on the SDK (id in, chat out); its androidTest/ holds the drop-in ChatDeviceCheck
-catalog/     specs (curated) -> entries (generated) -> the bundled asset; tools/ generate and gate them
+samples/decide three screens on typed decisions (voice gate, clipboard, query x passages) with the milliseconds on screen
+catalog/     specs (curated) -> entries (generated) -> the bundled asset; dev/ the development descriptor of the decision graphs; tools/ generate and gate them
 probes/      the runtime coexistence probe (LiteRT-LM + LiteRT in one release APK) and its logs
 docs/        api.md (the complete surface), errors.md, publishing.md; skills/ the agent procedure; tested-runtime-matrix.json the verified matrix
 ```

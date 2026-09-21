@@ -117,7 +117,10 @@
         },
         "manifest": "declares uses-native-library for libOpenCL.so, libOpenCL-car.so, libOpenCL-pixel.so, libvndksupport.so, libcdsprpc.so, libedgetpu_*.so and the MediaTek neuron/apuware/mvpu libraries (all required=false), uses-feature android.hardware.npu, and uses-permission FOREGROUND_SERVICE + FOREGROUND_SERVICE_DATA_SYNC; all of it merges into the app manifest",
         "proguard_txt": "keeps only org.tensorflow.lite.annotations.UsedByReflection",
-        "namespace": "com.google.ai.edge.litert (same as litert-api)"
+        "namespace": "com.google.ai.edge.litert (same as litert-api)",
+        "compiled_model_api": "CompiledModel.create(path, Options(accelerator){gpuOptions/cpuOptions}, Environment); createInputBuffer/createOutputBuffer(name, signature); run(Map, Map, signature); TensorBuffer.writeInt/writeFloat/readFloat",
+        "gpu_partition_note": "a graph with float16 weights (DEQUANTIZE feeding the delegated ops) is partitioned (2097 GPU / 130 CPU nodes for the laya s512 graph) and then fails 'Failed to compile model' on the S26 GPU; the fp32 graphs of the same model compile (litert/results/2026-09-21-1411-RFGL80R6A6H-litert2.2.0-decide-en_s512_wfp16-gpu.log vs -1415-…-en_s512_fp32-gpu.log)",
+        "r8": "litert-api pulls Play ai-delivery (WorkManager + Room): -keep class * extends androidx.room.RoomDatabase { <init>(); } is needed under R8 (hfmodels-litert/consumer-rules.pro carries it, measured in probes/coexist 2026-09-07 and in the samples/decide release build on the S26 2026-09-21)"
       }
     },
     "litert-api": {
@@ -200,5 +203,128 @@
       "caveat": "compiled with -Xskip-metadata-version-check because the AAR carries Kotlin 2.4.0 metadata; not the pinned configuration",
       "evidence": "probes/coexist/results/2026-09-07-4C131JEKB15210-0.17.0-keepwork-keepjni.log"
     }
-  ]
+  ],
+  "typed_decisions": {
+    "$comment": "hfmodels-litert (EncoderDecisions on CompiledModel) verified combinations: one device, one day. Variants are the development descriptor's (catalog/dev/convaiinnovations__laya-litert-dev.hfmodels.json); the graphs are side-loaded, not published. Numbers: median per-question ms of the parity loop (warm), then the p90 over the same rows; thermal state rose during the session (status 1 at 40 C by the end).",
+    "device": {
+      "model": "SM-S942Q (Galaxy S26)",
+      "serial": "RFGL80R6A6H",
+      "android": "16",
+      "build": "BP4A.251205.006.S942QOPS1AZF2"
+    },
+    "date": "2026-09-21",
+    "runtime": "com.google.ai.edge.litert:litert:2.2.0 (GPU with explicit FP32 precision; CPU 4 threads)",
+    "rows": [
+      {
+        "variant": "ml_s256_fp32",
+        "backend": "gpu",
+        "result": "PASS",
+        "question_ms_median": 54.8,
+        "question_ms_p90": 117.4,
+        "parity_rows": 201,
+        "argmax_flips": 0,
+        "max_prob_abs_err": 0.0001,
+        "authored144_agreement": "144/144",
+        "log": "litert/results/2026-09-21-1440-RFGL80R6A6H-litert2.2.0-decide-ml_s256_fp32-gpu.log"
+      },
+      {
+        "variant": "ml_s256_fp32",
+        "backend": "gpu",
+        "result": "PASS",
+        "question_ms_median": 53.8,
+        "question_ms_p90": 57.3,
+        "parity_rows": 60,
+        "argmax_flips": 0,
+        "max_prob_abs_err": 0.0,
+        "authored144_agreement": "48/48",
+        "log": "litert/results/2026-09-21-1412-RFGL80R6A6H-litert2.2.0-decide-ml_s256_fp32-gpu.log"
+      },
+      {
+        "variant": "ml_s256_fp32",
+        "backend": "cpu",
+        "result": "PASS",
+        "question_ms_median": 222.2,
+        "question_ms_p90": 237.1,
+        "parity_rows": 30,
+        "argmax_flips": 0,
+        "max_prob_abs_err": 0.0,
+        "authored144_agreement": "24/24",
+        "log": "litert/results/2026-09-21-1421-RFGL80R6A6H-litert2.2.0-decide-ml_s256_fp32-cpu.log"
+      },
+      {
+        "variant": "en_s256_fp32",
+        "backend": "gpu",
+        "result": "PASS",
+        "question_ms_median": 132.7,
+        "question_ms_p90": 289.8,
+        "parity_rows": 140,
+        "argmax_flips": 0,
+        "max_prob_abs_err": 0.0,
+        "authored144_agreement": "144/144",
+        "log": "litert/results/2026-09-21-1442-RFGL80R6A6H-litert2.2.0-decide-en_s256_fp32-gpu.log"
+      },
+      {
+        "variant": "en_s256_fp32",
+        "backend": "gpu",
+        "result": "PASS",
+        "question_ms_median": 126.7,
+        "question_ms_p90": 129.2,
+        "parity_rows": 60,
+        "argmax_flips": 0,
+        "max_prob_abs_err": 0.0,
+        "authored144_agreement": "skipped",
+        "log": "litert/results/2026-09-21-1414-RFGL80R6A6H-litert2.2.0-decide-en_s256_fp32-gpu.log"
+      },
+      {
+        "variant": "en_s512_fp32",
+        "backend": "gpu",
+        "result": "PASS",
+        "question_ms_median": 492.6,
+        "question_ms_p90": 612.4,
+        "parity_rows": 209,
+        "argmax_flips": 0,
+        "max_prob_abs_err": 0.0001,
+        "authored144_agreement": "144/144",
+        "log": "litert/results/2026-09-21-1443-RFGL80R6A6H-litert2.2.0-decide-en_s512_fp32-gpu.log"
+      },
+      {
+        "variant": "en_s512_fp32",
+        "backend": "gpu",
+        "result": "PASS",
+        "question_ms_median": 442.2,
+        "question_ms_p90": 573.4,
+        "parity_rows": 60,
+        "argmax_flips": 0,
+        "max_prob_abs_err": 0.0,
+        "authored144_agreement": "48/48",
+        "log": "litert/results/2026-09-21-1415-RFGL80R6A6H-litert2.2.0-decide-en_s512_fp32-gpu.log"
+      },
+      {
+        "variant": "en_s512_wfp16",
+        "backend": "cpu",
+        "result": "PASS",
+        "question_ms_median": 1325.9,
+        "question_ms_p90": 1357.3,
+        "parity_rows": 30,
+        "argmax_flips": 0,
+        "max_prob_abs_err": 0.0005,
+        "authored144_agreement": "24/24",
+        "log": "litert/results/2026-09-21-1417-RFGL80R6A6H-litert2.2.0-decide-en_s512_wfp16-cpu.log"
+      },
+      {
+        "variant": "en_s512_wfp16",
+        "backend": "gpu",
+        "result": "FAIL",
+        "reason": "CompiledModel: Failed to compile model (DEQUANTIZE / EMBEDDING_LOOKUP partition left to the CPU)",
+        "log": "litert/results/2026-09-21-1411-RFGL80R6A6H-litert2.2.0-decide-en_s512_wfp16-gpu.log"
+      },
+      {
+        "variant": "en_s256_wfp16",
+        "backend": "gpu",
+        "result": "FAIL",
+        "reason": "same as en_s512_wfp16",
+        "log": "litert/results/2026-09-21-1417-RFGL80R6A6H-litert2.2.0-decide-en_s256_wfp16-gpu.log"
+      }
+    ]
+  }
 }

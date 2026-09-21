@@ -1,0 +1,20 @@
+# hfmodels typed-decisions device gate  date=2026-09-21T05:12:04Z serial=RFGL80R6A6H device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 android=16
+# git=c158603 variant=ml_s256_fp32 backend=gpu thermal=Thermal Status: 0 battery_level= level: 97 battery_temp_x10C= temperature: 335 screen= mWakefulness=Awake
+# gradle rc=0 end=2026-09-21T05:12:39Z thermal_end=Thermal Status: 0 battery_temp_end_x10C= temperature: 334
+--------- beginning of main
+09-21 14:12:18.191 30504 30520 I hfmodels-decide: device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 android=16 litert=2.2.0 variant=ml_s256_fp32 backend=gpu
+09-21 14:12:18.199 30504 30525 I hfmodels: resolve convaiinnovations/laya: commit=1c5edc17 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=fbc32a94
+09-21 14:12:19.671 30504 30525 I hfmodels: imported laya_ml_s256_fp32.tflite: 1287375376 bytes, sha256 ok, from /data/local/tmp/hfmodels/laya/laya_ml_s256_fp32.tflite
+09-21 14:12:19.674 30504 30525 I hfmodels: imported laya_ml_act_head_fp32.tflite: 795816 bytes, sha256 ok, from /data/local/tmp/hfmodels/laya/laya_ml_act_head_fp32.tflite
+09-21 14:12:19.715 30504 30525 I hfmodels: imported tokenizer.json: 34363188 bytes, sha256 ok, from /data/local/tmp/hfmodels/laya/multilingual/tokenizer/tokenizer.json
+09-21 14:12:19.717 30504 30525 I hfmodels: imported tokenizer_config.json: 524 bytes, sha256 ok, from /data/local/tmp/hfmodels/laya/multilingual/tokenizer/tokenizer_config.json
+09-21 14:12:19.717 30504 30525 I hfmodels: imported rl_agent_config.json: 472 bytes, sha256 ok, from /data/local/tmp/hfmodels/laya/multilingual/rl_agent_config.json
+09-21 14:12:19.719 30504 30525 I hfmodels: resolve convaiinnovations/laya: commit=1c5edc17 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=fbc32a94
+09-21 14:12:22.406 30504 30525 I hfmodels: tokenizer tokenizer.json: 256000 tokens, load_ms=2677
+09-21 14:12:27.418 30504 30520 I hfmodels: ready convaiinnovations/laya@1c5edc17 variant=ml_s256_fp32 profile=gpu inference=GPU prepare_ms=7689
+09-21 14:12:27.418 30504 30520 I hfmodels-decide: RESULT step=load ok=true variant=ml_s256_fp32 backend=gpu import_ms=1518 load_ms=7700 profile=gpu window=256 head=256 notes=compile_ms=5010 on gpu (precision fp32) | observed backend is UNKNOWN: litert 2.2.0 reports no per-op execution target; 'initialized' is the accelerator the CompiledModel was created with
+09-21 14:12:31.732 30504 30520 I hfmodels-decide: RESULT step=parity ok=true variant=ml_s256_fp32 backend=gpu rows=60 argmax_flips=0 max_marker_logit_abs_err=0.00004 (worst ML_B06/category) max_prob_abs_err=0.00000 max_score_abs_err=0.00000 max_act_logit_rel_err=1.41e-06 exact_rounded=58/60 question_ms_median=53.8 p90=57.3 min=51.1 max=63.2
+09-21 14:12:35.719 30504 30520 I hfmodels-decide: RESULT step=timing ok=true variant=ml_s256_fp32 backend=gpu questions=4 state_tokens=25 shared_ms_median=219.4 direct_ms_median=224.3 prefill_then_decide_ms_median=217.2 state_tokenize_ms_median=2.10 per_question_ms=55.6,54.2,53.7,54.1 repeats=5
+09-21 14:12:38.572 30504 30520 I hfmodels-decide: RESULT step=authored144 ok=true variant=ml_s256_fp32 backend=gpu rows=48 agree_with_official=48 max_prob_abs_err=0.00000 accuracy_device=0.688 accuracy_official=0.688 per_family(device/official/n)=rule_application=17/17/24 evidence_interpretation=16/16/24
+09-21 14:12:38.697 30504 30520 I hfmodels-decide: RESULT step=release ok=true variant=ml_s256_fp32 backend=gpu close_ms=126
+09-21 14:12:38.698 30504 30520 I hfmodels-decide: RESULT ok=true variant=ml_s256_fp32 backend=gpu device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 failures=

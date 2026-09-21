@@ -226,6 +226,9 @@ class HfModels internal constructor(
                 log.i("side-loaded $name from ${pushed.path} (sha256 verified)")
             } catch (e: ModelException) {
                 log.w("side-load candidate ${pushed.path} rejected (${e.code}); downloading instead")
+            } catch (e: Exception) {
+                // A copy the app cannot read (a file created by another uid under the external files dir) is skipped, not fatal.
+                log.w("side-load candidate ${pushed.path} unreadable (${e.javaClass.simpleName}: ${e.message}); downloading instead")
             }
         }
     }

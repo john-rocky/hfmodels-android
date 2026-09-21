@@ -25,3 +25,6 @@ local-maven/
 # Gate scratch: per-entry gradle output and the unfiltered logcat captures (megabytes); the filtered .log files are the record
 litertlm/results/_*
 litertlm/results/*.full.log
+
+# Typed-decisions gate scratch, same rule as litertlm/results
+litert/results/_*

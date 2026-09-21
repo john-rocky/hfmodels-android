@@ -1,0 +1,630 @@
+{
+  "schema_version": 1,
+  "model_id": "convaiinnovations/laya",
+  "$comment": "DEVELOPMENT descriptor. The tokenizer and config files are the publisher's at commit 1c5edc17; the litert/*.tflite graphs are the conversion's local outputs (CPU-parity-checked on 2026-09-21, not published on the Hub yet), imported by side-load. Not in the bundled catalog. Replaced by the published repo's own hfmodels.json when the graphs ship.",
+  "tasks": [
+    "decide"
+  ],
+  "default_variant": "ml_s256_fp32",
+  "license": {
+    "id": "apache-2.0",
+    "url": "https://huggingface.co/convaiinnovations/laya/blob/1c5edc17a7acd8701df6fc341c0d179f1c62c982/README.md"
+  },
+  "variants": [
+    {
+      "id": "en_s512_wfp16",
+      "runtime": "litert",
+      "handler": {
+        "id": "litert.typed_decisions",
+        "abi": 1
+      },
+      "runtime_range": {
+        "min_inclusive": "2.2.0",
+        "max_exclusive": "3.0.0"
+      },
+      "inputs": [
+        "text"
+      ],
+      "files": [
+        {
+          "id": "main",
+          "role": "model",
+          "path": "litert/laya_en_s512_wfp16.tflite",
+          "bytes": 843929120,
+          "sha256": "882643ae98cbc040ac28726c1106167be0d8b3dd2a8feb902dd9d1e607204020"
+        },
+        {
+          "id": "act",
+          "role": "model",
+          "path": "litert/laya_act_head_fp32.tflite",
+          "bytes": 1057960,
+          "sha256": "c6f8de9b66e36581ce03cca7047d0a6b8573ba448ce44ae613e49c58f34e4052"
+        },
+        {
+          "id": "tokenizer",
+          "role": "tokenizer",
+          "path": "tokenizer/tokenizer.json",
+          "bytes": 3583228,
+          "sha256": "6c8aaa9a542084f2457eab775d4eeb51f92a70c0fd9de28d5edb0ddec3c08d30"
+        },
+        {
+          "id": "tokenizer_config",
+          "role": "tokenizer",
+          "path": "tokenizer/tokenizer_config.json",
+          "bytes": 308,
+          "sha256": "50044de60daaa73df97d262e15a40d4faf0160e7d742df64b377877a1320dd12"
+        },
+        {
+          "id": "config",
+          "role": "processor_config",
+          "path": "rl_agent_config.json",
+          "bytes": 745,
+          "sha256": "ae287b56bbcf5f8c4f4541ae9dfd00c914c4c48b940b8398c3058af37ba92bbd"
+        }
+      ],
+      "default_profile": "gpu",
+      "profiles": [
+        {
+          "id": "gpu",
+          "priority": 100,
+          "files": [
+            "main",
+            "act",
+            "tokenizer",
+            "tokenizer_config",
+            "config"
+          ],
+          "enabled_inputs": [
+            "text"
+          ],
+          "components": {
+            "inference": "gpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "default_selectable": true,
+          "fallback_profiles": [
+            "cpu"
+          ]
+        },
+        {
+          "id": "cpu",
+          "priority": 50,
+          "files": [
+            "main",
+            "act",
+            "tokenizer",
+            "tokenizer_config",
+            "config"
+          ],
+          "enabled_inputs": [
+            "text"
+          ],
+          "components": {
+            "inference": "cpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "default_selectable": true
+        }
+      ],
+      "handler_config": {
+        "family": "laya",
+        "window": 512,
+        "hidden": 1024,
+        "files": {
+          "main": "main",
+          "act_head": "act",
+          "tokenizer": "tokenizer",
+          "tokenizer_config": "tokenizer_config",
+          "config": "config"
+        },
+        "gpu_precision": "fp32",
+        "cpu_threads": 4,
+        "languages": [
+          "en"
+        ]
+      }
+    },
+    {
+      "id": "en_s256_wfp16",
+      "runtime": "litert",
+      "handler": {
+        "id": "litert.typed_decisions",
+        "abi": 1
+      },
+      "runtime_range": {
+        "min_inclusive": "2.2.0",
+        "max_exclusive": "3.0.0"
+      },
+      "inputs": [
+        "text"
+      ],
+      "files": [
+        {
+          "id": "main",
+          "role": "model",
+          "path": "litert/laya_en_s256_wfp16.tflite",
+          "bytes": 842880544,
+          "sha256": "fa78e649115d7d3ae7683e80af446c8db48d33ba38d8e9bc58fd33180192d1f2"
+        },
+        {
+          "id": "act",
+          "role": "model",
+          "path": "litert/laya_act_head_fp32.tflite",
+          "bytes": 1057960,
+          "sha256": "c6f8de9b66e36581ce03cca7047d0a6b8573ba448ce44ae613e49c58f34e4052"
+        },
+        {
+          "id": "tokenizer",
+          "role": "tokenizer",
+          "path": "tokenizer/tokenizer.json",
+          "bytes": 3583228,
+          "sha256": "6c8aaa9a542084f2457eab775d4eeb51f92a70c0fd9de28d5edb0ddec3c08d30"
+        },
+        {
+          "id": "tokenizer_config",
+          "role": "tokenizer",
+          "path": "tokenizer/tokenizer_config.json",
+          "bytes": 308,
+          "sha256": "50044de60daaa73df97d262e15a40d4faf0160e7d742df64b377877a1320dd12"
+        },
+        {
+          "id": "config",
+          "role": "processor_config",
+          "path": "rl_agent_config.json",
+          "bytes": 745,
+          "sha256": "ae287b56bbcf5f8c4f4541ae9dfd00c914c4c48b940b8398c3058af37ba92bbd"
+        }
+      ],
+      "default_profile": "gpu",
+      "profiles": [
+        {
+          "id": "gpu",
+          "priority": 100,
+          "files": [
+            "main",
+            "act",
+            "tokenizer",
+            "tokenizer_config",
+            "config"
+          ],
+          "enabled_inputs": [
+            "text"
+          ],
+          "components": {
+            "inference": "gpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "default_selectable": true,
+          "fallback_profiles": [
+            "cpu"
+          ]
+        },
+        {
+          "id": "cpu",
+          "priority": 50,
+          "files": [
+            "main",
+            "act",
+            "tokenizer",
+            "tokenizer_config",
+            "config"
+          ],
+          "enabled_inputs": [
+            "text"
+          ],
+          "components": {
+            "inference": "cpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "default_selectable": true
+        }
+      ],
+      "handler_config": {
+        "family": "laya",
+        "window": 256,
+        "hidden": 1024,
+        "files": {
+          "main": "main",
+          "act_head": "act",
+          "tokenizer": "tokenizer",
+          "tokenizer_config": "tokenizer_config",
+          "config": "config"
+        },
+        "gpu_precision": "fp32",
+        "cpu_threads": 4,
+        "languages": [
+          "en"
+        ]
+      }
+    },
+    {
+      "id": "ml_s256_fp32",
+      "runtime": "litert",
+      "handler": {
+        "id": "litert.typed_decisions",
+        "abi": 1
+      },
+      "runtime_range": {
+        "min_inclusive": "2.2.0",
+        "max_exclusive": "3.0.0"
+      },
+      "inputs": [
+        "text"
+      ],
+      "files": [
+        {
+          "id": "main",
+          "role": "model",
+          "path": "litert/laya_ml_s256_fp32.tflite",
+          "bytes": 1287375376,
+          "sha256": "38d63fd6015aecae1cc05e5ec6fcfa8ea700f576d1363d32fcb4393c5c8a8828"
+        },
+        {
+          "id": "act",
+          "role": "model",
+          "path": "litert/laya_ml_act_head_fp32.tflite",
+          "bytes": 795816,
+          "sha256": "30da532a8b752fdc82351740b0194d440a13d342ed77b9f8848978f1a96cf16d"
+        },
+        {
+          "id": "tokenizer",
+          "role": "tokenizer",
+          "path": "multilingual/tokenizer/tokenizer.json",
+          "bytes": 34363188,
+          "sha256": "609d8f4c067cd3950f88594c5a802616cea245823836ef5848ee4fc40aab5b6f"
+        },
+        {
+          "id": "tokenizer_config",
+          "role": "tokenizer",
+          "path": "multilingual/tokenizer/tokenizer_config.json",
+          "bytes": 524,
+          "sha256": "6c6b2d8e3c84ce0e671c129cd6b374b235d6f9863042a5836358d00a89bbb5a1"
+        },
+        {
+          "id": "config",
+          "role": "processor_config",
+          "path": "multilingual/rl_agent_config.json",
+          "bytes": 472,
+          "sha256": "25061739243b617ad88d1219ba6f8a9c86c5881ca28df024fa2d9b3b2fcc30c6"
+        }
+      ],
+      "default_profile": "gpu",
+      "profiles": [
+        {
+          "id": "gpu",
+          "priority": 100,
+          "files": [
+            "main",
+            "act",
+            "tokenizer",
+            "tokenizer_config",
+            "config"
+          ],
+          "enabled_inputs": [
+            "text"
+          ],
+          "components": {
+            "inference": "gpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "default_selectable": true,
+          "fallback_profiles": [
+            "cpu"
+          ]
+        },
+        {
+          "id": "cpu",
+          "priority": 50,
+          "files": [
+            "main",
+            "act",
+            "tokenizer",
+            "tokenizer_config",
+            "config"
+          ],
+          "enabled_inputs": [
+            "text"
+          ],
+          "components": {
+            "inference": "cpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "default_selectable": true
+        }
+      ],
+      "handler_config": {
+        "family": "laya",
+        "window": 256,
+        "hidden": 768,
+        "files": {
+          "main": "main",
+          "act_head": "act",
+          "tokenizer": "tokenizer",
+          "tokenizer_config": "tokenizer_config",
+          "config": "config"
+        },
+        "gpu_precision": "fp32",
+        "cpu_threads": 4,
+        "languages": [
+          "multilingual"
+        ]
+      }
+    },
+    {
+      "id": "en_s512_fp32",
+      "runtime": "litert",
+      "handler": {
+        "id": "litert.typed_decisions",
+        "abi": 1
+      },
+      "runtime_range": {
+        "min_inclusive": "2.2.0",
+        "max_exclusive": "3.0.0"
+      },
+      "inputs": [
+        "text"
+      ],
+      "files": [
+        {
+          "id": "main",
+          "role": "model",
+          "path": "litert/laya_en_s512_fp32.tflite",
+          "bytes": 1685803264,
+          "sha256": "2edc029fed8016648a893f498c0aa92dc8fb45d47e6e59d9393a667d39807e15"
+        },
+        {
+          "id": "act",
+          "role": "model",
+          "path": "litert/laya_act_head_fp32.tflite",
+          "bytes": 1057960,
+          "sha256": "c6f8de9b66e36581ce03cca7047d0a6b8573ba448ce44ae613e49c58f34e4052"
+        },
+        {
+          "id": "tokenizer",
+          "role": "tokenizer",
+          "path": "tokenizer/tokenizer.json",
+          "bytes": 3583228,
+          "sha256": "6c8aaa9a542084f2457eab775d4eeb51f92a70c0fd9de28d5edb0ddec3c08d30"
+        },
+        {
+          "id": "tokenizer_config",
+          "role": "tokenizer",
+          "path": "tokenizer/tokenizer_config.json",
+          "bytes": 308,
+          "sha256": "50044de60daaa73df97d262e15a40d4faf0160e7d742df64b377877a1320dd12"
+        },
+        {
+          "id": "config",
+          "role": "processor_config",
+          "path": "rl_agent_config.json",
+          "bytes": 745,
+          "sha256": "ae287b56bbcf5f8c4f4541ae9dfd00c914c4c48b940b8398c3058af37ba92bbd"
+        }
+      ],
+      "default_profile": "gpu",
+      "profiles": [
+        {
+          "id": "gpu",
+          "priority": 100,
+          "files": [
+            "main",
+            "act",
+            "tokenizer",
+            "tokenizer_config",
+            "config"
+          ],
+          "enabled_inputs": [
+            "text"
+          ],
+          "components": {
+            "inference": "gpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "default_selectable": true,
+          "fallback_profiles": [
+            "cpu"
+          ]
+        },
+        {
+          "id": "cpu",
+          "priority": 50,
+          "files": [
+            "main",
+            "act",
+            "tokenizer",
+            "tokenizer_config",
+            "config"
+          ],
+          "enabled_inputs": [
+            "text"
+          ],
+          "components": {
+            "inference": "cpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "default_selectable": true
+        }
+      ],
+      "handler_config": {
+        "family": "laya",
+        "window": 512,
+        "hidden": 1024,
+        "files": {
+          "main": "main",
+          "act_head": "act",
+          "tokenizer": "tokenizer",
+          "tokenizer_config": "tokenizer_config",
+          "config": "config"
+        },
+        "gpu_precision": "fp32",
+        "cpu_threads": 4,
+        "languages": [
+          "en"
+        ]
+      }
+    },
+    {
+      "id": "en_s256_fp32",
+      "runtime": "litert",
+      "handler": {
+        "id": "litert.typed_decisions",
+        "abi": 1
+      },
+      "runtime_range": {
+        "min_inclusive": "2.2.0",
+        "max_exclusive": "3.0.0"
+      },
+      "inputs": [
+        "text"
+      ],
+      "files": [
+        {
+          "id": "main",
+          "role": "model",
+          "path": "litert/laya_en_s256_fp32.tflite",
+          "bytes": 1684754688,
+          "sha256": "60cd44a92f70f9edc5ebad9007677ae5ca02c14acbab21a25addc13c7c6eb0af"
+        },
+        {
+          "id": "act",
+          "role": "model",
+          "path": "litert/laya_act_head_fp32.tflite",
+          "bytes": 1057960,
+          "sha256": "c6f8de9b66e36581ce03cca7047d0a6b8573ba448ce44ae613e49c58f34e4052"
+        },
+        {
+          "id": "tokenizer",
+          "role": "tokenizer",
+          "path": "tokenizer/tokenizer.json",
+          "bytes": 3583228,
+          "sha256": "6c8aaa9a542084f2457eab775d4eeb51f92a70c0fd9de28d5edb0ddec3c08d30"
+        },
+        {
+          "id": "tokenizer_config",
+          "role": "tokenizer",
+          "path": "tokenizer/tokenizer_config.json",
+          "bytes": 308,
+          "sha256": "50044de60daaa73df97d262e15a40d4faf0160e7d742df64b377877a1320dd12"
+        },
+        {
+          "id": "config",
+          "role": "processor_config",
+          "path": "rl_agent_config.json",
+          "bytes": 745,
+          "sha256": "ae287b56bbcf5f8c4f4541ae9dfd00c914c4c48b940b8398c3058af37ba92bbd"
+        }
+      ],
+      "default_profile": "gpu",
+      "profiles": [
+        {
+          "id": "gpu",
+          "priority": 100,
+          "files": [
+            "main",
+            "act",
+            "tokenizer",
+            "tokenizer_config",
+            "config"
+          ],
+          "enabled_inputs": [
+            "text"
+          ],
+          "components": {
+            "inference": "gpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "default_selectable": true,
+          "fallback_profiles": [
+            "cpu"
+          ]
+        },
+        {
+          "id": "cpu",
+          "priority": 50,
+          "files": [
+            "main",
+            "act",
+            "tokenizer",
+            "tokenizer_config",
+            "config"
+          ],
+          "enabled_inputs": [
+            "text"
+          ],
+          "components": {
+            "inference": "cpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "default_selectable": true
+        }
+      ],
+      "handler_config": {
+        "family": "laya",
+        "window": 256,
+        "hidden": 1024,
+        "files": {
+          "main": "main",
+          "act_head": "act",
+          "tokenizer": "tokenizer",
+          "tokenizer_config": "tokenizer_config",
+          "config": "config"
+        },
+        "gpu_precision": "fp32",
+        "cpu_threads": 4,
+        "languages": [
+          "en"
+        ]
+      }
+    }
+  ]
+}

@@ -28,7 +28,7 @@ data class Descriptor(
     companion object {
         const val SCHEMA_VERSION = 1
         const val FILE_NAME = "hfmodels.json"
-        val TASKS = setOf("chat", "object_detection")
+        val TASKS = setOf("chat", "object_detection", "decide")
         val RUNTIMES = setOf("litert_lm", "litert")
         val ROLES = setOf("model", "tokenizer", "labels", "processor_config")
         private val SHA256 = Regex("^[0-9a-f]{64}$")

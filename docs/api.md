@@ -21,6 +21,8 @@ import io.github.johnrocky.hfmodels.litertlm.SessionState
 import io.github.johnrocky.hfmodels.litertlm.GenerationOptions
 import io.github.johnrocky.hfmodels.litertlm.ThinkingInfo   // 0.1.1
 import io.github.johnrocky.hfmodels.litertlm.text           // 0.1.1: the Message.text extension
+import io.github.johnrocky.hfmodels.litert.EncoderDecisions // 0.1.2, module hfmodels-litert: typed decisions on a LiteRT decision encoder
+import io.github.johnrocky.hfmodels.decide.TypedDecisions   // 0.1.2: the decision model (decide / prefill), Question, Answer, Decisions
 // runtime types that cross the SDK boundary (LiteRT-LM 0.16.1, brought in as an `api` dependency)
 import com.google.ai.edge.litertlm.Contents
 import com.google.ai.edge.litertlm.Content
@@ -159,6 +161,66 @@ A reasoning model streams its thinking between markers (`<think>` … `</think>`
 - Off: `createConversation(ConversationConfig(channels = emptyList()))` disables the channels for that conversation; the markers then appear in `m.text` (what an app without the SDK sees).
 - Which models: the README table marks the entries whose reasoning was verified to arrive in `channels` on a device; `catalog/entries/*.json` carry `thinking_default` for the ones that reason on every turn.
 - Cost: a load with a channel renders one prompt through the runtime at `prepare` (a throwaway conversation, no token generated) to fill `prefilled` / `generationPromptTail`.
+
+## Typed decisions (0.1.2, module `hfmodels-litert`)
+
+A decision model answers typed questions about a state without generating text: one forward per question, calibrated probabilities back. The request and answer forms are the `/v1/systemone` ones (`state`, `questions` with `type` / `instructions` / `criteria`; answers with `choice` / `score` / `noul`, `probabilities`, `confidence`), so a request written for a server is handed to the phone unchanged. The first models are the `laya` decision encoders (`convaiinnovations/laya`, English and multilingual), run by LiteRT's `CompiledModel` (`com.google.ai.edge.litert`, classic `.tflite`), which is why this lives in its own module: the litert AAR adds about 9 MB of native code and needs `android.uniquePackageNames=false` on AGP 9 (litert 2.2.0 and litert-api 2.2.0 share a namespace); a chat-only app does not pay for it.
+
+```kotlin
+// app/build.gradle.kts: implementation("io.github.john-rocky.hfmodels:hfmodels-litert:<version>")   // brings hfmodels-core and litert 2.2.0
+// gradle.properties:   android.uniquePackageNames=false
+import io.github.johnrocky.hfmodels.litert.EncoderDecisions      // the Task, where Tasks.Chat goes
+import io.github.johnrocky.hfmodels.decide.TypedDecisions        // the model
+import io.github.johnrocky.hfmodels.decide.Question
+import io.github.johnrocky.hfmodels.decide.Answer
+import io.github.johnrocky.hfmodels.decide.Decisions
+import io.github.johnrocky.hfmodels.decide.PreparedState
+import io.github.johnrocky.hfmodels.decide.DecisionLimits
+import io.github.johnrocky.hfmodels.decide.Json                  // the publisher-compatible JSON reader / writer
+
+val model: TypedDecisions = models.fromPretrained(ModelRef("<owner>/<name>"), EncoderDecisions)
+val questions = mapOf(
+    "department" to Question.Choice("Which department should handle this request?", linkedMapOf("billing" to "invoices, payments, refunds", "technical" to "bugs, outages", "other" to "everything else")),
+    "urgency" to Question.Score("How urgent is this request?", listOf("not urgent", "soon", "critical deadline or blocking issue")),
+    "refund_requested" to Question.Noul("Does the user explicitly request a refund?"),
+)
+val d: Decisions = model.decide(mapOf("subject" to "Duplicate charge", "body" to "Please refund the duplicate charge."), questions)
+(d.answers["department"] as Answer.Choice).choice            // "billing"; .probabilities, .confidence
+(d.answers["urgency"] as Answer.Score).score                  // 1.26 (expected level index); .legend, .probabilities
+(d.answers["refund_requested"] as Answer.Noul).noul           // 0.91 = P(the statement holds)
+d.timing.questionMs; d.stateTokens; d.truncated; d.toJson()  // {"model": …, "answers": {…}} in the response form
+val same = Question.parseAll(jsonText)                        // the questions object of a request, order kept
+```
+
+```kotlin
+interface TypedDecisions : PreparedModel {
+    val limits: DecisionLimits                                              // windowTokens, headTokens, maxOptions, languages
+    suspend fun decide(state: Any, questions: Map<String, Question>): Decisions
+    suspend fun decide(state: Any, question: Question): Answer                 // one question, no id
+    suspend fun prefill(state: Any): PreparedState                          // the state once, several rounds of questions
+}
+interface PreparedState : AutoCloseable { suspend fun decide(questions: Map<String, Question>): Decisions; suspend fun decide(question: Question): Answer }
+
+sealed class Question {                                                     // toMap(); Question.fromMap(o); Question.parseAll(json)
+    data class Choice(instructions: String, criteria: Map<String, String?>)  // pick one key; a value describes it; a JSON list of keys is accepted too
+    data class Score(instructions: String, criteria: List<String>)           // ordered levels, index 0 lowest
+    data class Noul(instructions: String, criteria: Map<String, String>? = null)   // does it hold? optional "false" / "true" descriptions
+}
+sealed class Answer {                                                       // toMap(): the JSON object, rounded to 4 decimals like the reference
+    data class Choice(choice: String, probabilities: Map<String, Double>, confidence: Double, extras: Map<String, Any?>)
+    data class Score(score: Double, legend: Map<String, String>, probabilities: Map<String, Double>, confidence: Double, extras: …)
+    data class Noul(noul: Double, confidence: Double, extras: …)             // extras: model-defined fields (laya: "action": {"act_probability"})
+}
+data class Decisions(answers: Map<String, Answer>, model: String, timing: DecisionTiming, stateTokens: Int, truncated: Boolean) { fun toJson(): String }
+data class DecisionTiming(stateMs: Double, questionMs: List<Double>, totalMs: Double)   // one call's wall clock on the device, not a benchmark
+```
+
+- **State**: a `String` is used as it is; a `Map<String, Any?>` / `List<Any?>` is serialized the way the publisher's code does it (`Json.dumps`: Python `json.dumps(…, ensure_ascii=False)` form, key order kept, `/` unescaped) so the phone tokenizes the same bytes the publisher's tests did. `org.json` is not used on this path (it escapes `/` and loses key order on the JVM).
+- **Fit**: the question head (instructions + options) is budgeted first, the state gets the rest of the window and is cut at the end when longer (`Decisions.truncated = true`, `stateTokens` = what was kept). A question whose options do not fit the head fails with `CONTEXT_LIMIT_EXCEEDED`.
+- **What `prefill` shares**: what the backend can. An encoder shares the serialized, tokenized state (about 2 ms on the measured phone) and still runs one forward per question, so `prefill(state).decide(qs)` and `decide(state, qs)` cost the same; a language-model backend with a scoring API would share the prompt's KV cache. The answers are identical either way. The measured numbers are in the README table and `litert/results/`.
+- **Rules**: one `decide` at a time per model (`MODEL_BUSY` otherwise); `close()` / `closeAndJoin()` as for chat; `info.notes` carries `compile_ms` and the accelerator the graph was created with (`observed` stays UNKNOWN: litert 2.2.0 reports no per-op execution target).
+- **Descriptor**: task `decide`, runtime `litert`, handler `litert.typed_decisions` ABI 1, profile components keyed `inference` (`gpu` with `fallback_profiles: ["cpu"]`, then `cpu`); `handler_config`: `family: laya`, `window`, `hidden`, `files` (`main`, `act_head`, `tokenizer`, `tokenizer_config`, `config`), `gpu_precision` (`fp32` default), `cpu_threads`, `languages`. `catalog/dev/convaiinnovations__laya-litert-dev.hfmodels.json` is the development descriptor for the converted graphs (side-loaded until they are published).
+- **Language-model bundles** (`.litertlm`) as a decision backend: not in this release. The Kotlin API of LiteRT-LM 0.16.1 / 0.17.1 exposes no scoring or checkpoint call (its C API and C++ do); the record and the reproduction are in the repository's development notes. `Tasks.Chat` stays the way to use those bundles.
 
 ## Errors
 

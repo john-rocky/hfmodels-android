@@ -1,0 +1,16 @@
+# hfmodels typed-decisions device gate  date=2026-09-21T05:14:52Z serial=RFGL80R6A6H device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 android=16
+# git=c158603 variant=en_s256_fp32 backend=gpu thermal=Thermal Status: 0 battery_level= level: 97 battery_temp_x10C= temperature: 351 screen= mWakefulness=Awake
+# gradle rc=0 end=2026-09-21T05:15:32Z thermal_end=Thermal Status: 1 battery_temp_end_x10C= temperature: 369
+--------- beginning of main
+09-21 14:15:02.320 31604 31620 I hfmodels-decide: device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 android=16 litert=2.2.0 variant=en_s256_fp32 backend=gpu
+09-21 14:15:02.331 31604 31625 I hfmodels: resolve convaiinnovations/laya: commit=1c5edc17 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=7bd9ed20
+09-21 14:15:03.918 31604 31625 I hfmodels: imported laya_en_s256_fp32.tflite: 1684754688 bytes, sha256 ok, from /data/local/tmp/hfmodels/laya/laya_en_s256_fp32.tflite
+09-21 14:15:03.920 31604 31625 I hfmodels: resolve convaiinnovations/laya: commit=1c5edc17 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=7bd9ed20
+09-21 14:15:04.388 31604 31625 I hfmodels: tokenizer tokenizer.json: 50280 tokens, load_ms=457
+09-21 14:15:08.752 31604 31620 I hfmodels: ready convaiinnovations/laya@1c5edc17 variant=en_s256_fp32 profile=gpu inference=GPU prepare_ms=4823
+09-21 14:15:08.752 31604 31620 I hfmodels-decide: RESULT step=load ok=true variant=en_s256_fp32 backend=gpu import_ms=1582 load_ms=4834 profile=gpu window=256 head=192 notes=compile_ms=4363 on gpu (precision fp32) | observed backend is UNKNOWN: litert 2.2.0 reports no per-op execution target; 'initialized' is the accelerator the CompiledModel was created with
+09-21 14:15:16.831 31604 31620 I hfmodels-decide: RESULT step=parity ok=true variant=en_s256_fp32 backend=gpu rows=60 argmax_flips=0 max_marker_logit_abs_err=0.00005 (worst A05/churn_risk) max_prob_abs_err=0.00000 max_score_abs_err=0.00000 max_act_logit_rel_err=2.71e-06 exact_rounded=60/60 question_ms_median=126.7 p90=129.2 min=119.7 max=133.0
+09-21 14:15:30.963 31604 31620 I hfmodels-decide: RESULT step=timing ok=true variant=en_s256_fp32 backend=gpu questions=4 state_tokens=27 shared_ms_median=824.5 direct_ms_median=831.7 prefill_then_decide_ms_median=923.0 state_tokenize_ms_median=1.77 per_question_ms=258.2,264.8,265.2,263.9 repeats=5
+09-21 14:15:30.987 31604 31620 I hfmodels-decide: RESULT step=authored144 ok=true variant=en_s256_fp32 backend=gpu skipped: no oracle block for en256 at window 256
+09-21 14:15:31.170 31604 31620 I hfmodels-decide: RESULT step=release ok=true variant=en_s256_fp32 backend=gpu close_ms=182
+09-21 14:15:31.170 31604 31620 I hfmodels-decide: RESULT ok=true variant=en_s256_fp32 backend=gpu device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 failures=

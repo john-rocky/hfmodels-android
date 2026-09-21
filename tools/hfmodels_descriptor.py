@@ -22,7 +22,7 @@ Verification records are NOT written here; `tools/build_catalog.py` merges `veri
 import argparse, hashlib, json, os, struct, sys, urllib.parse, urllib.request
 
 HUB = os.environ.get("HF_ENDPOINT", "https://huggingface.co")
-TASKS = {"chat", "object_detection"}
+TASKS = {"chat", "object_detection", "decide"}
 RUNTIMES = {"litert_lm", "litert"}
 ROLES = {"model", "tokenizer", "labels", "processor_config"}
 BACKENDS = {"cpu", "gpu", "npu"}
