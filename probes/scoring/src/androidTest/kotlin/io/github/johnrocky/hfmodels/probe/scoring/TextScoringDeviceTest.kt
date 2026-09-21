@@ -81,21 +81,20 @@ class TextScoringDeviceTest {
                 val ts = System.nanoTime()
                 session.runPrefill(listOf(InputData.Text(prompt)))
                 val tp = System.nanoTime()
-                val step = session.currentStep
+                val step = session.getCurrentStep()
                 if (step != r.getInt("input_tokens")) stepMismatch++
                 session.saveCheckpoint("q")
                 val neg = DoubleArray(n)
                 for (k in 0 until n) {
                     val tk = System.nanoTime()
-                    // Measured: the runtime returns the log probability of the target (negative; higher = more likely),
-                    // although engine.h documents the sum of the negative log probabilities. Used as a log probability here.
-                    neg[k] = session.runTextScoring(listOf(letters[k].toString()))[0].score.toDouble()
+                    // The score is the target's log probability after the prefill (negative; higher is more likely).
+                    neg[k] = session.runTextScoring(listOf(letters[k].toString())).scores[0].toDouble()
                     scoreMs += (System.nanoTime() - tk) / 1e6
                     session.rewindToCheckpoint("q")
                 }
                 val te = System.nanoTime()
                 // the same letter again after the rewinds: a drift means the rewind did not restore the position
-                val again = session.runTextScoring(listOf(letters[0].toString()))[0].score.toDouble()
+                val again = session.runTextScoring(listOf(letters[0].toString())).scores[0].toDouble()
                 rewindDrift = maxOf(rewindDrift, abs(again - neg[0]))
                 session.close()
                 if (checked < 6) Log.i(TAG, "row ${r.getString("id").take(8)} step=$step expected=${r.getInt("input_tokens")} logp_device=${neg.joinToString(",") { "%.3f".format(it) }} logp_oracle=${oracle.joinToString(",") { "%.3f".format(Math.log(maxOf(it, 1e-12))) }} A_again=${"%.3f".format(again)}")
