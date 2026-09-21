@@ -4,3 +4,17 @@
 09-21 17:01:18.617  4631  4677 I hfmodels: tokenizer tokenizer.json: 256000 tokens, load_ms=2255
 09-21 17:01:18.859  4631  4631 I hfmodels: ready litert-community/laya-LiteRT@00f16269 variant=ml_s256_wfp16 profile=cpu inference=CPU prepare_ms=2500
 # second load of the cached files: Ready in 2511 ms (compile_ms=241)
+# after the repo went public: fresh install, no token. Resolved via RESOLVED_BRANCH, every file downloaded and sha256-verified, Ready in 107154 ms total (download 644 MB graph + 34 MB tokenizer), compile_ms=285
+09-21 17:02:12.793  5580  5617 I hfmodels: resolve litert-community/laya-LiteRT: commit=00f16269 via RESOLVED_BRANCH, descriptor=litert-community/laya-LiteRT@00f16269/hfmodels.json sha=51139434
+09-21 17:02:12.800  5580  5617 I hfmodels: download laya_ml_s256_wfp16.tflite <- https://huggingface.co/litert-community/laya-LiteRT/resolve/00f162699b86fff2207d1f43cfa4438515dcd7ae/laya_ml_s256_wfp16.tflite
+09-21 17:03:47.310  5580  5617 I hfmodels: downloaded laya_ml_s256_wfp16.tflite: 644077088 bytes, sha256 ok
+09-21 17:03:47.313  5580  5617 I hfmodels: download laya_ml_act_head_fp32.tflite <- https://huggingface.co/litert-community/laya-LiteRT/resolve/00f162699b86fff2207d1f43cfa4438515dcd7ae/laya_ml_act_head_fp32.tflite
+09-21 17:03:48.727  5580  5617 I hfmodels: downloaded laya_ml_act_head_fp32.tflite: 795816 bytes, sha256 ok
+09-21 17:03:48.727  5580  5617 I hfmodels: download tokenizer.json <- https://huggingface.co/litert-community/laya-LiteRT/resolve/00f162699b86fff2207d1f43cfa4438515dcd7ae/multilingual/tokenizer.json
+09-21 17:03:55.785  5580  5617 I hfmodels: downloaded tokenizer.json: 34363188 bytes, sha256 ok
+09-21 17:03:55.787  5580  5617 I hfmodels: download tokenizer_config.json <- https://huggingface.co/litert-community/laya-LiteRT/resolve/00f162699b86fff2207d1f43cfa4438515dcd7ae/multilingual/tokenizer_config.json
+09-21 17:03:56.449  5580  5617 I hfmodels: downloaded tokenizer_config.json: 524 bytes, sha256 ok
+09-21 17:03:56.450  5580  5617 I hfmodels: download calibration.json <- https://huggingface.co/litert-community/laya-LiteRT/resolve/00f162699b86fff2207d1f43cfa4438515dcd7ae/multilingual/calibration.json
+09-21 17:03:56.912  5580  5617 I hfmodels: downloaded calibration.json: 9156 bytes, sha256 ok
+09-21 17:03:58.865  5580  5617 I hfmodels: tokenizer tokenizer.json: 256000 tokens, load_ms=1941
+09-21 17:03:59.152  5580  5580 I hfmodels: ready litert-community/laya-LiteRT@00f16269 variant=ml_s256_wfp16 profile=cpu inference=CPU prepare_ms=2233
