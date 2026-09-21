@@ -169,11 +169,16 @@ def main():
             if f["role"] not in ROLES: fail(f"file {f['id']}: role {f['role']}")
             meta = files.get(f["path"])
             if meta is None: fail(f"{repo}@{commit[:8]} has no file '{f['path']}'")
-            if not meta["sha256"]: fail(f"'{f['path']}' is not an LFS file; no sha256 from the Hub")
+            if not meta["sha256"]:
+                # A regular git blob (under the Hub's LFS threshold) has no sha256 in the listing: fetch it and hash it, up to 64 MiB.
+                if int(meta["size"] or 0) > 64 * 1024 * 1024: fail(f"'{f['path']}' is not an LFS file and too large to fetch for hashing")
+                blob = get(f"{HUB}/{repo}/resolve/{commit}/{f['path']}", a.token)
+                if len(blob) != int(meta["size"]): fail(f"'{f['path']}': fetched {len(blob)} bytes, the Hub lists {meta['size']}")
+                meta["sha256"] = hashlib.sha256(blob).hexdigest()
             vfiles.append({"id": f["id"], "role": f["role"], "path": f["path"], "bytes": int(meta["size"]), "sha256": meta["sha256"]})
         hc = dict(v.get("handler_config", {}))
         model_file = next(f for f in vfiles if f["role"] == "model")
-        if not a.no_bundle_header:
+        if not a.no_bundle_header and v["runtime"] == "litert_lm":   # a classic .tflite (runtime litert) has no bundle header
             try:
                 bh = bundle_header(f"{HUB}/{repo}/resolve/{commit}/{model_file['path']}", a.token)
             except Exception as e:  # noqa: BLE001
@@ -219,6 +224,8 @@ def main():
                 "fallback_profiles": p.get("fallback_profiles", []), "default_selectable": p.get("default_selectable", True),
             }
             if "context_tokens" in p: prof["context_tokens"] = p["context_tokens"]
+            # A publisher's own device records travel with the spec (level, device, os_build, runtime, result, date).
+            if "verification" in p: prof["verification"] = p["verification"]
             profiles.append(prof)
         if v["default_profile"] not in {p["id"] for p in profiles}: fail(f"variant {v['id']}: default_profile")
         out["variants"].append({

@@ -29,8 +29,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    // The development descriptor for the converted decision graphs (catalog/dev) ships as an asset until the graphs are published.
-    sourceSets { named("main") { assets.srcDir(rootProject.file("catalog/dev")) } }
 }
 
 dependencies {

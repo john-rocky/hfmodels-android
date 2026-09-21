@@ -97,7 +97,9 @@ class EncoderDecisionsDeviceTest {
                 val (raw, act) = impl.lastRaw!!
                 val refRaw = (r["raw_logits"] as List<*>).map { (it as Number).toDouble() }
                 val refAct = (r["raw_act_logits"] as List<*>).map { (it as Number).toDouble() }
-                val official = r["official_answer"] as Map<*, *>
+                // The expected answer: the captured (official fp32) logits decoded with the calibration THIS variant declares, so a
+                // fitted calibration file and the publisher's config are both checked against the same reference logits.
+                val official = LayaDecode.answer(q, refRaw.map { it.toFloat() }.toFloatArray(), refAct.map { it.toFloat() }.toFloatArray(), impl.calibration).toMap()
                 val got = d.answers.getValue("q")
                 checked++
                 val le = refRaw.indices.maxOf { abs(refRaw[it] - raw[it]) }
@@ -114,7 +116,7 @@ class EncoderDecisionsDeviceTest {
             }
             val sorted = perQuestionMs.sorted()
             result("parity", checked > 0 && argmaxFlips == 0 && maxProbErr <= 0.01,
-                "rows=$checked argmax_flips=$argmaxFlips max_marker_logit_abs_err=${"%.5f".format(maxLogitErr)} (worst $worst) max_prob_abs_err=${"%.5f".format(maxProbErr)} max_score_abs_err=${"%.5f".format(maxScoreErr)} max_act_logit_rel_err=${"%.2e".format(maxActErr)} exact_rounded=$exact/$checked question_ms_median=${"%.1f".format(sorted[sorted.size / 2])} p90=${"%.1f".format(sorted[(sorted.size * 9) / 10])} min=${"%.1f".format(sorted.first())} max=${"%.1f".format(sorted.last())}")
+                "rows=$checked calibration=${File(m.info.files.getValue("config")).name} argmax_flips=$argmaxFlips max_marker_logit_abs_err=${"%.5f".format(maxLogitErr)} (worst $worst) max_prob_abs_err=${"%.5f".format(maxProbErr)} max_score_abs_err=${"%.5f".format(maxScoreErr)} max_act_logit_rel_err=${"%.2e".format(maxActErr)} exact_rounded=$exact/$checked question_ms_median=${"%.1f".format(sorted[sorted.size / 2])} p90=${"%.1f".format(sorted[(sorted.size * 9) / 10])} min=${"%.1f".format(sorted.first())} max=${"%.1f".format(sorted.last())}")
 
             // 3. timing: shared (one call, N questions) vs direct (N calls, one question each), warm
             val tf = fixtures.getValue(v.timingFixture)
@@ -198,7 +200,9 @@ class EncoderDecisionsDeviceTest {
             "en_s256_wfp16" to V(mapOf("main" to "laya_en_s256_wfp16.tflite", "act" to "laya_act_head_fp32.tflite", "tokenizer" to "tokenizer/tokenizer.json", "tokenizer_config" to "tokenizer/tokenizer_config.json", "config" to "rl_agent_config.json"), "en_rows.json.gz", "en_fixtures.json.gz", "A01", "en256"),
             "en_s512_fp32" to V(mapOf("main" to "laya_en_s512_fp32.tflite", "act" to "laya_act_head_fp32.tflite", "tokenizer" to "tokenizer/tokenizer.json", "tokenizer_config" to "tokenizer/tokenizer_config.json", "config" to "rl_agent_config.json"), "en_rows.json.gz", "en_fixtures.json.gz", "A01", "en"),
             "en_s256_fp32" to V(mapOf("main" to "laya_en_s256_fp32.tflite", "act" to "laya_act_head_fp32.tflite", "tokenizer" to "tokenizer/tokenizer.json", "tokenizer_config" to "tokenizer/tokenizer_config.json", "config" to "rl_agent_config.json"), "en_rows.json.gz", "en_fixtures.json.gz", "A01", "en256"),
-            "ml_s256_fp32" to V(mapOf("main" to "laya_ml_s256_fp32.tflite", "act" to "laya_ml_act_head_fp32.tflite", "tokenizer" to "multilingual/tokenizer/tokenizer.json", "tokenizer_config" to "multilingual/tokenizer/tokenizer_config.json", "config" to "multilingual/rl_agent_config.json"), "ml_rows_s256.json.gz", "ml_fixtures.json.gz", "ML_A01", "ml"),
+            "ml_s256_fp32" to V(mapOf("main" to "laya_ml_s256_fp32.tflite", "act" to "laya_ml_act_head_fp32.tflite", "tokenizer" to "multilingual/tokenizer/tokenizer.json", "tokenizer_config" to "multilingual/tokenizer/tokenizer_config.json", "config" to "laya_ml_calibration.json"), "ml_rows_s256.json.gz", "ml_fixtures.json.gz", "ML_A01", "ml"),
+            "ml_s256_wfp16" to V(mapOf("main" to "laya_ml_s256_wfp16.tflite", "act" to "laya_ml_act_head_fp32.tflite", "tokenizer" to "multilingual/tokenizer/tokenizer.json", "tokenizer_config" to "multilingual/tokenizer/tokenizer_config.json", "config" to "laya_ml_calibration.json"), "ml_rows_s256.json.gz", "ml_fixtures.json.gz", "ML_A01", "ml"),
+            "ml_s512_fp32" to V(mapOf("main" to "laya_ml_s512_fp32.tflite", "act" to "laya_ml_act_head_fp32.tflite", "tokenizer" to "multilingual/tokenizer/tokenizer.json", "tokenizer_config" to "multilingual/tokenizer/tokenizer_config.json", "config" to "laya_ml_calibration.json"), "ml_rows_s256.json.gz", "ml_fixtures.json.gz", "ML_A01", "ml512"),
         )
 
         fun descriptor(variantId: String): String = LayaDevDescriptor.json(variantId)

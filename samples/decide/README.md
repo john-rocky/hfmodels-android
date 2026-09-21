@@ -8,17 +8,13 @@ One decision model, three uses, each with the measured milliseconds on the scree
 | Clipboard | the clipboard text (or typed text) and a purpose from the spinner -> what the text holds (choice), whether it carries personal data (noul), which of the purpose's pieces it contains (one noul per piece) -> then the spans to paste from [GLiNER2.5-Small-LiteRT](https://huggingface.co/litert-community/GLiNER2.5-Small-LiteRT) (its published Kotlin host, copied under `gliner/`). | 2 + pieces |
 | Query x text | one query against the passages typed one per line -> does the passage answer it (noul), how relevant (4-level score) -> ranked, with the milliseconds per passage. | 2 per passage |
 
-## Model files (development state, 2026-09-21)
+## Model files
 
-The decision model is `convaiinnovations/laya` (Apache-2.0) converted to LiteRT graphs. The conversion is verified on the phone (see the repository README's table) but **the graphs are not published yet**: the tokenizer and config files download from the publisher's repo at a pinned commit, the graphs are side-loaded. After installing the app, push the graphs of the variant you pick (the spinner lists them; the files come from the conversion's `exports/`):
+The decision model is [litert-community/laya-LiteRT](https://huggingface.co/litert-community/laya-LiteRT) (the `convaiinnovations/laya` checkpoints converted to LiteRT graphs, Apache-2.0), loaded by id: the first **Load** downloads the chosen variant's graph (0.6 to 1.7 GB), tokenizer and config files into the app's private storage and verifies their sha256; later loads are offline. The spinner lists the repo's variants; `ml_s256_fp32` (multilingual, window 256) is the default and the fastest measured on the GPU, the English variants take English states, the `_wfp16` variants (float16 weights, half the download) load on the CPU only (LiteRT 2.2.0's GPU accelerator does not compile them on the measured phone). A copy of a graph already on the computer can be pushed instead of downloaded:
 
 ```sh
-adb push laya_ml_s256_fp32.tflite laya_ml_act_head_fp32.tflite /sdcard/Android/data/io.github.johnrocky.hfmodels.samples.decide/files/     # multilingual, window 256 (the default)
-adb push laya_en_s256_fp32.tflite laya_act_head_fp32.tflite /sdcard/Android/data/io.github.johnrocky.hfmodels.samples.decide/files/        # English, window 256
-adb push laya_en_s512_fp32.tflite /sdcard/Android/data/io.github.johnrocky.hfmodels.samples.decide/files/                                   # English, window 512
+adb push laya_ml_s256_fp32.tflite /sdcard/Android/data/io.github.johnrocky.hfmodels.samples.decide/files/     # hashed against the descriptor, then imported
 ```
-
-The SDK hashes a pushed copy against the descriptor (`catalog/dev/convaiinnovations__laya-litert-dev.hfmodels.json`, shipped as an asset) and imports it; a wrong file is ignored. Once the graphs are on the Hub, `DecisionModels.kt` drops the descriptor and the push. The `_wfp16` variants (float16 weights) load on `cpu` only on the measured phone: LiteRT 2.2.0's GPU accelerator leaves their DEQUANTIZE nodes to the CPU and then fails to compile the model.
 
 The extraction model's ten files (about 410 MB) are fetched by `GlinerAssets` on the first **Get extractor** with a sha256 check against the repo's `SHA256SUMS`, or taken from a pushed copy (`adb push <files> /sdcard/Android/data/<applicationId>/files/`).
 

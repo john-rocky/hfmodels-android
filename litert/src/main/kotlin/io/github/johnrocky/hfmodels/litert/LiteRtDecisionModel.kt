@@ -36,7 +36,7 @@ internal class LiteRtDecisionModel private constructor(
     override val info: PreparedModelInfo,
     override val limits: DecisionLimits,
     private val builder: LayaSequenceBuilder,
-    private val calibration: LayaCalibration,
+    internal val calibration: LayaCalibration,
     private val main: Graph,
     private val act: Graph?,
     private val hidden: Int,

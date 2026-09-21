@@ -11,7 +11,7 @@ An integration is done when three things hold, in this order:
 2. **the app answers a fixed prompt on a connected device** (the SDK's `Ready` event, then a streamed reply);
 3. the lifecycle is wired: load off the main thread (it is a `suspend` function), Stop cancels the collecting coroutine, `closeAndJoin()` on release / teardown, and a cancelled session is replaced with `createConversation()` before the next turn.
 
-Scope: an app that already exists, a model that is registered (its repo carries `hfmodels.json`, or it is in the bundled catalog). Anything else fails with a typed `ModelException`; `docs/errors.md` says what to do. Typed decisions (choice / score / noul about a state, no text generated) are a separate task on a separate module, `hfmodels-litert` with `EncoderDecisions`; read the "Typed decisions" section of `docs/api.md` and `samples/decide/README.md` before offering them, and say that the decision graphs are side-loaded in this development state rather than downloadable by id.
+Scope: an app that already exists, a model that is registered (its repo carries `hfmodels.json`, or it is in the bundled catalog). Anything else fails with a typed `ModelException`; `docs/errors.md` says what to do. Typed decisions (choice / score / noul about a state, no text generated) are a separate task on a separate module, `hfmodels-litert` with `EncoderDecisions`; read the "Typed decisions" section of `docs/api.md` and `samples/decide/README.md` before offering them; the id is `litert-community/laya-LiteRT` (needs the `hfmodels-litert` module and `android.uniquePackageNames=false`).
 
 ## Step 0: versions and the API, from the files, never from memory
 

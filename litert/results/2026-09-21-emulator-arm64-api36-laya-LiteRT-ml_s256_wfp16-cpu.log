@@ -1,0 +1,6 @@
+# hfmodels typed-decisions: litert-community/laya-LiteRT loaded BY ID (repo hfmodels.json, private repo with a token) on the arm64 Android emulator, date=2026-09-21T08:00:59Z avd=pixel_api36 android=16 abi=arm64-v8a git=835194d
+# sample status line: Ready: ml_s256_wfp16 on cpu, window 256, 136074 ms total; compile_ms=329 on cpu (4 threads); rank screen: 5 passages x 2 questions in 3487 ms, the two answering passages first (0.59, 0.56)
+09-21 17:01:16.353  4631  4677 I hfmodels: resolve litert-community/laya-LiteRT: commit=00f16269 via SAVED_BINDING, descriptor=litert-community/laya-LiteRT@00f16269/hfmodels.json sha=51139434
+09-21 17:01:18.617  4631  4677 I hfmodels: tokenizer tokenizer.json: 256000 tokens, load_ms=2255
+09-21 17:01:18.859  4631  4631 I hfmodels: ready litert-community/laya-LiteRT@00f16269 variant=ml_s256_wfp16 profile=cpu inference=CPU prepare_ms=2500
+# second load of the cached files: Ready in 2511 ms (compile_ms=241)

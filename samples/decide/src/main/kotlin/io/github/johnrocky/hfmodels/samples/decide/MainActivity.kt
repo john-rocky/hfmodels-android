@@ -81,12 +81,13 @@ class MainActivity : ComponentActivity() {
                     val m = decisions.load(variant.selectedItem as String, kind) { e -> status.text = e.describe() }
                     status.text = "Ready: ${m.info.variantId} on ${m.info.profileId}, window ${m.limits.windowTokens}, ${(System.nanoTime() - t0) / 1_000_000} ms total; ${m.info.notes.firstOrNull() ?: ""}"
                 } catch (e: ModelException) {
-                    status.text = "${e.code}: ${e.reason}" + if (e.code.name == "MODEL_NOT_FOUND_OR_INACCESSIBLE" || e.code.name == "NETWORK_ERROR") "\nThe graphs are not published yet: push them to ${getExternalFilesDir(null)?.path}/ (see README.md)" else ""
+                    status.text = "${e.code}: ${e.reason}"
                 }
             }
         }
         findViewById<Button>(R.id.release).setOnClickListener { scope.launch { decisions.release(); status.text = "Released" } }
         // For scripted runs: `adb shell am start -n <pkg>/.MainActivity --es variant en_s256_fp32 --es backend gpu` preselects and loads.
+        intent.getStringExtra("hf_token")?.let { decisions.token = it }   // --es hf_token <token> for a private or gated copy
         intent.getStringExtra("variant")?.let { v -> decisions.variants.indexOf(v).takeIf { it >= 0 }?.let { variant.setSelection(it) } }
         intent.getStringExtra("backend")?.let { b -> listOf("auto", "gpu", "cpu").indexOf(b).takeIf { it >= 0 }?.let { backend.setSelection(it) } }
         if (intent.hasExtra("variant")) findViewById<Button>(R.id.load).post { findViewById<Button>(R.id.load).performClick() }

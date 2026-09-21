@@ -79,7 +79,10 @@ internal class LayaCalibration(val temperature: DoubleArray, val byOptions: Map<
             val o = Json.parseObject(text)
             val t = (o["temperature"] as? List<*>)?.map { (it as Number).toDouble() } ?: listOf(1.0, 1.0, 1.0)
             val by = (o["temperature_by_options"] as? Map<*, *>)?.entries?.associate { (k, v) -> k.toString() to (v as Number).toDouble() } ?: emptyMap()
-            return LayaCalibration(t.toDoubleArray(), by, (o["max_len"] as? Number)?.toInt() ?: 512, (o["head_max_len"] as? Number)?.toInt() ?: 192, o["encoder"]?.toString() ?: "")
+            // A fitted calibration file keeps the window facts under `provenance`; the publisher's config keeps them at the top.
+            val prov = o["provenance"] as? Map<*, *>
+            fun num(key: String) = (o[key] as? Number)?.toInt() ?: (prov?.get(key) as? Number)?.toInt()
+            return LayaCalibration(t.toDoubleArray(), by, num("max_len") ?: 512, num("head_max_len") ?: 192, (o["encoder"] ?: prov?.get("model"))?.toString() ?: "")
         }
     }
 
