@@ -167,7 +167,7 @@ A reasoning model streams its thinking between markers (`<think>` … `</think>`
 A decision model answers typed questions about a state without generating text: one forward per question, calibrated probabilities back. The request and answer forms are the `/v1/systemone` ones (`state`, `questions` with `type` / `instructions` / `criteria`; answers with `choice` / `score` / `noul`, `probabilities`, `confidence`), so a request written for a server is handed to the phone unchanged. The first models are the `laya` decision encoders (`convaiinnovations/laya`, English and multilingual), run by LiteRT's `CompiledModel` (`com.google.ai.edge.litert`, classic `.tflite`), which is why this lives in its own module: the litert AAR adds about 9 MB of native code and needs `android.uniquePackageNames=false` on AGP 9 (litert 2.2.0 and litert-api 2.2.0 share a namespace); a chat-only app does not pay for it.
 
 ```kotlin
-// app/build.gradle.kts: implementation("io.github.john-rocky.hfmodels:hfmodels-litert:<version>")   // brings hfmodels-core and litert 2.2.0
+// app/build.gradle.kts: implementation("io.github.john-rocky.hfmodels:hfmodels-litert:0.1.2")   // brings hfmodels-core and litert 2.2.0
 // gradle.properties:   android.uniquePackageNames=false
 import io.github.johnrocky.hfmodels.litert.EncoderDecisions      // the Task, where Tasks.Chat goes
 import io.github.johnrocky.hfmodels.decide.TypedDecisions        // the model

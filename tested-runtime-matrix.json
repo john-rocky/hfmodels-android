@@ -205,7 +205,7 @@
     }
   ],
   "typed_decisions": {
-    "$comment": "hfmodels-litert (EncoderDecisions on CompiledModel) verified combinations: one device, one day. Variants are the development descriptor's (catalog/dev/convaiinnovations__laya-litert-dev.hfmodels.json); the graphs are side-loaded, not published. Numbers: median per-question ms of the parity loop (warm), then the p90 over the same rows; thermal state rose during the session (status 1 at 40 C by the end).",
+    "$comment": "hfmodels-litert (EncoderDecisions on CompiledModel) verified combinations: one device, one day. Variants are the development descriptor's (catalog/dev/convaiinnovations__laya-litert-dev.hfmodels.json); the graphs were side-loaded for these runs and are the same bytes as litert-community/laya-LiteRT publishes (sha256 identical for every published variant, checked 2026-09-23). Numbers: median per-question ms of the parity loop (warm), then the p90 over the same rows; thermal state rose during the session (status 1 at 40 C by the end).",
     "device": {
       "model": "SM-S942Q (Galaxy S26)",
       "serial": "RFGL80R6A6H",

@@ -12,7 +12,7 @@ withContext(NonCancellable) { chat.closeAndJoin() }
 
 Under the hood it is Google's LiteRT-LM runtime (`com.google.ai.edge.litertlm`). The SDK adds the part the runtime leaves to every app: resolving the id to an immutable commit, downloading with resume and a sha256 check, choosing a backend profile the device can run, initializing, a streaming Flow whose cancel really stops the model, and a release that waits for the native side. The `Contents` / `Content` / `Message` / `ConversationConfig` types are the runtime's own, so nothing has to be unlearned.
 
-**Status: 0.1.1, early.** One device verified (the table below and `tested-runtime-matrix.json`); the API may still move before 1.0. 0.1.1 adds thinking models (their reasoning arrives in `Message.channels`, not in the text), `Message.text`, a resolver that never auto-selects a profile whose only device record is a FAIL, and a drop-in device check for any app (`samples/chat/src/androidTest/.../ChatDeviceCheck.kt`).
+**Status: 0.1.2, early.** One device verified (the table below and `tested-runtime-matrix.json`); the API may still move before 1.0. 0.1.2 adds typed decisions (module `hfmodels-litert`: `EncoderDecisions` on the `laya` decision encoders, the section below, and `samples/decide`). 0.1.1 added thinking models (their reasoning arrives in `Message.channels`, not in the text), `Message.text`, a resolver that never auto-selects a profile whose only device record is a FAIL, and a drop-in device check for any app (`samples/chat/src/androidTest/.../ChatDeviceCheck.kt`).
 
 ## Add it
 
@@ -40,7 +40,7 @@ android {
         ndk { abiFilters += "arm64-v8a" }
     }
 }
-dependencies { implementation("io.github.john-rocky.hfmodels:hfmodels-litertlm:0.1.1") }
+dependencies { implementation("io.github.john-rocky.hfmodels:hfmodels-litertlm:0.1.2") }
 ```
 
 That one line brings `hfmodels-core`, `litertlm-android` and `kotlinx-coroutines-android 1.11.0` (the version the runtime's bytecode needs; its POM understates it). Toolchain this was built with: AGP 9.3.1, Gradle 9.7.0, compileSdk 36, JDK 17, Kotlin built into AGP (do not apply the standalone Kotlin plugin). The SDK's manifest declares the GPU's `uses-native-library` entries and `INTERNET` (the first download only); its consumer R8 rules keep what the runtime's JNI looks up by name — with `minifyEnabled true` and nothing else, generation works.
@@ -179,12 +179,12 @@ Development shortcut: a copy of the file pushed into the app's external files di
 
 `ModelRef(id, revision = "<commit>", variant = "<id>")` pins more. Without a revision the first successful load binds the id to the commit it resolved, and later loads (also offline) use that binding until you call `unbind`.
 
-## Typed decisions (0.1.2, this branch)
+## Typed decisions (0.1.2)
 
 The second thing the SDK runs: a decision model that answers typed questions about a state without generating text. One forward per question; the answer is a calibrated probability, not a sentence to parse. The request and answer forms are the `/v1/systemone` ones (`state`, `questions` with `type` / `instructions` / `criteria`; answers with `choice` / `score` / `noul`, `probabilities`, `confidence`), so a request written for a server is handed to the phone unchanged.
 
 ```kotlin
-// implementation("io.github.john-rocky.hfmodels:hfmodels-litert:<version>")   (+ android.uniquePackageNames=false, see docs/api.md)
+// implementation("io.github.john-rocky.hfmodels:hfmodels-litert:0.1.2")   (+ android.uniquePackageNames=false, see docs/api.md)
 val model = models.fromPretrained(ModelRef("<owner>/<name>"), EncoderDecisions)
 val d = model.decide(
     mapOf("subject" to "Duplicate charge", "body" to "Please refund the duplicate charge."),

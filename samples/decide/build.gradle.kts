@@ -33,7 +33,7 @@ android {
 
 dependencies {
     // In an app outside this repo:
-    //   implementation("io.github.john-rocky.hfmodels:hfmodels-litert:<version>")   // hfmodels-core, litert 2.2.0 come with it
+    //   implementation("io.github.john-rocky.hfmodels:hfmodels-litert:0.1.2")   // hfmodels-core, litert 2.2.0 come with it
     // and gradle.properties: android.uniquePackageNames=false (litert 2.2.0 / litert-api 2.2.0 share a namespace on AGP 9).
     implementation(project(":litert"))
     implementation("androidx.activity:activity:1.10.1")

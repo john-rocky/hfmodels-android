@@ -54,7 +54,7 @@ dependencies {
 mavenPublishing {
     publishToMavenCentral()
     signAllPublications()
-    coordinates("io.github.john-rocky.hfmodels", "hfmodels-litert", project.findProperty("hfmodelsVersion") as String? ?: "0.1.1")
+    coordinates("io.github.john-rocky.hfmodels", "hfmodels-litert", project.findProperty("hfmodelsVersion") as String? ?: "0.1.2")
     pom {
         name.set("hfmodels-litert")
         description.set("hfmodels adapter for Google's LiteRT runtime: typed decisions (choice / score / noul with calibrated probabilities) on a decision encoder, one forward per question")
