@@ -199,5 +199,5 @@ interface PrepareHost {
 }
 
 object HfModelsVersion {
-    const val SDK_VERSION = "0.1.2"
+    const val SDK_VERSION = "0.1.3-SNAPSHOT"
 }
