@@ -2,7 +2,7 @@
 
 Not part of the SDK. It measures the primitive the typed-decisions API would use on a `.litertlm` bundle: prefill a rendered prompt once, save a checkpoint, score each candidate continuation, rewind between candidates. The published LiteRT-LM Kotlin API has no scoring or checkpoint call, so the probe uses the Kotlin sources and a JNI library built from the branch that adds them ([john-rocky/LiteRT-LM `kotlin-text-scoring`](https://github.com/john-rocky/LiteRT-LM/tree/kotlin-text-scoring): `Session.runTextScoring`, `saveCheckpoint`, `rewindToCheckpoint`, `rewindToStep`, `currentStep`, `SessionConfig.applyPromptTemplate`).
 
-`sync.sh` copies the branch's sources and libraries in (they are never committed); the test compares the phone's letter scores with a published oracle (the SemIf `authored144` rows rendered for Qwen3-0.6B, fp32 last-position logits over the letter slots; `src/androidTest/assets`) and times the shared arm against a fresh prefill per candidate:
+`sync.sh` copies the branch's sources and libraries in (they are never committed); the JNI the 2026-09-23 rows were taken with also carries `patches/litert-lm-3562-27c55edd.patch` (the pending fix of google-ai-edge/LiteRT-LM#3562 at 27c55edd, one hunk in `runtime/framework/resource_management/resource_manager.cc`, Apache-2.0), applied to the branch checkout before the bazel build in `sync.sh`; the test compares the phone's letter scores with a published oracle (the SemIf `authored144` rows rendered for Qwen3-0.6B, fp32 last-position logits over the letter slots; `src/androidTest/assets`) and times the shared arm against a fresh prefill per candidate:
 
 ```sh
 probes/scoring/sync.sh ~/code/litert-lm-scoring-wt <dir with libLiteRt.so from litert-2.2.0.aar>
