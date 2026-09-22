@@ -1,0 +1,16 @@
+# hfmodels typed-decisions device gate  date=2026-09-21T14:42:02Z serial=RFGL80R6A6H device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 android=16
+# git=5fb838e variant=ml_s512_fp32 backend=gpu thermal=Thermal Status: 0 battery_level= level: 100 battery_temp_x10C= temperature: 329 screen= mWakefulness=Awake
+# gradle rc=1 end=2026-09-21T14:42:46Z thermal_end=Thermal Status: 1 battery_temp_end_x10C= temperature: 377
+--------- beginning of main
+09-21 23:42:10.796 11282 11296 I hfmodels-decide: device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 android=16 litert=2.2.0 variant=ml_s512_fp32 backend=gpu
+09-21 23:42:10.815 11282 11301 I hfmodels: resolve convaiinnovations/laya: commit=1c5edc17 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=b7f777b8
+09-21 23:42:12.667 11282 11301 I hfmodels: imported laya_ml_s512_fp32.tflite: 1288292880 bytes, sha256 ok, from /data/local/tmp/hfmodels/laya/laya_ml_s512_fp32.tflite
+09-21 23:42:12.670 11282 11301 I hfmodels: resolve convaiinnovations/laya: commit=1c5edc17 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=b7f777b8
+09-21 23:42:16.521 11282 11301 I hfmodels: tokenizer tokenizer.json: 256000 tokens, load_ms=3831
+09-21 23:42:22.594 11282 11296 I hfmodels: ready convaiinnovations/laya@1c5edc17 variant=ml_s512_fp32 profile=gpu inference=GPU prepare_ms=9911
+09-21 23:42:22.595 11282 11296 I hfmodels-decide: RESULT step=load ok=true variant=ml_s512_fp32 backend=gpu import_ms=1846 load_ms=9928 profile=gpu window=512 head=256 notes=compile_ms=6071 on gpu (precision fp32) | observed backend is UNKNOWN: litert 2.2.0 reports no per-op execution target; 'initialized' is the accelerator the CompiledModel was created with
+09-21 23:42:31.805 11282 11296 I hfmodels-decide: RESULT step=parity ok=false variant=ml_s512_fp32 backend=gpu rows=60 calibration=laya_ml_calibration.json argmax_flips=3 max_marker_logit_abs_err=13.07275 (worst ML_B06/is_phishing) max_prob_abs_err=0.41040 max_score_abs_err=0.37050 max_act_logit_rel_err=7.44e-02 exact_rounded=42/60 question_ms_median=135.8 p90=147.6 min=131.1 max=157.2
+09-21 23:42:45.059 11282 11296 I hfmodels-decide: RESULT step=timing ok=true variant=ml_s512_fp32 backend=gpu questions=4 state_tokens=25 shared_ms_median=763.2 direct_ms_median=771.9 prefill_then_decide_ms_median=767.1 state_tokenize_ms_median=1.91 per_question_ms=197.5,192.5,189.7,190.6 repeats=5
+09-21 23:42:45.101 11282 11296 I hfmodels-decide: RESULT step=authored144 ok=true variant=ml_s512_fp32 backend=gpu skipped: no oracle block for ml512 at window 512
+09-21 23:42:45.213 11282 11296 I hfmodels-decide: RESULT step=release ok=true variant=ml_s512_fp32 backend=gpu close_ms=113
+09-21 23:42:45.214 11282 11296 I hfmodels-decide: RESULT ok=false variant=ml_s512_fp32 backend=gpu device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 failures=parity: rows=60 calibration=laya_ml_calibration.json argmax_flips=3 max_marker_logit_abs_err=13.07275 (worst ML_B06/is_phishing) max_prob_abs_err=0.41040 max_score_abs_err=0.37050 max_act_logit_rel_err=7.44e-02 exact_rounded=42/60 question_ms_median=135.8 p90=147.6 min=131.1 max=157.2
