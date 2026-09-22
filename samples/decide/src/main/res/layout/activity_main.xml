@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
+        <Spinner android:id="@+id/variant" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" />
+        <Spinner android:id="@+id/backend" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+        <Button android:id="@+id/load" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Load" />
+        <Button android:id="@+id/release" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Release" />
+    </LinearLayout>
+    <TextView android:id="@+id/status" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="12sp" android:text="Not loaded" />
+
+    <RadioGroup android:id="@+id/tabs" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="6dp">
+        <RadioButton android:id="@+id/tab_voice" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Voice gate" android:checked="true" />
+        <RadioButton android:id="@+id/tab_clip" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Clipboard" />
+        <RadioButton android:id="@+id/tab_rank" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Query × text" />
+    </RadioGroup>
+
+    <ViewFlipper android:id="@+id/flipper" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
+
+        <!-- (a) voice gate: every utterance -> noul "needs a response?" -> only then an assistant would be called -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical">
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="12sp"
+                android:text="Each utterance the recognizer finalizes is asked one noul question: does it ask the assistant for something? Only an open gate would reach a language model." />
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                <Button android:id="@+id/listen" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Listen" />
+                <Button android:id="@+id/stop_listen" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Stop" />
+                <Spinner android:id="@+id/language" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" />
+            </LinearLayout>
+            <TextView android:id="@+id/partial" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="14sp" android:minLines="2" />
+            <EditText android:id="@+id/typed_utterance" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Or type an utterance and press Decide" android:inputType="textMultiLine" />
+            <Button android:id="@+id/decide_typed" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Decide" />
+            <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
+                <TextView android:id="@+id/voice_log" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="13sp" android:fontFamily="monospace" />
+            </ScrollView>
+        </LinearLayout>
+
+        <!-- (b) clipboard: what kind of text, which fields the chosen purpose needs, and the spans (extraction model) -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical">
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="12sp"
+                android:text="Before pasting: what the clipboard holds and which of its pieces the chosen purpose needs (decision model), then the spans to paste (GLiNER2.5-Small-LiteRT extraction)." />
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                <Spinner android:id="@+id/purpose" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" />
+                <Button android:id="@+id/read_clip" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Read clipboard" />
+                <Button android:id="@+id/gliner_setup" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Get extractor" />
+            </LinearLayout>
+            <EditText android:id="@+id/clip_text" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Clipboard text (or paste / type here)" android:inputType="textMultiLine" android:maxLines="6" />
+            <Button android:id="@+id/decide_clip" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Decide + extract" />
+            <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
+                <TextView android:id="@+id/clip_log" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="13sp" android:fontFamily="monospace" />
+            </ScrollView>
+        </LinearLayout>
+
+        <!-- (c) query x text: does each passage answer the query (noul) and how well (score) -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical">
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="12sp"
+                android:text="A query against several passages, one line each: noul (answers it?) and a 4-level score, ranked, with the milliseconds per passage." />
+            <EditText android:id="@+id/query" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Query" android:inputType="text" />
+            <EditText android:id="@+id/passages" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Passages, one per line" android:inputType="textMultiLine" android:maxLines="8" />
+            <Button android:id="@+id/rank" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Rank" />
+            <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
+                <TextView android:id="@+id/rank_log" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="13sp" android:fontFamily="monospace" />
+            </ScrollView>
+        </LinearLayout>
+    </ViewFlipper>
+</LinearLayout>

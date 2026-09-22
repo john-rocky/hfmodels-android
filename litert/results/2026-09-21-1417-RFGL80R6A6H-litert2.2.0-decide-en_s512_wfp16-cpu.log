@@ -1,0 +1,15 @@
+# hfmodels typed-decisions device gate  date=2026-09-21T05:17:46Z serial=RFGL80R6A6H device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 android=16
+# git=c158603 variant=en_s512_wfp16 backend=cpu thermal=Thermal Status: 2 battery_level= level: 96 battery_temp_x10C= temperature: 423 screen= mWakefulness=Awake
+# gradle rc=0 end=2026-09-21T05:21:00Z thermal_end=Thermal Status: 2 battery_temp_end_x10C= temperature: 441
+--------- beginning of main
+09-21 14:17:56.680 32680 32694 I hfmodels-decide: device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 android=16 litert=2.2.0 variant=en_s512_wfp16 backend=cpu
+09-21 14:17:56.691 32680 32700 I hfmodels: resolve convaiinnovations/laya: commit=1c5edc17 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=7bd9ed20
+09-21 14:17:56.705 32680 32700 I hfmodels: resolve convaiinnovations/laya: commit=1c5edc17 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=7bd9ed20
+09-21 14:17:57.178 32680 32700 I hfmodels: tokenizer tokenizer.json: 50280 tokens, load_ms=457
+09-21 14:17:58.897 32680 32694 I hfmodels: ready convaiinnovations/laya@1c5edc17 variant=en_s512_wfp16 profile=cpu inference=CPU prepare_ms=2178
+09-21 14:17:58.897 32680 32694 I hfmodels-decide: RESULT step=load ok=true variant=en_s512_wfp16 backend=cpu import_ms=0 load_ms=2201 profile=cpu window=512 head=192 notes=compile_ms=1718 on cpu (4 threads) | observed backend is UNKNOWN: litert 2.2.0 reports no per-op execution target; 'initialized' is the accelerator the CompiledModel was created with
+09-21 14:18:38.733 32680 32694 I hfmodels-decide: RESULT step=parity ok=true variant=en_s512_wfp16 backend=cpu rows=30 argmax_flips=0 max_marker_logit_abs_err=0.00565 (worst A05/churn_risk) max_prob_abs_err=0.00050 max_score_abs_err=0.00040 max_act_logit_rel_err=5.09e-04 exact_rounded=10/30 question_ms_median=1325.9 p90=1357.3 min=1272.2 max=1411.7
+09-21 14:20:22.718 32680 32694 I hfmodels-decide: RESULT step=timing ok=true variant=en_s512_wfp16 backend=cpu questions=4 state_tokens=27 shared_ms_median=5816.1 direct_ms_median=5810.1 prefill_then_decide_ms_median=5897.2 state_tokenize_ms_median=0.47 per_question_ms=1507.5,1501.7,1502.9,1501.8 repeats=5
+09-21 14:20:59.156 32680 32694 I hfmodels-decide: RESULT step=authored144 ok=true variant=en_s512_wfp16 backend=cpu rows=24 agree_with_official=24 max_prob_abs_err=0.00040 accuracy_device=0.708 accuracy_official=0.708 per_family(device/official/n)=evidence_interpretation=17/17/24
+09-21 14:20:59.328 32680 32694 I hfmodels-decide: RESULT step=release ok=true variant=en_s512_wfp16 backend=cpu close_ms=173
+09-21 14:20:59.329 32680 32694 I hfmodels-decide: RESULT ok=true variant=en_s512_wfp16 backend=cpu device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 failures=

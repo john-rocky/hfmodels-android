@@ -25,3 +25,10 @@ local-maven/
 # Gate scratch: per-entry gradle output and the unfiltered logcat captures (megabytes); the filtered .log files are the record
 litertlm/results/_*
 litertlm/results/*.full.log
+
+# Typed-decisions gate scratch, same rule as litertlm/results
+litert/results/_*
+
+# Scoring probe: the branch's Kotlin sources and the JNI/LiteRT libraries are synced in, never committed
+probes/scoring/jniLibs/
+probes/scoring/src/main/kotlin/com/google/

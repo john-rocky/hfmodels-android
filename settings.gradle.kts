@@ -18,5 +18,8 @@ dependencyResolutionManagement {
 rootProject.name = "hfmodels-android"
 include(":core")
 include(":litertlm")
+include(":litert")
 include(":probes:coexist")
+include(":probes:scoring")
 include(":samples:chat")
+include(":samples:decide")

@@ -1,0 +1,14 @@
+# scoring probe on the Galaxy S26 (SM-S942Q, BP4A.251205.006.S942QOPS1AZF2, Android 16), backend=cpu, build=jniLibs_fix (fork 9073fcca + #3562 at 27c55edd; liblitertlm_jni.so md5 a994d7ef61259128175f76fbf4b9f2ee), model=qwen3_0_6b_mixed_int4.litertlm, fixture=authored144_qwen3_0_6b_oracle.json, rows=144 direct=12, 2026-09-22T18:01:38Z, gradle rc=0 wall_s=184, thermal_before=Thermal Status: 2 battery_temp_x10C_before= temperature: 412 thermal_after=Thermal Status: 2 battery_temp_x10C_after= temperature: 414, top_before=%MEM ARGS;14.2 1;7.1 system_server;3.5 com.sec.android.sdhms;3.5 vendor.samsung.hardware.thermal-service; top_after=%MEM ARGS;17.2 1;0.0 com.google.android.cellbroadcastreceiver;0.0 [kworker/4:1];0.0 [kworker/2:1-events];
+# hold: {'pid': 20871, 'script': 'hfmodels-android-ee typed-decisions probes/scoring (B timing, C MiniCPM5-2B int8)', 'device': 'S26', 'started': '2026-09-23 02:40:30'}
+# RESULT lines from the app's files dir (run-as), then the streamed logcat rows:
+RESULT step=init ok=true backend=cpu model=qwen3_0_6b_mixed_int4.litertlm fixture=authored144_qwen3_0_6b_oracle.json init_ms=554
+row a3f18f3a step=143 expected=142 logp_device=-0.142,-3.578,-2.262 logp_oracle=-0.000,-14.225,-15.037 A_again=-0.142 target_tokens=-1,-1,-1
+row f40beba9 step=141 expected=140 logp_device=-0.643,-1.110,-1.935 logp_oracle=-0.000,-14.976,-15.941 A_again=-0.643 target_tokens=-1,-1,-1
+row 0b43ea8e step=135 expected=134 logp_device=-9.087,-0.002,-6.524 logp_oracle=-9.784,-0.000,-12.995 A_again=-9.087 target_tokens=-1,-1,-1
+row 942ec65d step=135 expected=134 logp_device=-5.106,-0.131,-2.152 logp_oracle=-5.254,-0.006,-7.228 A_again=-5.106 target_tokens=-1,-1,-1
+row e0c140e9 step=148 expected=147 logp_device=-0.017,-4.182,-6.994 logp_oracle=-0.000,-15.230,-19.239 A_again=-0.017 target_tokens=-1,-1,-1
+row 8e8c3804 step=145 expected=144 logp_device=-6.182,-0.047,-3.135 logp_oracle=-5.186,-0.026,-3.925 A_again=-6.182 target_tokens=-1,-1,-1
+RESULT step=timing ok=true backend=cpu model=qwen3_0_6b_mixed_int4.litertlm fixture=authored144_qwen3_0_6b_oracle.json rows=144 prefill_ms_median=905.6 prefill_ms_p90=953.3 score_ms_median=26.7 score_ms_p90=31.4 shared_3_options_ms_median=987.2 shared_ms_p90=1047.8 shared_ms_min=784.2 direct_3_prefills_ms_median=2458.5 (direct rows=12) ratio_direct_over_shared=2.49
+RESULT step=oracle ok=true backend=cpu model=qwen3_0_6b_mixed_int4.litertlm fixture=authored144_qwen3_0_6b_oracle.json rows=144 argmax_agree=107/144 max_p_abs_err=0.9992 mean_p_abs_err=0.2842 accuracy=0.410 per_family=rule_application=20/48 evidence_interpretation=21/48 candidate_selection=18/48 prefill_step_mismatch=144 first_step/expected=143/142 rewind_drift_max=0.00000
+RESULT step=release ok=true backend=cpu model=qwen3_0_6b_mixed_int4.litertlm fixture=authored144_qwen3_0_6b_oracle.json close_ms=179
+RESULT ok=true backend=cpu device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 failures=

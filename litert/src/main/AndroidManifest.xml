@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- The litert AAR's own manifest declares the uses-native-library entries its GPU accelerator needs
+         (libOpenCL.so and the vendor variants) and merges FOREGROUND_SERVICE permissions; nothing to add here. -->
+    <application />
+</manifest>

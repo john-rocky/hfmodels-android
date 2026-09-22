@@ -1,0 +1,2 @@
+# scoring probe on the Galaxy S26 (SM-S942Q, BP4A.251205.006.S942QOPS1AZF2, Android 16), backend=gpu, build=jniLibs_fix (fork 9073fcca + #3562 at 27c55edd), Qwen3-0.6B mixed_int4 154c5de0, rows=144 direct=12, 2026-09-21T14:52:49Z, thermal=Thermal Status: 0 battery_temp_x10C= temperature: 355
+java.lang.AssertionError: java.lang.AssertionError: oracle: rows=144 argmax_agree=100/144 max_p_abs_err=0.9940 mean_p_abs_err=0.2982 accuracy=0.410 per_family=rule_application=22/48 evidence_interpretation=22/48 candidate_selection=15/48 prefill_step_mismatch=144 rewind_drift_max=0.00000

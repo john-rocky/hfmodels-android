@@ -1,0 +1,16 @@
+# hfmodels typed-decisions device gate  date=2026-09-21T05:15:32Z serial=RFGL80R6A6H device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 android=16
+# git=c158603 variant=en_s512_fp32 backend=gpu thermal=Thermal Status: 1 battery_level= level: 96 battery_temp_x10C= temperature: 369 screen= mWakefulness=Awake
+# gradle rc=0 end=2026-09-21T05:17:09Z thermal_end=Thermal Status: 2 battery_temp_end_x10C= temperature: 420
+--------- beginning of main
+09-21 14:15:42.768 31965 31979 I hfmodels-decide: device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 android=16 litert=2.2.0 variant=en_s512_fp32 backend=gpu
+09-21 14:15:42.782 31965 31985 I hfmodels: resolve convaiinnovations/laya: commit=1c5edc17 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=7bd9ed20
+09-21 14:15:45.138 31965 31985 I hfmodels: imported laya_en_s512_fp32.tflite: 1685803264 bytes, sha256 ok, from /data/local/tmp/hfmodels/laya/laya_en_s512_fp32.tflite
+09-21 14:15:45.141 31965 31985 I hfmodels: resolve convaiinnovations/laya: commit=1c5edc17 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=7bd9ed20
+09-21 14:15:45.760 31965 31985 I hfmodels: tokenizer tokenizer.json: 50280 tokens, load_ms=605
+09-21 14:15:51.214 31965 31979 I hfmodels: ready convaiinnovations/laya@1c5edc17 variant=en_s512_fp32 profile=gpu inference=GPU prepare_ms=6062
+09-21 14:15:51.214 31965 31979 I hfmodels-decide: RESULT step=load ok=true variant=en_s512_fp32 backend=gpu import_ms=2351 load_ms=6075 profile=gpu window=512 head=192 notes=compile_ms=5452 on gpu (precision fp32) | observed backend is UNKNOWN: litert 2.2.0 reports no per-op execution target; 'initialized' is the accelerator the CompiledModel was created with
+09-21 14:16:16.422 31965 31979 I hfmodels-decide: RESULT step=parity ok=true variant=en_s512_fp32 backend=gpu rows=60 argmax_flips=0 max_marker_logit_abs_err=0.00005 (worst A05/churn_risk) max_prob_abs_err=0.00000 max_score_abs_err=0.00000 max_act_logit_rel_err=2.71e-06 exact_rounded=60/60 question_ms_median=442.2 p90=573.4 min=291.1 max=580.3
+09-21 14:16:47.150 31965 31979 I hfmodels-decide: RESULT step=timing ok=true variant=en_s512_fp32 backend=gpu questions=4 state_tokens=27 shared_ms_median=1753.6 direct_ms_median=1717.3 prefill_then_decide_ms_median=1653.6 state_tokenize_ms_median=1.51 per_question_ms=448.5,433.6,404.0,397.9 repeats=5
+09-21 14:17:07.858 31965 31979 I hfmodels-decide: RESULT step=authored144 ok=true variant=en_s512_fp32 backend=gpu rows=48 agree_with_official=48 max_prob_abs_err=0.00010 accuracy_device=0.646 accuracy_official=0.646 per_family(device/official/n)=rule_application=14/14/24 evidence_interpretation=17/17/24
+09-21 14:17:08.036 31965 31979 I hfmodels-decide: RESULT step=release ok=true variant=en_s512_fp32 backend=gpu close_ms=177
+09-21 14:17:08.037 31965 31979 I hfmodels-decide: RESULT ok=true variant=en_s512_fp32 backend=gpu device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 failures=
