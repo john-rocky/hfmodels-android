@@ -601,6 +601,42 @@
         "log": "probes/scoring/results/2026-09-23-0330-RFGL80R6A6H-minicpm5-2b-int8-gpu-jniLibs_fix-r2.log",
         "argmax_agree_same_bundle_mac_graph": "121/144",
         "mean_p_abs_err_same_bundle_mac_graph": 0.1239
+      },
+      {
+        "model": "MiniCPM5-2B_int8_fp32act.litertlm",
+        "model_note": "litert-community/MiniCPM5-2B MiniCPM5-2B_int8.litertlm (sha256 61dafe88) repacked with prefer_activation_type = \"fp32\" in the TFLiteModel section (litertlm-convert scripts/set_activation_type.py, litert-lm 0.17.0 unpack/pack); weights unchanged, not published",
+        "fixture": "authored144_minicpm5_2b_oracle.json",
+        "backend": "gpu",
+        "build": "kotlin-text-scoring 9073fcca + LiteRT-LM #3562 (27c55edd) applied, JNI md5 a994d7ef61259128175f76fbf4b9f2ee",
+        "rows": 144,
+        "direct_rows": 12,
+        "init_ms": 8071,
+        "shared_decision_ms_median": 705.2,
+        "shared_decision_ms_p90": 756.2,
+        "shared_decision_ms_min": 433.0,
+        "prefill_call_ms_median": 325.2,
+        "score_ms_median": 65.1,
+        "score_ms_p90": 265.6,
+        "direct_3_prefills_ms_median": 1668.7,
+        "ratio_direct_over_shared": 2.37,
+        "argmax_agree_fp32_oracle": "122/144",
+        "mean_p_abs_err_fp32_oracle": 0.1014,
+        "accuracy_authored144": 0.688,
+        "rewind_drift_max": 0.0,
+        "thermal_status_before_after": [
+          "0",
+          "2"
+        ],
+        "battery_temp_c_before_after": [
+          35.8,
+          44.4
+        ],
+        "date": "2026-09-23T14:39:45Z",
+        "log": "probes/scoring/results/2026-09-23-2339-RFGL80R6A6H-minicpm5-2b-int8-fp32act-gpu-jniLibs_fix-r1.log",
+        "argmax_agree_same_bundle_mac_graph": "120/144",
+        "mean_p_abs_err_same_bundle_mac_graph": 0.1117,
+        "argmax_agree_same_phone_cpu_run": "120/144",
+        "note": "The fp32 activation declaration changes the GPU numbers (no row has the same log-probabilities as the default-activation GPU run; median |dp| 0.036 between the two GPU runs; prefill 449 -> 325 ms) but does not close the gap to this phone's CPU rows (argmax differs on 24 rows vs 23 in the default run, 18 of them the same rows; median |dp| vs CPU 0.060, max 0.55). The GPU deviation is therefore not the fp16 activation dtype that this declaration governs, and not the prefill chunking either (qwen3_0_6b_mixed_int4 has only prefill_256, one chunk per row, and its GPU rows differ from its CPU rows on 23/144 as well). Cause open; CPU is the correctness reference for typed decisions on this phone until the runtime side is understood."
       }
     ]
   }
