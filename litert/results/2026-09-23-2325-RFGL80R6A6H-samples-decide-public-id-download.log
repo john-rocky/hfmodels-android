@@ -9,3 +9,11 @@
 09-23 23:25:29.714 24039 24086 I hfmodels: download laya_ml_s256_fp32.tflite resume from 11740664 <- https://huggingface.co/litert-community/laya-LiteRT/resolve/bbdc85e6f80b6d471e91b36d36d85e8b439287bc/laya_ml_s256_fp32.tflite
 09-23 23:25:29.715 24039 24086 W hfmodels: download laya_ml_s256_fp32.tflite: attempt 2 failed (transfer of 'laya_ml_s256_fp32.tflite' interrupted after 11740664 bytes); retrying in 2000 ms
 09-23 23:25:31.738 24039 24086 I hfmodels: download laya_ml_s256_fp32.tflite resume from 11740664 <- https://huggingface.co/litert-community/laya-LiteRT/resolve/bbdc85e6f80b6d471e91b36d36d85e8b439287bc/laya_ml_s256_fp32.tflite
+
+# second attempt 2026-09-23T14:42:52Z (fresh process, the SDK resumed its partial): attempt 1 reached 25,906,998 bytes in ~5 s then TransferInterrupted; attempt 2 (resume) failed at once; attempt 3 silent again; force-stopped 23:45 after ~3 min. Third occurrence on this phone (2026-09-21: 137 MB).
+09-23 23:42:53.299 28017 28061 I hfmodels: resolve litert-community/laya-LiteRT: commit=bbdc85e6 via RESOLVED_BRANCH, descriptor=litert-community/laya-LiteRT@bbdc85e6/hfmodels.json sha=51139434
+09-23 23:42:53.336 28017 28061 I hfmodels: download laya_ml_s256_fp32.tflite resume from 11740664 <- https://huggingface.co/litert-community/laya-LiteRT/resolve/bbdc85e6f80b6d471e91b36d36d85e8b439287bc/laya_ml_s256_fp32.tflite
+09-23 23:42:57.535 28017 28061 W hfmodels: download laya_ml_s256_fp32.tflite: attempt 1 failed (transfer of 'laya_ml_s256_fp32.tflite' interrupted after 25906998 bytes); retrying in 1000 ms
+09-23 23:42:58.578 28017 28061 I hfmodels: download laya_ml_s256_fp32.tflite resume from 25906998 <- https://huggingface.co/litert-community/laya-LiteRT/resolve/bbdc85e6f80b6d471e91b36d36d85e8b439287bc/laya_ml_s256_fp32.tflite
+09-23 23:42:58.580 28017 28061 W hfmodels: download laya_ml_s256_fp32.tflite: attempt 2 failed (transfer of 'laya_ml_s256_fp32.tflite' interrupted after 25906998 bytes); retrying in 2000 ms
+09-23 23:43:00.611 28017 28061 I hfmodels: download laya_ml_s256_fp32.tflite resume from 25906998 <- https://huggingface.co/litert-community/laya-LiteRT/resolve/bbdc85e6f80b6d471e91b36d36d85e8b439287bc/laya_ml_s256_fp32.tflite
