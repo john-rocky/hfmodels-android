@@ -20,5 +20,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- The scripted demo for a screen recording; how to start it is in the KDoc of DemoActivity.kt -->
+        <activity android:name=".DemoActivity" android:exported="true" android:screenOrientation="portrait" android:theme="@android:style/Theme.Material.NoActionBar" />
     </application>
 </manifest>

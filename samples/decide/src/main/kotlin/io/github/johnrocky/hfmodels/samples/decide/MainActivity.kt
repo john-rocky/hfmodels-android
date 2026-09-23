@@ -157,13 +157,14 @@ class MainActivity : ComponentActivity() {
             try {
                 val questions = LinkedHashMap<String, Question>()
                 questions["kind"] = KIND_QUESTION
-                questions["personal_data"] = Question.Noul("Does the text contain personal data (a name, an address, a phone number, an email address or an account number)?")
-                for ((id, phrase) in fields) questions[id] = Question.Noul("The clipboard text contains $phrase, and the purpose needs it.")
+                // One statement per question: presence of a piece is asked on its own, the purpose only selects which pieces are asked.
+                questions["personal_data"] = Question.Noul("The text contains a person's name, a postal address or a phone number.")
+                for ((id, phrase) in fields) questions[id] = Question.Noul("The text contains $phrase.")
                 val d: Decisions = m.decide(linkedMapOf("purpose" to purposeName, "clipboard" to text), questions)
                 val kind = d.answers.getValue("kind") as Answer.Choice
                 val sb = StringBuilder()
                 sb.append("kind=${kind.choice} (${"%.2f".format(kind.probabilities.getValue(kind.choice))}), personal data p=${"%.2f".format((d.answers.getValue("personal_data") as Answer.Noul).noul)}\n")
-                sb.append("needed for \"$purposeName\":\n")
+                sb.append("pieces for \"$purposeName\":\n")
                 for ((id, _) in fields) { val a = d.answers.getValue(id) as Answer.Noul; sb.append("   ${if (a.noul >= 0.5) "yes" else "no "} p=${"%.2f".format(a.noul)}  $id\n") }
                 sb.append("decision: ${d.timing.questionMs.size} questions, ${d.timing.questionMs.joinToString("+") { "%.0f".format(it) }} ms = ${"%.0f".format(d.timing.totalMs)} ms (state ${d.stateTokens} tokens${if (d.truncated) ", truncated" else ""})\n")
                 val ex = extractor

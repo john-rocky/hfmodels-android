@@ -29,3 +29,14 @@ The extraction model's ten files (about 410 MB) are fetched by `GlinerAssets` on
 - Query x text, "When does the store close on Sundays?" against 5 passages: the two passages that answer it ranked first on both variants (0.80 / 0.70 English, 0.79 / 0.71 multilingual); the Japanese passage that also answers it scored 0.19 / 0.27; 5 passages x 2 questions in 1,259 ms (English) / 561 ms (multilingual).
 
 Numbers from one phone on one afternoon, the model loaded and warm; not a benchmark, and not a claim about the model's accuracy beyond these inputs.
+
+## Demo recording
+
+`DemoActivity` is a scripted run of the same API for a screen recording: seven utterances go through the voice gate one after another (only a question or a request opens it), then a question is ranked against five passages twice, then a card with the count and the mean milliseconds per question. Every decision is a real call on the loaded model and the milliseconds are the SDK's own timing; the utterances and passages are in `DemoActivity.kt`.
+
+```sh
+adb shell am start -n io.github.johnrocky.hfmodels.samples.decide/.DemoActivity --es variant en_s256_fp32 --es backend gpu   # then tap once; --ez autostart true skips the tap
+adb shell screenrecord --time-limit 60 /sdcard/demo.mp4
+```
+
+On 2026-09-23 (Galaxy S26, GPU, `en_s256_fp32`) the run gave 34 questions at 129 ms each; all seven gate verdicts and both rankings came out as a reader would expect (the log lines under tag `demo`).
