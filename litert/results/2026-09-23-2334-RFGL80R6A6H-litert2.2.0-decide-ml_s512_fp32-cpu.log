@@ -1,0 +1,15 @@
+# hfmodels typed-decisions device gate  date=2026-09-23T14:34:07Z serial=RFGL80R6A6H device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 android=16
+# git=5fef04e variant=ml_s512_fp32 backend=cpu thermal=Thermal Status: 0 battery_level= level: 95 battery_temp_x10C= temperature: 365 screen= mWakefulness=Awake
+# gradle rc=0 end=2026-09-23T14:37:35Z thermal_end=Thermal Status: 0 battery_temp_end_x10C= temperature: 375
+--------- beginning of main
+09-23 23:34:15.505 26713 26727 I hfmodels-decide: device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 android=16 litert=2.2.0 variant=ml_s512_fp32 backend=cpu
+09-23 23:34:15.523 26713 26732 I hfmodels: resolve convaiinnovations/laya: commit=1c5edc17 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=b7f777b8
+09-23 23:34:15.537 26713 26732 I hfmodels: resolve convaiinnovations/laya: commit=1c5edc17 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=b7f777b8
+09-23 23:34:19.095 26713 26732 I hfmodels: tokenizer tokenizer.json: 256000 tokens, load_ms=3540
+09-23 23:34:19.420 26713 26727 I hfmodels: ready convaiinnovations/laya@1c5edc17 variant=ml_s512_fp32 profile=cpu inference=CPU prepare_ms=3871
+09-23 23:34:19.420 26713 26727 I hfmodels-decide: RESULT step=load ok=true variant=ml_s512_fp32 backend=cpu import_ms=0 load_ms=3891 profile=cpu window=512 head=256 notes=compile_ms=324 on cpu (4 threads) | observed backend is UNKNOWN: litert 2.2.0 reports no per-op execution target; 'initialized' is the accelerator the CompiledModel was created with
+09-23 23:36:41.686 26713 26727 I hfmodels-decide: RESULT step=parity ok=true variant=ml_s512_fp32 backend=cpu rows=201 calibration=laya_ml_calibration.json argmax_flips=0 max_marker_logit_abs_err=0.00009 (worst ML_A06/refund_requested) max_prob_abs_err=0.00010 max_score_abs_err=0.00000 max_act_logit_rel_err=4.97e-06 exact_rounded=199/201 question_ms_median=648.9 p90=812.7 min=573.6 max=817.4
+09-23 23:37:34.548 26713 26727 I hfmodels-decide: RESULT step=timing ok=true variant=ml_s512_fp32 backend=cpu questions=4 state_tokens=25 shared_ms_median=2713.6 direct_ms_median=3237.0 prefill_then_decide_ms_median=3237.9 state_tokenize_ms_median=0.63 per_question_ms=581.1,575.9,574.7,806.0 repeats=5
+09-23 23:37:34.570 26713 26727 I hfmodels-decide: RESULT step=authored144 ok=true variant=ml_s512_fp32 backend=cpu skipped: no oracle block for ml512 at window 512
+09-23 23:37:34.669 26713 26727 I hfmodels-decide: RESULT step=release ok=true variant=ml_s512_fp32 backend=cpu close_ms=99
+09-23 23:37:34.669 26713 26727 I hfmodels-decide: RESULT ok=true variant=ml_s512_fp32 backend=cpu device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 failures=

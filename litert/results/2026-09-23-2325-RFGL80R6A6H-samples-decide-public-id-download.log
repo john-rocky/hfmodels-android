@@ -1,0 +1,11 @@
+# samples/decide public-id download check  date=2026-09-23T14:25Z serial=RFGL80R6A6H device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 android=16 wifi=connected lte=connected thermal=0
+# app: decide-debug.apk built 2026-09-23 22:10 (main 5fef04e), 'pm clear' first, then: am start -n io.github.johnrocky.hfmodels.samples.decide/.MainActivity --es variant ml_s256_fp32 --es backend gpu
+# outcome: resolve OK; attempt 1 received 11,740,664 bytes in 4 s then TransferInterrupted; attempt 2 (resume) failed at once; attempt 3 logged nothing for >10 min (connect/read timeout 30 s) - partial stayed at 11,740,664 bytes; force-stopped 23:36.
+# control from the Mac at 23:3x, same URL: single connection HTTP 200, 261,057,562 bytes in 40 s (6.5 MB/s); 'Range: bytes=11740664-' -> 206, 81 MB in 15 s (5.3 MB/s). Same symptom on 2026-09-21 (stalled at 137 MB, earlier lane). Not a CDN fault; device-side cause unresolved.
+--------- beginning of main
+09-23 23:25:24.591 24039 24086 I hfmodels: resolve litert-community/laya-LiteRT: commit=bbdc85e6 via RESOLVED_BRANCH, descriptor=litert-community/laya-LiteRT@bbdc85e6/hfmodels.json sha=51139434
+09-23 23:25:24.596 24039 24086 I hfmodels: download laya_ml_s256_fp32.tflite <- https://huggingface.co/litert-community/laya-LiteRT/resolve/bbdc85e6f80b6d471e91b36d36d85e8b439287bc/laya_ml_s256_fp32.tflite
+09-23 23:25:28.686 24039 24086 W hfmodels: download laya_ml_s256_fp32.tflite: attempt 1 failed (transfer of 'laya_ml_s256_fp32.tflite' interrupted after 11740664 bytes); retrying in 1000 ms
+09-23 23:25:29.714 24039 24086 I hfmodels: download laya_ml_s256_fp32.tflite resume from 11740664 <- https://huggingface.co/litert-community/laya-LiteRT/resolve/bbdc85e6f80b6d471e91b36d36d85e8b439287bc/laya_ml_s256_fp32.tflite
+09-23 23:25:29.715 24039 24086 W hfmodels: download laya_ml_s256_fp32.tflite: attempt 2 failed (transfer of 'laya_ml_s256_fp32.tflite' interrupted after 11740664 bytes); retrying in 2000 ms
+09-23 23:25:31.738 24039 24086 I hfmodels: download laya_ml_s256_fp32.tflite resume from 11740664 <- https://huggingface.co/litert-community/laya-LiteRT/resolve/bbdc85e6f80b6d471e91b36d36d85e8b439287bc/laya_ml_s256_fp32.tflite

@@ -1,0 +1,15 @@
+# hfmodels typed-decisions device gate  date=2026-09-23T14:33:01Z serial=RFGL80R6A6H device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 android=16
+# git=5fef04e variant=ml_s512_fp32 backend=gpu thermal=Thermal Status: 0 battery_level= level: 96 battery_temp_x10C= temperature: 298 screen= mWakefulness=Awake
+# gradle rc=0 end=2026-09-23T14:34:07Z thermal_end=Thermal Status: 0 battery_temp_end_x10C= temperature: 365
+--------- beginning of main
+09-23 23:33:13.510 25779 25793 I hfmodels-decide: device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 android=16 litert=2.2.0 variant=ml_s512_fp32 backend=gpu
+09-23 23:33:13.526 25779 25798 I hfmodels: resolve convaiinnovations/laya: commit=1c5edc17 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=b7f777b8
+09-23 23:33:13.549 25779 25798 I hfmodels: resolve convaiinnovations/laya: commit=1c5edc17 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=b7f777b8
+09-23 23:33:16.330 25779 25798 I hfmodels: tokenizer tokenizer.json: 256000 tokens, load_ms=2765
+09-23 23:33:22.015 25779 25793 I hfmodels: ready convaiinnovations/laya@1c5edc17 variant=ml_s512_fp32 profile=gpu inference=GPU prepare_ms=8456
+09-23 23:33:22.016 25779 25793 I hfmodels-decide: RESULT step=load ok=true variant=ml_s512_fp32 backend=gpu import_ms=0 load_ms=8476 profile=gpu window=512 head=256 notes=compile_ms=5684 on gpu (precision fp32) | observed backend is UNKNOWN: litert 2.2.0 reports no per-op execution target; 'initialized' is the accelerator the CompiledModel was created with
+09-23 23:33:53.960 25779 25793 I hfmodels-decide: RESULT step=parity ok=true variant=ml_s512_fp32 backend=gpu rows=201 calibration=laya_ml_calibration.json argmax_flips=0 max_marker_logit_abs_err=0.00007 (worst ML_C08/is_urgent) max_prob_abs_err=0.00010 max_score_abs_err=0.00010 max_act_logit_rel_err=1.41e-06 exact_rounded=198/201 question_ms_median=137.8 p90=155.5 min=131.3 max=184.5
+09-23 23:34:06.075 25779 25793 I hfmodels-decide: RESULT step=timing ok=true variant=ml_s512_fp32 backend=gpu questions=4 state_tokens=25 shared_ms_median=657.4 direct_ms_median=658.2 prefill_then_decide_ms_median=707.5 state_tokenize_ms_median=1.54 per_question_ms=181.9,184.0,178.6,174.1 repeats=5
+09-23 23:34:06.110 25779 25793 I hfmodels-decide: RESULT step=authored144 ok=true variant=ml_s512_fp32 backend=gpu skipped: no oracle block for ml512 at window 512
+09-23 23:34:06.242 25779 25793 I hfmodels-decide: RESULT step=release ok=true variant=ml_s512_fp32 backend=gpu close_ms=132
+09-23 23:34:06.243 25779 25793 I hfmodels-decide: RESULT ok=true variant=ml_s512_fp32 backend=gpu device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 failures=
