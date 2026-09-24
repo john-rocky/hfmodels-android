@@ -303,13 +303,24 @@ class HfModels internal constructor(
                 if (d.cancelled) throw CancellationException("download of ${ref.file} cancelled by the last waiter")
                 if (attempt >= MAX_ATTEMPTS) throw ModelException(ErrorCode.NETWORK_ERROR, "${e.message}; gave up after $attempt attempts, partial kept for a later resume", retryable = true, details = mapOf("file" to ref.file, "bytes" to e.bytesSoFar.toString()), cause = e)
                 val backoff = e.retryAfterSeconds?.let { it * 1000 } ?: (1000L shl (attempt - 1))
-                log.w("download ${ref.file}: attempt $attempt failed (${e.message}); retrying in $backoff ms")
+                log.w("download ${ref.file}: attempt $attempt failed (${e.message}${causeChain(e)}); retrying in $backoff ms")
                 delay(backoff)
             }
         }
     }
 
     private suspend fun currentCoroutineContextEnsureActive() = kotlinx.coroutines.currentCoroutineContext().ensureActive()
+
+    /** The exception classes behind an interruption, so a log line says why (reset, timeout, EOF) and not just how far. */
+    private fun causeChain(e: Throwable): String {
+        val parts = ArrayList<String>()
+        var c = e.cause
+        while (c != null && parts.size < 4) {
+            parts += c.javaClass.simpleName + (c.message?.let { ": $it" } ?: "")
+            c = c.cause?.takeIf { it !== c }
+        }
+        return if (parts.isEmpty()) "" else "; cause " + parts.joinToString(" <- ")
+    }
 
     private companion object {
         const val MAX_ATTEMPTS = 3

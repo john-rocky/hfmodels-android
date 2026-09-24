@@ -1,0 +1,10 @@
+# hfmodels download probe  date=2026-09-24T01:13:37Z serial=RFGL80R6A6H device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 android=16
+# git=e7f1d45 label=ctrl-dl-google url=https://dl.google.com/android/repository/commandlinetools-mac-11076708_latest.zip size=153607488 budget_s=240
+# thermal=Thermal Status: 0 wakefulness= mWakefulness=Awake locked=deviceLocked=0 usb= USB powered: true wifi_rssi=RSSI: -43 default_net=Active default network: 102
+# gradle rc=0 end=2026-09-24T01:13:54Z thermal_end=Thermal Status: 0
+09-24 10:13:47.831 I/hfmodels-dlprobe( 5680): NETWORK active=102 transports=wifi validated=true iface=wlan0 dns=[/192.168.10.1] privateDns=false mtu=0
+09-24 10:13:47.851 I/hfmodels-dlprobe( 5680): DNS dl.google.com -> 2404:6800:400a:1007::5b,2404:6800:400a:1007::5d,2404:6800:400a:1007::88,2404:6800:400a:1007::be,142.251.118.190,142.251.118.93,142.251.118.136,142.251.118.91
+09-24 10:13:47.852 I/hfmodels-dlprobe( 5680): download commandlinetools-mac-11076708_latest.zip <- https://dl.google.com/android/repository/commandlinetools-mac-11076708_latest.zip
+09-24 10:13:51.521 I/hfmodels-dlprobe( 5680): downloaded commandlinetools-mac-11076708_latest.zip: 153607488 bytes, sha256 ok
+09-24 10:13:51.521 I/hfmodels-dlprobe( 5680): RESULT step=attempt ok=true file=commandlinetools-mac-11076708_latest.zip n=1 status=DOWNLOADED bytes=153607488 resumedFrom=0 ms=3670
+09-24 10:13:51.522 I/hfmodels-dlprobe( 5680): RESULT step=final ok=true file=commandlinetools-mac-11076708_latest.zip outcome='done' bytes=153607488 of 153607488 ms=3670 url=https://dl.google.com/android/repository/commandlinetools-mac-11076708_latest.zip

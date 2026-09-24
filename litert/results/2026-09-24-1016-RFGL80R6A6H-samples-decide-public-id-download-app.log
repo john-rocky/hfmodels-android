@@ -1,0 +1,12 @@
+# samples/decide public-id download check (app path, SDK with cause logging)  date=2026-09-24T01:16:46Z serial=RFGL80R6A6H device=SM-S942Q android=16 git=e7f1d45+wip apk=decide-debug.apk built 10:16
+# state: wakefulness=mWakefulness=Awake locked=deviceLocked=0 thermal=Thermal Status: 0 wifi_rssi=RSSI: -36 usb= USB powered: true
+# cmd: pm clear; am start -n io.github.johnrocky.hfmodels.samples.decide/.MainActivity --es variant ml_s256_fp32 --es backend gpu
+--------- beginning of main
+09-24 10:16:47.801  6756  6803 I hfmodels: resolve litert-community/laya-LiteRT: commit=bbdc85e6 via RESOLVED_BRANCH, descriptor=litert-community/laya-LiteRT@bbdc85e6/hfmodels.json sha=51139434
+09-24 10:16:47.806  6756  6803 I hfmodels: download laya_ml_s256_fp32.tflite <- https://huggingface.co/litert-community/laya-LiteRT/resolve/bbdc85e6f80b6d471e91b36d36d85e8b439287bc/laya_ml_s256_fp32.tflite
+09-24 10:18:18.513  6756  6803 I hfmodels: downloaded laya_ml_s256_fp32.tflite: 1287375376 bytes, sha256 ok
+09-24 10:18:18.514  6756  6803 I hfmodels: download laya_ml_act_head_fp32.tflite <- https://huggingface.co/litert-community/laya-LiteRT/resolve/bbdc85e6f80b6d471e91b36d36d85e8b439287bc/laya_ml_act_head_fp32.tflite
+09-24 10:18:19.869  6756  6803 I hfmodels: downloaded laya_ml_act_head_fp32.tflite: 795816 bytes, sha256 ok
+09-24 10:18:19.871  6756  6803 I hfmodels: download tokenizer.json <- https://huggingface.co/litert-community/laya-LiteRT/resolve/bbdc85e6f80b6d471e91b36d36d85e8b439287bc/multilingual/tokenizer.json
+# done after ~95 s
+# end=2026-09-24T01:18:23Z

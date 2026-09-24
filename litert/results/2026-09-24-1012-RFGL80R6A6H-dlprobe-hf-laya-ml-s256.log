@@ -1,0 +1,10 @@
+# hfmodels download probe  date=2026-09-24T01:12:21Z serial=RFGL80R6A6H device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 android=16
+# git=e7f1d45 label=hf-laya-ml-s256 url=https://huggingface.co/litert-community/laya-LiteRT/resolve/bbdc85e6f80b6d471e91b36d36d85e8b439287bc/laya_ml_s256_fp32.tflite size=1287375376 budget_s=480
+# thermal=Thermal Status: 0 wakefulness= mWakefulness=Awake locked=deviceLocked=0 usb= USB powered: true wifi_rssi=RSSI: -39 default_net=Active default network: 102
+# gradle rc=0 end=2026-09-24T01:13:32Z thermal_end=Thermal Status: 0
+09-24 10:12:31.359 I/hfmodels-dlprobe( 4741): NETWORK active=102 transports=wifi validated=true iface=wlan0 dns=[/192.168.10.1] privateDns=false mtu=0
+09-24 10:12:31.546 I/hfmodels-dlprobe( 4741): DNS huggingface.co -> 2600:9000:2138:7800:17:b174:6d00:93a1,2600:9000:2138:ac00:17:b174:6d00:93a1,2600:9000:2138:b200:17:b174:6d00:93a1,2600:9000:2138:1e00:17:b174:6d00:93a1,2600:9000:2138:d600:17:b174:6d00:93a1,2600:9000:2138:7e00:17:b174:6d00:93a1,2600:9000:2138:3600:17:b174:6d00:93a1,2600:9000:2138:a600:17:b174:6d00:93a1,143.204.80.9,143.204.80.60,143.204.80.100,143.204.80.57
+09-24 10:12:31.549 I/hfmodels-dlprobe( 4741): download laya_ml_s256_fp32.tflite <- https://huggingface.co/litert-community/laya-LiteRT/resolve/bbdc85e6f80b6d471e91b36d36d85e8b439287bc/laya_ml_s256_fp32.tflite
+09-24 10:13:29.617 I/hfmodels-dlprobe( 4741): downloaded laya_ml_s256_fp32.tflite: 1287375376 bytes, sha256 ok
+09-24 10:13:29.618 I/hfmodels-dlprobe( 4741): RESULT step=attempt ok=true file=laya_ml_s256_fp32.tflite n=1 status=DOWNLOADED bytes=1287375376 resumedFrom=0 ms=58071
+09-24 10:13:29.618 I/hfmodels-dlprobe( 4741): RESULT step=final ok=true file=laya_ml_s256_fp32.tflite outcome='done' bytes=1287375376 of 1287375376 ms=58071 url=https://huggingface.co/litert-community/laya-LiteRT/resolve/bbdc85e6f80b6d471e91b36d36d85e8b439287bc/laya_ml_s256_fp32.tflite
