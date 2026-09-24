@@ -1,0 +1,29 @@
+# decode-vs-scoring probe  date=2026-09-24T03:30:27Z serial=RFGL80R6A6H device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 android=16
+# git=5632404 backend=cpu model=MiniCPM5-2B_int8.litertlm fixture=authored144_minicpm5_2b_oracle.json jni=jniLibs_fix(#3562 applied) sampler=topK1 ids=23 rows56c419b12cd37cbe790c,2608370d01783735c3ea,3b0958cabc339005cf66,f2b4ec4930322fe45118,d41072dc35d8cd14c056,533d4423d311de82b27d,fdb9fc214aea2710763a,f6d68126b43f8c9ed183,ebd74aa05324a1556288,4d7a003342db5b0a17e3,46b7029b9a704138b77a,97a35499bd8717f3e786,c6a411e7f2bbdf377173,cdfa9eed51fafcf09b72,1105577da4c8dad4609d,0ebd299739302d8b057b,4aee37a6a155747766aa,ef3e0f8e657bf59f8a29,d167e51bb1f499099645,b5e6788d95b8395d2888,843185706adff0c60f8b,b531dd603bf080dab820,b863998d4be2721a5dfd thermal=Thermal Status: 2 battery_temp_x10C= temperature: 425
+# instrument rc=0 end=2026-09-24T03:34:09Z thermal_end=Thermal Status: 2
+09-24 12:30:28.666 27047 27060 I hfmodels-scoring: device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 android=16 backend=cpu model=/data/local/tmp/hfmodels/MiniCPM5-2B_int8.litertlm fixture=authored144_minicpm5_2b_oracle.json ids=23 rows=144
+09-24 12:30:47.427 27047 27060 I hfmodels-scoring: ROW id=56c419b1 decode='C' decode_letter=2 score_letter=2 p=0.485,0.011,0.504 decode_ms=4976 score_ms=4797
+09-24 12:30:57.346 27047 27060 I hfmodels-scoring: ROW id=2608370d decode='B' decode_letter=1 score_letter=1 p=0.310,0.403,0.287 decode_ms=4858 score_ms=5060
+09-24 12:31:07.259 27047 27060 I hfmodels-scoring: ROW id=3b0958ca decode='B' decode_letter=1 score_letter=1 p=0.379,0.611,0.011 decode_ms=5013 score_ms=4899
+09-24 12:31:16.812 27047 27060 I hfmodels-scoring: ROW id=f2b4ec49 decode='C' decode_letter=2 score_letter=2 p=0.295,0.305,0.400 decode_ms=4759 score_ms=4793
+09-24 12:31:26.371 27047 27060 I hfmodels-scoring: ROW id=d41072dc decode='C' decode_letter=2 score_letter=2 p=0.012,0.078,0.910 decode_ms=4768 score_ms=4790
+09-24 12:31:35.924 27047 27060 I hfmodels-scoring: ROW id=533d4423 decode='B' decode_letter=1 score_letter=1 p=0.133,0.866,0.000 decode_ms=4763 score_ms=4788
+09-24 12:31:40.882 27047 27060 I hfmodels-scoring: ROW id=fdb9fc21 decode='A' decode_letter=0 score_letter=0 p=0.674,0.323,0.003 decode_ms=2481 score_ms=2476
+09-24 12:31:50.287 27047 27060 I hfmodels-scoring: ROW id=f6d68126 decode='B' decode_letter=1 score_letter=1 p=0.393,0.606,0.001 decode_ms=4749 score_ms=4655
+09-24 12:31:59.767 27047 27060 I hfmodels-scoring: ROW id=ebd74aa0 decode='A' decode_letter=0 score_letter=0 p=0.574,0.425,0.001 decode_ms=4770 score_ms=4709
+09-24 12:32:09.336 27047 27060 I hfmodels-scoring: ROW id=4d7a0033 decode='B' decode_letter=1 score_letter=1 p=0.233,0.763,0.005 decode_ms=4771 score_ms=4798
+09-24 12:32:18.882 27047 27060 I hfmodels-scoring: ROW id=46b7029b decode='B' decode_letter=1 score_letter=1 p=0.156,0.795,0.049 decode_ms=4757 score_ms=4788
+09-24 12:32:28.430 27047 27060 I hfmodels-scoring: ROW id=97a35499 decode='B' decode_letter=1 score_letter=1 p=0.025,0.739,0.236 decode_ms=4760 score_ms=4788
+09-24 12:32:37.818 27047 27060 I hfmodels-scoring: ROW id=c6a411e7 decode='C' decode_letter=2 score_letter=2 p=0.407,0.019,0.574 decode_ms=4773 score_ms=4614
+09-24 12:32:46.987 27047 27060 I hfmodels-scoring: ROW id=cdfa9eed decode='C' decode_letter=2 score_letter=2 p=0.320,0.060,0.620 decode_ms=4566 score_ms=4601
+09-24 12:32:56.155 27047 27060 I hfmodels-scoring: ROW id=1105577d decode='C' decode_letter=2 score_letter=2 p=0.318,0.020,0.662 decode_ms=4570 score_ms=4597
+09-24 12:33:05.321 27047 27060 I hfmodels-scoring: ROW id=0ebd2997 decode='C' decode_letter=2 score_letter=2 p=0.418,0.018,0.564 decode_ms=4562 score_ms=4603
+09-24 12:33:14.494 27047 27060 I hfmodels-scoring: ROW id=4aee37a6 decode='A' decode_letter=0 score_letter=0 p=0.443,0.345,0.213 decode_ms=4565 score_ms=4607
+09-24 12:33:23.659 27047 27060 I hfmodels-scoring: ROW id=ef3e0f8e decode='A' decode_letter=0 score_letter=0 p=0.466,0.073,0.461 decode_ms=4563 score_ms=4601
+09-24 12:33:32.814 27047 27060 I hfmodels-scoring: ROW id=d167e51b decode='B' decode_letter=1 score_letter=1 p=0.422,0.574,0.004 decode_ms=4554 score_ms=4600
+09-24 12:33:41.984 27047 27060 I hfmodels-scoring: ROW id=b5e6788d decode='C' decode_letter=2 score_letter=2 p=0.154,0.070,0.776 decode_ms=4569 score_ms=4600
+09-24 12:33:51.138 27047 27060 I hfmodels-scoring: ROW id=84318570 decode='C' decode_letter=2 score_letter=2 p=0.420,0.070,0.511 decode_ms=4559 score_ms=4595
+09-24 12:34:00.073 27047 27060 I hfmodels-scoring: ROW id=b531dd60 decode='C' decode_letter=2 score_letter=2 p=0.291,0.003,0.706 decode_ms=4564 score_ms=4370
+09-24 12:34:08.767 27047 27060 I hfmodels-scoring: ROW id=b863998d decode='C' decode_letter=2 score_letter=2 p=0.413,0.066,0.521 decode_ms=4319 score_ms=4374
+09-24 12:34:08.768 27047 27060 I hfmodels-scoring: RESULT step=decode_vs_scoring ok=true backend=cpu model=MiniCPM5-2B_int8.litertlm fixture=authored144_minicpm5_2b_oracle.json rows=23 decode_letter_found=23 agree=23 disagree=0 out=/data/user/0/io.github.johnrocky.hfmodels.probe.scoring/files/scoring/authored144_minicpm5_2b_oracle-cpu.decode.jsonl
+# rows pulled: 23
