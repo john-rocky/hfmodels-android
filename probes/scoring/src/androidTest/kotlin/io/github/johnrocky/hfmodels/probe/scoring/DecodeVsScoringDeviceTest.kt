@@ -34,6 +34,8 @@ import org.junit.runner.RunWith
  * streamed text of the decode (cancelled after the first chunk), then, in another fresh session, the
  * three letter scores (prefill, checkpoint, score, rewind). Output: RESULT lines under
  * `hfmodels-scoring` and `files/scoring/<fixture>-<backend>.decode.jsonl` in the app's files dir.
+ * Top-1 sampling is the greedy choice whatever the temperature; the cancel is issued from another
+ * thread so the callback never waits on itself.
  */
 @RunWith(AndroidJUnit4::class)
 class DecodeVsScoringDeviceTest {
@@ -76,14 +78,14 @@ class DecodeVsScoringDeviceTest {
                 val prompt = if (stripPrefix.isNotEmpty() && rawPrompt.startsWith(stripPrefix)) rawPrompt.substring(stripPrefix.length) else rawPrompt
                 val n = r.getJSONArray("option_ids").length()
                 // 1. greedy decode: the first streamed chunk of a fresh session, top-1 sampling
-                val greedy = SessionConfig(samplerConfig = SamplerConfig(topK = 1, topP = 1.0, temperature = 0.0, seed = 0), applyPromptTemplate = false)
+                val greedy = SessionConfig(samplerConfig = SamplerConfig(topK = 1, topP = 1.0, temperature = 1.0, seed = 0), applyPromptTemplate = false)
                 val first = StringBuilder(); val done = CountDownLatch(1); var error: String? = null
                 val s1 = engine.createSession(greedy)
                 val td = System.nanoTime()
                 try {
                     s1.generateContentStream(listOf(InputData.Text(prompt)), object : ResponseCallback {
                         override fun onNext(response: String) {
-                            if (first.isEmpty() && response.isNotEmpty()) { first.append(response); runCatching { s1.cancelProcess() } }
+                            if (first.isEmpty() && response.isNotEmpty()) { first.append(response); Thread { runCatching { s1.cancelProcess() } }.start() }
                             else if (first.isNotEmpty() && first.length < 8) first.append(response)
                         }
                         override fun onDone() { done.countDown() }
