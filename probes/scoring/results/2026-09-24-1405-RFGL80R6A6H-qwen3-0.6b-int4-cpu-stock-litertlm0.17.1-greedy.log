@@ -1,0 +1,36 @@
+# stock-runtime greedy probe  date=2026-09-24T05:05:02Z serial=RFGL80R6A6H device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 android=16
+# git=195ac6d runtime=litertlm-android:0.17.1 (published AAR, no patch) backend=cpu model=qwen3_0_6b_mixed_int4.litertlm prompts=stock_prompts_qwen3.json sampler=topK1 thinking=off maxTokens=4 thermal=Thermal Status: 0 battery_temp_x10C= temperature: 371
+# instrument rc=0 end=2026-09-24T05:05:31Z thermal_end=Thermal Status: 0
+09-24 14:05:02.574 16824 16838 I hfmodels-greedy: device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 android=16 runtime=litertlm-android:0.17.1 backend=cpu model=/data/local/tmp/hfmodels/qwen3_0_6b_mixed_int4.litertlm prompts=29 maxTokens=4 sampler=topK1
+09-24 14:05:03.339 16824 16838 I hfmodels-greedy: init_ms=764
+09-24 14:05:04.805 16824 16838 I hfmodels-greedy: ROW id=07ee70cf kind=mismatch letter='B' text='B' probe_cpu=A probe_gpu=B ms=1455
+09-24 14:05:05.643 16824 16838 I hfmodels-greedy: ROW id=c89b86e3 kind=mismatch letter='C' text='C' probe_cpu=C probe_gpu=B ms=835
+09-24 14:05:06.487 16824 16838 I hfmodels-greedy: ROW id=4b3d794c kind=mismatch letter='B' text='B' probe_cpu=B probe_gpu=C ms=842
+09-24 14:05:07.350 16824 16838 I hfmodels-greedy: ROW id=8a4c3de2 kind=mismatch letter='A' text='A' probe_cpu=A probe_gpu=B ms=861
+09-24 14:05:08.219 16824 16838 I hfmodels-greedy: ROW id=533d4423 kind=mismatch letter='B' text='B' probe_cpu=C probe_gpu=B ms=866
+09-24 14:05:09.034 16824 16838 I hfmodels-greedy: ROW id=f6d68126 kind=mismatch letter='B' text='B' probe_cpu=C probe_gpu=B ms=813
+09-24 14:05:09.841 16824 16838 I hfmodels-greedy: ROW id=e1d610bd kind=mismatch letter='C' text='C' probe_cpu=C probe_gpu=B ms=804
+09-24 14:05:10.676 16824 16838 I hfmodels-greedy: ROW id=ebd74aa0 kind=mismatch letter='B' text='B' probe_cpu=B probe_gpu=C ms=833
+09-24 14:05:11.491 16824 16838 I hfmodels-greedy: ROW id=19d3d8d0 kind=mismatch letter='C' text='C' probe_cpu=A probe_gpu=C ms=813
+09-24 14:05:12.349 16824 16838 I hfmodels-greedy: ROW id=f46f392e kind=mismatch letter='A' text='A' probe_cpu=A probe_gpu=B ms=856
+09-24 14:05:13.286 16824 16838 I hfmodels-greedy: ROW id=edb708bd kind=mismatch letter='A' text='A' probe_cpu=C probe_gpu=A ms=935
+09-24 14:05:14.177 16824 16838 I hfmodels-greedy: ROW id=0aa24a67 kind=mismatch letter='B' text='B' probe_cpu=B probe_gpu=C ms=888
+09-24 14:05:15.096 16824 16838 I hfmodels-greedy: ROW id=d51b05bf kind=mismatch letter='A' text='A' probe_cpu=A probe_gpu=C ms=917
+09-24 14:05:15.967 16824 16838 I hfmodels-greedy: ROW id=42384af9 kind=mismatch letter='C' text='C' probe_cpu=C probe_gpu=B ms=868
+09-24 14:05:16.857 16824 16838 I hfmodels-greedy: ROW id=cdf7f428 kind=mismatch letter='C' text='C' probe_cpu=B probe_gpu=C ms=888
+09-24 14:05:17.819 16824 16838 I hfmodels-greedy: ROW id=4533dd91 kind=mismatch letter='A' text='A' probe_cpu=B probe_gpu=A ms=959
+09-24 14:05:18.728 16824 16838 I hfmodels-greedy: ROW id=9ac5cc82 kind=mismatch letter='B' text='B' probe_cpu=B probe_gpu=A ms=906
+09-24 14:05:19.663 16824 16838 I hfmodels-greedy: ROW id=ef3e0f8e kind=mismatch letter='C' text='C' probe_cpu=C probe_gpu=B ms=933
+09-24 14:05:20.576 16824 16838 I hfmodels-greedy: ROW id=b5e6788d kind=mismatch letter='C' text='C' probe_cpu=C probe_gpu=B ms=910
+09-24 14:05:21.519 16824 16838 I hfmodels-greedy: ROW id=b531dd60 kind=mismatch letter='C' text='C' probe_cpu=B probe_gpu=C ms=940
+09-24 14:05:22.490 16824 16838 I hfmodels-greedy: ROW id=be2dd67b kind=mismatch letter='A' text='A' probe_cpu=A probe_gpu=C ms=968
+09-24 14:05:23.489 16824 16838 I hfmodels-greedy: ROW id=5d31b4bf kind=mismatch letter='A' text='A' probe_cpu=A probe_gpu=B ms=997
+09-24 14:05:24.495 16824 16838 I hfmodels-greedy: ROW id=a9230edf kind=mismatch letter='C' text='C' probe_cpu=C probe_gpu=B ms=1003
+09-24 14:05:25.491 16824 16838 I hfmodels-greedy: ROW id=a3f18f3a kind=control letter='A' text='A' probe_cpu=A probe_gpu=A ms=993
+09-24 14:05:26.497 16824 16838 I hfmodels-greedy: ROW id=f40beba9 kind=control letter='A' text='A' probe_cpu=A probe_gpu=A ms=1003
+09-24 14:05:27.589 16824 16838 I hfmodels-greedy: ROW id=0b43ea8e kind=control letter='B' text='B' probe_cpu=B probe_gpu=B ms=1089
+09-24 14:05:28.675 16824 16838 I hfmodels-greedy: ROW id=942ec65d kind=control letter='B' text='B' probe_cpu=B probe_gpu=B ms=1083
+09-24 14:05:29.823 16824 16838 I hfmodels-greedy: ROW id=e0c140e9 kind=control letter='A' text='A' probe_cpu=A probe_gpu=A ms=1145
+09-24 14:05:30.928 16824 16838 I hfmodels-greedy: ROW id=8e8c3804 kind=control letter='B' text='B' probe_cpu=B probe_gpu=B ms=1102
+09-24 14:05:31.146 16824 16838 I hfmodels-greedy: RESULT step=greedy ok=true backend=cpu runtime=litertlm-android:0.17.1 model=qwen3_0_6b_mixed_int4.litertlm rows=29 letter_found=29 same_as_cpu_probe=21 same_as_gpu_probe=14 failures=0 out=/data/user/0/io.github.johnrocky.hfmodels.litertlm.test/files/greedy/qwen3_0_6b_mixed_int4-cpu.jsonl
+# rows pulled: 29
