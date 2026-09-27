@@ -1,0 +1,4045 @@
+{
+  "source": "sms inbox, read = 0",
+  "count": 200,
+  "total_s": 27.357332125,
+  "median_ms": 133.827109,
+  "p90_ms": 137.387813,
+  "msg_per_s": 7.310654382750782,
+  "bins": {
+    "nothing you need to do": 65,
+    "a code to type in": 36,
+    "a package or a delivery": 34,
+    "money you have to pay": 36,
+    "an appointment or a booking": 29
+  },
+  "variant": "en_s256_fp32",
+  "backend": "gpu",
+  "device": "SM-S942Q",
+  "android_build": "BP4A.251205.006.S942QOPS1AZF2",
+  "android_release": "16",
+  "date": "2026-09-27T15:25:54.273485Z",
+  "thermal_before": 0,
+  "thermal_after": 2,
+  "model": "litert-community\/laya-LiteRT@bbdc85e6f80b6d471e91b36d36d85e8b439287bc",
+  "sdk_notes": [
+    "compile_ms=4141 on gpu (precision fp32)",
+    "observed backend is UNKNOWN: litert 2.2.0 reports no per-op execution target; 'initialized' is the accelerator the CompiledModel was created with"
+  ],
+  "questions": {
+    "need": {
+      "type": "choice",
+      "instructions": "What does this text message need from you?",
+      "criteria": {
+        "nothing you need to do": null,
+        "a code to type in": null,
+        "a package or a delivery": null,
+        "money you have to pay": null,
+        "an appointment or a booking": null
+      }
+    }
+  },
+  "series": [
+    [
+      0.15197677,
+      149.429375
+    ],
+    [
+      0.275493125,
+      121.761615
+    ],
+    [
+      0.402235208,
+      126.018281
+    ],
+    [
+      0.529076718,
+      126.159271
+    ],
+    [
+      0.655342499,
+      125.835677
+    ],
+    [
+      0.785758645,
+      125.711927
+    ],
+    [
+      0.914869218,
+      127.295573
+    ],
+    [
+      1.041905989,
+      124.926562
+    ],
+    [
+      1.168178333,
+      124.545886
+    ],
+    [
+      1.295530155,
+      126.065677
+    ],
+    [
+      1.422066249,
+      124.80276
+    ],
+    [
+      1.549723645,
+      125.571719
+    ],
+    [
+      1.67821078,
+      127.386302
+    ],
+    [
+      1.811612759,
+      128.855052
+    ],
+    [
+      1.942162291,
+      128.749167
+    ],
+    [
+      2.074516509,
+      130.414687
+    ],
+    [
+      2.206236197,
+      129.970886
+    ],
+    [
+      2.339677707,
+      132.457291
+    ],
+    [
+      2.474245259,
+      132.606771
+    ],
+    [
+      2.60707854,
+      131.32401
+    ],
+    [
+      2.742674999,
+      132.769062
+    ],
+    [
+      2.87581854,
+      131.825364
+    ],
+    [
+      3.008310363,
+      131.09927
+    ],
+    [
+      3.140672863,
+      131.035625
+    ],
+    [
+      3.274471196,
+      131.170052
+    ],
+    [
+      3.40772505,
+      131.49375
+    ],
+    [
+      3.539661613,
+      130.995
+    ],
+    [
+      3.673449842,
+      131.616614
+    ],
+    [
+      3.809188488,
+      132.000625
+    ],
+    [
+      3.946192498,
+      134.570781
+    ],
+    [
+      4.080797915,
+      132.800885
+    ],
+    [
+      4.213670988,
+      131.694063
+    ],
+    [
+      4.349792081,
+      133.87625
+    ],
+    [
+      4.483158904,
+      131.168594
+    ],
+    [
+      4.616260988,
+      130.896407
+    ],
+    [
+      4.749860935,
+      132.173229
+    ],
+    [
+      4.884029946,
+      132.939063
+    ],
+    [
+      5.016305362,
+      131.011511
+    ],
+    [
+      5.14880255,
+      130.906042
+    ],
+    [
+      5.283957446,
+      133.755
+    ],
+    [
+      5.416102341,
+      131.001875
+    ],
+    [
+      5.549879112,
+      131.57349
+    ],
+    [
+      5.68247781,
+      130.421407
+    ],
+    [
+      5.815725831,
+      131.000312
+    ],
+    [
+      5.95041755,
+      133.903698
+    ],
+    [
+      6.084215362,
+      132.294584
+    ],
+    [
+      6.221153747,
+      134.927396
+    ],
+    [
+      6.356531664,
+      133.256198
+    ],
+    [
+      6.491588383,
+      132.703854
+    ],
+    [
+      6.626079476,
+      131.698698
+    ],
+    [
+      6.760885987,
+      132.96401
+    ],
+    [
+      6.896049632,
+      132.054896
+    ],
+    [
+      7.03239958,
+      134.535364
+    ],
+    [
+      7.165117184,
+      130.367917
+    ],
+    [
+      7.299722705,
+      131.516302
+    ],
+    [
+      7.43390083,
+      132.757239
+    ],
+    [
+      7.567844893,
+      132.551458
+    ],
+    [
+      7.702269476,
+      132.111407
+    ],
+    [
+      7.835941403,
+      131.598489
+    ],
+    [
+      7.969809424,
+      132.068333
+    ],
+    [
+      8.104779372,
+      133.302709
+    ],
+    [
+      8.238719111,
+      131.772448
+    ],
+    [
+      8.371169267,
+      131.242031
+    ],
+    [
+      8.503251663,
+      130.259531
+    ],
+    [
+      8.63681734,
+      131.606875
+    ],
+    [
+      8.771669111,
+      131.42276
+    ],
+    [
+      8.907143538,
+      133.939636
+    ],
+    [
+      9.044086975,
+      135.6075
+    ],
+    [
+      9.181136975,
+      135.099687
+    ],
+    [
+      9.316585361,
+      134.358698
+    ],
+    [
+      9.449727236,
+      130.584635
+    ],
+    [
+      9.5868276,
+      133.055364
+    ],
+    [
+      9.725055204,
+      132.053697
+    ],
+    [
+      9.859600361,
+      133.639688
+    ],
+    [
+      9.995586923,
+      133.402813
+    ],
+    [
+      10.130725048,
+      134.249739
+    ],
+    [
+      10.265079683,
+      132.807084
+    ],
+    [
+      10.399280777,
+      132.454583
+    ],
+    [
+      10.531666662,
+      130.929219
+    ],
+    [
+      10.665926194,
+      132.105729
+    ],
+    [
+      10.800226141,
+      132.29
+    ],
+    [
+      10.935331141,
+      132.307813
+    ],
+    [
+      11.069120881,
+      132.119323
+    ],
+    [
+      11.20268286,
+      132.921198
+    ],
+    [
+      11.334864787,
+      131.291406
+    ],
+    [
+      11.467482027,
+      131.178698
+    ],
+    [
+      11.600567756,
+      132.374948
+    ],
+    [
+      11.734032651,
+      132.841615
+    ],
+    [
+      11.867427808,
+      132.817969
+    ],
+    [
+      12.001236766,
+      132.794584
+    ],
+    [
+      12.135512235,
+      133.687343
+    ],
+    [
+      12.268776037,
+      132.133021
+    ],
+    [
+      12.40184786,
+      131.872188
+    ],
+    [
+      12.536407547,
+      133.783489
+    ],
+    [
+      12.671269682,
+      132.619167
+    ],
+    [
+      12.80584463,
+      133.870729
+    ],
+    [
+      12.942726766,
+      136.181875
+    ],
+    [
+      13.141747286,
+      198.058802
+    ],
+    [
+      13.345072286,
+      202.533073
+    ],
+    [
+      13.547824474,
+      201.586927
+    ],
+    [
+      13.736375255,
+      186.56052
+    ],
+    [
+      13.866165619,
+      127.937864
+    ],
+    [
+      13.998443224,
+      130.089687
+    ],
+    [
+      14.131036921,
+      131.24151
+    ],
+    [
+      14.263674057,
+      131.923906
+    ],
+    [
+      14.396759161,
+      131.999531
+    ],
+    [
+      14.528870307,
+      131.353072
+    ],
+    [
+      14.661256817,
+      130.934896
+    ],
+    [
+      14.794167129,
+      131.644427
+    ],
+    [
+      14.926890463,
+      131.77875
+    ],
+    [
+      15.060322494,
+      132.622604
+    ],
+    [
+      15.193876296,
+      132.129792
+    ],
+    [
+      15.327848796,
+      132.778333
+    ],
+    [
+      15.463696817,
+      135.237499
+    ],
+    [
+      15.600925879,
+      135.66375
+    ],
+    [
+      15.734574785,
+      132.491614
+    ],
+    [
+      15.869407233,
+      133.422291
+    ],
+    [
+      16.004412598,
+      133.303282
+    ],
+    [
+      16.139395723,
+      134.295417
+    ],
+    [
+      16.276526504,
+      136.497083
+    ],
+    [
+      16.411688066,
+      134.496458
+    ],
+    [
+      16.547816452,
+      135.342969
+    ],
+    [
+      16.683623639,
+      135.114115
+    ],
+    [
+      16.818000983,
+      133.651615
+    ],
+    [
+      16.953803587,
+      134.191771
+    ],
+    [
+      17.090020566,
+      134.220521
+    ],
+    [
+      17.226929264,
+      135.962292
+    ],
+    [
+      17.363170618,
+      134.772292
+    ],
+    [
+      17.501220878,
+      136.198489
+    ],
+    [
+      17.637416868,
+      135.295
+    ],
+    [
+      17.773392597,
+      134.026511
+    ],
+    [
+      17.912838274,
+      137.270416
+    ],
+    [
+      18.050700982,
+      137.387813
+    ],
+    [
+      18.186988014,
+      135.803021
+    ],
+    [
+      18.325529628,
+      137.942239
+    ],
+    [
+      18.462693691,
+      135.684479
+    ],
+    [
+      18.600633795,
+      137.200833
+    ],
+    [
+      18.739801034,
+      137.348177
+    ],
+    [
+      18.878318326,
+      137.110885
+    ],
+    [
+      19.015900461,
+      135.944896
+    ],
+    [
+      19.153605409,
+      135.471927
+    ],
+    [
+      19.291434576,
+      136.490261
+    ],
+    [
+      19.428267232,
+      135.795364
+    ],
+    [
+      19.566645513,
+      136.997448
+    ],
+    [
+      19.70420093,
+      135.727083
+    ],
+    [
+      19.842484784,
+      136.811875
+    ],
+    [
+      19.980378221,
+      136.311042
+    ],
+    [
+      20.120048013,
+      138.759063
+    ],
+    [
+      20.259057909,
+      137.018073
+    ],
+    [
+      20.398288325,
+      137.894896
+    ],
+    [
+      20.53666494,
+      135.51026
+    ],
+    [
+      20.67551744,
+      136.221093
+    ],
+    [
+      20.815005565,
+      137.420677
+    ],
+    [
+      20.957416294,
+      140.147656
+    ],
+    [
+      21.096559731,
+      137.203697
+    ],
+    [
+      21.234969731,
+      136.389844
+    ],
+    [
+      21.3728802,
+      135.86099
+    ],
+    [
+      21.512074002,
+      137.77974
+    ],
+    [
+      21.650409731,
+      135.628489
+    ],
+    [
+      21.789242231,
+      136.151042
+    ],
+    [
+      21.927563168,
+      136.671094
+    ],
+    [
+      22.064199887,
+      135.85875
+    ],
+    [
+      22.201651606,
+      135.900729
+    ],
+    [
+      22.339104783,
+      136.277135
+    ],
+    [
+      22.477044574,
+      136.287448
+    ],
+    [
+      22.617029887,
+      137.27599
+    ],
+    [
+      22.756257856,
+      137.041459
+    ],
+    [
+      22.896323689,
+      137.076302
+    ],
+    [
+      23.035689835,
+      138.359219
+    ],
+    [
+      23.175093637,
+      137.437344
+    ],
+    [
+      23.313791293,
+      136.489635
+    ],
+    [
+      23.452685876,
+      137.746719
+    ],
+    [
+      23.592883428,
+      137.321093
+    ],
+    [
+      23.733319261,
+      136.597187
+    ],
+    [
+      23.872479574,
+      136.324062
+    ],
+    [
+      24.010983949,
+      137.049322
+    ],
+    [
+      24.151265668,
+      139.351614
+    ],
+    [
+      24.289442438,
+      135.806511
+    ],
+    [
+      24.427731449,
+      137.258854
+    ],
+    [
+      24.567381397,
+      137.239739
+    ],
+    [
+      24.706836553,
+      137.135417
+    ],
+    [
+      24.845894886,
+      136.264479
+    ],
+    [
+      24.986594469,
+      139.138177
+    ],
+    [
+      25.125822959,
+      137.308802
+    ],
+    [
+      25.262573688,
+      136.267292
+    ],
+    [
+      25.400621761,
+      137.283333
+    ],
+    [
+      25.539435771,
+      136.343906
+    ],
+    [
+      25.678924261,
+      135.956615
+    ],
+    [
+      25.818566761,
+      137.466041
+    ],
+    [
+      25.959705302,
+      137.951458
+    ],
+    [
+      26.099960979,
+      137.348386
+    ],
+    [
+      26.239406761,
+      137.079739
+    ],
+    [
+      26.380317854,
+      137.935469
+    ],
+    [
+      26.519021188,
+      137.016771
+    ],
+    [
+      26.658407542,
+      136.401718
+    ],
+    [
+      26.797262073,
+      136.877969
+    ],
+    [
+      26.936787594,
+      137.477344
+    ],
+    [
+      27.077358948,
+      137.181875
+    ],
+    [
+      27.217303843,
+      137.29474
+    ],
+    [
+      27.357332125,
+      136.986458
+    ]
+  ],
+  "answers": [
+    {
+      "id": 849,
+      "from": "Kelderbank",
+      "text": "Kelderbank: your August statement is ready to view in the app.",
+      "choice": "nothing you need to do",
+      "p_choice": 0.4751,
+      "probabilities": {
+        "nothing you need to do": 0.4751,
+        "a code to type in": 0.1036,
+        "a package or a delivery": 0.1298,
+        "money you have to pay": 0.1279,
+        "an appointment or a booking": 0.1635
+      },
+      "ms": 149.429375,
+      "t_s": 0.15197677
+    },
+    {
+      "id": 850,
+      "from": "Lungefold",
+      "text": "Lungefold Fitness: 10 visits this month, keep it up!",
+      "choice": "nothing you need to do",
+      "p_choice": 0.5845,
+      "probabilities": {
+        "nothing you need to do": 0.5845,
+        "a code to type in": 0.1374,
+        "a package or a delivery": 0.0594,
+        "money you have to pay": 0.0395,
+        "an appointment or a booking": 0.1792
+      },
+      "ms": 121.761615,
+      "t_s": 0.275493125
+    },
+    {
+      "id": 851,
+      "from": "Mailbrook",
+      "text": "Your Mailbrook security code is 9603. Do not give this code to anyone.",
+      "choice": "a code to type in",
+      "p_choice": 0.6213,
+      "probabilities": {
+        "nothing you need to do": 0.1875,
+        "a code to type in": 0.6213,
+        "a package or a delivery": 0.0902,
+        "money you have to pay": 0.0282,
+        "an appointment or a booking": 0.0728
+      },
+      "ms": 126.018281,
+      "t_s": 0.402235208
+    },
+    {
+      "id": 852,
+      "from": "Lanternby",
+      "text": "Lanternby Cinemas: your tickets for Tuesday are confirmed, 2 seats in row F. Show this text at the door.",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.4674,
+      "probabilities": {
+        "nothing you need to do": 0.4135,
+        "a code to type in": 0.0691,
+        "a package or a delivery": 0.0245,
+        "money you have to pay": 0.0255,
+        "an appointment or a booking": 0.4674
+      },
+      "ms": 126.159271,
+      "t_s": 0.529076718
+    },
+    {
+      "id": 853,
+      "from": "+1 702-555-0198",
+      "text": "Kelderbank: your account has been locked. Verify your identity now at http:\/\/kelderbank-verify.example or lose access.",
+      "choice": "nothing you need to do",
+      "p_choice": 0.2291,
+      "probabilities": {
+        "nothing you need to do": 0.2291,
+        "a code to type in": 0.2082,
+        "a package or a delivery": 0.1779,
+        "money you have to pay": 0.2076,
+        "an appointment or a booking": 0.1772
+      },
+      "ms": 125.835677,
+      "t_s": 0.655342499
+    },
+    {
+      "id": 854,
+      "from": "Mailbrook",
+      "text": "Mailbrook: your login code is 860519. If you did not ask for it, you can ignore this text.",
+      "choice": "a code to type in",
+      "p_choice": 0.7623,
+      "probabilities": {
+        "nothing you need to do": 0.1434,
+        "a code to type in": 0.7623,
+        "a package or a delivery": 0.0277,
+        "money you have to pay": 0.0127,
+        "an appointment or a booking": 0.054
+      },
+      "ms": 125.711927,
+      "t_s": 0.785758645
+    },
+    {
+      "id": 855,
+      "from": "Crateford",
+      "text": "Crateford Couriers: your parcel is waiting at your local pickup point. Collect it within 5 days with photo ID.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.7574,
+      "probabilities": {
+        "nothing you need to do": 0.1625,
+        "a code to type in": 0.0208,
+        "a package or a delivery": 0.7574,
+        "money you have to pay": 0.011,
+        "an appointment or a booking": 0.0483
+      },
+      "ms": 127.295573,
+      "t_s": 0.914869218
+    },
+    {
+      "id": 856,
+      "from": "CasaUmbrino",
+      "text": "Casa Umbrino: your table for 6 is booked for Thursday at 11:45 am. Reply C to cancel.",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.4778,
+      "probabilities": {
+        "nothing you need to do": 0.3588,
+        "a code to type in": 0.0712,
+        "a package or a delivery": 0.0234,
+        "money you have to pay": 0.0687,
+        "an appointment or a booking": 0.4778
+      },
+      "ms": 124.926562,
+      "t_s": 1.041905989
+    },
+    {
+      "id": 857,
+      "from": "+1 415-555-0116",
+      "text": "Hi, this is Aisha from Keyfallow Homes. Would 11:45 am on Sunday work for the viewing?",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.8934,
+      "probabilities": {
+        "nothing you need to do": 0.0942,
+        "a code to type in": 0.004,
+        "a package or a delivery": 0.0036,
+        "money you have to pay": 0.0049,
+        "an appointment or a booking": 0.8934
+      },
+      "ms": 124.545886,
+      "t_s": 1.168178333
+    },
+    {
+      "id": 858,
+      "from": "Mailbrook",
+      "text": "Use 53252 to confirm your phone number on Mailbrook. The code is valid for 5 minutes.",
+      "choice": "a code to type in",
+      "p_choice": 0.7382,
+      "probabilities": {
+        "nothing you need to do": 0.1792,
+        "a code to type in": 0.7382,
+        "a package or a delivery": 0.0365,
+        "money you have to pay": 0.0122,
+        "an appointment or a booking": 0.034
+      },
+      "ms": 126.065677,
+      "t_s": 1.295530155
+    },
+    {
+      "id": 859,
+      "from": "Lungefold",
+      "text": "Lungefold Fitness: your membership payment of $103.69 did not go through. Please update your card.",
+      "choice": "money you have to pay",
+      "p_choice": 0.7052,
+      "probabilities": {
+        "nothing you need to do": 0.1418,
+        "a code to type in": 0.0396,
+        "a package or a delivery": 0.0751,
+        "money you have to pay": 0.7052,
+        "an appointment or a booking": 0.0382
+      },
+      "ms": 124.80276,
+      "t_s": 1.422066249
+    },
+    {
+      "id": 860,
+      "from": "+1 617-555-0143",
+      "text": "Lovely to see you on Sunday! Let's do it again soon. Jake x",
+      "choice": "nothing you need to do",
+      "p_choice": 0.7188,
+      "probabilities": {
+        "nothing you need to do": 0.7188,
+        "a code to type in": 0.0759,
+        "a package or a delivery": 0.0624,
+        "money you have to pay": 0.0329,
+        "an appointment or a booking": 0.1101
+      },
+      "ms": 125.571719,
+      "t_s": 1.549723645
+    },
+    {
+      "id": 861,
+      "from": "+1 702-555-0153",
+      "text": "Hi Mum, I dropped my phone and this is my new number. Can you send $800 for a new one today? I'll pay you back",
+      "choice": "money you have to pay",
+      "p_choice": 0.7594,
+      "probabilities": {
+        "nothing you need to do": 0.0865,
+        "a code to type in": 0.0108,
+        "a package or a delivery": 0.1338,
+        "money you have to pay": 0.7594,
+        "an appointment or a booking": 0.0096
+      },
+      "ms": 127.386302,
+      "t_s": 1.67821078
+    },
+    {
+      "id": 862,
+      "from": "Heelgrove",
+      "text": "Heelgrove: your order #92981 has shipped with Crateford Couriers. It should arrive on Sunday.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.8325,
+      "probabilities": {
+        "nothing you need to do": 0.1412,
+        "a code to type in": 0.0087,
+        "a package or a delivery": 0.8325,
+        "money you have to pay": 0.0082,
+        "an appointment or a booking": 0.0093
+      },
+      "ms": 128.855052,
+      "t_s": 1.811612759
+    },
+    {
+      "id": 863,
+      "from": "Mailbrook",
+      "text": "Your Mailbrook security code is 9452. Do not give this code to anyone.",
+      "choice": "a code to type in",
+      "p_choice": 0.6363,
+      "probabilities": {
+        "nothing you need to do": 0.1838,
+        "a code to type in": 0.6363,
+        "a package or a delivery": 0.0879,
+        "money you have to pay": 0.0249,
+        "an appointment or a booking": 0.0671
+      },
+      "ms": 128.749167,
+      "t_s": 1.942162291
+    },
+    {
+      "id": 864,
+      "from": "Brookpell",
+      "text": "Invoice INV-7352 from Brookpell Plumbing for $350 is due on Sunday. Thank you!",
+      "choice": "money you have to pay",
+      "p_choice": 0.5731,
+      "probabilities": {
+        "nothing you need to do": 0.2467,
+        "a code to type in": 0.0637,
+        "a package or a delivery": 0.037,
+        "money you have to pay": 0.5731,
+        "an appointment or a booking": 0.0795
+      },
+      "ms": 130.414687,
+      "t_s": 2.074516509
+    },
+    {
+      "id": 865,
+      "from": "Crateford",
+      "text": "Crateford Couriers: we tried to deliver your parcel today but nobody was home. We will try again tomorrow.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.7824,
+      "probabilities": {
+        "nothing you need to do": 0.1584,
+        "a code to type in": 0.0058,
+        "a package or a delivery": 0.7824,
+        "money you have to pay": 0.0062,
+        "an appointment or a booking": 0.0471
+      },
+      "ms": 129.970886,
+      "t_s": 2.206236197
+    },
+    {
+      "id": 866,
+      "from": "+1 201-555-0110",
+      "text": "Maya here! We got the keys to the new flat today!!",
+      "choice": "nothing you need to do",
+      "p_choice": 0.7377,
+      "probabilities": {
+        "nothing you need to do": 0.7377,
+        "a code to type in": 0.0209,
+        "a package or a delivery": 0.0955,
+        "money you have to pay": 0.0398,
+        "an appointment or a booking": 0.1061
+      },
+      "ms": 132.457291,
+      "t_s": 2.339677707
+    },
+    {
+      "id": 867,
+      "from": "+1 702-555-0178",
+      "text": "Hi Dad, it's me. Lost my wallet, can you send $25.39 to this account so I can get home? Don't call, my battery is dying",
+      "choice": "money you have to pay",
+      "p_choice": 0.5378,
+      "probabilities": {
+        "nothing you need to do": 0.2632,
+        "a code to type in": 0.0296,
+        "a package or a delivery": 0.1475,
+        "money you have to pay": 0.5378,
+        "an appointment or a booking": 0.0218
+      },
+      "ms": 132.606771,
+      "t_s": 2.474245259
+    },
+    {
+      "id": 868,
+      "from": "Mailbrook",
+      "text": "Mailbrook: your login code is 510751. If you did not ask for it, you can ignore this text.",
+      "choice": "a code to type in",
+      "p_choice": 0.7212,
+      "probabilities": {
+        "nothing you need to do": 0.1632,
+        "a code to type in": 0.7212,
+        "a package or a delivery": 0.0351,
+        "money you have to pay": 0.0155,
+        "an appointment or a booking": 0.0649
+      },
+      "ms": 131.32401,
+      "t_s": 2.60707854
+    },
+    {
+      "id": 869,
+      "from": "Lindenquay",
+      "text": "Lindenquay Clinic: Dr. Okoro can see you on Friday at 3:15 pm. Reply YES to book this slot.",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.876,
+      "probabilities": {
+        "nothing you need to do": 0.1018,
+        "a code to type in": 0.0078,
+        "a package or a delivery": 0.0056,
+        "money you have to pay": 0.0088,
+        "an appointment or a booking": 0.876
+      },
+      "ms": 132.769062,
+      "t_s": 2.742674999
+    },
+    {
+      "id": 870,
+      "from": "Lungefold",
+      "text": "Lungefold Fitness: 19 visits this month, keep it up!",
+      "choice": "nothing you need to do",
+      "p_choice": 0.6195,
+      "probabilities": {
+        "nothing you need to do": 0.6195,
+        "a code to type in": 0.1223,
+        "a package or a delivery": 0.0628,
+        "money you have to pay": 0.0374,
+        "an appointment or a booking": 0.158
+      },
+      "ms": 131.825364,
+      "t_s": 2.87581854
+    },
+    {
+      "id": 871,
+      "from": "+1 808-555-0149",
+      "text": "It's Luis. What time should I pick you up tomorrow?",
+      "choice": "nothing you need to do",
+      "p_choice": 0.5995,
+      "probabilities": {
+        "nothing you need to do": 0.5995,
+        "a code to type in": 0.1144,
+        "a package or a delivery": 0.0636,
+        "money you have to pay": 0.046,
+        "an appointment or a booking": 0.1766
+      },
+      "ms": 131.09927,
+      "t_s": 3.008310363
+    },
+    {
+      "id": 872,
+      "from": "+1 503-555-0119",
+      "text": "Are we still on for Wednesday? Let me know by tonight.",
+      "choice": "nothing you need to do",
+      "p_choice": 0.7217,
+      "probabilities": {
+        "nothing you need to do": 0.7217,
+        "a code to type in": 0.0702,
+        "a package or a delivery": 0.0445,
+        "money you have to pay": 0.0432,
+        "an appointment or a booking": 0.1204
+      },
+      "ms": 131.035625,
+      "t_s": 3.140672863
+    },
+    {
+      "id": 873,
+      "from": "+1 503-555-0140",
+      "text": "Ruby here! We got the keys to the new flat today!!",
+      "choice": "nothing you need to do",
+      "p_choice": 0.7154,
+      "probabilities": {
+        "nothing you need to do": 0.7154,
+        "a code to type in": 0.0224,
+        "a package or a delivery": 0.1211,
+        "money you have to pay": 0.0388,
+        "an appointment or a booking": 0.1023
+      },
+      "ms": 131.170052,
+      "t_s": 3.274471196
+    },
+    {
+      "id": 874,
+      "from": "Parcelwick",
+      "text": "Parcelwick: your parcel PA369739489 is out for delivery today between 10 am and 2 pm.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.8931,
+      "probabilities": {
+        "nothing you need to do": 0.0744,
+        "a code to type in": 0.0142,
+        "a package or a delivery": 0.8931,
+        "money you have to pay": 0.005,
+        "an appointment or a booking": 0.0134
+      },
+      "ms": 131.49375,
+      "t_s": 3.40772505
+    },
+    {
+      "id": 875,
+      "from": "HobnailMkt",
+      "text": "Hobnail Market: your grocery delivery is on its way and will arrive between 10 am and 2 pm.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.8065,
+      "probabilities": {
+        "nothing you need to do": 0.1487,
+        "a code to type in": 0.0233,
+        "a package or a delivery": 0.8065,
+        "money you have to pay": 0.0079,
+        "an appointment or a booking": 0.0135
+      },
+      "ms": 130.995,
+      "t_s": 3.539661613
+    },
+    {
+      "id": 876,
+      "from": "Heelgrove",
+      "text": "Heelgrove: your order #12608 has shipped with Parcelwick. It should arrive on Thursday.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.7864,
+      "probabilities": {
+        "nothing you need to do": 0.1712,
+        "a code to type in": 0.0124,
+        "a package or a delivery": 0.7864,
+        "money you have to pay": 0.0107,
+        "an appointment or a booking": 0.0192
+      },
+      "ms": 131.616614,
+      "t_s": 3.673449842
+    },
+    {
+      "id": 877,
+      "from": "+1 201-555-0110",
+      "text": "Hi, this is Maya from Keyfallow Homes. Would 1:30 pm on Wednesday work for the viewing?",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.764,
+      "probabilities": {
+        "nothing you need to do": 0.2075,
+        "a code to type in": 0.008,
+        "a package or a delivery": 0.0074,
+        "money you have to pay": 0.0131,
+        "an appointment or a booking": 0.764
+      },
+      "ms": 132.000625,
+      "t_s": 3.809188488
+    },
+    {
+      "id": 878,
+      "from": "+1 503-555-0119",
+      "text": "Can you send me the photos from Monday when you get a chance?",
+      "choice": "nothing you need to do",
+      "p_choice": 0.7798,
+      "probabilities": {
+        "nothing you need to do": 0.7798,
+        "a code to type in": 0.0407,
+        "a package or a delivery": 0.0422,
+        "money you have to pay": 0.0361,
+        "an appointment or a booking": 0.1011
+      },
+      "ms": 134.570781,
+      "t_s": 3.946192498
+    },
+    {
+      "id": 879,
+      "from": "Heelgrove",
+      "text": "Heelgrove SALE: 25% off everything until Sunday. Shop online or in store.",
+      "choice": "nothing you need to do",
+      "p_choice": 0.4547,
+      "probabilities": {
+        "nothing you need to do": 0.4547,
+        "a code to type in": 0.1565,
+        "a package or a delivery": 0.1639,
+        "money you have to pay": 0.1074,
+        "an appointment or a booking": 0.1175
+      },
+      "ms": 132.800885,
+      "t_s": 4.080797915
+    },
+    {
+      "id": 880,
+      "from": "Molarbrook",
+      "text": "Molarbrook Dental: reminder of your check-up on Thursday at 6 pm. Reply Y to confirm or call us to change it.",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.4551,
+      "probabilities": {
+        "nothing you need to do": 0.3469,
+        "a code to type in": 0.1605,
+        "a package or a delivery": 0.0188,
+        "money you have to pay": 0.0187,
+        "an appointment or a booking": 0.4551
+      },
+      "ms": 131.694063,
+      "t_s": 4.213670988
+    },
+    {
+      "id": 881,
+      "from": "HobnailMkt",
+      "text": "Hobnail Market: this week only, 2 for 1 on fresh bread and 15% off all fruit. See you in store!",
+      "choice": "nothing you need to do",
+      "p_choice": 0.378,
+      "probabilities": {
+        "nothing you need to do": 0.378,
+        "a code to type in": 0.1417,
+        "a package or a delivery": 0.1632,
+        "money you have to pay": 0.1987,
+        "an appointment or a booking": 0.1184
+      },
+      "ms": 133.87625,
+      "t_s": 4.349792081
+    },
+    {
+      "id": 882,
+      "from": "Lanternby",
+      "text": "Lanternby Cinemas: your tickets for Monday are confirmed, 2 seats in row F. Show this text at the door.",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.4723,
+      "probabilities": {
+        "nothing you need to do": 0.3996,
+        "a code to type in": 0.0777,
+        "a package or a delivery": 0.0248,
+        "money you have to pay": 0.0257,
+        "an appointment or a booking": 0.4723
+      },
+      "ms": 131.168594,
+      "t_s": 4.483158904
+    },
+    {
+      "id": 883,
+      "from": "Parcelwick",
+      "text": "Parcelwick: your parcel is waiting at your local pickup point. Collect it within 5 days with photo ID.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.7977,
+      "probabilities": {
+        "nothing you need to do": 0.1544,
+        "a code to type in": 0.0142,
+        "a package or a delivery": 0.7977,
+        "money you have to pay": 0.0073,
+        "an appointment or a booking": 0.0265
+      },
+      "ms": 130.896407,
+      "t_s": 4.616260988
+    },
+    {
+      "id": 884,
+      "from": "HobnailMkt",
+      "text": "Hobnail Market: your receipt from Wednesday, $141.55. Thank you for shopping with us.",
+      "choice": "money you have to pay",
+      "p_choice": 0.6883,
+      "probabilities": {
+        "nothing you need to do": 0.1732,
+        "a code to type in": 0.0145,
+        "a package or a delivery": 0.0935,
+        "money you have to pay": 0.6883,
+        "an appointment or a booking": 0.0305
+      },
+      "ms": 132.173229,
+      "t_s": 4.749860935
+    },
+    {
+      "id": 885,
+      "from": "Lanternby",
+      "text": "Lanternby Cinemas: your tickets for Wednesday are confirmed, 2 seats in row F. Show this text at the door.",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.4692,
+      "probabilities": {
+        "nothing you need to do": 0.4062,
+        "a code to type in": 0.0753,
+        "a package or a delivery": 0.0242,
+        "money you have to pay": 0.0251,
+        "an appointment or a booking": 0.4692
+      },
+      "ms": 132.939063,
+      "t_s": 4.884029946
+    },
+    {
+      "id": 886,
+      "from": "Mailbrook",
+      "text": "Your Mailbrook security code is 4970. Do not give this code to anyone.",
+      "choice": "a code to type in",
+      "p_choice": 0.6068,
+      "probabilities": {
+        "nothing you need to do": 0.1982,
+        "a code to type in": 0.6068,
+        "a package or a delivery": 0.0928,
+        "money you have to pay": 0.0289,
+        "an appointment or a booking": 0.0733
+      },
+      "ms": 131.011511,
+      "t_s": 5.016305362
+    },
+    {
+      "id": 887,
+      "from": "Brindlewatt",
+      "text": "Brindlewatt Energy: your electricity bill of $112.84 is due on 14 Oct. Pay online to avoid a late fee.",
+      "choice": "money you have to pay",
+      "p_choice": 0.4508,
+      "probabilities": {
+        "nothing you need to do": 0.3212,
+        "a code to type in": 0.088,
+        "a package or a delivery": 0.084,
+        "money you have to pay": 0.4508,
+        "an appointment or a booking": 0.056
+      },
+      "ms": 130.906042,
+      "t_s": 5.14880255
+    },
+    {
+      "id": 888,
+      "from": "Lungefold",
+      "text": "Lungefold Fitness: 15 visits this month, keep it up!",
+      "choice": "nothing you need to do",
+      "p_choice": 0.6108,
+      "probabilities": {
+        "nothing you need to do": 0.6108,
+        "a code to type in": 0.1406,
+        "a package or a delivery": 0.0572,
+        "money you have to pay": 0.0357,
+        "an appointment or a booking": 0.1557
+      },
+      "ms": 133.755,
+      "t_s": 5.283957446
+    },
+    {
+      "id": 889,
+      "from": "Cobblemere",
+      "text": "Cobblemere Water: your water bill of $237.32 is now overdue. Please pay by 2 Oct.",
+      "choice": "money you have to pay",
+      "p_choice": 0.8636,
+      "probabilities": {
+        "nothing you need to do": 0.0888,
+        "a code to type in": 0.009,
+        "a package or a delivery": 0.0265,
+        "money you have to pay": 0.8636,
+        "an appointment or a booking": 0.0121
+      },
+      "ms": 131.001875,
+      "t_s": 5.416102341
+    },
+    {
+      "id": 890,
+      "from": "Heelgrove",
+      "text": "Heelgrove SALE: 15% off everything until Sunday. Shop online or in store.",
+      "choice": "nothing you need to do",
+      "p_choice": 0.4529,
+      "probabilities": {
+        "nothing you need to do": 0.4529,
+        "a code to type in": 0.1567,
+        "a package or a delivery": 0.1636,
+        "money you have to pay": 0.1098,
+        "an appointment or a booking": 0.1171
+      },
+      "ms": 131.57349,
+      "t_s": 5.549879112
+    },
+    {
+      "id": 891,
+      "from": "Crateford",
+      "text": "Crateford Couriers: your parcel was left at the front door at 10 am.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.8286,
+      "probabilities": {
+        "nothing you need to do": 0.1382,
+        "a code to type in": 0.0075,
+        "a package or a delivery": 0.8286,
+        "money you have to pay": 0.0066,
+        "an appointment or a booking": 0.0191
+      },
+      "ms": 130.421407,
+      "t_s": 5.68247781
+    },
+    {
+      "id": 892,
+      "from": "+1 617-555-0122",
+      "text": "Hey, are you free for lunch on Thursday?",
+      "choice": "nothing you need to do",
+      "p_choice": 0.835,
+      "probabilities": {
+        "nothing you need to do": 0.835,
+        "a code to type in": 0.0343,
+        "a package or a delivery": 0.0314,
+        "money you have to pay": 0.0285,
+        "an appointment or a booking": 0.0709
+      },
+      "ms": 131.000312,
+      "t_s": 5.815725831
+    },
+    {
+      "id": 893,
+      "from": "Tallowby",
+      "text": "Tallowby Vets: the bill for Pepper's visit, $323.10, is still open. Please pay online or at your next visit.",
+      "choice": "money you have to pay",
+      "p_choice": 0.7794,
+      "probabilities": {
+        "nothing you need to do": 0.1137,
+        "a code to type in": 0.0105,
+        "a package or a delivery": 0.0103,
+        "money you have to pay": 0.7794,
+        "an appointment or a booking": 0.0861
+      },
+      "ms": 133.903698,
+      "t_s": 5.95041755
+    },
+    {
+      "id": 894,
+      "from": "LorrowCU",
+      "text": "Lorrow Credit Union: use one-time passcode 467889 to approve your new device. It expires in 5 minutes.",
+      "choice": "a code to type in",
+      "p_choice": 0.7582,
+      "probabilities": {
+        "nothing you need to do": 0.1582,
+        "a code to type in": 0.7582,
+        "a package or a delivery": 0.0251,
+        "money you have to pay": 0.0187,
+        "an appointment or a booking": 0.0398
+      },
+      "ms": 132.294584,
+      "t_s": 6.084215362
+    },
+    {
+      "id": 895,
+      "from": "+1 503-555-0140",
+      "text": "Happy birthday!! Hope you have the best day. Love, Ruby",
+      "choice": "nothing you need to do",
+      "p_choice": 0.7246,
+      "probabilities": {
+        "nothing you need to do": 0.7246,
+        "a code to type in": 0.0581,
+        "a package or a delivery": 0.061,
+        "money you have to pay": 0.0313,
+        "an appointment or a booking": 0.1251
+      },
+      "ms": 134.927396,
+      "t_s": 6.221153747
+    },
+    {
+      "id": 896,
+      "from": "Crateford",
+      "text": "Crateford Couriers: your parcel CR844573706 is out for delivery today between 10 am and 2 pm.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.856,
+      "probabilities": {
+        "nothing you need to do": 0.0802,
+        "a code to type in": 0.0259,
+        "a package or a delivery": 0.856,
+        "money you have to pay": 0.0057,
+        "an appointment or a booking": 0.0322
+      },
+      "ms": 133.256198,
+      "t_s": 6.356531664
+    },
+    {
+      "id": 897,
+      "from": "LorrowCU",
+      "text": "Lorrow Credit Union: a payment of $353.97 to Heelgrove was approved on your card ending 3948.",
+      "choice": "money you have to pay",
+      "p_choice": 0.511,
+      "probabilities": {
+        "nothing you need to do": 0.2056,
+        "a code to type in": 0.0868,
+        "a package or a delivery": 0.1163,
+        "money you have to pay": 0.511,
+        "an appointment or a booking": 0.0803
+      },
+      "ms": 132.703854,
+      "t_s": 6.491588383
+    },
+    {
+      "id": 898,
+      "from": "Lungefold",
+      "text": "Lungefold Fitness: 9 visits this month, keep it up!",
+      "choice": "nothing you need to do",
+      "p_choice": 0.5756,
+      "probabilities": {
+        "nothing you need to do": 0.5756,
+        "a code to type in": 0.1189,
+        "a package or a delivery": 0.0579,
+        "money you have to pay": 0.0371,
+        "an appointment or a booking": 0.2104
+      },
+      "ms": 131.698698,
+      "t_s": 6.626079476
+    },
+    {
+      "id": 899,
+      "from": "+1 808-555-0128",
+      "text": "Happy birthday!! Hope you have the best day. Love, Nina",
+      "choice": "nothing you need to do",
+      "p_choice": 0.6903,
+      "probabilities": {
+        "nothing you need to do": 0.6903,
+        "a code to type in": 0.0663,
+        "a package or a delivery": 0.0641,
+        "money you have to pay": 0.0348,
+        "an appointment or a booking": 0.1445
+      },
+      "ms": 132.96401,
+      "t_s": 6.760885987
+    },
+    {
+      "id": 900,
+      "from": "Mailbrook",
+      "text": "Use 12940 to confirm your phone number on Mailbrook. The code is valid for 5 minutes.",
+      "choice": "a code to type in",
+      "p_choice": 0.7644,
+      "probabilities": {
+        "nothing you need to do": 0.1621,
+        "a code to type in": 0.7644,
+        "a package or a delivery": 0.0321,
+        "money you have to pay": 0.011,
+        "an appointment or a booking": 0.0303
+      },
+      "ms": 132.054896,
+      "t_s": 6.896049632
+    },
+    {
+      "id": 901,
+      "from": "LorrowCU",
+      "text": "Lorrow Credit Union: your verification code is 789742. It expires in 10 minutes. Never share it.",
+      "choice": "a code to type in",
+      "p_choice": 0.5772,
+      "probabilities": {
+        "nothing you need to do": 0.223,
+        "a code to type in": 0.5772,
+        "a package or a delivery": 0.0809,
+        "money you have to pay": 0.0436,
+        "an appointment or a booking": 0.0753
+      },
+      "ms": 134.535364,
+      "t_s": 7.03239958
+    },
+    {
+      "id": 902,
+      "from": "+1 617-555-0143",
+      "text": "Hi, this is Jake from Keyfallow Homes. Would 8:30 am on Friday work for the viewing?",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.8289,
+      "probabilities": {
+        "nothing you need to do": 0.1354,
+        "a code to type in": 0.0062,
+        "a package or a delivery": 0.0058,
+        "money you have to pay": 0.0237,
+        "an appointment or a booking": 0.8289
+      },
+      "ms": 130.367917,
+      "t_s": 7.165117184
+    },
+    {
+      "id": 903,
+      "from": "HobnailMkt",
+      "text": "Hobnail Market: your grocery delivery is on its way and will arrive between 8 am and 12 pm.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.7964,
+      "probabilities": {
+        "nothing you need to do": 0.1547,
+        "a code to type in": 0.0253,
+        "a package or a delivery": 0.7964,
+        "money you have to pay": 0.0086,
+        "an appointment or a booking": 0.0151
+      },
+      "ms": 131.516302,
+      "t_s": 7.299722705
+    },
+    {
+      "id": 904,
+      "from": "Lindenquay",
+      "text": "Lindenquay Clinic: Dr. Brennan can see you on Tuesday at 11:45 am. Reply YES to book this slot.",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.9603,
+      "probabilities": {
+        "nothing you need to do": 0.0325,
+        "a code to type in": 0.0025,
+        "a package or a delivery": 0.0019,
+        "money you have to pay": 0.0028,
+        "an appointment or a booking": 0.9603
+      },
+      "ms": 132.757239,
+      "t_s": 7.43390083
+    },
+    {
+      "id": 905,
+      "from": "Heelgrove",
+      "text": "Good news from Heelgrove: order #29077 arrives tomorrow.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.9491,
+      "probabilities": {
+        "nothing you need to do": 0.0432,
+        "a code to type in": 0.0024,
+        "a package or a delivery": 0.9491,
+        "money you have to pay": 0.0025,
+        "an appointment or a booking": 0.0028
+      },
+      "ms": 132.551458,
+      "t_s": 7.567844893
+    },
+    {
+      "id": 906,
+      "from": "Chattermoss",
+      "text": "Chattermoss Mobile: your data resets tomorrow. You used 12 GB of 50 GB this month.",
+      "choice": "nothing you need to do",
+      "p_choice": 0.2825,
+      "probabilities": {
+        "nothing you need to do": 0.2825,
+        "a code to type in": 0.2662,
+        "a package or a delivery": 0.167,
+        "money you have to pay": 0.1053,
+        "an appointment or a booking": 0.1791
+      },
+      "ms": 132.111407,
+      "t_s": 7.702269476
+    },
+    {
+      "id": 907,
+      "from": "Mailbrook",
+      "text": "Use 40798 to confirm your phone number on Mailbrook. The code is valid for 5 minutes.",
+      "choice": "a code to type in",
+      "p_choice": 0.7577,
+      "probabilities": {
+        "nothing you need to do": 0.166,
+        "a code to type in": 0.7577,
+        "a package or a delivery": 0.0331,
+        "money you have to pay": 0.0116,
+        "an appointment or a booking": 0.0316
+      },
+      "ms": 131.598489,
+      "t_s": 7.835941403
+    },
+    {
+      "id": 908,
+      "from": "+1 503-555-0140",
+      "text": "Can you send me the photos from Tuesday when you get a chance?",
+      "choice": "nothing you need to do",
+      "p_choice": 0.7826,
+      "probabilities": {
+        "nothing you need to do": 0.7826,
+        "a code to type in": 0.0377,
+        "a package or a delivery": 0.0394,
+        "money you have to pay": 0.0339,
+        "an appointment or a booking": 0.1064
+      },
+      "ms": 132.068333,
+      "t_s": 7.969809424
+    },
+    {
+      "id": 909,
+      "from": "Cobblemere",
+      "text": "Cobblemere Water: planned work on the mains on Monday. Your water supply will not be affected.",
+      "choice": "nothing you need to do",
+      "p_choice": 0.4361,
+      "probabilities": {
+        "nothing you need to do": 0.4361,
+        "a code to type in": 0.0326,
+        "a package or a delivery": 0.1703,
+        "money you have to pay": 0.0454,
+        "an appointment or a booking": 0.3155
+      },
+      "ms": 133.302709,
+      "t_s": 8.104779372
+    },
+    {
+      "id": 910,
+      "from": "+1 201-555-0131",
+      "text": "Leo here! We got the keys to the new flat today!!",
+      "choice": "nothing you need to do",
+      "p_choice": 0.7303,
+      "probabilities": {
+        "nothing you need to do": 0.7303,
+        "a code to type in": 0.028,
+        "a package or a delivery": 0.0937,
+        "money you have to pay": 0.0435,
+        "an appointment or a booking": 0.1045
+      },
+      "ms": 131.772448,
+      "t_s": 8.238719111
+    },
+    {
+      "id": 911,
+      "from": "Shieldwren",
+      "text": "Shieldwren Insurance: your car insurance payment of $247.81 failed. Update your card by 4 Nov to stay covered.",
+      "choice": "money you have to pay",
+      "p_choice": 0.4044,
+      "probabilities": {
+        "nothing you need to do": 0.3279,
+        "a code to type in": 0.073,
+        "a package or a delivery": 0.1205,
+        "money you have to pay": 0.4044,
+        "an appointment or a booking": 0.0742
+      },
+      "ms": 131.242031,
+      "t_s": 8.371169267
+    },
+    {
+      "id": 912,
+      "from": "Brackwheel",
+      "text": "Brackwheel Motors: your car service is booked for Tuesday at 11:45 am. Please drop off the keys by 8 am.",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.7803,
+      "probabilities": {
+        "nothing you need to do": 0.1593,
+        "a code to type in": 0.0188,
+        "a package or a delivery": 0.0209,
+        "money you have to pay": 0.0207,
+        "an appointment or a booking": 0.7803
+      },
+      "ms": 130.259531,
+      "t_s": 8.503251663
+    },
+    {
+      "id": 913,
+      "from": "Heelgrove",
+      "text": "Heelgrove: your order #91854 has shipped with Parcelwick. It should arrive on Wednesday.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.8248,
+      "probabilities": {
+        "nothing you need to do": 0.1428,
+        "a code to type in": 0.0094,
+        "a package or a delivery": 0.8248,
+        "money you have to pay": 0.0084,
+        "an appointment or a booking": 0.0146
+      },
+      "ms": 131.606875,
+      "t_s": 8.63681734
+    },
+    {
+      "id": 914,
+      "from": "+1 312-555-0134",
+      "text": "Hey, are you free for lunch on Tuesday?",
+      "choice": "nothing you need to do",
+      "p_choice": 0.8212,
+      "probabilities": {
+        "nothing you need to do": 0.8212,
+        "a code to type in": 0.0443,
+        "a package or a delivery": 0.0322,
+        "money you have to pay": 0.0291,
+        "an appointment or a booking": 0.0732
+      },
+      "ms": 131.42276,
+      "t_s": 8.771669111
+    },
+    {
+      "id": 915,
+      "from": "Parcelwick",
+      "text": "Parcelwick: your driver is 5 stops away. Your parcel needs a signature.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.7976,
+      "probabilities": {
+        "nothing you need to do": 0.1198,
+        "a code to type in": 0.0318,
+        "a package or a delivery": 0.7976,
+        "money you have to pay": 0.0108,
+        "an appointment or a booking": 0.04
+      },
+      "ms": 133.939636,
+      "t_s": 8.907143538
+    },
+    {
+      "id": 916,
+      "from": "SnipSable",
+      "text": "Your haircut at Snip & Sable is booked for Friday at 2 pm.",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.6719,
+      "probabilities": {
+        "nothing you need to do": 0.2456,
+        "a code to type in": 0.0287,
+        "a package or a delivery": 0.0247,
+        "money you have to pay": 0.0292,
+        "an appointment or a booking": 0.6719
+      },
+      "ms": 135.6075,
+      "t_s": 9.044086975
+    },
+    {
+      "id": 917,
+      "from": "Mailbrook",
+      "text": "Use 24162 to confirm your phone number on Mailbrook. The code is valid for 5 minutes.",
+      "choice": "a code to type in",
+      "p_choice": 0.7124,
+      "probabilities": {
+        "nothing you need to do": 0.1901,
+        "a code to type in": 0.7124,
+        "a package or a delivery": 0.044,
+        "money you have to pay": 0.015,
+        "an appointment or a booking": 0.0385
+      },
+      "ms": 135.099687,
+      "t_s": 9.181136975
+    },
+    {
+      "id": 918,
+      "from": "Lungefold",
+      "text": "Lungefold Fitness: 13 visits this month, keep it up!",
+      "choice": "nothing you need to do",
+      "p_choice": 0.6272,
+      "probabilities": {
+        "nothing you need to do": 0.6272,
+        "a code to type in": 0.1187,
+        "a package or a delivery": 0.0624,
+        "money you have to pay": 0.0367,
+        "an appointment or a booking": 0.1549
+      },
+      "ms": 134.358698,
+      "t_s": 9.316585361
+    },
+    {
+      "id": 919,
+      "from": "+1 312-555-0113",
+      "text": "Did you see my email about the trip? Let me know what you think.",
+      "choice": "nothing you need to do",
+      "p_choice": 0.4766,
+      "probabilities": {
+        "nothing you need to do": 0.4766,
+        "a code to type in": 0.119,
+        "a package or a delivery": 0.1526,
+        "money you have to pay": 0.0649,
+        "an appointment or a booking": 0.1869
+      },
+      "ms": 130.584635,
+      "t_s": 9.449727236
+    },
+    {
+      "id": 920,
+      "from": "LorrowCU",
+      "text": "Lorrow Credit Union: use one-time passcode 126245 to approve your new device. It expires in 5 minutes.",
+      "choice": "a code to type in",
+      "p_choice": 0.7844,
+      "probabilities": {
+        "nothing you need to do": 0.1426,
+        "a code to type in": 0.7844,
+        "a package or a delivery": 0.0227,
+        "money you have to pay": 0.0169,
+        "an appointment or a booking": 0.0334
+      },
+      "ms": 133.055364,
+      "t_s": 9.5868276
+    },
+    {
+      "id": 921,
+      "from": "+1 617-555-0122",
+      "text": "It's Chloe. What time should I pick you up tomorrow?",
+      "choice": "nothing you need to do",
+      "p_choice": 0.6237,
+      "probabilities": {
+        "nothing you need to do": 0.6237,
+        "a code to type in": 0.1284,
+        "a package or a delivery": 0.0558,
+        "money you have to pay": 0.0412,
+        "an appointment or a booking": 0.1509
+      },
+      "ms": 132.053697,
+      "t_s": 9.725055204
+    },
+    {
+      "id": 922,
+      "from": "+1 201-555-0110",
+      "text": "Hey it's Maya, made it home safe. Thanks for tonight!",
+      "choice": "nothing you need to do",
+      "p_choice": 0.9072,
+      "probabilities": {
+        "nothing you need to do": 0.9072,
+        "a code to type in": 0.0176,
+        "a package or a delivery": 0.026,
+        "money you have to pay": 0.0136,
+        "an appointment or a booking": 0.0356
+      },
+      "ms": 133.639688,
+      "t_s": 9.859600361
+    },
+    {
+      "id": 923,
+      "from": "+1 646-555-0180",
+      "text": "Lorrow Credit Union: your account has been locked. Verify your identity now at http:\/\/lorrowcu-verify.example or lose access.",
+      "choice": "a code to type in",
+      "p_choice": 0.2463,
+      "probabilities": {
+        "nothing you need to do": 0.2446,
+        "a code to type in": 0.2463,
+        "a package or a delivery": 0.1522,
+        "money you have to pay": 0.1581,
+        "an appointment or a booking": 0.1987
+      },
+      "ms": 133.402813,
+      "t_s": 9.995586923
+    },
+    {
+      "id": 924,
+      "from": "Heelgrove",
+      "text": "Heelgrove: your order #83476 has shipped with Parcelwick. It should arrive on Sunday.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.7751,
+      "probabilities": {
+        "nothing you need to do": 0.1828,
+        "a code to type in": 0.0134,
+        "a package or a delivery": 0.7751,
+        "money you have to pay": 0.0103,
+        "an appointment or a booking": 0.0183
+      },
+      "ms": 134.249739,
+      "t_s": 10.130725048
+    },
+    {
+      "id": 925,
+      "from": "Brookpell",
+      "text": "Invoice INV-6181 from Brookpell Plumbing for $950 is due on Wednesday. Thank you!",
+      "choice": "money you have to pay",
+      "p_choice": 0.5115,
+      "probabilities": {
+        "nothing you need to do": 0.2291,
+        "a code to type in": 0.1501,
+        "a package or a delivery": 0.0367,
+        "money you have to pay": 0.5115,
+        "an appointment or a booking": 0.0726
+      },
+      "ms": 132.807084,
+      "t_s": 10.265079683
+    },
+    {
+      "id": 926,
+      "from": "Parcelwick",
+      "text": "Parcelwick: your parcel PA858247324 is out for delivery today between 8 am and 12 pm.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.8772,
+      "probabilities": {
+        "nothing you need to do": 0.0801,
+        "a code to type in": 0.0215,
+        "a package or a delivery": 0.8772,
+        "money you have to pay": 0.0061,
+        "an appointment or a booking": 0.0151
+      },
+      "ms": 132.454583,
+      "t_s": 10.399280777
+    },
+    {
+      "id": 927,
+      "from": "+1 720-555-0125",
+      "text": "Hi, it's Sam from next door. Could you take in a parcel for me on Thursday?",
+      "choice": "a package or a delivery",
+      "p_choice": 0.803,
+      "probabilities": {
+        "nothing you need to do": 0.1535,
+        "a code to type in": 0.0107,
+        "a package or a delivery": 0.803,
+        "money you have to pay": 0.0117,
+        "an appointment or a booking": 0.0211
+      },
+      "ms": 130.929219,
+      "t_s": 10.531666662
+    },
+    {
+      "id": 928,
+      "from": "+1 312-555-0134",
+      "text": "Do you still want the tickets for Friday? I need to tell Omar by tonight.",
+      "choice": "nothing you need to do",
+      "p_choice": 0.6151,
+      "probabilities": {
+        "nothing you need to do": 0.6151,
+        "a code to type in": 0.0792,
+        "a package or a delivery": 0.0398,
+        "money you have to pay": 0.0411,
+        "an appointment or a booking": 0.2248
+      },
+      "ms": 132.105729,
+      "t_s": 10.665926194
+    },
+    {
+      "id": 929,
+      "from": "LorrowCU",
+      "text": "Lorrow Credit Union: your verification code is 595718. It expires in 10 minutes. Never share it.",
+      "choice": "a code to type in",
+      "p_choice": 0.5919,
+      "probabilities": {
+        "nothing you need to do": 0.2078,
+        "a code to type in": 0.5919,
+        "a package or a delivery": 0.0822,
+        "money you have to pay": 0.045,
+        "an appointment or a booking": 0.0731
+      },
+      "ms": 132.29,
+      "t_s": 10.800226141
+    },
+    {
+      "id": 930,
+      "from": "Heelgrove",
+      "text": "Heelgrove: 205680 is your code to reset your password.",
+      "choice": "a code to type in",
+      "p_choice": 0.5531,
+      "probabilities": {
+        "nothing you need to do": 0.2923,
+        "a code to type in": 0.5531,
+        "a package or a delivery": 0.0494,
+        "money you have to pay": 0.0225,
+        "an appointment or a booking": 0.0827
+      },
+      "ms": 132.307813,
+      "t_s": 10.935331141
+    },
+    {
+      "id": 931,
+      "from": "+1 415-555-0116",
+      "text": "Do you still want the tickets for Friday? I need to tell Nina by tonight.",
+      "choice": "nothing you need to do",
+      "p_choice": 0.6123,
+      "probabilities": {
+        "nothing you need to do": 0.6123,
+        "a code to type in": 0.0568,
+        "a package or a delivery": 0.0347,
+        "money you have to pay": 0.0487,
+        "an appointment or a booking": 0.2475
+      },
+      "ms": 132.119323,
+      "t_s": 11.069120881
+    },
+    {
+      "id": 932,
+      "from": "Tallowby",
+      "text": "Tallowby Vets: Milo is due for a booster. Reply with a day that suits you and we will book it.",
+      "choice": "nothing you need to do",
+      "p_choice": 0.629,
+      "probabilities": {
+        "nothing you need to do": 0.629,
+        "a code to type in": 0.0494,
+        "a package or a delivery": 0.0571,
+        "money you have to pay": 0.0415,
+        "an appointment or a booking": 0.223
+      },
+      "ms": 132.921198,
+      "t_s": 11.20268286
+    },
+    {
+      "id": 933,
+      "from": "Heelgrove",
+      "text": "Heelgrove: 112511 is your code to reset your password.",
+      "choice": "a code to type in",
+      "p_choice": 0.5478,
+      "probabilities": {
+        "nothing you need to do": 0.2937,
+        "a code to type in": 0.5478,
+        "a package or a delivery": 0.0546,
+        "money you have to pay": 0.0221,
+        "an appointment or a booking": 0.0818
+      },
+      "ms": 131.291406,
+      "t_s": 11.334864787
+    },
+    {
+      "id": 934,
+      "from": "Parcelwick",
+      "text": "Parcelwick: your parcel was left at the front door at 2 pm.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.6966,
+      "probabilities": {
+        "nothing you need to do": 0.2606,
+        "a code to type in": 0.0163,
+        "a package or a delivery": 0.6966,
+        "money you have to pay": 0.0091,
+        "an appointment or a booking": 0.0174
+      },
+      "ms": 131.178698,
+      "t_s": 11.467482027
+    },
+    {
+      "id": 935,
+      "from": "+1 617-555-0143",
+      "text": "Jake here, just finished the race! Legs are dead but so happy.",
+      "choice": "nothing you need to do",
+      "p_choice": 0.8493,
+      "probabilities": {
+        "nothing you need to do": 0.8493,
+        "a code to type in": 0.0321,
+        "a package or a delivery": 0.0359,
+        "money you have to pay": 0.0206,
+        "an appointment or a booking": 0.0622
+      },
+      "ms": 132.374948,
+      "t_s": 11.600567756
+    },
+    {
+      "id": 936,
+      "from": "Lungefold",
+      "text": "Lungefold Fitness: new spin classes start Monday at 1:30 pm. Just drop in, no booking needed.",
+      "choice": "nothing you need to do",
+      "p_choice": 0.5839,
+      "probabilities": {
+        "nothing you need to do": 0.5839,
+        "a code to type in": 0.1246,
+        "a package or a delivery": 0.0408,
+        "money you have to pay": 0.0337,
+        "an appointment or a booking": 0.217
+      },
+      "ms": 132.841615,
+      "t_s": 11.734032651
+    },
+    {
+      "id": 937,
+      "from": "LorrowCU",
+      "text": "Lorrow Credit Union: use one-time passcode 945640 to approve your new device. It expires in 5 minutes.",
+      "choice": "a code to type in",
+      "p_choice": 0.7874,
+      "probabilities": {
+        "nothing you need to do": 0.1355,
+        "a code to type in": 0.7874,
+        "a package or a delivery": 0.0231,
+        "money you have to pay": 0.0183,
+        "an appointment or a booking": 0.0357
+      },
+      "ms": 132.817969,
+      "t_s": 11.867427808
+    },
+    {
+      "id": 938,
+      "from": "HobnailMkt",
+      "text": "Hobnail Market: this week only, 2 for 1 on fresh bread and 20% off all fruit. See you in store!",
+      "choice": "nothing you need to do",
+      "p_choice": 0.3832,
+      "probabilities": {
+        "nothing you need to do": 0.3832,
+        "a code to type in": 0.1406,
+        "a package or a delivery": 0.1605,
+        "money you have to pay": 0.1973,
+        "an appointment or a booking": 0.1185
+      },
+      "ms": 132.794584,
+      "t_s": 12.001236766
+    },
+    {
+      "id": 939,
+      "from": "Lindenquay",
+      "text": "Lindenquay Clinic: Dr. Novak can see you on Friday at 2 pm. Reply YES to book this slot.",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.8924,
+      "probabilities": {
+        "nothing you need to do": 0.0897,
+        "a code to type in": 0.0062,
+        "a package or a delivery": 0.0046,
+        "money you have to pay": 0.0071,
+        "an appointment or a booking": 0.8924
+      },
+      "ms": 133.687343,
+      "t_s": 12.135512235
+    },
+    {
+      "id": 940,
+      "from": "Heelgrove",
+      "text": "Heelgrove: thanks for your order #38626. Your receipt is in your account, no action needed.",
+      "choice": "nothing you need to do",
+      "p_choice": 0.5643,
+      "probabilities": {
+        "nothing you need to do": 0.5643,
+        "a code to type in": 0.0608,
+        "a package or a delivery": 0.308,
+        "money you have to pay": 0.0234,
+        "an appointment or a booking": 0.0435
+      },
+      "ms": 132.133021,
+      "t_s": 12.268776037
+    },
+    {
+      "id": 941,
+      "from": "Kelderbank",
+      "text": "Kelderbank: use one-time passcode 342861 to approve your new device. It expires in 5 minutes.",
+      "choice": "a code to type in",
+      "p_choice": 0.8014,
+      "probabilities": {
+        "nothing you need to do": 0.125,
+        "a code to type in": 0.8014,
+        "a package or a delivery": 0.0195,
+        "money you have to pay": 0.0135,
+        "an appointment or a booking": 0.0406
+      },
+      "ms": 131.872188,
+      "t_s": 12.40184786
+    },
+    {
+      "id": 942,
+      "from": "HobnailMkt",
+      "text": "Hobnail Market: this week only, 2 for 1 on fresh bread and 40% off all fruit. See you in store!",
+      "choice": "nothing you need to do",
+      "p_choice": 0.3868,
+      "probabilities": {
+        "nothing you need to do": 0.3868,
+        "a code to type in": 0.1494,
+        "a package or a delivery": 0.1582,
+        "money you have to pay": 0.18,
+        "an appointment or a booking": 0.1255
+      },
+      "ms": 133.783489,
+      "t_s": 12.536407547
+    },
+    {
+      "id": 943,
+      "from": "+1 720-555-0146",
+      "text": "Hey it's Hannah, made it home safe. Thanks for tonight!",
+      "choice": "nothing you need to do",
+      "p_choice": 0.9097,
+      "probabilities": {
+        "nothing you need to do": 0.9097,
+        "a code to type in": 0.0177,
+        "a package or a delivery": 0.0253,
+        "money you have to pay": 0.0143,
+        "an appointment or a booking": 0.033
+      },
+      "ms": 132.619167,
+      "t_s": 12.671269682
+    },
+    {
+      "id": 944,
+      "from": "SnipSable",
+      "text": "Your haircut at Snip & Sable is booked for Tuesday at 7:30 pm.",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.8254,
+      "probabilities": {
+        "nothing you need to do": 0.1371,
+        "a code to type in": 0.0127,
+        "a package or a delivery": 0.0103,
+        "money you have to pay": 0.0145,
+        "an appointment or a booking": 0.8254
+      },
+      "ms": 133.870729,
+      "t_s": 12.80584463
+    },
+    {
+      "id": 945,
+      "from": "LorrowCU",
+      "text": "Lorrow Credit Union: your credit card payment of $447.92 is due on 17 Nov.",
+      "choice": "money you have to pay",
+      "p_choice": 0.8377,
+      "probabilities": {
+        "nothing you need to do": 0.0995,
+        "a code to type in": 0.0153,
+        "a package or a delivery": 0.0279,
+        "money you have to pay": 0.8377,
+        "an appointment or a booking": 0.0195
+      },
+      "ms": 136.181875,
+      "t_s": 12.942726766
+    },
+    {
+      "id": 946,
+      "from": "Crateford",
+      "text": "Crateford Couriers: your parcel CR486370730 is out for delivery today between 2 pm and 6 pm.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.8613,
+      "probabilities": {
+        "nothing you need to do": 0.082,
+        "a code to type in": 0.0294,
+        "a package or a delivery": 0.8613,
+        "money you have to pay": 0.0058,
+        "an appointment or a booking": 0.0216
+      },
+      "ms": 198.058802,
+      "t_s": 13.141747286
+    },
+    {
+      "id": 947,
+      "from": "+1 469-555-0160",
+      "text": "Hi Dad, it's me. Lost my wallet, can you send $142.31 to this account so I can get home? Don't call, my battery is dying",
+      "choice": "money you have to pay",
+      "p_choice": 0.5218,
+      "probabilities": {
+        "nothing you need to do": 0.2391,
+        "a code to type in": 0.033,
+        "a package or a delivery": 0.1801,
+        "money you have to pay": 0.5218,
+        "an appointment or a booking": 0.026
+      },
+      "ms": 202.533073,
+      "t_s": 13.345072286
+    },
+    {
+      "id": 948,
+      "from": "+1 312-555-0113",
+      "text": "Can you send me the photos from Friday when you get a chance?",
+      "choice": "nothing you need to do",
+      "p_choice": 0.7719,
+      "probabilities": {
+        "nothing you need to do": 0.7719,
+        "a code to type in": 0.0514,
+        "a package or a delivery": 0.0445,
+        "money you have to pay": 0.0357,
+        "an appointment or a booking": 0.0965
+      },
+      "ms": 201.586927,
+      "t_s": 13.547824474
+    },
+    {
+      "id": 949,
+      "from": "+1 808-555-0128",
+      "text": "Hi, it's Nina from next door. Could you take in a parcel for me on Sunday?",
+      "choice": "a package or a delivery",
+      "p_choice": 0.8374,
+      "probabilities": {
+        "nothing you need to do": 0.1246,
+        "a code to type in": 0.0085,
+        "a package or a delivery": 0.8374,
+        "money you have to pay": 0.0085,
+        "an appointment or a booking": 0.021
+      },
+      "ms": 186.56052,
+      "t_s": 13.736375255
+    },
+    {
+      "id": 950,
+      "from": "HobnailMkt",
+      "text": "Thanks for shopping at Hobnail Market. Your receipt total was $203.62. You earned 54 points today.",
+      "choice": "nothing you need to do",
+      "p_choice": 0.5523,
+      "probabilities": {
+        "nothing you need to do": 0.5523,
+        "a code to type in": 0.0614,
+        "a package or a delivery": 0.1529,
+        "money you have to pay": 0.1704,
+        "an appointment or a booking": 0.0629
+      },
+      "ms": 127.937864,
+      "t_s": 13.866165619
+    },
+    {
+      "id": 951,
+      "from": "Cobblemere",
+      "text": "Cobblemere Water: your water bill of $161.74 is now overdue. Please pay by 24 Oct.",
+      "choice": "money you have to pay",
+      "p_choice": 0.8564,
+      "probabilities": {
+        "nothing you need to do": 0.0989,
+        "a code to type in": 0.0088,
+        "a package or a delivery": 0.0254,
+        "money you have to pay": 0.8564,
+        "an appointment or a booking": 0.0105
+      },
+      "ms": 130.089687,
+      "t_s": 13.998443224
+    },
+    {
+      "id": 952,
+      "from": "+1 702-555-0185",
+      "text": "Kelderbank: your account has been locked. Verify your identity now at http:\/\/kelderbank-billing-update.example or lose access.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.2737,
+      "probabilities": {
+        "nothing you need to do": 0.2081,
+        "a code to type in": 0.1816,
+        "a package or a delivery": 0.2737,
+        "money you have to pay": 0.2027,
+        "an appointment or a booking": 0.134
+      },
+      "ms": 131.24151,
+      "t_s": 14.131036921
+    },
+    {
+      "id": 953,
+      "from": "Heelgrove",
+      "text": "Heelgrove: your order #24627 has shipped with Parcelwick. It should arrive on Monday.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.8003,
+      "probabilities": {
+        "nothing you need to do": 0.1664,
+        "a code to type in": 0.0099,
+        "a package or a delivery": 0.8003,
+        "money you have to pay": 0.0087,
+        "an appointment or a booking": 0.0146
+      },
+      "ms": 131.923906,
+      "t_s": 14.263674057
+    },
+    {
+      "id": 954,
+      "from": "Kelderbank",
+      "text": "Kelderbank: your credit card payment of $27.35 is due on 7 Oct.",
+      "choice": "money you have to pay",
+      "p_choice": 0.8482,
+      "probabilities": {
+        "nothing you need to do": 0.0994,
+        "a code to type in": 0.0126,
+        "a package or a delivery": 0.0214,
+        "money you have to pay": 0.8482,
+        "an appointment or a booking": 0.0185
+      },
+      "ms": 131.999531,
+      "t_s": 14.396759161
+    },
+    {
+      "id": 955,
+      "from": "Lindenquay",
+      "text": "Lindenquay Clinic: Dr. Castell can see you on Tuesday at 2 pm. Reply YES to book this slot.",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.8977,
+      "probabilities": {
+        "nothing you need to do": 0.0855,
+        "a code to type in": 0.0055,
+        "a package or a delivery": 0.0044,
+        "money you have to pay": 0.0068,
+        "an appointment or a booking": 0.8977
+      },
+      "ms": 131.353072,
+      "t_s": 14.528870307
+    },
+    {
+      "id": 956,
+      "from": "Mailbrook",
+      "text": "Your Mailbrook security code is 3261. Do not give this code to anyone.",
+      "choice": "a code to type in",
+      "p_choice": 0.6013,
+      "probabilities": {
+        "nothing you need to do": 0.1992,
+        "a code to type in": 0.6013,
+        "a package or a delivery": 0.0976,
+        "money you have to pay": 0.0285,
+        "an appointment or a booking": 0.0734
+      },
+      "ms": 130.934896,
+      "t_s": 14.661256817
+    },
+    {
+      "id": 957,
+      "from": "+1 503-555-0119",
+      "text": "Which works better for you, Tuesday or Wednesday?",
+      "choice": "nothing you need to do",
+      "p_choice": 0.6362,
+      "probabilities": {
+        "nothing you need to do": 0.6362,
+        "a code to type in": 0.0824,
+        "a package or a delivery": 0.0726,
+        "money you have to pay": 0.0454,
+        "an appointment or a booking": 0.1634
+      },
+      "ms": 131.644427,
+      "t_s": 14.794167129
+    },
+    {
+      "id": 958,
+      "from": "+1 808-555-0149",
+      "text": "Hey, are you free for lunch on Saturday?",
+      "choice": "nothing you need to do",
+      "p_choice": 0.7735,
+      "probabilities": {
+        "nothing you need to do": 0.7735,
+        "a code to type in": 0.0525,
+        "a package or a delivery": 0.0405,
+        "money you have to pay": 0.0366,
+        "an appointment or a booking": 0.0968
+      },
+      "ms": 131.77875,
+      "t_s": 14.926890463
+    },
+    {
+      "id": 959,
+      "from": "Mailbrook",
+      "text": "558303 is your Mailbrook sign-in code.",
+      "choice": "a code to type in",
+      "p_choice": 0.7175,
+      "probabilities": {
+        "nothing you need to do": 0.1907,
+        "a code to type in": 0.7175,
+        "a package or a delivery": 0.0325,
+        "money you have to pay": 0.0124,
+        "an appointment or a booking": 0.0469
+      },
+      "ms": 132.622604,
+      "t_s": 15.060322494
+    },
+    {
+      "id": 960,
+      "from": "+1 415-555-0116",
+      "text": "It's Aisha. What time should I pick you up tomorrow?",
+      "choice": "nothing you need to do",
+      "p_choice": 0.6004,
+      "probabilities": {
+        "nothing you need to do": 0.6004,
+        "a code to type in": 0.1576,
+        "a package or a delivery": 0.0534,
+        "money you have to pay": 0.0414,
+        "an appointment or a booking": 0.1472
+      },
+      "ms": 132.129792,
+      "t_s": 15.193876296
+    },
+    {
+      "id": 961,
+      "from": "+1 808-555-0128",
+      "text": "Lovely to see you on Tuesday! Let's do it again soon. Nina x",
+      "choice": "nothing you need to do",
+      "p_choice": 0.7196,
+      "probabilities": {
+        "nothing you need to do": 0.7196,
+        "a code to type in": 0.0768,
+        "a package or a delivery": 0.0555,
+        "money you have to pay": 0.031,
+        "an appointment or a booking": 0.1171
+      },
+      "ms": 132.778333,
+      "t_s": 15.327848796
+    },
+    {
+      "id": 962,
+      "from": "Heelgrove",
+      "text": "Good news from Heelgrove: order #76618 arrives tomorrow.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.9445,
+      "probabilities": {
+        "nothing you need to do": 0.0462,
+        "a code to type in": 0.0032,
+        "a package or a delivery": 0.9445,
+        "money you have to pay": 0.0029,
+        "an appointment or a booking": 0.0033
+      },
+      "ms": 135.237499,
+      "t_s": 15.463696817
+    },
+    {
+      "id": 963,
+      "from": "HobnailMkt",
+      "text": "Hobnail Market: your receipt from Thursday, $316.05. Thank you for shopping with us.",
+      "choice": "money you have to pay",
+      "p_choice": 0.6717,
+      "probabilities": {
+        "nothing you need to do": 0.1556,
+        "a code to type in": 0.0173,
+        "a package or a delivery": 0.118,
+        "money you have to pay": 0.6717,
+        "an appointment or a booking": 0.0375
+      },
+      "ms": 135.66375,
+      "t_s": 15.600925879
+    },
+    {
+      "id": 964,
+      "from": "Mailbrook",
+      "text": "Your Mailbrook security code is 3555. Do not give this code to anyone.",
+      "choice": "a code to type in",
+      "p_choice": 0.6144,
+      "probabilities": {
+        "nothing you need to do": 0.192,
+        "a code to type in": 0.6144,
+        "a package or a delivery": 0.0929,
+        "money you have to pay": 0.0282,
+        "an appointment or a booking": 0.0725
+      },
+      "ms": 132.491614,
+      "t_s": 15.734574785
+    },
+    {
+      "id": 965,
+      "from": "Brackwheel",
+      "text": "Brackwheel Motors: your car service is booked for Wednesday at 1:30 pm. Please drop off the keys by 8 am.",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.7307,
+      "probabilities": {
+        "nothing you need to do": 0.1923,
+        "a code to type in": 0.0247,
+        "a package or a delivery": 0.0263,
+        "money you have to pay": 0.026,
+        "an appointment or a booking": 0.7307
+      },
+      "ms": 133.422291,
+      "t_s": 15.869407233
+    },
+    {
+      "id": 966,
+      "from": "Lindenquay",
+      "text": "Lindenquay Clinic: Dr. Okoro can see you on Thursday at 9:15 am. Reply YES to book this slot.",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.9121,
+      "probabilities": {
+        "nothing you need to do": 0.0723,
+        "a code to type in": 0.0054,
+        "a package or a delivery": 0.0041,
+        "money you have to pay": 0.0061,
+        "an appointment or a booking": 0.9121
+      },
+      "ms": 133.303282,
+      "t_s": 16.004412598
+    },
+    {
+      "id": 967,
+      "from": "+1 720-555-0125",
+      "text": "Happy birthday!! Hope you have the best day. Love, Sam",
+      "choice": "nothing you need to do",
+      "p_choice": 0.7133,
+      "probabilities": {
+        "nothing you need to do": 0.7133,
+        "a code to type in": 0.0571,
+        "a package or a delivery": 0.0675,
+        "money you have to pay": 0.0331,
+        "an appointment or a booking": 0.1289
+      },
+      "ms": 134.295417,
+      "t_s": 16.139395723
+    },
+    {
+      "id": 968,
+      "from": "Cobblemere",
+      "text": "Cobblemere Water: your water bill of $87.72 is now overdue. Please pay by 21 Nov.",
+      "choice": "money you have to pay",
+      "p_choice": 0.8569,
+      "probabilities": {
+        "nothing you need to do": 0.0988,
+        "a code to type in": 0.0095,
+        "a package or a delivery": 0.0242,
+        "money you have to pay": 0.8569,
+        "an appointment or a booking": 0.0106
+      },
+      "ms": 136.497083,
+      "t_s": 16.276526504
+    },
+    {
+      "id": 969,
+      "from": "Heelgrove",
+      "text": "Heelgrove: your return has arrived and $415.17 is back on your card.",
+      "choice": "money you have to pay",
+      "p_choice": 0.3435,
+      "probabilities": {
+        "nothing you need to do": 0.2571,
+        "a code to type in": 0.0808,
+        "a package or a delivery": 0.1618,
+        "money you have to pay": 0.3435,
+        "an appointment or a booking": 0.1568
+      },
+      "ms": 134.496458,
+      "t_s": 16.411688066
+    },
+    {
+      "id": 970,
+      "from": "Brackwheel",
+      "text": "Brackwheel Motors: your car service is booked for Wednesday at 7:30 pm. Please drop off the keys by 8 am.",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.7465,
+      "probabilities": {
+        "nothing you need to do": 0.179,
+        "a code to type in": 0.0234,
+        "a package or a delivery": 0.0248,
+        "money you have to pay": 0.0263,
+        "an appointment or a booking": 0.7465
+      },
+      "ms": 135.342969,
+      "t_s": 16.547816452
+    },
+    {
+      "id": 971,
+      "from": "+1 503-555-0119",
+      "text": "It's Ben. What time should I pick you up tomorrow?",
+      "choice": "nothing you need to do",
+      "p_choice": 0.6243,
+      "probabilities": {
+        "nothing you need to do": 0.6243,
+        "a code to type in": 0.1177,
+        "a package or a delivery": 0.0565,
+        "money you have to pay": 0.0392,
+        "an appointment or a booking": 0.1624
+      },
+      "ms": 135.114115,
+      "t_s": 16.683623639
+    },
+    {
+      "id": 972,
+      "from": "HobnailMkt",
+      "text": "Hobnail Market: your grocery delivery is on its way and will arrive between 4 pm and 8 pm.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.8187,
+      "probabilities": {
+        "nothing you need to do": 0.1382,
+        "a code to type in": 0.0222,
+        "a package or a delivery": 0.8187,
+        "money you have to pay": 0.0078,
+        "an appointment or a booking": 0.0131
+      },
+      "ms": 133.651615,
+      "t_s": 16.818000983
+    },
+    {
+      "id": 973,
+      "from": "Tallowby",
+      "text": "Tallowby Vets: Milo was a star at the check-up today. All vaccines are up to date.",
+      "choice": "nothing you need to do",
+      "p_choice": 0.4967,
+      "probabilities": {
+        "nothing you need to do": 0.4967,
+        "a code to type in": 0.0169,
+        "a package or a delivery": 0.0227,
+        "money you have to pay": 0.0215,
+        "an appointment or a booking": 0.4422
+      },
+      "ms": 134.191771,
+      "t_s": 16.953803587
+    },
+    {
+      "id": 974,
+      "from": "Lungefold",
+      "text": "Lungefold Fitness: new spin classes start Friday at 1:30 pm. Just drop in, no booking needed.",
+      "choice": "nothing you need to do",
+      "p_choice": 0.6079,
+      "probabilities": {
+        "nothing you need to do": 0.6079,
+        "a code to type in": 0.1225,
+        "a package or a delivery": 0.0422,
+        "money you have to pay": 0.0327,
+        "an appointment or a booking": 0.1946
+      },
+      "ms": 134.220521,
+      "t_s": 17.090020566
+    },
+    {
+      "id": 975,
+      "from": "Cobblemere",
+      "text": "Cobblemere Water: thanks for your payment of $253.62. Your account is up to date.",
+      "choice": "money you have to pay",
+      "p_choice": 0.4725,
+      "probabilities": {
+        "nothing you need to do": 0.3689,
+        "a code to type in": 0.0234,
+        "a package or a delivery": 0.0794,
+        "money you have to pay": 0.4725,
+        "an appointment or a booking": 0.0557
+      },
+      "ms": 135.962292,
+      "t_s": 17.226929264
+    },
+    {
+      "id": 976,
+      "from": "+1 201-555-0131",
+      "text": "Happy birthday!! Hope you have the best day. Love, Leo",
+      "choice": "nothing you need to do",
+      "p_choice": 0.6742,
+      "probabilities": {
+        "nothing you need to do": 0.6742,
+        "a code to type in": 0.0709,
+        "a package or a delivery": 0.0749,
+        "money you have to pay": 0.0373,
+        "an appointment or a booking": 0.1427
+      },
+      "ms": 134.772292,
+      "t_s": 17.363170618
+    },
+    {
+      "id": 977,
+      "from": "Brackwheel",
+      "text": "Brackwheel Motors: your car service is booked for Tuesday at 4:40 pm. Please drop off the keys by 8 am.",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.7829,
+      "probabilities": {
+        "nothing you need to do": 0.1517,
+        "a code to type in": 0.0211,
+        "a package or a delivery": 0.0225,
+        "money you have to pay": 0.0218,
+        "an appointment or a booking": 0.7829
+      },
+      "ms": 136.198489,
+      "t_s": 17.501220878
+    },
+    {
+      "id": 978,
+      "from": "Lungefold",
+      "text": "Lungefold Fitness: your membership payment of $418.69 did not go through. Please update your card.",
+      "choice": "money you have to pay",
+      "p_choice": 0.7269,
+      "probabilities": {
+        "nothing you need to do": 0.1179,
+        "a code to type in": 0.0389,
+        "a package or a delivery": 0.081,
+        "money you have to pay": 0.7269,
+        "an appointment or a booking": 0.0353
+      },
+      "ms": 135.295,
+      "t_s": 17.637416868
+    },
+    {
+      "id": 979,
+      "from": "+1 617-555-0122",
+      "text": "Hi, this is Chloe from Keyfallow Homes. Would 6 pm on Tuesday work for the viewing?",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.6138,
+      "probabilities": {
+        "nothing you need to do": 0.3344,
+        "a code to type in": 0.0144,
+        "a package or a delivery": 0.0137,
+        "money you have to pay": 0.0238,
+        "an appointment or a booking": 0.6138
+      },
+      "ms": 134.026511,
+      "t_s": 17.773392597
+    },
+    {
+      "id": 980,
+      "from": "Chattermoss",
+      "text": "Chattermoss Mobile: enter 351476 to finish setting up your eSIM.",
+      "choice": "a code to type in",
+      "p_choice": 0.8387,
+      "probabilities": {
+        "nothing you need to do": 0.0904,
+        "a code to type in": 0.8387,
+        "a package or a delivery": 0.0268,
+        "money you have to pay": 0.0222,
+        "an appointment or a booking": 0.022
+      },
+      "ms": 137.270416,
+      "t_s": 17.912838274
+    },
+    {
+      "id": 981,
+      "from": "Lungefold",
+      "text": "Lungefold Fitness: your membership payment of $210.82 did not go through. Please update your card.",
+      "choice": "money you have to pay",
+      "p_choice": 0.7351,
+      "probabilities": {
+        "nothing you need to do": 0.1187,
+        "a code to type in": 0.032,
+        "a package or a delivery": 0.0762,
+        "money you have to pay": 0.7351,
+        "an appointment or a booking": 0.038
+      },
+      "ms": 137.387813,
+      "t_s": 18.050700982
+    },
+    {
+      "id": 982,
+      "from": "LorrowCU",
+      "text": "Lorrow Credit Union: your October statement is ready to view in the app.",
+      "choice": "nothing you need to do",
+      "p_choice": 0.4555,
+      "probabilities": {
+        "nothing you need to do": 0.4555,
+        "a code to type in": 0.1051,
+        "a package or a delivery": 0.1229,
+        "money you have to pay": 0.1616,
+        "an appointment or a booking": 0.155
+      },
+      "ms": 135.803021,
+      "t_s": 18.186988014
+    },
+    {
+      "id": 983,
+      "from": "Brindlewatt",
+      "text": "Brindlewatt Energy: your October statement is ready. Your account is in credit, so there is nothing to pay.",
+      "choice": "nothing you need to do",
+      "p_choice": 0.4012,
+      "probabilities": {
+        "nothing you need to do": 0.4012,
+        "a code to type in": 0.0307,
+        "a package or a delivery": 0.0887,
+        "money you have to pay": 0.3532,
+        "an appointment or a booking": 0.1262
+      },
+      "ms": 137.942239,
+      "t_s": 18.325529628
+    },
+    {
+      "id": 984,
+      "from": "Crateford",
+      "text": "Crateford Couriers: your driver is 6 stops away. Your parcel needs a signature.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.7254,
+      "probabilities": {
+        "nothing you need to do": 0.151,
+        "a code to type in": 0.0502,
+        "a package or a delivery": 0.7254,
+        "money you have to pay": 0.0138,
+        "an appointment or a booking": 0.0597
+      },
+      "ms": 135.684479,
+      "t_s": 18.462693691
+    },
+    {
+      "id": 985,
+      "from": "Mailbrook",
+      "text": "Mailbrook: your login code is 750809. If you did not ask for it, you can ignore this text.",
+      "choice": "a code to type in",
+      "p_choice": 0.7295,
+      "probabilities": {
+        "nothing you need to do": 0.1698,
+        "a code to type in": 0.7295,
+        "a package or a delivery": 0.0286,
+        "money you have to pay": 0.0141,
+        "an appointment or a booking": 0.0581
+      },
+      "ms": 137.200833,
+      "t_s": 18.600633795
+    },
+    {
+      "id": 986,
+      "from": "Kelderbank",
+      "text": "Kelderbank: your verification code is 950548. It expires in 10 minutes. Never share it.",
+      "choice": "a code to type in",
+      "p_choice": 0.6254,
+      "probabilities": {
+        "nothing you need to do": 0.2232,
+        "a code to type in": 0.6254,
+        "a package or a delivery": 0.0622,
+        "money you have to pay": 0.0236,
+        "an appointment or a booking": 0.0656
+      },
+      "ms": 137.348177,
+      "t_s": 18.739801034
+    },
+    {
+      "id": 987,
+      "from": "Heelgrove",
+      "text": "Heelgrove: your return has arrived and $437.40 is back on your card.",
+      "choice": "nothing you need to do",
+      "p_choice": 0.301,
+      "probabilities": {
+        "nothing you need to do": 0.301,
+        "a code to type in": 0.0688,
+        "a package or a delivery": 0.1881,
+        "money you have to pay": 0.2995,
+        "an appointment or a booking": 0.1426
+      },
+      "ms": 137.110885,
+      "t_s": 18.878318326
+    },
+    {
+      "id": 988,
+      "from": "+1 702-555-0177",
+      "text": "You have won a $2500 gift card! Send us the 6-digit code we just texted you to claim it.",
+      "choice": "a code to type in",
+      "p_choice": 0.3553,
+      "probabilities": {
+        "nothing you need to do": 0.3186,
+        "a code to type in": 0.3553,
+        "a package or a delivery": 0.1519,
+        "money you have to pay": 0.0534,
+        "an appointment or a booking": 0.1208
+      },
+      "ms": 135.944896,
+      "t_s": 19.015900461
+    },
+    {
+      "id": 989,
+      "from": "Molarbrook",
+      "text": "Molarbrook Dental: we have an opening tomorrow at 7:30 pm. Text YES to take it.",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.8769,
+      "probabilities": {
+        "nothing you need to do": 0.0842,
+        "a code to type in": 0.0264,
+        "a package or a delivery": 0.0054,
+        "money you have to pay": 0.0071,
+        "an appointment or a booking": 0.8769
+      },
+      "ms": 135.471927,
+      "t_s": 19.153605409
+    },
+    {
+      "id": 990,
+      "from": "Kelderbank",
+      "text": "Kelderbank: your September statement is ready to view in the app.",
+      "choice": "nothing you need to do",
+      "p_choice": 0.4715,
+      "probabilities": {
+        "nothing you need to do": 0.4715,
+        "a code to type in": 0.1068,
+        "a package or a delivery": 0.131,
+        "money you have to pay": 0.129,
+        "an appointment or a booking": 0.1618
+      },
+      "ms": 136.490261,
+      "t_s": 19.291434576
+    },
+    {
+      "id": 991,
+      "from": "Chattermoss",
+      "text": "Chattermoss Mobile: your bill of $335.90 is due in 3 days. Pay in the app or reply PAY.",
+      "choice": "money you have to pay",
+      "p_choice": 0.6304,
+      "probabilities": {
+        "nothing you need to do": 0.2133,
+        "a code to type in": 0.0774,
+        "a package or a delivery": 0.0441,
+        "money you have to pay": 0.6304,
+        "an appointment or a booking": 0.0348
+      },
+      "ms": 135.795364,
+      "t_s": 19.428267232
+    },
+    {
+      "id": 992,
+      "from": "Lungefold",
+      "text": "Lungefold Fitness: your membership payment of $284.30 did not go through. Please update your card.",
+      "choice": "money you have to pay",
+      "p_choice": 0.7135,
+      "probabilities": {
+        "nothing you need to do": 0.129,
+        "a code to type in": 0.0311,
+        "a package or a delivery": 0.091,
+        "money you have to pay": 0.7135,
+        "an appointment or a booking": 0.0354
+      },
+      "ms": 136.997448,
+      "t_s": 19.566645513
+    },
+    {
+      "id": 993,
+      "from": "Heelgrove",
+      "text": "Heelgrove: your order #42303 has shipped with Parcelwick. It should arrive on Tuesday.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.7875,
+      "probabilities": {
+        "nothing you need to do": 0.1718,
+        "a code to type in": 0.0121,
+        "a package or a delivery": 0.7875,
+        "money you have to pay": 0.0108,
+        "an appointment or a booking": 0.0178
+      },
+      "ms": 135.727083,
+      "t_s": 19.70420093
+    },
+    {
+      "id": 994,
+      "from": "Mailbrook",
+      "text": "Use 91665 to confirm your phone number on Mailbrook. The code is valid for 5 minutes.",
+      "choice": "a code to type in",
+      "p_choice": 0.7445,
+      "probabilities": {
+        "nothing you need to do": 0.1746,
+        "a code to type in": 0.7445,
+        "a package or a delivery": 0.0352,
+        "money you have to pay": 0.013,
+        "an appointment or a booking": 0.0328
+      },
+      "ms": 136.811875,
+      "t_s": 19.842484784
+    },
+    {
+      "id": 995,
+      "from": "CasaUmbrino",
+      "text": "Casa Umbrino: your table for 2 is booked for Sunday at 7:30 pm. Reply C to cancel.",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.6115,
+      "probabilities": {
+        "nothing you need to do": 0.2646,
+        "a code to type in": 0.0545,
+        "a package or a delivery": 0.0163,
+        "money you have to pay": 0.053,
+        "an appointment or a booking": 0.6115
+      },
+      "ms": 136.311042,
+      "t_s": 19.980378221
+    },
+    {
+      "id": 996,
+      "from": "Lindenquay",
+      "text": "Lindenquay Clinic: Dr. Okoro can see you on Friday at 10 am. Reply YES to book this slot.",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.857,
+      "probabilities": {
+        "nothing you need to do": 0.1171,
+        "a code to type in": 0.0088,
+        "a package or a delivery": 0.0066,
+        "money you have to pay": 0.0105,
+        "an appointment or a booking": 0.857
+      },
+      "ms": 138.759063,
+      "t_s": 20.120048013
+    },
+    {
+      "id": 997,
+      "from": "Chattermoss",
+      "text": "Chattermoss Mobile: your bill of $287.24 is due in 3 days. Pay in the app or reply PAY.",
+      "choice": "money you have to pay",
+      "p_choice": 0.6674,
+      "probabilities": {
+        "nothing you need to do": 0.1889,
+        "a code to type in": 0.0674,
+        "a package or a delivery": 0.0459,
+        "money you have to pay": 0.6674,
+        "an appointment or a booking": 0.0304
+      },
+      "ms": 137.018073,
+      "t_s": 20.259057909
+    },
+    {
+      "id": 998,
+      "from": "+1 720-555-0125",
+      "text": "Did you see my email about the party budget? Let me know what you think.",
+      "choice": "nothing you need to do",
+      "p_choice": 0.4893,
+      "probabilities": {
+        "nothing you need to do": 0.4893,
+        "a code to type in": 0.1454,
+        "a package or a delivery": 0.0973,
+        "money you have to pay": 0.0988,
+        "an appointment or a booking": 0.1692
+      },
+      "ms": 137.894896,
+      "t_s": 20.398288325
+    },
+    {
+      "id": 999,
+      "from": "Lungefold",
+      "text": "Lungefold Fitness: new spin classes start Thursday at 6 pm. Just drop in, no booking needed.",
+      "choice": "nothing you need to do",
+      "p_choice": 0.6302,
+      "probabilities": {
+        "nothing you need to do": 0.6302,
+        "a code to type in": 0.1212,
+        "a package or a delivery": 0.0393,
+        "money you have to pay": 0.0292,
+        "an appointment or a booking": 0.1802
+      },
+      "ms": 135.51026,
+      "t_s": 20.53666494
+    },
+    {
+      "id": 1000,
+      "from": "Parcelwick",
+      "text": "Parcelwick: your parcel was left at the front door at 4:40 pm.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.7955,
+      "probabilities": {
+        "nothing you need to do": 0.1737,
+        "a code to type in": 0.0122,
+        "a package or a delivery": 0.7955,
+        "money you have to pay": 0.0072,
+        "an appointment or a booking": 0.0114
+      },
+      "ms": 136.221093,
+      "t_s": 20.67551744
+    },
+    {
+      "id": 1001,
+      "from": "Cobblemere",
+      "text": "Cobblemere Water: your water bill of $20.84 is now overdue. Please pay by 10 Nov.",
+      "choice": "money you have to pay",
+      "p_choice": 0.8633,
+      "probabilities": {
+        "nothing you need to do": 0.097,
+        "a code to type in": 0.0087,
+        "a package or a delivery": 0.0209,
+        "money you have to pay": 0.8633,
+        "an appointment or a booking": 0.01
+      },
+      "ms": 137.420677,
+      "t_s": 20.815005565
+    },
+    {
+      "id": 1002,
+      "from": "HobnailMkt",
+      "text": "Hobnail Market: your grocery delivery is on its way and will arrive between 12 pm and 4 pm.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.8041,
+      "probabilities": {
+        "nothing you need to do": 0.1476,
+        "a code to type in": 0.026,
+        "a package or a delivery": 0.8041,
+        "money you have to pay": 0.0082,
+        "an appointment or a booking": 0.0142
+      },
+      "ms": 140.147656,
+      "t_s": 20.957416294
+    },
+    {
+      "id": 1003,
+      "from": "Crateford",
+      "text": "Crateford Couriers: your driver is 2 stops away. Your parcel needs a signature.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.7159,
+      "probabilities": {
+        "nothing you need to do": 0.1511,
+        "a code to type in": 0.0514,
+        "a package or a delivery": 0.7159,
+        "money you have to pay": 0.0138,
+        "an appointment or a booking": 0.0678
+      },
+      "ms": 137.203697,
+      "t_s": 21.096559731
+    },
+    {
+      "id": 1004,
+      "from": "+1 617-555-0143",
+      "text": "Jake here! We got the keys to the new flat today!!",
+      "choice": "nothing you need to do",
+      "p_choice": 0.7494,
+      "probabilities": {
+        "nothing you need to do": 0.7494,
+        "a code to type in": 0.0223,
+        "a package or a delivery": 0.0783,
+        "money you have to pay": 0.0345,
+        "an appointment or a booking": 0.1155
+      },
+      "ms": 136.389844,
+      "t_s": 21.234969731
+    },
+    {
+      "id": 1005,
+      "from": "Crateford",
+      "text": "Crateford Couriers: your parcel CR464871200 is out for delivery today between 10 am and 2 pm.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.8542,
+      "probabilities": {
+        "nothing you need to do": 0.0837,
+        "a code to type in": 0.0223,
+        "a package or a delivery": 0.8542,
+        "money you have to pay": 0.0068,
+        "an appointment or a booking": 0.0329
+      },
+      "ms": 135.86099,
+      "t_s": 21.3728802
+    },
+    {
+      "id": 1006,
+      "from": "Heelgrove",
+      "text": "Heelgrove: 371757 is your code to reset your password.",
+      "choice": "a code to type in",
+      "p_choice": 0.5463,
+      "probabilities": {
+        "nothing you need to do": 0.2852,
+        "a code to type in": 0.5463,
+        "a package or a delivery": 0.0597,
+        "money you have to pay": 0.0242,
+        "an appointment or a booking": 0.0846
+      },
+      "ms": 137.77974,
+      "t_s": 21.512074002
+    },
+    {
+      "id": 1007,
+      "from": "Kelderbank",
+      "text": "Kelderbank: your verification code is 195938. It expires in 10 minutes. Never share it.",
+      "choice": "a code to type in",
+      "p_choice": 0.6187,
+      "probabilities": {
+        "nothing you need to do": 0.2207,
+        "a code to type in": 0.6187,
+        "a package or a delivery": 0.0687,
+        "money you have to pay": 0.023,
+        "an appointment or a booking": 0.069
+      },
+      "ms": 135.628489,
+      "t_s": 21.650409731
+    },
+    {
+      "id": 1008,
+      "from": "Heelgrove",
+      "text": "Heelgrove: your order #56334 has shipped with Crateford Couriers. It should arrive on Wednesday.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.8493,
+      "probabilities": {
+        "nothing you need to do": 0.1275,
+        "a code to type in": 0.0071,
+        "a package or a delivery": 0.8493,
+        "money you have to pay": 0.0082,
+        "an appointment or a booking": 0.0078
+      },
+      "ms": 136.151042,
+      "t_s": 21.789242231
+    },
+    {
+      "id": 1009,
+      "from": "LorrowCU",
+      "text": "Lorrow Credit Union: use one-time passcode 887922 to approve your new device. It expires in 5 minutes.",
+      "choice": "a code to type in",
+      "p_choice": 0.8094,
+      "probabilities": {
+        "nothing you need to do": 0.1232,
+        "a code to type in": 0.8094,
+        "a package or a delivery": 0.0214,
+        "money you have to pay": 0.0143,
+        "an appointment or a booking": 0.0316
+      },
+      "ms": 136.671094,
+      "t_s": 21.927563168
+    },
+    {
+      "id": 1010,
+      "from": "Brackwheel",
+      "text": "Brackwheel Motors: your car service is booked for Tuesday at 9:15 am. Please drop off the keys by 8 am.",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.8257,
+      "probabilities": {
+        "nothing you need to do": 0.1283,
+        "a code to type in": 0.0148,
+        "a package or a delivery": 0.0157,
+        "money you have to pay": 0.0154,
+        "an appointment or a booking": 0.8257
+      },
+      "ms": 135.85875,
+      "t_s": 22.064199887
+    },
+    {
+      "id": 1011,
+      "from": "Lanternby",
+      "text": "Lanternby Cinemas: your tickets for Saturday are confirmed, 2 seats in row F. Show this text at the door.",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.4687,
+      "probabilities": {
+        "nothing you need to do": 0.3943,
+        "a code to type in": 0.0853,
+        "a package or a delivery": 0.0257,
+        "money you have to pay": 0.0261,
+        "an appointment or a booking": 0.4687
+      },
+      "ms": 135.900729,
+      "t_s": 22.201651606
+    },
+    {
+      "id": 1012,
+      "from": "Kelderbank",
+      "text": "Kelderbank: your verification code is 652834. It expires in 10 minutes. Never share it.",
+      "choice": "a code to type in",
+      "p_choice": 0.5648,
+      "probabilities": {
+        "nothing you need to do": 0.2521,
+        "a code to type in": 0.5648,
+        "a package or a delivery": 0.0812,
+        "money you have to pay": 0.0241,
+        "an appointment or a booking": 0.0778
+      },
+      "ms": 136.277135,
+      "t_s": 22.339104783
+    },
+    {
+      "id": 1013,
+      "from": "Mailbrook",
+      "text": "738809 is your Mailbrook sign-in code.",
+      "choice": "a code to type in",
+      "p_choice": 0.6311,
+      "probabilities": {
+        "nothing you need to do": 0.2436,
+        "a code to type in": 0.6311,
+        "a package or a delivery": 0.0436,
+        "money you have to pay": 0.0178,
+        "an appointment or a booking": 0.0639
+      },
+      "ms": 136.287448,
+      "t_s": 22.477044574
+    },
+    {
+      "id": 1014,
+      "from": "Heelgrove",
+      "text": "Heelgrove: 587035 is your code to reset your password.",
+      "choice": "a code to type in",
+      "p_choice": 0.567,
+      "probabilities": {
+        "nothing you need to do": 0.2708,
+        "a code to type in": 0.567,
+        "a package or a delivery": 0.0584,
+        "money you have to pay": 0.0262,
+        "an appointment or a booking": 0.0776
+      },
+      "ms": 137.27599,
+      "t_s": 22.617029887
+    },
+    {
+      "id": 1015,
+      "from": "Kelderbank",
+      "text": "Kelderbank: your verification code is 404681. It expires in 10 minutes. Never share it.",
+      "choice": "a code to type in",
+      "p_choice": 0.5913,
+      "probabilities": {
+        "nothing you need to do": 0.2437,
+        "a code to type in": 0.5913,
+        "a package or a delivery": 0.0733,
+        "money you have to pay": 0.0234,
+        "an appointment or a booking": 0.0682
+      },
+      "ms": 137.041459,
+      "t_s": 22.756257856
+    },
+    {
+      "id": 1016,
+      "from": "Heelgrove",
+      "text": "Heelgrove: your return has arrived and $354.56 is back on your card.",
+      "choice": "money you have to pay",
+      "p_choice": 0.3249,
+      "probabilities": {
+        "nothing you need to do": 0.2956,
+        "a code to type in": 0.0659,
+        "a package or a delivery": 0.1731,
+        "money you have to pay": 0.3249,
+        "an appointment or a booking": 0.1406
+      },
+      "ms": 137.076302,
+      "t_s": 22.896323689
+    },
+    {
+      "id": 1017,
+      "from": "Brookpell",
+      "text": "Invoice INV-1617 from Brookpell Plumbing for $400 is due on Monday. Thank you!",
+      "choice": "money you have to pay",
+      "p_choice": 0.4564,
+      "probabilities": {
+        "nothing you need to do": 0.2529,
+        "a code to type in": 0.1858,
+        "a package or a delivery": 0.0382,
+        "money you have to pay": 0.4564,
+        "an appointment or a booking": 0.0666
+      },
+      "ms": 138.359219,
+      "t_s": 23.035689835
+    },
+    {
+      "id": 1018,
+      "from": "Mailbrook",
+      "text": "Mailbrook: your login code is 259734. If you did not ask for it, you can ignore this text.",
+      "choice": "a code to type in",
+      "p_choice": 0.6925,
+      "probabilities": {
+        "nothing you need to do": 0.1917,
+        "a code to type in": 0.6925,
+        "a package or a delivery": 0.0365,
+        "money you have to pay": 0.0163,
+        "an appointment or a booking": 0.063
+      },
+      "ms": 137.437344,
+      "t_s": 23.175093637
+    },
+    {
+      "id": 1019,
+      "from": "Lungefold",
+      "text": "Lungefold Fitness: your membership payment of $361.53 did not go through. Please update your card.",
+      "choice": "money you have to pay",
+      "p_choice": 0.7456,
+      "probabilities": {
+        "nothing you need to do": 0.1177,
+        "a code to type in": 0.0347,
+        "a package or a delivery": 0.0708,
+        "money you have to pay": 0.7456,
+        "an appointment or a booking": 0.0312
+      },
+      "ms": 136.489635,
+      "t_s": 23.313791293
+    },
+    {
+      "id": 1020,
+      "from": "Chattermoss",
+      "text": "Chattermoss Mobile: your data resets tomorrow. You used 14 GB of 50 GB this month.",
+      "choice": "nothing you need to do",
+      "p_choice": 0.2998,
+      "probabilities": {
+        "nothing you need to do": 0.2998,
+        "a code to type in": 0.2512,
+        "a package or a delivery": 0.1643,
+        "money you have to pay": 0.1143,
+        "an appointment or a booking": 0.1704
+      },
+      "ms": 137.746719,
+      "t_s": 23.452685876
+    },
+    {
+      "id": 1021,
+      "from": "Kelderbank",
+      "text": "Kelderbank: a payment of $286.71 to Heelgrove was approved on your card ending 1289.",
+      "choice": "money you have to pay",
+      "p_choice": 0.5397,
+      "probabilities": {
+        "nothing you need to do": 0.2749,
+        "a code to type in": 0.0345,
+        "a package or a delivery": 0.084,
+        "money you have to pay": 0.5397,
+        "an appointment or a booking": 0.0668
+      },
+      "ms": 137.321093,
+      "t_s": 23.592883428
+    },
+    {
+      "id": 1022,
+      "from": "+1 213-555-0162",
+      "text": "Kelderbank: your account has been locked. Verify your identity now at http:\/\/kelderbank-account-check.example or lose access.",
+      "choice": "nothing you need to do",
+      "p_choice": 0.2356,
+      "probabilities": {
+        "nothing you need to do": 0.2356,
+        "a code to type in": 0.2124,
+        "a package or a delivery": 0.1605,
+        "money you have to pay": 0.2007,
+        "an appointment or a booking": 0.1907
+      },
+      "ms": 136.597187,
+      "t_s": 23.733319261
+    },
+    {
+      "id": 1023,
+      "from": "Lindenquay",
+      "text": "Lindenquay Clinic: Dr. Castell can see you on Wednesday at 4:40 pm. Reply YES to book this slot.",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.9363,
+      "probabilities": {
+        "nothing you need to do": 0.053,
+        "a code to type in": 0.0038,
+        "a package or a delivery": 0.0028,
+        "money you have to pay": 0.0041,
+        "an appointment or a booking": 0.9363
+      },
+      "ms": 136.324062,
+      "t_s": 23.872479574
+    },
+    {
+      "id": 1024,
+      "from": "+1 720-555-0146",
+      "text": "Do you still want the tickets for Wednesday? I need to tell Tom by tonight.",
+      "choice": "nothing you need to do",
+      "p_choice": 0.5637,
+      "probabilities": {
+        "nothing you need to do": 0.5637,
+        "a code to type in": 0.0853,
+        "a package or a delivery": 0.0382,
+        "money you have to pay": 0.0541,
+        "an appointment or a booking": 0.2586
+      },
+      "ms": 137.049322,
+      "t_s": 24.010983949
+    },
+    {
+      "id": 1025,
+      "from": "LorrowCU",
+      "text": "Lorrow Credit Union: use one-time passcode 521370 to approve your new device. It expires in 5 minutes.",
+      "choice": "a code to type in",
+      "p_choice": 0.8049,
+      "probabilities": {
+        "nothing you need to do": 0.1281,
+        "a code to type in": 0.8049,
+        "a package or a delivery": 0.02,
+        "money you have to pay": 0.0153,
+        "an appointment or a booking": 0.0317
+      },
+      "ms": 139.351614,
+      "t_s": 24.151265668
+    },
+    {
+      "id": 1026,
+      "from": "+1 305-555-0169",
+      "text": "Chattermoss Mobile: your number will be cut off today. Log in at http:\/\/chattermoss-account-check.example to keep it.",
+      "choice": "nothing you need to do",
+      "p_choice": 0.2812,
+      "probabilities": {
+        "nothing you need to do": 0.2812,
+        "a code to type in": 0.2323,
+        "a package or a delivery": 0.1347,
+        "money you have to pay": 0.1484,
+        "an appointment or a booking": 0.2034
+      },
+      "ms": 135.806511,
+      "t_s": 24.289442438
+    },
+    {
+      "id": 1027,
+      "from": "Heelgrove",
+      "text": "Good news from Heelgrove: order #61221 arrives tomorrow.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.9421,
+      "probabilities": {
+        "nothing you need to do": 0.0486,
+        "a code to type in": 0.0031,
+        "a package or a delivery": 0.9421,
+        "money you have to pay": 0.003,
+        "an appointment or a booking": 0.0032
+      },
+      "ms": 137.258854,
+      "t_s": 24.427731449
+    },
+    {
+      "id": 1028,
+      "from": "Molarbrook",
+      "text": "Molarbrook Dental: we have an opening tomorrow at 6 pm. Text YES to take it.",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.8405,
+      "probabilities": {
+        "nothing you need to do": 0.1091,
+        "a code to type in": 0.0347,
+        "a package or a delivery": 0.0069,
+        "money you have to pay": 0.0088,
+        "an appointment or a booking": 0.8405
+      },
+      "ms": 137.239739,
+      "t_s": 24.567381397
+    },
+    {
+      "id": 1029,
+      "from": "Mailbrook",
+      "text": "Mailbrook: your login code is 284327. If you did not ask for it, you can ignore this text.",
+      "choice": "a code to type in",
+      "p_choice": 0.7553,
+      "probabilities": {
+        "nothing you need to do": 0.1468,
+        "a code to type in": 0.7553,
+        "a package or a delivery": 0.0311,
+        "money you have to pay": 0.0127,
+        "an appointment or a booking": 0.0542
+      },
+      "ms": 137.135417,
+      "t_s": 24.706836553
+    },
+    {
+      "id": 1030,
+      "from": "Chattermoss",
+      "text": "Chattermoss Mobile: your data resets tomorrow. You used 3 GB of 20 GB this month.",
+      "choice": "nothing you need to do",
+      "p_choice": 0.2865,
+      "probabilities": {
+        "nothing you need to do": 0.2865,
+        "a code to type in": 0.2602,
+        "a package or a delivery": 0.1488,
+        "money you have to pay": 0.134,
+        "an appointment or a booking": 0.1704
+      },
+      "ms": 136.264479,
+      "t_s": 24.845894886
+    },
+    {
+      "id": 1031,
+      "from": "+1 720-555-0146",
+      "text": "Hi, it's Hannah from next door. Could you take in a parcel for me on Sunday?",
+      "choice": "a package or a delivery",
+      "p_choice": 0.8149,
+      "probabilities": {
+        "nothing you need to do": 0.1457,
+        "a code to type in": 0.009,
+        "a package or a delivery": 0.8149,
+        "money you have to pay": 0.0096,
+        "an appointment or a booking": 0.0208
+      },
+      "ms": 139.138177,
+      "t_s": 24.986594469
+    },
+    {
+      "id": 1032,
+      "from": "Shieldwren",
+      "text": "Shieldwren Insurance: your car insurance payment of $158.55 failed. Update your card by 11 Nov to stay covered.",
+      "choice": "money you have to pay",
+      "p_choice": 0.3662,
+      "probabilities": {
+        "nothing you need to do": 0.3412,
+        "a code to type in": 0.0732,
+        "a package or a delivery": 0.1448,
+        "money you have to pay": 0.3662,
+        "an appointment or a booking": 0.0746
+      },
+      "ms": 137.308802,
+      "t_s": 25.125822959
+    },
+    {
+      "id": 1033,
+      "from": "Lungefold",
+      "text": "Lungefold Fitness: your membership payment of $150.61 did not go through. Please update your card.",
+      "choice": "money you have to pay",
+      "p_choice": 0.7475,
+      "probabilities": {
+        "nothing you need to do": 0.119,
+        "a code to type in": 0.0319,
+        "a package or a delivery": 0.0686,
+        "money you have to pay": 0.7475,
+        "an appointment or a booking": 0.033
+      },
+      "ms": 136.267292,
+      "t_s": 25.262573688
+    },
+    {
+      "id": 1034,
+      "from": "Lindenquay",
+      "text": "Lindenquay Clinic: your blood test is on Sunday at 6 pm. No food after midnight.",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.6144,
+      "probabilities": {
+        "nothing you need to do": 0.2081,
+        "a code to type in": 0.135,
+        "a package or a delivery": 0.0203,
+        "money you have to pay": 0.0221,
+        "an appointment or a booking": 0.6144
+      },
+      "ms": 137.283333,
+      "t_s": 25.400621761
+    },
+    {
+      "id": 1035,
+      "from": "Heelgrove",
+      "text": "Heelgrove: your order #69585 has shipped with Parcelwick. It should arrive on Monday.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.8036,
+      "probabilities": {
+        "nothing you need to do": 0.1615,
+        "a code to type in": 0.0106,
+        "a package or a delivery": 0.8036,
+        "money you have to pay": 0.0086,
+        "an appointment or a booking": 0.0156
+      },
+      "ms": 136.343906,
+      "t_s": 25.539435771
+    },
+    {
+      "id": 1036,
+      "from": "Shieldwren",
+      "text": "Shieldwren Insurance: your car insurance payment of $400.06 failed. Update your card by 11 Nov to stay covered.",
+      "choice": "money you have to pay",
+      "p_choice": 0.3845,
+      "probabilities": {
+        "nothing you need to do": 0.3395,
+        "a code to type in": 0.068,
+        "a package or a delivery": 0.1397,
+        "money you have to pay": 0.3845,
+        "an appointment or a booking": 0.0683
+      },
+      "ms": 135.956615,
+      "t_s": 25.678924261
+    },
+    {
+      "id": 1037,
+      "from": "HobnailMkt",
+      "text": "Thanks for shopping at Hobnail Market. Your receipt total was $474.87. You earned 383 points today.",
+      "choice": "nothing you need to do",
+      "p_choice": 0.5992,
+      "probabilities": {
+        "nothing you need to do": 0.5992,
+        "a code to type in": 0.0868,
+        "a package or a delivery": 0.1471,
+        "money you have to pay": 0.1015,
+        "an appointment or a booking": 0.0654
+      },
+      "ms": 137.466041,
+      "t_s": 25.818566761
+    },
+    {
+      "id": 1038,
+      "from": "Brindlewatt",
+      "text": "Brindlewatt Energy: your electricity bill of $441.63 is due on 27 Nov. Pay online to avoid a late fee.",
+      "choice": "money you have to pay",
+      "p_choice": 0.5507,
+      "probabilities": {
+        "nothing you need to do": 0.2567,
+        "a code to type in": 0.0691,
+        "a package or a delivery": 0.0739,
+        "money you have to pay": 0.5507,
+        "an appointment or a booking": 0.0497
+      },
+      "ms": 137.951458,
+      "t_s": 25.959705302
+    },
+    {
+      "id": 1039,
+      "from": "+1 415-555-0116",
+      "text": "Aisha here, can you call me back when you get a minute? It's about the rota.",
+      "choice": "nothing you need to do",
+      "p_choice": 0.5667,
+      "probabilities": {
+        "nothing you need to do": 0.5667,
+        "a code to type in": 0.1386,
+        "a package or a delivery": 0.0406,
+        "money you have to pay": 0.052,
+        "an appointment or a booking": 0.2021
+      },
+      "ms": 137.348386,
+      "t_s": 26.099960979
+    },
+    {
+      "id": 1040,
+      "from": "Crateford",
+      "text": "Crateford Couriers: your parcel was left at the front door at 3:15 pm.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.8628,
+      "probabilities": {
+        "nothing you need to do": 0.1075,
+        "a code to type in": 0.0076,
+        "a package or a delivery": 0.8628,
+        "money you have to pay": 0.0061,
+        "an appointment or a booking": 0.0161
+      },
+      "ms": 137.079739,
+      "t_s": 26.239406761
+    },
+    {
+      "id": 1041,
+      "from": "Lindenquay",
+      "text": "Lindenquay Clinic: your blood test is on Friday at 9:15 am. No food after midnight.",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.6635,
+      "probabilities": {
+        "nothing you need to do": 0.1831,
+        "a code to type in": 0.1192,
+        "a package or a delivery": 0.0168,
+        "money you have to pay": 0.0174,
+        "an appointment or a booking": 0.6635
+      },
+      "ms": 137.935469,
+      "t_s": 26.380317854
+    },
+    {
+      "id": 1042,
+      "from": "Heelgrove",
+      "text": "Heelgrove: your return has arrived and $19.67 is back on your card.",
+      "choice": "nothing you need to do",
+      "p_choice": 0.3375,
+      "probabilities": {
+        "nothing you need to do": 0.3375,
+        "a code to type in": 0.0741,
+        "a package or a delivery": 0.1696,
+        "money you have to pay": 0.298,
+        "an appointment or a booking": 0.1209
+      },
+      "ms": 137.016771,
+      "t_s": 26.519021188
+    },
+    {
+      "id": 1043,
+      "from": "+1 201-555-0110",
+      "text": "Can you send me the photos from Saturday when you get a chance?",
+      "choice": "nothing you need to do",
+      "p_choice": 0.7917,
+      "probabilities": {
+        "nothing you need to do": 0.7917,
+        "a code to type in": 0.0477,
+        "a package or a delivery": 0.0405,
+        "money you have to pay": 0.0324,
+        "an appointment or a booking": 0.0876
+      },
+      "ms": 136.401718,
+      "t_s": 26.658407542
+    },
+    {
+      "id": 1044,
+      "from": "LorrowCU",
+      "text": "Lorrow Credit Union: a payment of $12.58 to Heelgrove was approved on your card ending 3522.",
+      "choice": "money you have to pay",
+      "p_choice": 0.509,
+      "probabilities": {
+        "nothing you need to do": 0.2173,
+        "a code to type in": 0.0719,
+        "a package or a delivery": 0.126,
+        "money you have to pay": 0.509,
+        "an appointment or a booking": 0.0757
+      },
+      "ms": 136.877969,
+      "t_s": 26.797262073
+    },
+    {
+      "id": 1045,
+      "from": "Lungefold",
+      "text": "Lungefold Fitness: your membership payment of $153.83 did not go through. Please update your card.",
+      "choice": "money you have to pay",
+      "p_choice": 0.7044,
+      "probabilities": {
+        "nothing you need to do": 0.1342,
+        "a code to type in": 0.0437,
+        "a package or a delivery": 0.0758,
+        "money you have to pay": 0.7044,
+        "an appointment or a booking": 0.0419
+      },
+      "ms": 137.477344,
+      "t_s": 26.936787594
+    },
+    {
+      "id": 1046,
+      "from": "HobnailMkt",
+      "text": "Hobnail Market: this week only, 2 for 1 on fresh bread and 50% off all fruit. See you in store!",
+      "choice": "nothing you need to do",
+      "p_choice": 0.3797,
+      "probabilities": {
+        "nothing you need to do": 0.3797,
+        "a code to type in": 0.1502,
+        "a package or a delivery": 0.1605,
+        "money you have to pay": 0.1891,
+        "an appointment or a booking": 0.1205
+      },
+      "ms": 137.181875,
+      "t_s": 27.077358948
+    },
+    {
+      "id": 1047,
+      "from": "Brindlewatt",
+      "text": "Brindlewatt Energy: your electricity bill of $291.59 is due on 15 Nov. Pay online to avoid a late fee.",
+      "choice": "money you have to pay",
+      "p_choice": 0.5581,
+      "probabilities": {
+        "nothing you need to do": 0.2643,
+        "a code to type in": 0.0609,
+        "a package or a delivery": 0.0673,
+        "money you have to pay": 0.5581,
+        "an appointment or a booking": 0.0494
+      },
+      "ms": 137.29474,
+      "t_s": 27.217303843
+    },
+    {
+      "id": 1048,
+      "from": "Heelgrove",
+      "text": "Heelgrove SALE: 40% off everything until Sunday. Shop online or in store.",
+      "choice": "nothing you need to do",
+      "p_choice": 0.4528,
+      "probabilities": {
+        "nothing you need to do": 0.4528,
+        "a code to type in": 0.1528,
+        "a package or a delivery": 0.1678,
+        "money you have to pay": 0.1104,
+        "an appointment or a booking": 0.1162
+      },
+      "ms": 136.986458,
+      "t_s": 27.357332125
+    }
+  ]
+}

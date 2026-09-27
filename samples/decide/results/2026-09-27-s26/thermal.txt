@@ -1,0 +1,18 @@
+device thermal (dumpsys thermalservice, block 'Current temperatures from HAL')
+Sun Sep 27 23:34:23 JST 2026
+Thermal Status: 0
+
+before ml300: 23:47:24 Thermal Status: 0 AP=39.2 BAT=36.8 SKIN=37.7 
+after ml300: 23:48:29 Thermal Status: 1 AP=49.1 BAT=40.2 SKIN=41.2 
+before en120: 23:54:07 status=0 skin=36.0 ap=36.3 bat=35.4
+after en120: 23:54:50 status=2 skin=43.1 ap=58.3 bat=41.9
+end: 23:55:28 status=2 skin=40.9 ap=48.3 bat=40.3
+
+en240 no-video run (old names):
+before: 00:05:59 status=0 skin=35.7 ap=38.6 bat=34.5
+after: 00:06:51 status=2 skin=42.2 ap=52.3 bat=41.5
+
+en200 recorded run:
+before: 00:25:17 status=0 skin=34.5 ap=34.3 bat=33.7
+after: 00:26:07 status=2 skin=41.5 ap=49.0 bat=40.7
+end: 00:26:26 status=2 skin=40.1 ap=48.1 bat=39.6

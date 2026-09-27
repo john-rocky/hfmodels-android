@@ -1,12 +1,15 @@
-# samples/decide: three screens on typed decisions
+# samples/decide: four screens on typed decisions
 
-One decision model, three uses, each with the measured milliseconds on the screen. Everything model-related goes through the SDK (`DecisionModels.kt`); `MainActivity.kt` drives the UI.
+One decision model, four uses, each with the measured milliseconds on the screen. Everything model-related goes through the SDK (`DecisionModels.kt`); `MainActivity.kt` drives the first three screens, `InboxActivity.kt` the inbox.
 
 | screen | what one tap does | questions per tap |
 |---|---|---|
 | Voice gate | the platform `SpeechRecognizer` finalizes an utterance (or you type one) -> is it a question / a request for the assistant (choice) and is the assistant addressed (noul) -> `OPEN` or `closed`. Only an open gate would go on to a language model. | 2 |
 | Clipboard | the clipboard text (or typed text) and a purpose from the spinner -> what the text holds (choice), whether it carries personal data (noul), which of the purpose's pieces it contains (one noul per piece) -> then the spans to paste from [GLiNER2.5-Small-LiteRT](https://huggingface.co/litert-community/GLiNER2.5-Small-LiteRT) (its published Kotlin host, copied under `gliner/`). | 2 + pieces |
 | Query x text | one query against the passages typed one per line -> does the passage answer it (noul), how relevant (4-level score) -> ranked, with the milliseconds per passage. | 2 per passage |
+| Inbox | **Sort inbox** -> every unread text on the phone: what it needs from you (choice) -> the texts in five bins, the four that ask something of you counted as `Needs you today`. | 1 per text |
+
+`probes/smsseed` is the helper that puts invented texts into the phone's SMS store for the inbox screen and deletes them afterwards (its README).
 
 ## Model files
 
@@ -29,6 +32,30 @@ The extraction model's ten files (about 410 MB) are fetched by `GlinerAssets` on
 - Query x text, "When does the store close on Sundays?" against 5 passages: the two passages that answer it ranked first on both variants (0.80 / 0.70 English, 0.79 / 0.71 multilingual); the Japanese passage that also answers it scored 0.19 / 0.27; 5 passages x 2 questions in 1,259 ms (English) / 561 ms (multilingual).
 
 Numbers from one phone on one afternoon, the model loaded and warm; not a benchmark, and not a claim about the model's accuracy beyond these inputs.
+
+## Inbox: the unread texts sorted on one tap
+
+`InboxActivity` reads `content://sms/inbox` where `read = 0`, newest first (READ_SMS; nothing else is read from the phone and nothing leaves it), and asks every text one question, `What does this text message need from you?`, with five options, "nothing" first: `nothing you need to do` / `a code to type in` / `a package or a delivery` / `money you have to pay` / `an appointment or a booking`. The model gets the text alone; the sender is only shown.
+
+The screen: a state pill with a clock and the count, one latency line (median ms per text, texts per second, variant, backend), the list following the text being sorted, the five options as growing bars, `Needs you today` (codes, deliveries, payments, appointments) with the texts that need nothing counted apart, a DONE line and a footer (the layout of the Core AI inbox example, `InboxScreen.swift`).
+
+```sh
+adb shell pm grant io.github.johnrocky.hfmodels.samples.decide android.permission.READ_SMS
+adb shell am start -n io.github.johnrocky.hfmodels.samples.decide/.InboxActivity \
+    --es variant en_s256_fp32 --es backend gpu --ez autostart true --ei delay 3    # --ei limit 120: the newest 120 only
+adb shell am start -n io.github.johnrocky.hfmodels.samples.decide/.InboxActivity \
+    --es variant en_s256_fp32 --es backend gpu --ez panel true --ez autostart true  # the 24 labelled texts below
+```
+
+A scripted start (`autostart` or `panel`) is recording mode: it wakes the screen and shows over the lock screen (a phone asleep behind a secure lock keeps the app off the network and out of the foreground), and every DONE writes the sorted texts with their answers to `inbox-result-<epoch s>.json` (`panel-result-<variant>.json`) in the app's external files dir, with the count, the total, the median and p90 milliseconds per text, every text's time, the bins, the thermal status before and after, the device and the build; the same lines go to logcat under tag `inbox`. A normal start does none of that. Sort the invented texts of `probes/smsseed`, not a real inbox, and check that the phone's own texts are read before a recording. `screenrecord` does not start while the display is off: start the activity first, then the recording.
+
+The question was chosen on 24 hand-labelled texts with invented names (`InboxPanel.kt`; a text waiting for your reply counts as "nothing", the three scam texts are left out): on a Galaxy S26, GPU, 19 of 21 as labelled with `en_s256_fp32` and 18 of 21 with `ml_s256_fp32` (2026-09-28). Two more questions were measured and left out. A red flag, `Does this message ask you to send money, a code, a password or to open a login link?` (noul), marked every scam but also 57 of the 286 other texts among 300 invented ones on the multilingual variant (one-time passcodes from a bank, "payment failed, update your card"). A sixth option, `a person waiting for your reply`, was never picked by the English variant, and a noul `Does the message ask you a question?` found none of the four panel texts that ask one on either variant.
+
+On 2026-09-28 (Galaxy S26 SM-S942Q, Android 16 BP4A.251205.006, LiteRT 2.2.0, GPU FP32, airplane mode) `en_s256_fp32` sorted the 200 invented texts of `probes/smsseed` (seed 7) in 27.4 s: median 133.8 ms per text, p90 137.4 ms, 7.3 texts per second; 65 with nothing to do, 36 codes, 34 deliveries, 36 payments, 29 appointments. The phone's thermal status went from none to moderate (skin 34.5 to 41.5 °C) and the time per text rose from about 129 to 137 ms over the run; in other runs the same evening it doubled for part of the run once the phone was warm (the GPU clock was not read, so the cause is not established).
+
+Against the kind the generator wrote each text as (not a hand label; a text waiting for a reply counts as "nothing", the 9 scams left out) the answer agreed on 171 of 191. Texts that need nothing went to "money you have to pay" (8) or "an appointment or a booking" (4); texts waiting for a reply went to "an appointment or a booking" (4) or "a package or a delivery" (3).
+
+Numbers from one phone on one evening; not a benchmark, and not a claim about the model's accuracy beyond these texts. The result files are in `results/2026-09-27-s26/`.
 
 ## Demo recording
 

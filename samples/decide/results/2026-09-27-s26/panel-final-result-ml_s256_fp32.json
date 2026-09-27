@@ -1,0 +1,552 @@
+{
+  "source": "panel",
+  "count": 24,
+  "total_s": 1.291846978,
+  "median_ms": 52.099349000000004,
+  "p90_ms": 53.736354,
+  "msg_per_s": 18.57805174197652,
+  "bins": {
+    "nothing you need to do": 4,
+    "a code to type in": 7,
+    "a package or a delivery": 5,
+    "money you have to pay": 4,
+    "an appointment or a booking": 4
+  },
+  "variant": "ml_s256_fp32",
+  "backend": "gpu",
+  "device": "SM-S942Q",
+  "android_build": "BP4A.251205.006.S942QOPS1AZF2",
+  "android_release": "16",
+  "date": "2026-09-27T15:27:30.486236Z",
+  "thermal_before": 1,
+  "thermal_after": 1,
+  "model": "litert-community\/laya-LiteRT@bbdc85e6f80b6d471e91b36d36d85e8b439287bc",
+  "sdk_notes": [
+    "compile_ms=3720 on gpu (precision fp32)",
+    "observed backend is UNKNOWN: litert 2.2.0 reports no per-op execution target; 'initialized' is the accelerator the CompiledModel was created with"
+  ],
+  "questions": {
+    "need": {
+      "type": "choice",
+      "instructions": "What does this text message need from you?",
+      "criteria": {
+        "nothing you need to do": null,
+        "a code to type in": null,
+        "a package or a delivery": null,
+        "money you have to pay": null,
+        "an appointment or a booking": null
+      }
+    }
+  },
+  "series": [
+    [
+      0.063626041,
+      62.475469
+    ],
+    [
+      0.115879739,
+      51.425209
+    ],
+    [
+      0.167715364,
+      51.093438
+    ],
+    [
+      0.2195875,
+      51.426823
+    ],
+    [
+      0.271571718,
+      51.66901
+    ],
+    [
+      0.324867135,
+      52.948333
+    ],
+    [
+      0.376080625,
+      50.863594
+    ],
+    [
+      0.427352604,
+      50.874427
+    ],
+    [
+      0.478523385,
+      50.841042
+    ],
+    [
+      0.531227031,
+      51.307135
+    ],
+    [
+      0.587156979,
+      52.785677
+    ],
+    [
+      0.639619218,
+      51.232604
+    ],
+    [
+      0.69264052,
+      51.576927
+    ],
+    [
+      0.746807291,
+      52.529688
+    ],
+    [
+      0.800830468,
+      53.138802
+    ],
+    [
+      0.855677499,
+      53.411406
+    ],
+    [
+      0.907972812,
+      51.443645
+    ],
+    [
+      0.95966552,
+      51.276303
+    ],
+    [
+      1.013983124,
+      53.32802
+    ],
+    [
+      1.068741197,
+      53.717187
+    ],
+    [
+      1.124238489,
+      53.333802
+    ],
+    [
+      1.179591666,
+      54.326093
+    ],
+    [
+      1.234236926,
+      53.299219
+    ],
+    [
+      1.291846978,
+      53.736354
+    ]
+  ],
+  "answers": [
+    {
+      "id": 0,
+      "label": "nothing",
+      "from": "#01 · label nothing",
+      "text": "Thanks for shopping at Marlowe Grocers. Your receipt total was $42.18. See you again!",
+      "choice": "a package or a delivery",
+      "p_choice": 0.369,
+      "probabilities": {
+        "nothing you need to do": 0.3514,
+        "a code to type in": 0.0416,
+        "a package or a delivery": 0.369,
+        "money you have to pay": 0.2194,
+        "an appointment or a booking": 0.0186
+      },
+      "ms": 62.475469,
+      "t_s": 0.063626041
+    },
+    {
+      "id": 1,
+      "label": "nothing",
+      "from": "#02 · label nothing",
+      "text": "FLASH SALE this weekend only: 30% off all shoes at Heelgrove Outlet. Show this text in store.",
+      "choice": "a code to type in",
+      "p_choice": 0.7637,
+      "probabilities": {
+        "nothing you need to do": 0.0664,
+        "a code to type in": 0.7637,
+        "a package or a delivery": 0.1164,
+        "money you have to pay": 0.0348,
+        "an appointment or a booking": 0.0187
+      },
+      "ms": 51.425209,
+      "t_s": 0.115879739
+    },
+    {
+      "id": 2,
+      "label": "nothing",
+      "from": "#03 · label nothing",
+      "text": "Hey it's Priya, just landed safely. Talk tomorrow!",
+      "choice": "nothing you need to do",
+      "p_choice": 0.5089,
+      "probabilities": {
+        "nothing you need to do": 0.5089,
+        "a code to type in": 0.1796,
+        "a package or a delivery": 0.1364,
+        "money you have to pay": 0.0274,
+        "an appointment or a booking": 0.1477
+      },
+      "ms": 51.093438,
+      "t_s": 0.167715364
+    },
+    {
+      "id": 3,
+      "label": "nothing",
+      "from": "#04 · label nothing",
+      "text": "Your table for 2 at Casa Verdino is confirmed for tonight 7:30 pm. Reply STOP to opt out of texts.",
+      "choice": "nothing you need to do",
+      "p_choice": 0.8368,
+      "probabilities": {
+        "nothing you need to do": 0.8368,
+        "a code to type in": 0.1436,
+        "a package or a delivery": 0.0065,
+        "money you have to pay": 0.0064,
+        "an appointment or a booking": 0.0067
+      },
+      "ms": 51.426823,
+      "t_s": 0.2195875
+    },
+    {
+      "id": 4,
+      "label": "code",
+      "from": "#05 · label code",
+      "text": "Your Kelderbank verification code is 483920. It expires in 10 minutes. Do not share it.",
+      "choice": "a code to type in",
+      "p_choice": 0.9479,
+      "probabilities": {
+        "nothing you need to do": 0.0273,
+        "a code to type in": 0.9479,
+        "a package or a delivery": 0.0048,
+        "money you have to pay": 0.0121,
+        "an appointment or a booking": 0.0079
+      },
+      "ms": 51.66901,
+      "t_s": 0.271571718
+    },
+    {
+      "id": 5,
+      "label": "code",
+      "from": "#06 · label code",
+      "text": "G-771204 is your sign-in code for Mailbrook.",
+      "choice": "a code to type in",
+      "p_choice": 0.9882,
+      "probabilities": {
+        "nothing you need to do": 0.0071,
+        "a code to type in": 0.9882,
+        "a package or a delivery": 0.0012,
+        "money you have to pay": 6.0E-4,
+        "an appointment or a booking": 0.0028
+      },
+      "ms": 52.948333,
+      "t_s": 0.324867135
+    },
+    {
+      "id": 6,
+      "label": "code",
+      "from": "#07 · label code",
+      "text": "Use 30591 to confirm your phone number on Mailbrook. The code is valid for 5 minutes.",
+      "choice": "a code to type in",
+      "p_choice": 0.9875,
+      "probabilities": {
+        "nothing you need to do": 0.0055,
+        "a code to type in": 0.9875,
+        "a package or a delivery": 0.0027,
+        "money you have to pay": 5.0E-4,
+        "an appointment or a booking": 0.0039
+      },
+      "ms": 50.863594,
+      "t_s": 0.376080625
+    },
+    {
+      "id": 7,
+      "label": "delivery",
+      "from": "#08 · label delivery",
+      "text": "Parcelwick: your package will arrive today between 2 pm and 6 pm. Someone must be home to sign.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.9651,
+      "probabilities": {
+        "nothing you need to do": 0.0027,
+        "a code to type in": 0.0018,
+        "a package or a delivery": 0.9651,
+        "money you have to pay": 0.001,
+        "an appointment or a booking": 0.0295
+      },
+      "ms": 50.874427,
+      "t_s": 0.427352604
+    },
+    {
+      "id": 8,
+      "label": "delivery",
+      "from": "#09 · label delivery",
+      "text": "Your order #88231 has been delivered to the front porch.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.9921,
+      "probabilities": {
+        "nothing you need to do": 0.0029,
+        "a code to type in": 0.0017,
+        "a package or a delivery": 0.9921,
+        "money you have to pay": 9.0E-4,
+        "an appointment or a booking": 0.0024
+      },
+      "ms": 50.841042,
+      "t_s": 0.478523385
+    },
+    {
+      "id": 9,
+      "label": "delivery",
+      "from": "#10 · label delivery",
+      "text": "We missed you! Your parcel is waiting at Elm Street Post Office. Bring ID to collect it within 7 days.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.9084,
+      "probabilities": {
+        "nothing you need to do": 0.02,
+        "a code to type in": 0.0464,
+        "a package or a delivery": 0.9084,
+        "money you have to pay": 0.0053,
+        "an appointment or a booking": 0.02
+      },
+      "ms": 51.307135,
+      "t_s": 0.531227031
+    },
+    {
+      "id": 10,
+      "label": "delivery",
+      "from": "#11 · label delivery",
+      "text": "Courier update: driver is 3 stops away. Package requires a signature.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.9939,
+      "probabilities": {
+        "nothing you need to do": 0.0027,
+        "a code to type in": 0.0023,
+        "a package or a delivery": 0.9939,
+        "money you have to pay": 6.0E-4,
+        "an appointment or a booking": 6.0E-4
+      },
+      "ms": 52.785677,
+      "t_s": 0.587156979
+    },
+    {
+      "id": 11,
+      "label": "bill",
+      "from": "#12 · label bill",
+      "text": "Reminder: your electricity bill of $128.40 is due on Friday 3 Oct. Pay online to avoid a late fee.",
+      "choice": "money you have to pay",
+      "p_choice": 0.9443,
+      "probabilities": {
+        "nothing you need to do": 0.0212,
+        "a code to type in": 0.0102,
+        "a package or a delivery": 0.0178,
+        "money you have to pay": 0.9443,
+        "an appointment or a booking": 0.0064
+      },
+      "ms": 51.232604,
+      "t_s": 0.639619218
+    },
+    {
+      "id": 12,
+      "label": "bill",
+      "from": "#13 · label bill",
+      "text": "Your car insurance payment of $96 failed. Update your card by Sept 30 to keep cover.",
+      "choice": "money you have to pay",
+      "p_choice": 0.4821,
+      "probabilities": {
+        "nothing you need to do": 0.1747,
+        "a code to type in": 0.2558,
+        "a package or a delivery": 0.0406,
+        "money you have to pay": 0.4821,
+        "an appointment or a booking": 0.0468
+      },
+      "ms": 51.576927,
+      "t_s": 0.69264052
+    },
+    {
+      "id": 13,
+      "label": "bill",
+      "from": "#14 · label bill",
+      "text": "Invoice INV-2291 from Brookpell Plumbing for $340 is now 5 days overdue.",
+      "choice": "money you have to pay",
+      "p_choice": 0.9138,
+      "probabilities": {
+        "nothing you need to do": 0.0364,
+        "a code to type in": 0.0185,
+        "a package or a delivery": 0.0228,
+        "money you have to pay": 0.9138,
+        "an appointment or a booking": 0.0084
+      },
+      "ms": 52.529688,
+      "t_s": 0.746807291
+    },
+    {
+      "id": 14,
+      "label": "appointment",
+      "from": "#15 · label appointment",
+      "text": "Dr. Okafor's office: your appointment is Tue 30 Sept at 9:15 am. Reply C to confirm or R to reschedule.",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.999,
+      "probabilities": {
+        "nothing you need to do": 4.0E-4,
+        "a code to type in": 4.0E-4,
+        "a package or a delivery": 1.0E-4,
+        "money you have to pay": 1.0E-4,
+        "an appointment or a booking": 0.999
+      },
+      "ms": 53.138802,
+      "t_s": 0.800830468
+    },
+    {
+      "id": 15,
+      "label": "appointment",
+      "from": "#16 · label appointment",
+      "text": "Molarbrook Dental: we have an opening tomorrow at 11 am. Text YES to take it.",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.7073,
+      "probabilities": {
+        "nothing you need to do": 0.107,
+        "a code to type in": 0.1579,
+        "a package or a delivery": 0.0071,
+        "money you have to pay": 0.0207,
+        "an appointment or a booking": 0.7073
+      },
+      "ms": 53.411406,
+      "t_s": 0.855677499
+    },
+    {
+      "id": 16,
+      "label": "appointment",
+      "from": "#17 · label appointment",
+      "text": "Your haircut with Lena is booked for Sat 4 Oct at 3 pm at Snip & Sable.",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.9895,
+      "probabilities": {
+        "nothing you need to do": 0.0072,
+        "a code to type in": 0.0013,
+        "a package or a delivery": 0.001,
+        "money you have to pay": 0.0011,
+        "an appointment or a booking": 0.9895
+      },
+      "ms": 51.443645,
+      "t_s": 0.907972812
+    },
+    {
+      "id": 17,
+      "label": "appointment",
+      "from": "#18 · label appointment",
+      "text": "Vehicle inspection reminder: your slot is Mon 6 Oct 8:00 am at Brackwheel Motors. Bring the registration.",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.4856,
+      "probabilities": {
+        "nothing you need to do": 0.2152,
+        "a code to type in": 0.17,
+        "a package or a delivery": 0.0966,
+        "money you have to pay": 0.0325,
+        "an appointment or a booking": 0.4856
+      },
+      "ms": 51.276303,
+      "t_s": 0.95966552
+    },
+    {
+      "id": 18,
+      "label": "reply",
+      "from": "#19 · label reply",
+      "text": "Mom: are you coming for dinner on Sunday? Dad wants to know how many to cook for",
+      "choice": "a code to type in",
+      "p_choice": 0.3245,
+      "probabilities": {
+        "nothing you need to do": 0.2162,
+        "a code to type in": 0.3245,
+        "a package or a delivery": 0.1488,
+        "money you have to pay": 0.1303,
+        "an appointment or a booking": 0.1802
+      },
+      "ms": 53.32802,
+      "t_s": 1.013983124
+    },
+    {
+      "id": 19,
+      "label": "reply",
+      "from": "#20 · label reply",
+      "text": "Hi, this is Daniel from the estate agency. Would 5 pm on Thursday work for the viewing?",
+      "choice": "nothing you need to do",
+      "p_choice": 0.4088,
+      "probabilities": {
+        "nothing you need to do": 0.4088,
+        "a code to type in": 0.0866,
+        "a package or a delivery": 0.0514,
+        "money you have to pay": 0.0545,
+        "an appointment or a booking": 0.3986
+      },
+      "ms": 53.717187,
+      "t_s": 1.068741197
+    },
+    {
+      "id": 20,
+      "label": "reply",
+      "from": "#21 · label reply",
+      "text": "Can you send me the photos from Saturday when you get a chance?",
+      "choice": "nothing you need to do",
+      "p_choice": 0.4551,
+      "probabilities": {
+        "nothing you need to do": 0.4551,
+        "a code to type in": 0.1335,
+        "a package or a delivery": 0.2979,
+        "money you have to pay": 0.0379,
+        "an appointment or a booking": 0.0755
+      },
+      "ms": 53.333802,
+      "t_s": 1.124238489
+    },
+    {
+      "id": 21,
+      "label": "scam",
+      "from": "#22 · label scam",
+      "text": "Your account has been locked. Verify your identity now at http:\/\/kelderbank-secure-login.xyz or lose access.",
+      "choice": "a code to type in",
+      "p_choice": 0.737,
+      "probabilities": {
+        "nothing you need to do": 0.1598,
+        "a code to type in": 0.737,
+        "a package or a delivery": 0.0134,
+        "money you have to pay": 0.0696,
+        "an appointment or a booking": 0.0203
+      },
+      "ms": 54.326093,
+      "t_s": 1.179591666
+    },
+    {
+      "id": 22,
+      "label": "scam",
+      "from": "#23 · label scam",
+      "text": "Hi Mum this is my new number, my phone broke. Can you transfer 300 for the repair today? I'll pay you back.",
+      "choice": "money you have to pay",
+      "p_choice": 0.9047,
+      "probabilities": {
+        "nothing you need to do": 0.0267,
+        "a code to type in": 0.0395,
+        "a package or a delivery": 0.012,
+        "money you have to pay": 0.9047,
+        "an appointment or a booking": 0.0171
+      },
+      "ms": 53.299219,
+      "t_s": 1.234236926
+    },
+    {
+      "id": 23,
+      "label": "scam",
+      "from": "#24 · label scam",
+      "text": "You have won a $1000 gift card! Send the 6-digit code we just texted you to claim it.",
+      "choice": "a code to type in",
+      "p_choice": 0.9909,
+      "probabilities": {
+        "nothing you need to do": 0.0053,
+        "a code to type in": 0.9909,
+        "a package or a delivery": 0.0013,
+        "money you have to pay": 0.0021,
+        "an appointment or a booking": 4.0E-4
+      },
+      "ms": 53.736354,
+      "t_s": 1.291846978
+    }
+  ],
+  "agree": 18,
+  "of": 21,
+  "gate_80": true
+}

@@ -1,0 +1,11 @@
+edge_enable before: 1
+edge_enable=1
+edge_handle_size_percent=18.874172
+edge_handle_transparency=70
+edge_lighting_recommend_app_list=com.whatsapp,com.google.android.talk,kik.android,com.google.android.apps.tachyon,com.samsung.knox.message,com.bsb.hike,com.snapchat.android,com.tencent.mm,com.samsung.android.messaging,com.skype.raider,com.skt.prod.dialer,Uxpp.UC,com.zing.zalo,jp.naver.line.android,com.nimbuzz,com.viber.voip,com.verizon.messaging.vzmsgs,com.kakao.talk,org.telegram.messenger,com.sgiggle.production,com.facebook.orca,com.discord,com.sds.mysinglesquare,
+game_edgescreen_touch_lock=0
+qspanel_media_quickcontrol_bar_available=null
+quick_panel_edit_more=0
+quick_panel_landscape_edit=0
+quick_panel_percent_text=0
+quick_panel_tile_specs=(Wifi, Wi-Fi),(Bluetooth, Bluetooth),(SoundMode, サウンド),(RotationLock, 自動回転),(AirplaneMode, 機内
