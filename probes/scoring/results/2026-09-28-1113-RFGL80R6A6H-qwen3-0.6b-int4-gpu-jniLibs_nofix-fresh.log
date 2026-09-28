@@ -1,0 +1,44 @@
+# scoring probe on the Galaxy S26 (SM-S942Q, BP4A.251205.006.S942QOPS1AZF2, Android 16), backend=gpu, build=jniLibs_nofix-fresh (liblitertlm_jni.so md5 ea84ca2907726b58f810f121425a8d96), model=qwen3_0_6b_mixed_int4.litertlm (litert-community/Qwen3-0.6B, sha256 7900eb4e7362d88c…, the same blob at revisions 154c5de0 and a3c5d805), fixture=authored144_qwen3_0_6b_oracle.json, rows=all, direct=all; fresh-session assert (FRESH_TOL 1e-3) added 2026-09-28
+# thermal before: Thermal Status: 0  start Mon Sep 28 11:13:19 JST 2026
+# gradle rc=1  end Mon Sep 28 11:16:43 JST 2026  thermal after: Thermal Status: 2
+# RESULT lines from the app's files dir (run-as):
+RESULT step=init ok=true backend=gpu model=qwen3_0_6b_mixed_int4.litertlm fixture=authored144_qwen3_0_6b_oracle.json init_ms=3773
+row a3f18f3a step=143 expected=142 logp_device=-2.435,-6.022,-5.256 logp_oracle=-0.000,-14.225,-15.037 A_again=-4.897 target_tokens=-1,-1,-1
+row f40beba9 step=141 expected=140 logp_device=-2.529,-6.464,-4.574 logp_oracle=-0.000,-14.976,-15.941 A_again=-4.667 target_tokens=-1,-1,-1
+row 0b43ea8e step=135 expected=134 logp_device=-9.255,-1.377,-3.737 logp_oracle=-9.784,-0.000,-12.995 A_again=-6.565 target_tokens=-1,-1,-1
+row 942ec65d step=135 expected=134 logp_device=-5.872,-3.753,-3.909 logp_oracle=-5.254,-0.006,-7.228 A_again=-5.472 target_tokens=-1,-1,-1
+row e0c140e9 step=148 expected=147 logp_device=-2.889,-7.350,-7.147 logp_oracle=-0.000,-15.230,-19.239 A_again=-5.131 target_tokens=-1,-1,-1
+row 8e8c3804 step=145 expected=144 logp_device=-4.686,-5.598,-6.082 logp_oracle=-5.186,-0.026,-3.925 A_again=-6.488 target_tokens=-1,-1,-1
+RESULT step=timing ok=true backend=gpu model=qwen3_0_6b_mixed_int4.litertlm fixture=authored144_qwen3_0_6b_oracle.json rows=144 prefill_ms_median=7.1 prefill_ms_p90=8.2 score_ms_median=32.2 score_ms_p90=208.3 shared_3_options_ms_median=270.6 shared_ms_p90=304.2 shared_ms_min=191.9 direct_3_prefills_ms_median=647.1 (direct rows=144) ratio_direct_over_shared=2.39
+RESULT step=fresh ok=false backend=gpu model=qwen3_0_6b_mixed_int4.litertlm fixture=authored144_qwen3_0_6b_oracle.json rows=144 max_abs_diff=5.27028 mismatch_rows=144 tol=0.001
+RESULT step=oracle ok=false backend=gpu model=qwen3_0_6b_mixed_int4.litertlm fixture=authored144_qwen3_0_6b_oracle.json rows=144 argmax_agree=91/144 max_p_abs_err=0.9784 mean_p_abs_err=0.4045 accuracy=0.431 per_family=rule_application=22/48 evidence_interpretation=22/48 candidate_selection=18/48 prefill_step_mismatch=144 first_step/expected=143/142 rewind_drift_max=2.76014
+RESULT step=release ok=true backend=gpu model=qwen3_0_6b_mixed_int4.litertlm fixture=authored144_qwen3_0_6b_oracle.json close_ms=141
+RESULT ok=false backend=gpu device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 failures=fresh: rows=144 max_abs_diff=5.27028 mismatch_rows=144 tol=0.001 | oracle: rows=144 argmax_agree=91/144 max_p_abs_err=0.9784 mean_p_abs_err=0.4045 accuracy=0.431 per_family=rule_application=22/48 evidence_interpretation=22/48 candidate_selection=18/48 prefill_step_mismatch=144 first_step/expected=143/142 rewind_drift_max=2.76014
+# logcat rows (fresh mismatch / progress):
+09-28 11:13:28.061 12692 12707 I hfmodels-scoring: device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 android=16 backend=gpu model=/data/local/tmp/hfmodels/qwen3_0_6b_mixed_int4.litertlm fixture=authored144_qwen3_0_6b_oracle.json ids=0 rows=144
+09-28 11:14:23.353 12692 12707 I hfmodels-scoring: device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 android=16 backend=gpu model=/data/local/tmp/hfmodels/qwen3_0_6b_mixed_int4.litertlm fixture=authored144_qwen3_0_6b_oracle.json rows=144 strip_prefix=(none)
+09-28 11:14:27.355 12692 12707 I hfmodels-scoring: row a3f18f3a step=143 expected=142 logp_device=-2.435,-6.022,-5.256 logp_oracle=-0.000,-14.225,-15.037 A_again=-4.897 target_tokens=-1,-1,-1
+09-28 11:14:27.828 12692 12707 I hfmodels-scoring: fresh mismatch row a3f18f3a shared=-2.4349,-6.0218,-5.2562 fresh=-2.4349,-2.5286,-1.3880
+09-28 11:14:28.048 12692 12707 I hfmodels-scoring: row f40beba9 step=141 expected=140 logp_device=-2.529,-6.464,-4.574 logp_oracle=-0.000,-14.976,-15.941 A_again=-4.667 target_tokens=-1,-1,-1
+09-28 11:14:28.498 12692 12707 I hfmodels-scoring: fresh mismatch row f40beba9 shared=-2.5289,-6.4642,-4.5735 fresh=-2.5289,-3.2477,-1.1539
+09-28 11:14:28.720 12692 12707 I hfmodels-scoring: row 0b43ea8e step=135 expected=134 logp_device=-9.255,-1.377,-3.737 logp_oracle=-9.784,-0.000,-12.995 A_again=-6.565 target_tokens=-1,-1,-1
+09-28 11:14:29.172 12692 12707 I hfmodels-scoring: fresh mismatch row 0b43ea8e shared=-9.2554,-1.3775,-3.7369 fresh=-9.2554,-0.0366,-3.8647
+09-28 11:14:29.385 12692 12707 I hfmodels-scoring: row 942ec65d step=135 expected=134 logp_device=-5.872,-3.753,-3.909 logp_oracle=-5.254,-0.006,-7.228 A_again=-5.472 target_tokens=-1,-1,-1
+09-28 11:14:29.835 12692 12707 I hfmodels-scoring: fresh mismatch row 942ec65d shared=-5.8723,-3.7530,-3.9092 fresh=-5.8723,-0.2942,-1.7005
+09-28 11:14:30.075 12692 12707 I hfmodels-scoring: row e0c140e9 step=148 expected=147 logp_device=-2.889,-7.350,-7.147 logp_oracle=-0.000,-15.230,-19.239 A_again=-5.131 target_tokens=-1,-1,-1
+09-28 11:14:31.011 12692 12707 I hfmodels-scoring: fresh mismatch row e0c140e9 shared=-2.8888,-7.3498,-7.1466 fresh=-2.8888,-4.3888,-4.3888
+09-28 11:14:31.459 12692 12707 I hfmodels-scoring: row 8e8c3804 step=145 expected=144 logp_device=-4.686,-5.598,-6.082 logp_oracle=-5.186,-0.026,-3.925 A_again=-6.488 target_tokens=-1,-1,-1
+09-28 11:14:32.419 12692 12707 I hfmodels-scoring: fresh mismatch row 8e8c3804 shared=-4.6863,-5.5976,-6.0820 fresh=-4.6863,-2.0300,-2.1081
+09-28 11:14:40.650 12692 12707 I hfmodels-scoring: progress rows=12 argmax_agree=9 max_p_err=0.7601
+09-28 11:14:53.383 12692 12707 I hfmodels-scoring: progress rows=24 argmax_agree=19 max_p_err=0.7601
+09-28 11:15:04.915 12692 12707 I hfmodels-scoring: progress rows=36 argmax_agree=28 max_p_err=0.8148
+09-28 11:15:15.287 12692 12707 I hfmodels-scoring: progress rows=48 argmax_agree=37 max_p_err=0.8148
+09-28 11:15:25.627 12692 12707 I hfmodels-scoring: progress rows=60 argmax_agree=41 max_p_err=0.9784
+09-28 11:15:35.870 12692 12707 I hfmodels-scoring: progress rows=72 argmax_agree=48 max_p_err=0.9784
+09-28 11:15:46.404 12692 12707 I hfmodels-scoring: progress rows=84 argmax_agree=58 max_p_err=0.9784
+09-28 11:15:57.420 12692 12707 I hfmodels-scoring: progress rows=96 argmax_agree=65 max_p_err=0.9784
+09-28 11:16:08.717 12692 12707 I hfmodels-scoring: progress rows=108 argmax_agree=70 max_p_err=0.9784
+09-28 11:16:20.336 12692 12707 I hfmodels-scoring: progress rows=120 argmax_agree=80 max_p_err=0.9784
+09-28 11:16:31.445 12692 12707 I hfmodels-scoring: progress rows=132 argmax_agree=86 max_p_err=0.9784
+09-28 11:16:43.040 12692 12707 I hfmodels-scoring: progress rows=144 argmax_agree=91 max_p_err=0.9784
+09-28 11:16:43.184 12692 12707 I hfmodels-scoring: RESULT ok=false backend=gpu device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 failures=fresh: rows=144 max_abs_diff=5.27028 mismatch_rows=144 tol=0.001 | oracle: rows=144 argmax_agree=91/144 max_p_abs_err=0.9784 mean_p_abs_err=0.4045 accuracy=0.431 per_family=rule_application=22/48 evidence_interpretation=22/48 candidate_selection=18/48 prefill_step_mismatch=144 first_step/expected=143/142 rewind_drift_max=2.76014
