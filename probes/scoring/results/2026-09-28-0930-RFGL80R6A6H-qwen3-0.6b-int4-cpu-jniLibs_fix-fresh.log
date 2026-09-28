@@ -1,0 +1,13 @@
+# scoring probe on the Galaxy S26 (SM-S942Q, BP4A.251205.006.S942QOPS1AZF2, Android 16), backend=cpu, build=jniLibs_fix-fresh (liblitertlm_jni.so md5 a994d7ef61259128175f76fbf4b9f2ee), model=qwen3_0_6b_mixed_int4.litertlm (litert-community/Qwen3-0.6B, sha256 7900eb4e7362d88c…, the same blob at revisions 154c5de0 and a3c5d805), fixture=authored144_qwen3_0_6b_oracle.json, rows=all, direct=all; fresh-session assert (FRESH_TOL 1e-3) added 2026-09-28
+# thermal before: Thermal Status: 1  start Mon Sep 28 09:30:17 JST 2026
+# gradle rc=143  end Mon Sep 28 09:37:55 JST 2026  thermal after: Thermal Status: 2
+# RESULT lines from the app's files dir (run-as):
+RESULT step=init ok=true backend=cpu model=qwen3_0_6b_mixed_int4.litertlm fixture=authored144_qwen3_0_6b_oracle.json init_ms=832
+row a3f18f3a step=143 expected=142 logp_device=-0.142,-3.578,-2.262 logp_oracle=-0.000,-14.225,-15.037 A_again=-0.142 target_tokens=-1,-1,-1
+row f40beba9 step=141 expected=140 logp_device=-0.643,-1.110,-1.935 logp_oracle=-0.000,-14.976,-15.941 A_again=-0.643 target_tokens=-1,-1,-1
+row 0b43ea8e step=135 expected=134 logp_device=-9.087,-0.002,-6.524 logp_oracle=-9.784,-0.000,-12.995 A_again=-9.087 target_tokens=-1,-1,-1
+row 942ec65d step=135 expected=134 logp_device=-5.106,-0.131,-2.152 logp_oracle=-5.254,-0.006,-7.228 A_again=-5.106 target_tokens=-1,-1,-1
+row e0c140e9 step=148 expected=147 logp_device=-0.017,-4.182,-6.994 logp_oracle=-0.000,-15.230,-19.239 A_again=-0.017 target_tokens=-1,-1,-1
+row 8e8c3804 step=145 expected=144 logp_device=-6.182,-0.047,-3.135 logp_oracle=-5.186,-0.026,-3.925 A_again=-6.182 target_tokens=-1,-1,-1
+# logcat rows (fresh mismatch / progress):
+# stopped by hand at row 32 of 144 (09:37:55, gradle rc=143) to yield the phone to another lane's hold; the 32 rows in .rows.jsonl carry fresh_logp: max|shared-fresh|=0.000000, rewind_drift_max=0.000000, prefill_ms median 1001.8, decision_ms median 1095.6 (thermal status 1→2). The full CPU run follows.

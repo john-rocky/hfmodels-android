@@ -29,13 +29,16 @@ import org.junit.runner.RunWith
  * prefill per letter).
  *
  * Arguments: model (bundle path on the device), backend (gpu | cpu), rows (default all 144),
- * direct (rows to time the direct arm on, default 12), fixture (asset name, default
+ * direct (rows to run the direct arm on, default all), fixture (asset name, default
  * authored144_qwen3_0_6b_oracle.json). A fixture may carry `strip_prefix`: a literal removed from
  * the start of every prompt because the runtime prepends the bundle's own start token to a raw
  * session (MiniCPM5 declares `<s>`), so the session sees the frozen ids exactly once.
  *
- * One RESULT line per step under tag `hfmodels-scoring`. The probe's `ok` is about the binding
- * (the run completed, the score of a letter did not drift after a rewind); agreement with the
+ * One RESULT line per step under tag `hfmodels-scoring`. The probe's `ok` is about the binding:
+ * the run completed, the score of a letter did not drift after a rewind (`oracle`), and each
+ * candidate's score on the shared arm equals the direct arm's fresh-session score within
+ * FRESH_TOL (`fresh`) - the check that catches a rewind that does not restore the session
+ * (google-ai-edge/LiteRT-LM#3561, and kakasolg's suggestion in #3639). Agreement with the
  * oracle is a measurement of the quantized bundle, reported, not asserted. Every RESULT line is
  * also written to the app's files dir (`files/scoring/<fixture>-<backend>.txt`, the per-row device
  * probabilities next to it as `.rows.jsonl`), readable with `adb shell run-as <applicationId> cat
@@ -48,7 +51,7 @@ class TextScoringDeviceTest {
     private val modelPath = args.getString("model") ?: "/data/local/tmp/hfmodels/Qwen3-0.6B.litertlm"
     private val backend = args.getString("backend") ?: "gpu"
     private val rowLimit = args.getString("rows")?.toInt() ?: Int.MAX_VALUE
-    private val directRows = args.getString("direct")?.toInt() ?: 12
+    private val directRows = args.getString("direct")?.toInt() ?: Int.MAX_VALUE
     private val fixtureName = args.getString("fixture") ?: "authored144_qwen3_0_6b_oracle.json"
     private val failures = ArrayList<String>()
     private val lines = ArrayList<String>()
@@ -95,6 +98,7 @@ class TextScoringDeviceTest {
         result("init", true, "init_ms=${SystemClock.elapsedRealtime() - t0}")
         try {
             var checked = 0; var argmaxAgree = 0; var maxPErr = 0.0; var sumPErr = 0.0; var stepMismatch = 0; var rewindDrift = 0.0; var correct = 0
+            var freshRows = 0; var freshMaxAbsDiff = 0.0; var freshMismatch = 0
             var graphRows = 0; var graphAgree = 0; var graphMaxPErr = 0.0; var graphSumPErr = 0.0
             val prefillMs = ArrayList<Double>(); val scoreMs = ArrayList<Double>(); val sharedMs = ArrayList<Double>(); val directMs = ArrayList<Double>()
             val perFamily = HashMap<String, IntArray>()
@@ -150,26 +154,38 @@ class TextScoringDeviceTest {
                 val fam = perFamily.getOrPut(r.getString("family")) { IntArray(2) }; fam[1]++
                 if (gotArg == r.getInt("label")) { correct++; fam[0]++ }
                 checked++
-                rowsFile.appendText(JSONObject().put("id", r.getString("id")).put("option_ids", r.getJSONArray("option_ids"))
-                    .put("probabilities", JSONArray(p.toList())).put("logp", JSONArray(neg.toList())).put("step", step).put("expected_step", expected)
-                    .put("prefill_ms", (tp - ts) / 1e6).put("decision_ms", (te - ts) / 1e6).put("rewind_again_logp", again).toString() + "\n")
-                // direct arm on the first rows: a fresh prefill per letter
+                // direct arm: a fresh session and a fresh prefill per letter. Its score is the reference the shared arm
+                // must reproduce; a difference means the session did not return to the prompt's end between letters.
+                var fresh: DoubleArray? = null
                 if (checked <= directRows) {
                     val td = System.nanoTime()
+                    val f = DoubleArray(n)
                     for (k in 0 until n) {
                         val s2 = engine.createSession(SessionConfig(applyPromptTemplate = false))
                         s2.runPrefill(listOf(InputData.Text(prompt)))
-                        s2.runTextScoring(listOf(letters[k].toString()))
+                        f[k] = s2.runTextScoring(listOf(letters[k].toString())).scores[0].toDouble()
                         s2.close()
                     }
                     directMs += (System.nanoTime() - td) / 1e6
+                    fresh = f; freshRows++
+                    val d = f.indices.maxOf { abs(f[it] - neg[it]) }
+                    freshMaxAbsDiff = maxOf(freshMaxAbsDiff, d)
+                    if (d > FRESH_TOL) {
+                        freshMismatch++
+                        if (freshMismatch <= 6) Log.i(TAG, "fresh mismatch row ${r.getString("id").take(8)} shared=${neg.joinToString(",") { "%.4f".format(it) }} fresh=${f.joinToString(",") { "%.4f".format(it) }}")
+                    }
                 }
+                rowsFile.appendText(JSONObject().put("id", r.getString("id")).put("option_ids", r.getJSONArray("option_ids"))
+                    .put("probabilities", JSONArray(p.toList())).put("logp", JSONArray(neg.toList())).put("step", step).put("expected_step", expected)
+                    .put("prefill_ms", (tp - ts) / 1e6).put("decision_ms", (te - ts) / 1e6).put("rewind_again_logp", again)
+                    .put("fresh_logp", fresh?.let { JSONArray(it.toList()) } ?: JSONObject.NULL).toString() + "\n")
                 if (checked % 12 == 0) Log.i(TAG, "progress rows=$checked argmax_agree=$argmaxAgree max_p_err=${"%.4f".format(maxPErr)}")
             }
             // timing first: the numbers are the point of the shared arm and must survive an agreement below 100 %
             result("timing", checked > 0, "rows=$checked prefill_ms_median=${"%.1f".format(med(prefillMs))} prefill_ms_p90=${"%.1f".format(p90(prefillMs))} score_ms_median=${"%.1f".format(med(scoreMs))} score_ms_p90=${"%.1f".format(p90(scoreMs))} shared_${letters.length.coerceAtMost(3)}_options_ms_median=${"%.1f".format(med(sharedMs))} shared_ms_p90=${"%.1f".format(p90(sharedMs))} shared_ms_min=${"%.1f".format(sharedMs.minOrNull() ?: 0.0)} direct_3_prefills_ms_median=${"%.1f".format(med(directMs))} (direct rows=${directMs.size}) ratio_direct_over_shared=${"%.2f".format(med(directMs) / maxOf(1e-9, med(sharedMs)))}")
             val famStr = perFamily.entries.joinToString(" ") { (k, a) -> "$k=${a[0]}/${a[1]}" }
             val graphStr = if (graphRows > 0) " graph_argmax_agree=$graphAgree/$graphRows graph_max_p_abs_err=${"%.4f".format(graphMaxPErr)} graph_mean_p_abs_err=${"%.4f".format(graphSumPErr / graphRows)}" else ""
+            result("fresh", freshRows > 0 && freshMaxAbsDiff <= FRESH_TOL, "rows=$freshRows max_abs_diff=${"%.5f".format(freshMaxAbsDiff)} mismatch_rows=$freshMismatch tol=$FRESH_TOL")
             result("oracle", checked > 0 && rewindDrift <= 1e-3, "rows=$checked argmax_agree=$argmaxAgree/$checked max_p_abs_err=${"%.4f".format(maxPErr)} mean_p_abs_err=${"%.4f".format(sumPErr / maxOf(1, checked))} accuracy=${"%.3f".format(correct.toDouble() / maxOf(1, checked))} per_family=$famStr$graphStr prefill_step_mismatch=$stepMismatch first_step/expected=$firstStep rewind_drift_max=${"%.5f".format(rewindDrift)}")
         } catch (t: Throwable) {
             Log.e(TAG, "failed", t); failures += "exception: ${t.javaClass.simpleName}: ${t.message}"
@@ -184,5 +200,5 @@ class TextScoringDeviceTest {
         assertTrue((lines + summary).joinToString("\n"), failures.isEmpty())
     }
 
-    companion object { const val TAG = "hfmodels-scoring" }
+    companion object { const val TAG = "hfmodels-scoring"; const val FRESH_TOL = 1e-3 }
 }
