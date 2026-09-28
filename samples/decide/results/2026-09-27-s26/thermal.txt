@@ -16,3 +16,11 @@ en200 recorded run:
 before: 00:25:17 status=0 skin=34.5 ap=34.3 bat=33.7
 after: 00:26:07 status=2 skin=41.5 ap=49.0 bat=40.7
 end: 00:26:26 status=2 skin=40.1 ap=48.1 bat=39.6
+
+en120 recorded run (spotlight):
+before: 09:47:45 status=0 skin=35.9 ap=37.8 bat=35.3
+after: 09:48:23 status=1 skin=40.5 ap=47.6 bat=40.0
+
+en120 no-scam recorded run (spotlight):
+before: 09:55:36 status=0 skin=35.8 ap=36.1 bat=35.2
+after: 09:56:13 status=1 skin=40.2 ap=47.2 bat=39.7

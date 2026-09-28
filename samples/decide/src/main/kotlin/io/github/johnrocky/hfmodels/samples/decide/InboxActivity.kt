@@ -65,7 +65,8 @@ import kotlin.math.ceil
  * normal start does none of that.
  * Every DONE writes `inbox-result-<epoch s>.json` (`panel-result-<variant>.json`) to the app's external
  * files dir and logs the same under tag `inbox`. The screen follows the Core AI inbox example
- * (InboxScreen.swift): state pill, clock, count, one latency line, the list, the bars, a small footer.
+ * (InboxScreen.swift): state pill, clock, count, one latency line, the list, the bars, a small footer; a
+ * card above the list shows one text large with the question and its answer.
  */
 class InboxActivity : ComponentActivity() {
     private enum class Phase { LOADING, READY, SORTING, DONE, FAILED }
@@ -97,12 +98,17 @@ class InboxActivity : ComponentActivity() {
     private var thermalBefore = -1
     private var thermalAfter = -1
     private var panelAgree = 0 to 0
+    // The spotlight card changes at most once per SPOTLIGHT_MS (the display only; sorting never waits for it).
+    private var spotlightShownAt = 0L
+    private var spotlightPending = false
+    private val spotlightTick = Runnable { spotlightPending = false; spotlightLatest() }
 
     private var u = 1f
     private lateinit var pill: TextView
     private lateinit var clock: TextView
     private lateinit var count: TextView
     private lateinit var latency: TextView
+    private lateinit var spotlight: InboxSpotlightView
     private lateinit var list: InboxListView
     private lateinit var button: TextView
     private lateinit var doneLine: TextView
@@ -179,7 +185,27 @@ class InboxActivity : ComponentActivity() {
         rows = ms.map { InboxListView.Row(it.sender, it.text) }
         list.rows = rows
         bins.total = ms.size
+        spotlightFirst()
         render()
+    }
+
+    /** Before sorting: the first text with the question's options. */
+    private fun spotlightFirst() {
+        spotlight.removeCallbacks(spotlightTick); spotlightPending = false; spotlightShownAt = 0L
+        rows.firstOrNull()?.let { spotlight.show(it.sender, it.text, -1) }
+    }
+
+    /** The text answered last, now or when the card may change next. */
+    private fun spotlightAnswered() {
+        val wait = spotlightShownAt + SPOTLIGHT_MS - SystemClock.uptimeMillis()
+        if (wait <= 0) spotlightLatest()
+        else if (!spotlightPending) { spotlightPending = true; spotlight.postDelayed(spotlightTick, wait) }
+    }
+
+    private fun spotlightLatest() {
+        val r = rows.getOrNull(done - 1) ?: return
+        spotlight.show(r.sender, r.text, r.bin)
+        spotlightShownAt = SystemClock.uptimeMillis()
     }
 
     private fun fail(reason: String) {
@@ -195,6 +221,7 @@ class InboxActivity : ComponentActivity() {
         rows.forEach { it.bin = -1 }
         bins.reset(); ms.clear(); series.clear(); answers.clear()
         done = 0; totalS = 0.0
+        spotlightFirst()
         thermalBefore = thermalStatus()
         phase = Phase.SORTING
         t0 = SystemClock.elapsedRealtimeNanos()
@@ -223,6 +250,7 @@ class InboxActivity : ComponentActivity() {
                 .put("ms", d.timing.totalMs).put("t_s", t)
             Log.i(TAG, "msg ${i + 1}/${msgs.size} id=${msg.id}${msg.label?.let { " label=$it" } ?: ""} choice=\"${a.choice}\" p=${a.probabilities[a.choice]} ms=${d.timing.totalMs} t=$t")
             done = i + 1
+            spotlightAnswered()
             render()
         }
         list.current = -1
@@ -326,6 +354,8 @@ class InboxActivity : ComponentActivity() {
 
         latency = label(13.4f, InboxStyle.LATENCY, digits = true)
         content.addView(latency, margins(top = 10f))
+        spotlight = InboxSpotlightView(this, u)
+        content.addView(spotlight, margins(top = 10f))
 
         val listFrame = FrameLayout(this)
         list = InboxListView(this, u)
@@ -442,5 +472,6 @@ class InboxActivity : ComponentActivity() {
     private companion object {
         const val TAG = "inbox"
         const val SMS_REQUEST = 7
+        const val SPOTLIGHT_MS = 1200L
     }
 }

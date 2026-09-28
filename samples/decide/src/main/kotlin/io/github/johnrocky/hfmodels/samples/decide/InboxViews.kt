@@ -209,3 +209,81 @@ class InboxBinsView(context: Context, private val u: Float) : View(context) {
         if (moving) postInvalidateOnAnimation()
     }
 }
+
+/**
+ * One text large above the list, so a viewer can read what goes in and what comes out: the sender, up to
+ * three lines of the text, the question, then its five options (before sorting) or the answer as a chip.
+ * The height never changes, so the list below does not move when the text does.
+ */
+class InboxSpotlightView(context: Context, private val u: Float) : View(context) {
+    private var sender = ""
+    private var text = ""
+    /** Index into InboxPanel.OPTIONS, or -1 to show all the options. */
+    private var answer = -1
+    private var body: StaticLayout? = null
+
+    private val pad = 14f * u
+    private val senderPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply { textSize = 15f * u; typeface = Typeface.create("sans-serif-medium", Typeface.BOLD); color = InboxStyle.AXIS }
+    private val bodyPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply { textSize = 20f * u; color = InboxStyle.WHITE }
+    private val askPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply { textSize = 12.5f * u; color = InboxStyle.LATENCY }
+    private val optionPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply { textSize = 13f * u; typeface = Typeface.create("sans-serif-medium", Typeface.BOLD) }
+    private val answerPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply { textSize = 16f * u; typeface = Typeface.create("sans-serif-medium", Typeface.BOLD) }
+    private val fill = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val rect = RectF()
+
+    private val senderHeight = 20f * u
+    private val bodyTop = pad + senderHeight + 6f * u
+    private val bodyHeight = 3 * bodyPaint.fontSpacing
+    private val askTop = bodyTop + bodyHeight + 10f * u
+    private val chipsTop = askTop + 16f * u + 8f * u
+    private val optionChip = 22f * u
+    private val chipsHeight = 2 * optionChip + 6f * u
+
+    fun show(sender: String, text: String, answer: Int) {
+        if (sender == this.sender && text == this.text && answer == this.answer) return
+        if (text != this.text) body = null
+        this.sender = sender; this.text = text; this.answer = answer
+        invalidate()
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), (chipsTop + chipsHeight + pad).toInt())
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) { body = null }
+
+    override fun onDraw(canvas: Canvas) {
+        fill.color = InboxStyle.LANE
+        rect.set(0f, 0f, width.toFloat(), height.toFloat())
+        canvas.drawRoundRect(rect, 12f * u, 12f * u, fill)
+        val inner = width - 2 * pad
+        canvas.drawText(TextUtils.ellipsize(sender, senderPaint, inner, TextUtils.TruncateAt.END).toString(), pad, pad + 15f * u, senderPaint)
+        val b = body ?: StaticLayout.Builder.obtain(text, 0, text.length, bodyPaint, inner.toInt().coerceAtLeast(1))
+            .setMaxLines(3).setEllipsize(TextUtils.TruncateAt.END).setIncludePad(false).build().also { body = it }
+        canvas.save(); canvas.translate(pad, bodyTop); b.draw(canvas); canvas.restore()
+        canvas.drawText(InboxPanel.QUESTIONS.getValue("need").instructions, pad, askTop + 12.5f * u, askPaint)
+        if (answer >= 0) {
+            chip(canvas, InboxPanel.SHORT[answer], InboxStyle.OPTION_COLORS[answer], answerPaint, pad, chipsTop, 28f * u, 11f * u)
+            return
+        }
+        // The five options, wrapped onto a second row when they do not fit one.
+        var x = pad
+        var y = chipsTop
+        for (i in InboxPanel.OPTIONS.indices) {
+            val w = optionPaint.measureText(InboxPanel.SHORT[i]) + 16f * u
+            if (x + w > width - pad && x > pad) { x = pad; y += optionChip + 6f * u }
+            x = chip(canvas, InboxPanel.SHORT[i], InboxStyle.OPTION_COLORS[i], optionPaint, x, y, optionChip, 8f * u) + 6f * u
+        }
+    }
+
+    private fun chip(canvas: Canvas, label: String, color: Int, paint: TextPaint, x: Float, top: Float, h: Float, padX: Float): Float {
+        val w = paint.measureText(label) + 2 * padX
+        fill.color = InboxStyle.BACKGROUND
+        rect.set(x, top, x + w, top + h)
+        canvas.drawRoundRect(rect, 7f * u, 7f * u, fill)
+        paint.color = color
+        val fm = paint.fontMetrics
+        canvas.drawText(label, x + padX, top + (h - fm.ascent - fm.descent) / 2, paint)
+        return x + w
+    }
+}

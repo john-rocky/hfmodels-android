@@ -9,6 +9,7 @@ import android.os.SystemClock
 import android.provider.Telephony
 import android.util.Log
 import io.github.johnrocky.hfmodels.samples.decide.sms.SmsGenerator
+import io.github.johnrocky.hfmodels.samples.decide.sms.SmsVocabulary
 import org.json.JSONObject
 import java.io.File
 import java.time.Instant
@@ -18,11 +19,13 @@ import java.time.Instant
  * so the SMS role is given to this app first and handed back afterwards (README.md):
  *
  *   adb shell am start -n io.github.johnrocky.hfmodels.probes.smsseed/.SeedActivity --ei count 300 --el seed 7
+ *   adb shell am start -n io.github.johnrocky.hfmodels.probes.smsseed/.SeedActivity --ei count 120 --el seed 7 --ez scams false
  *   adb shell am start -n io.github.johnrocky.hfmodels.probes.smsseed/.SeedActivity --ez clear true
  *
  * A seed inserts `count` unread inbox texts from `SmsGenerator` (samples/decide/src/sms; the same seed
  * gives the same texts, spread over the last 14 days) and keeps their `_id`s; a clear deletes exactly
- * those rows and nothing else. Each run writes `seed-result.json` to the app's external files dir and logs a
+ * those rows and nothing else. `--ez scams false` leaves out the texts that ask for money, a code or a
+ * login (the generator's `scam` kind), for a screen that does not ask about them. Each run writes `seed-result.json` to the app's external files dir and logs a
  * `RESULT` line under tag `smsseed`.
  */
 class SeedActivity : Activity() {
@@ -31,12 +34,13 @@ class SeedActivity : Activity() {
         val clear = intent.getBooleanExtra("clear", false)
         val count = intent.getIntExtra("count", 300)
         val seed = intent.getLongExtra("seed", 7L)
+        val scams = intent.getBooleanExtra("scams", true)
         Thread {
             val result = try {
                 check(getSystemService(RoleManager::class.java).isRoleHeld(RoleManager.ROLE_SMS)) {
                     "this app does not hold the SMS role; take it first, see README.md"
                 }
-                if (clear) clear() else seed(count, seed)
+                if (clear) clear() else seed(count, seed, scams)
             } catch (e: Exception) {
                 JSONObject().put("error", e.message ?: e.toString())
             }
@@ -47,10 +51,11 @@ class SeedActivity : Activity() {
         }.start()
     }
 
-    private fun seed(count: Int, seed: Long): JSONObject {
+    private fun seed(count: Int, seed: Long, scams: Boolean): JSONObject {
         val start = SystemClock.elapsedRealtime()
         val now = System.currentTimeMillis()
-        val texts = SmsGenerator.generate(count, seed)
+        val vocabulary = SmsVocabulary.DEFAULT.let { if (scams) it else it.copy(mix = it.mix - "scam") }
+        val texts = SmsGenerator.generate(count, seed, vocabulary)
         val ids = ArrayList<Long>(texts.size)
         for (m in texts) {
             val date = now - m.minutesAgo * 60_000L
@@ -71,7 +76,7 @@ class SeedActivity : Activity() {
             remember(id)
         }
         return JSONObject()
-            .put("count", ids.size).put("seed", seed)
+            .put("count", ids.size).put("seed", seed).put("scams", scams)
             .put("first_id", ids.minOrNull()).put("last_id", ids.maxOrNull())
             .put("elapsed_ms", SystemClock.elapsedRealtime() - start)
             // What the generator wrote each text as; not a model answer.

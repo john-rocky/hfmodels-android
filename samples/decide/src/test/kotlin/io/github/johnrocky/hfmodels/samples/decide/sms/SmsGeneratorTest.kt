@@ -58,6 +58,13 @@ class SmsGeneratorTest {
         assertTrue(ms.first().minutesAgo >= 0 && ms.last().minutesAgo < 14 * 24 * 60)
     }
 
+    @Test fun aKindLeftOutOfTheMixNeverAppears() {
+        val noScams = v.copy(mix = v.mix - "scam")
+        val ms = SmsGenerator.generate(300, 7, noScams)
+        assertEquals(300, ms.size)
+        assertTrue(ms.none { it.kind == "scam" })
+    }
+
     @Test fun everyKindAppears() {
         val kinds = SmsGenerator.generate(300, 7).groupingBy { it.kind }.eachCount()
         assertEquals(v.mix.keys, kinds.keys)

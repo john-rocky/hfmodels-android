@@ -1,0 +1,18 @@
+{
+  "count": 120,
+  "seed": 7,
+  "first_id": 1049,
+  "last_id": 1168,
+  "elapsed_ms": 1152,
+  "written_as": {
+    "delivery": 19,
+    "nothing": 34,
+    "appointment": 11,
+    "code": 22,
+    "scam": 6,
+    "bill": 12,
+    "reply": 16
+  },
+  "action": "seed",
+  "date": "2026-09-28T00:37:28.060208Z"
+}

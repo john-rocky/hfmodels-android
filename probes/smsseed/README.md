@@ -21,6 +21,7 @@ adb shell am start -n io.github.johnrocky.hfmodels.probes.smsseed/.SeedActivity 
 adb shell cmd role add-role-holder --user 0 android.app.role.SMS com.google.android.apps.messaging
 ```
 
+- `--ez scams false` leaves out the texts that ask for money, a code or a login (the generator's `scam` kind), for a screen that does not ask about them; the same seed then gives other texts.
 - A seed keeps the `_id` of every row it inserts (SharedPreferences, written row by row); a clear deletes those rows and nothing else, and the provider drops the threads that become empty. Seeds add up until the next clear.
 - Each run writes `seed-result.json` to `/sdcard/Android/data/io.github.johnrocky.hfmodels.probes.smsseed/files/` (count, seed, first and last id, elapsed ms, and `written_as`: how many texts the generator wrote as each kind, which is not a model answer) and logs the same `RESULT` line under tag `smsseed`. Without the role the run stops with an error in the same file instead of inserting nothing silently.
 - The seeded texts are unread (`read=0`, `seen=0`), in the inbox (`type=1`), dated over the last 14 days, the first generated text the newest. The phone's own texts are not touched; the inbox screen shows unread texts only, so check that the phone's own are read before a recording: `adb shell "content query --uri content://sms/inbox --projection _id:read"`.
