@@ -50,7 +50,7 @@ fun unbind(repoId: String): Boolean
 suspend fun closeAndJoin()                                                      // closes the prepared model too; close() is the non-suspending request
 ```
 
-One `HfModels` per process (it owns one model slot: loading a second model closes the first). Hold it in the `Application` or a ViewModel; construct it with the application context.
+One `HfModels` per process (it owns one model slot: a second `prepare` while a model is open fails with `MODEL_BUSY`; `closeAndJoin()` the open model first). Hold it in the `Application` or a ViewModel; construct it with the application context.
 
 ```kotlin
 data class ModelRef(val repoId: String, val revision: String? = null, val variant: String? = null)   // "owner/name"; revision = branch, tag or commit; variant = an id from the descriptor

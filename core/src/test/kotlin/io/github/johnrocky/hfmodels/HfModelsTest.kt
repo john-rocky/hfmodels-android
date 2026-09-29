@@ -158,6 +158,22 @@ class HfModelsTest {
         assertTrue(hub.requests.isEmpty())
     }
 
+    /** docs/api.md: LoadEvent is delivered on the caller's dispatcher, in order, including what the store and the handler emit from worker threads. */
+    @Test fun loadEventsArriveOnTheCallersThreadInOrder() = runBlocking {
+        val caller = Thread.currentThread()
+        val seen = mutableListOf<Pair<String, Thread>>()
+        val model = models.fromPretrained(ModelRef("org/model"), FakeChat) { seen += (it::class.simpleName ?: "?") to Thread.currentThread() }
+        try {
+            val kinds = seen.map { it.first }
+            assertEquals(kinds.toString(), "Resolving", kinds.first())
+            assertEquals(kinds.toString(), "Ready", kinds.last())
+            assertTrue(kinds.toString(), kinds.lastIndexOf("Downloading") in 1 until kinds.indexOf("Verifying"))
+            assertTrue(kinds.toString(), kinds.indexOf("Verifying") < kinds.indexOf("Initializing"))
+            val elsewhere = seen.filter { it.second !== caller }.map { "${it.first} on ${it.second.name}" }
+            assertTrue("delivered off the caller's dispatcher: $elsewhere", elsewhere.isEmpty())
+        } finally { model.closeAndJoin() }
+    }
+
     @Test fun closedClientRefuses() = runBlocking {
         models.close()
         try { models.inspect(ModelRef("org/model"), FakeChat); fail() } catch (e: ModelException) { assertEquals(ErrorCode.MODEL_CLOSED, e.code) }
