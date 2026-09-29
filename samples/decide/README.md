@@ -18,9 +18,19 @@ adb push laya_ml_s256_fp32.tflite /sdcard/Android/data/io.github.johnrocky.hfmod
 
 The extraction model's ten files (about 410 MB) are fetched by `GlinerAssets` on the first **Get extractor** with a sha256 check against the repo's `SHA256SUMS`, or taken from a pushed copy (`adb push <files> /sdcard/Android/data/<applicationId>/files/`).
 
+## NPU
+
+The backend spinner's `npu` runs the decision model on the Qualcomm NPU (Hexagon HTP) of a Snapdragon phone. Qualcomm's runtime is not in this repository and has to be in the APK; the build extracts it at install:
+
+```sh
+tools/fetch_npu_libs.sh samples/decide/src/main/jniLibs/arm64-v8a v81    # the Hexagon version of the phone's SoC: SM8550 v73, SM8650 v75, SM8750 v79, SM8850 v81
+```
+
+Then pick `ml_s256_wfp16` or `en_s256_fp32` (the variants whose descriptor has an `npu` profile) and `npu`. Without the files the load stops with `NATIVE_MODULE_MISSING` and the names of the missing files. The first NPU load on a phone compiles the graph (76 s for `ml_s256_wfp16` and 65 s for `en_s256_fp32` in the device gate on a Galaxy S26); later loads read LiteRT's cache (0.9 s). This screen's NPU choice was not run on a phone; the device gate ran the same load path.
+
 ## Scripted use
 
-`adb shell am start -n io.github.johnrocky.hfmodels.samples.decide/.MainActivity --es variant en_s256_fp32 --es backend gpu` preselects the spinners and presses Load. The three logs on the screens are plain `TextView`s (`voice_log`, `clip_log`, `rank_log`), readable with `uiautomator dump`.
+`adb shell am start -n io.github.johnrocky.hfmodels.samples.decide/.MainActivity --es variant en_s256_fp32 --es backend gpu` preselects the spinners and presses Load (`--es backend npu` for the NPU). The three logs on the screens are plain `TextView`s (`voice_log`, `clip_log`, `rank_log`), readable with `uiautomator dump`.
 
 ## What the screens showed on 2026-09-21 (Galaxy S26 SM-S942Q, Android 16 BP4A.251205.006, LiteRT 2.2.0, GPU FP32)
 
