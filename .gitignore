@@ -13,6 +13,8 @@ local.properties
 *.bin
 *.png
 *.jpg
+# Except the pong sample's reference frames (six PNGs, 6 KB): its JVM tests compare the app's drawing and resize against them
+!samples/pong/src/test/resources/fixtures/*.png
 
 # Build outputs
 *.apk

@@ -1,0 +1,92 @@
+{
+  "model_id": "litert-community/decider-2b-vision-LiteRT",
+  "revision": "6c024e946bb8489f3faacb2514b0c61b355d1fdb",
+  "tasks": [
+    "chat"
+  ],
+  "default_variant": "int8",
+  "license": {
+    "id": "apache-2.0",
+    "url": "https://huggingface.co/Mapika/decider-2b-vision"
+  },
+  "provenance": "Converted third-party repo (Mapika/decider-2b-vision). The int8 file ran on a Galaxy S26 on CPU and GPU through LiteRT-LM v0.16.0 (model card). The fp16 files are desktop files and are left out of this descriptor.",
+  "variants": [
+    {
+      "id": "int8",
+      "runtime": "litert_lm",
+      "handler": {
+        "id": "litertlm.conversation",
+        "abi": 1
+      },
+      "runtime_range": {
+        "min_inclusive": "0.16.0",
+        "max_exclusive": "0.18.0"
+      },
+      "inputs": [
+        "text",
+        "image"
+      ],
+      "files": [
+        {
+          "id": "weights",
+          "role": "model",
+          "path": "decider-2b-vision_int8.litertlm"
+        }
+      ],
+      "default_profile": "gpu",
+      "profiles": [
+        {
+          "id": "gpu",
+          "priority": 100,
+          "files": [
+            "weights"
+          ],
+          "enabled_inputs": [
+            "text",
+            "image"
+          ],
+          "components": {
+            "language": "gpu",
+            "vision": "gpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "fallback_profiles": [
+            "cpu"
+          ],
+          "default_selectable": true
+        },
+        {
+          "id": "cpu",
+          "priority": 50,
+          "files": [
+            "weights"
+          ],
+          "enabled_inputs": [
+            "text",
+            "image"
+          ],
+          "components": {
+            "language": "cpu",
+            "vision": "cpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "fallback_profiles": [],
+          "default_selectable": true
+        }
+      ],
+      "handler_config": {
+        "metadata_source": "litertlm_manifest"
+      }
+    }
+  ]
+}

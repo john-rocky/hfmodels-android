@@ -1,0 +1,1377 @@
+{
+ "seed": 7,
+ "steps": [
+  {
+   "step": 0,
+   "action": 1,
+   "state_before": {
+    "ball": [
+     40.0,
+     126.0
+    ],
+    "v": [
+     12,
+     -5
+    ],
+    "paddle": 90,
+    "left": 90
+   },
+   "event": null
+  },
+  {
+   "step": 1,
+   "action": 1,
+   "state_before": {
+    "ball": [
+     52.0,
+     121.0
+    ],
+    "v": [
+     12,
+     -5
+    ],
+    "paddle": 100,
+    "left": 100
+   },
+   "event": null
+  },
+  {
+   "step": 2,
+   "action": 2,
+   "state_before": {
+    "ball": [
+     64.0,
+     116.0
+    ],
+    "v": [
+     12,
+     -5
+    ],
+    "paddle": 110,
+    "left": 110
+   },
+   "event": null
+  },
+  {
+   "step": 3,
+   "action": 0,
+   "state_before": {
+    "ball": [
+     76.0,
+     111.0
+    ],
+    "v": [
+     12,
+     -5
+    ],
+    "paddle": 110,
+    "left": 110
+   },
+   "event": null
+  },
+  {
+   "step": 4,
+   "action": 2,
+   "state_before": {
+    "ball": [
+     88.0,
+     106.0
+    ],
+    "v": [
+     12,
+     -5
+    ],
+    "paddle": 100,
+    "left": 105
+   },
+   "event": null
+  },
+  {
+   "step": 5,
+   "action": 0,
+   "state_before": {
+    "ball": [
+     100.0,
+     101.0
+    ],
+    "v": [
+     12,
+     -5
+    ],
+    "paddle": 100,
+    "left": 100
+   },
+   "event": null
+  },
+  {
+   "step": 6,
+   "action": 2,
+   "state_before": {
+    "ball": [
+     112.0,
+     96.0
+    ],
+    "v": [
+     12,
+     -5
+    ],
+    "paddle": 90,
+    "left": 95
+   },
+   "event": null
+  },
+  {
+   "step": 7,
+   "action": 0,
+   "state_before": {
+    "ball": [
+     124.0,
+     91.0
+    ],
+    "v": [
+     12,
+     -5
+    ],
+    "paddle": 90,
+    "left": 90
+   },
+   "event": null
+  },
+  {
+   "step": 8,
+   "action": 2,
+   "state_before": {
+    "ball": [
+     136.0,
+     86.0
+    ],
+    "v": [
+     12,
+     -5
+    ],
+    "paddle": 80,
+    "left": 85
+   },
+   "event": "hit"
+  },
+  {
+   "step": 9,
+   "action": 2,
+   "state_before": {
+    "ball": [
+     128.0,
+     81.0
+    ],
+    "v": [
+     -12,
+     -6
+    ],
+    "paddle": 80,
+    "left": 80
+   },
+   "event": null
+  },
+  {
+   "step": 10,
+   "action": 0,
+   "state_before": {
+    "ball": [
+     116.0,
+     75.0
+    ],
+    "v": [
+     -12,
+     -6
+    ],
+    "paddle": 80,
+    "left": 75
+   },
+   "event": null
+  },
+  {
+   "step": 11,
+   "action": 0,
+   "state_before": {
+    "ball": [
+     104.0,
+     69.0
+    ],
+    "v": [
+     -12,
+     -6
+    ],
+    "paddle": 70,
+    "left": 69
+   },
+   "event": null
+  },
+  {
+   "step": 12,
+   "action": 2,
+   "state_before": {
+    "ball": [
+     92.0,
+     63.0
+    ],
+    "v": [
+     -12,
+     -6
+    ],
+    "paddle": 60,
+    "left": 63
+   },
+   "event": null
+  },
+  {
+   "step": 13,
+   "action": 0,
+   "state_before": {
+    "ball": [
+     80.0,
+     57.0
+    ],
+    "v": [
+     -12,
+     -6
+    ],
+    "paddle": 60,
+    "left": 57
+   },
+   "event": null
+  },
+  {
+   "step": 14,
+   "action": 2,
+   "state_before": {
+    "ball": [
+     68.0,
+     51.0
+    ],
+    "v": [
+     -12,
+     -6
+    ],
+    "paddle": 50,
+    "left": 51
+   },
+   "event": null
+  },
+  {
+   "step": 15,
+   "action": 0,
+   "state_before": {
+    "ball": [
+     56.0,
+     45.0
+    ],
+    "v": [
+     -12,
+     -6
+    ],
+    "paddle": 50,
+    "left": 45
+   },
+   "event": null
+  },
+  {
+   "step": 16,
+   "action": 0,
+   "state_before": {
+    "ball": [
+     44.0,
+     39.0
+    ],
+    "v": [
+     -12,
+     -6
+    ],
+    "paddle": 40,
+    "left": 39
+   },
+   "event": null
+  },
+  {
+   "step": 17,
+   "action": 2,
+   "state_before": {
+    "ball": [
+     32.0,
+     35.0
+    ],
+    "v": [
+     -12,
+     6
+    ],
+    "paddle": 34,
+    "left": 34
+   },
+   "event": null
+  },
+  {
+   "step": 18,
+   "action": 2,
+   "state_before": {
+    "ball": [
+     20.0,
+     41.0
+    ],
+    "v": [
+     12,
+     6
+    ],
+    "paddle": 34,
+    "left": 34
+   },
+   "event": null
+  },
+  {
+   "step": 19,
+   "action": 2,
+   "state_before": {
+    "ball": [
+     32.0,
+     47.0
+    ],
+    "v": [
+     12,
+     6
+    ],
+    "paddle": 34,
+    "left": 35
+   },
+   "event": null
+  },
+  {
+   "step": 20,
+   "action": 1,
+   "state_before": {
+    "ball": [
+     44.0,
+     53.0
+    ],
+    "v": [
+     12,
+     6
+    ],
+    "paddle": 34,
+    "left": 41
+   },
+   "event": null
+  },
+  {
+   "step": 21,
+   "action": 2,
+   "state_before": {
+    "ball": [
+     56.0,
+     59.0
+    ],
+    "v": [
+     12,
+     6
+    ],
+    "paddle": 44,
+    "left": 47
+   },
+   "event": null
+  },
+  {
+   "step": 22,
+   "action": 1,
+   "state_before": {
+    "ball": [
+     68.0,
+     65.0
+    ],
+    "v": [
+     12,
+     6
+    ],
+    "paddle": 44,
+    "left": 53
+   },
+   "event": null
+  },
+  {
+   "step": 23,
+   "action": 1,
+   "state_before": {
+    "ball": [
+     80.0,
+     71.0
+    ],
+    "v": [
+     12,
+     6
+    ],
+    "paddle": 54,
+    "left": 59
+   },
+   "event": null
+  },
+  {
+   "step": 24,
+   "action": 2,
+   "state_before": {
+    "ball": [
+     92.0,
+     77.0
+    ],
+    "v": [
+     12,
+     6
+    ],
+    "paddle": 64,
+    "left": 65
+   },
+   "event": null
+  },
+  {
+   "step": 25,
+   "action": 1,
+   "state_before": {
+    "ball": [
+     104.0,
+     83.0
+    ],
+    "v": [
+     12,
+     6
+    ],
+    "paddle": 64,
+    "left": 71
+   },
+   "event": null
+  },
+  {
+   "step": 26,
+   "action": 2,
+   "state_before": {
+    "ball": [
+     116.0,
+     89.0
+    ],
+    "v": [
+     12,
+     6
+    ],
+    "paddle": 74,
+    "left": 77
+   },
+   "event": null
+  },
+  {
+   "step": 27,
+   "action": 1,
+   "state_before": {
+    "ball": [
+     128.0,
+     95.0
+    ],
+    "v": [
+     12,
+     6
+    ],
+    "paddle": 74,
+    "left": 83
+   },
+   "event": "hit"
+  },
+  {
+   "step": 28,
+   "action": 1,
+   "state_before": {
+    "ball": [
+     136.0,
+     101.0
+    ],
+    "v": [
+     -12,
+     8
+    ],
+    "paddle": 84,
+    "left": 89
+   },
+   "event": null
+  },
+  {
+   "step": 29,
+   "action": 2,
+   "state_before": {
+    "ball": [
+     124.0,
+     109.0
+    ],
+    "v": [
+     -12,
+     8
+    ],
+    "paddle": 94,
+    "left": 95
+   },
+   "event": null
+  },
+  {
+   "step": 30,
+   "action": 1,
+   "state_before": {
+    "ball": [
+     112.0,
+     117.0
+    ],
+    "v": [
+     -12,
+     8
+    ],
+    "paddle": 94,
+    "left": 103
+   },
+   "event": null
+  },
+  {
+   "step": 31,
+   "action": 1,
+   "state_before": {
+    "ball": [
+     100.0,
+     125.0
+    ],
+    "v": [
+     -12,
+     8
+    ],
+    "paddle": 104,
+    "left": 111
+   },
+   "event": null
+  },
+  {
+   "step": 32,
+   "action": 1,
+   "state_before": {
+    "ball": [
+     88.0,
+     133.0
+    ],
+    "v": [
+     -12,
+     8
+    ],
+    "paddle": 114,
+    "left": 119
+   },
+   "event": null
+  },
+  {
+   "step": 33,
+   "action": 1,
+   "state_before": {
+    "ball": [
+     76.0,
+     141.0
+    ],
+    "v": [
+     -12,
+     8
+    ],
+    "paddle": 124,
+    "left": 127
+   },
+   "event": null
+  },
+  {
+   "step": 34,
+   "action": 2,
+   "state_before": {
+    "ball": [
+     64.0,
+     149.0
+    ],
+    "v": [
+     -12,
+     8
+    ],
+    "paddle": 134,
+    "left": 135
+   },
+   "event": null
+  },
+  {
+   "step": 35,
+   "action": 1,
+   "state_before": {
+    "ball": [
+     52.0,
+     157.0
+    ],
+    "v": [
+     -12,
+     8
+    ],
+    "paddle": 134,
+    "left": 143
+   },
+   "event": null
+  },
+  {
+   "step": 36,
+   "action": 1,
+   "state_before": {
+    "ball": [
+     40.0,
+     165.0
+    ],
+    "v": [
+     -12,
+     8
+    ],
+    "paddle": 144,
+    "left": 151
+   },
+   "event": null
+  },
+  {
+   "step": 37,
+   "action": 1,
+   "state_before": {
+    "ball": [
+     28.0,
+     173.0
+    ],
+    "v": [
+     -12,
+     8
+    ],
+    "paddle": 154,
+    "left": 159
+   },
+   "event": null
+  },
+  {
+   "step": 38,
+   "action": 1,
+   "state_before": {
+    "ball": [
+     24.0,
+     181.0
+    ],
+    "v": [
+     12,
+     8
+    ],
+    "paddle": 164,
+    "left": 167
+   },
+   "event": null
+  },
+  {
+   "step": 39,
+   "action": 2,
+   "state_before": {
+    "ball": [
+     36.0,
+     189.0
+    ],
+    "v": [
+     12,
+     8
+    ],
+    "paddle": 174,
+    "left": 175
+   },
+   "event": null
+  },
+  {
+   "step": 40,
+   "action": 2,
+   "state_before": {
+    "ball": [
+     48.0,
+     183.0
+    ],
+    "v": [
+     12,
+     -8
+    ],
+    "paddle": 174,
+    "left": 178
+   },
+   "event": null
+  },
+  {
+   "step": 41,
+   "action": 0,
+   "state_before": {
+    "ball": [
+     60.0,
+     175.0
+    ],
+    "v": [
+     12,
+     -8
+    ],
+    "paddle": 174,
+    "left": 177
+   },
+   "event": null
+  },
+  {
+   "step": 42,
+   "action": 2,
+   "state_before": {
+    "ball": [
+     72.0,
+     167.0
+    ],
+    "v": [
+     12,
+     -8
+    ],
+    "paddle": 164,
+    "left": 169
+   },
+   "event": null
+  },
+  {
+   "step": 43,
+   "action": 0,
+   "state_before": {
+    "ball": [
+     84.0,
+     159.0
+    ],
+    "v": [
+     12,
+     -8
+    ],
+    "paddle": 164,
+    "left": 161
+   },
+   "event": null
+  },
+  {
+   "step": 44,
+   "action": 0,
+   "state_before": {
+    "ball": [
+     96.0,
+     151.0
+    ],
+    "v": [
+     12,
+     -8
+    ],
+    "paddle": 154,
+    "left": 153
+   },
+   "event": null
+  },
+  {
+   "step": 45,
+   "action": 0,
+   "state_before": {
+    "ball": [
+     108.0,
+     143.0
+    ],
+    "v": [
+     12,
+     -8
+    ],
+    "paddle": 144,
+    "left": 145
+   },
+   "event": null
+  },
+  {
+   "step": 46,
+   "action": 0,
+   "state_before": {
+    "ball": [
+     120.0,
+     135.0
+    ],
+    "v": [
+     12,
+     -8
+    ],
+    "paddle": 134,
+    "left": 137
+   },
+   "event": null
+  },
+  {
+   "step": 47,
+   "action": 2,
+   "state_before": {
+    "ball": [
+     132.0,
+     127.0
+    ],
+    "v": [
+     12,
+     -8
+    ],
+    "paddle": 124,
+    "left": 129
+   },
+   "event": "hit"
+  },
+  {
+   "step": 48,
+   "action": 0,
+   "state_before": {
+    "ball": [
+     132.0,
+     119.0
+    ],
+    "v": [
+     -12,
+     -8
+    ],
+    "paddle": 124,
+    "left": 121
+   },
+   "event": null
+  },
+  {
+   "step": 49,
+   "action": 0,
+   "state_before": {
+    "ball": [
+     120.0,
+     111.0
+    ],
+    "v": [
+     -12,
+     -8
+    ],
+    "paddle": 114,
+    "left": 113
+   },
+   "event": null
+  },
+  {
+   "step": 50,
+   "action": 0,
+   "state_before": {
+    "ball": [
+     108.0,
+     103.0
+    ],
+    "v": [
+     -12,
+     -8
+    ],
+    "paddle": 104,
+    "left": 105
+   },
+   "event": null
+  },
+  {
+   "step": 51,
+   "action": 0,
+   "state_before": {
+    "ball": [
+     96.0,
+     95.0
+    ],
+    "v": [
+     -12,
+     -8
+    ],
+    "paddle": 94,
+    "left": 97
+   },
+   "event": null
+  },
+  {
+   "step": 52,
+   "action": 2,
+   "state_before": {
+    "ball": [
+     84.0,
+     87.0
+    ],
+    "v": [
+     -12,
+     -8
+    ],
+    "paddle": 84,
+    "left": 89
+   },
+   "event": null
+  },
+  {
+   "step": 53,
+   "action": 0,
+   "state_before": {
+    "ball": [
+     72.0,
+     79.0
+    ],
+    "v": [
+     -12,
+     -8
+    ],
+    "paddle": 84,
+    "left": 81
+   },
+   "event": null
+  },
+  {
+   "step": 54,
+   "action": 0,
+   "state_before": {
+    "ball": [
+     60.0,
+     71.0
+    ],
+    "v": [
+     -12,
+     -8
+    ],
+    "paddle": 74,
+    "left": 73
+   },
+   "event": null
+  },
+  {
+   "step": 55,
+   "action": 0,
+   "state_before": {
+    "ball": [
+     48.0,
+     63.0
+    ],
+    "v": [
+     -12,
+     -8
+    ],
+    "paddle": 64,
+    "left": 65
+   },
+   "event": null
+  },
+  {
+   "step": 56,
+   "action": 0,
+   "state_before": {
+    "ball": [
+     36.0,
+     55.0
+    ],
+    "v": [
+     -12,
+     -8
+    ],
+    "paddle": 54,
+    "left": 57
+   },
+   "event": null
+  },
+  {
+   "step": 57,
+   "action": 0,
+   "state_before": {
+    "ball": [
+     24.0,
+     47.0
+    ],
+    "v": [
+     -12,
+     -8
+    ],
+    "paddle": 44,
+    "left": 49
+   },
+   "event": null
+  },
+  {
+   "step": 58,
+   "action": 2,
+   "state_before": {
+    "ball": [
+     28.0,
+     39.0
+    ],
+    "v": [
+     12,
+     -8
+    ],
+    "paddle": 34,
+    "left": 41
+   },
+   "event": null
+  },
+  {
+   "step": 59,
+   "action": 2,
+   "state_before": {
+    "ball": [
+     40.0,
+     37.0
+    ],
+    "v": [
+     12,
+     8
+    ],
+    "paddle": 34,
+    "left": 34
+   },
+   "event": null
+  },
+  {
+   "step": 60,
+   "action": 2,
+   "state_before": {
+    "ball": [
+     52.0,
+     45.0
+    ],
+    "v": [
+     12,
+     8
+    ],
+    "paddle": 34,
+    "left": 34
+   },
+   "event": null
+  },
+  {
+   "step": 61,
+   "action": 1,
+   "state_before": {
+    "ball": [
+     64.0,
+     53.0
+    ],
+    "v": [
+     12,
+     8
+    ],
+    "paddle": 34,
+    "left": 39
+   },
+   "event": null
+  },
+  {
+   "step": 62,
+   "action": 1,
+   "state_before": {
+    "ball": [
+     76.0,
+     61.0
+    ],
+    "v": [
+     12,
+     8
+    ],
+    "paddle": 44,
+    "left": 47
+   },
+   "event": null
+  },
+  {
+   "step": 63,
+   "action": 1,
+   "state_before": {
+    "ball": [
+     88.0,
+     69.0
+    ],
+    "v": [
+     12,
+     8
+    ],
+    "paddle": 54,
+    "left": 55
+   },
+   "event": null
+  },
+  {
+   "step": 64,
+   "action": 2,
+   "state_before": {
+    "ball": [
+     100.0,
+     77.0
+    ],
+    "v": [
+     12,
+     8
+    ],
+    "paddle": 64,
+    "left": 63
+   },
+   "event": null
+  },
+  {
+   "step": 65,
+   "action": 1,
+   "state_before": {
+    "ball": [
+     112.0,
+     85.0
+    ],
+    "v": [
+     12,
+     8
+    ],
+    "paddle": 64,
+    "left": 71
+   },
+   "event": null
+  },
+  {
+   "step": 66,
+   "action": 1,
+   "state_before": {
+    "ball": [
+     124.0,
+     93.0
+    ],
+    "v": [
+     12,
+     8
+    ],
+    "paddle": 74,
+    "left": 79
+   },
+   "event": null
+  },
+  {
+   "step": 67,
+   "action": 1,
+   "state_before": {
+    "ball": [
+     136.0,
+     101.0
+    ],
+    "v": [
+     12,
+     8
+    ],
+    "paddle": 84,
+    "left": 87
+   },
+   "event": "hit"
+  },
+  {
+   "step": 68,
+   "action": 1,
+   "state_before": {
+    "ball": [
+     128.0,
+     109.0
+    ],
+    "v": [
+     -12,
+     8
+    ],
+    "paddle": 94,
+    "left": 95
+   },
+   "event": null
+  },
+  {
+   "step": 69,
+   "action": 2,
+   "state_before": {
+    "ball": [
+     116.0,
+     117.0
+    ],
+    "v": [
+     -12,
+     8
+    ],
+    "paddle": 104,
+    "left": 103
+   },
+   "event": null
+  },
+  {
+   "step": 70,
+   "action": 1,
+   "state_before": {
+    "ball": [
+     104.0,
+     125.0
+    ],
+    "v": [
+     -12,
+     8
+    ],
+    "paddle": 104,
+    "left": 111
+   },
+   "event": null
+  },
+  {
+   "step": 71,
+   "action": 1,
+   "state_before": {
+    "ball": [
+     92.0,
+     133.0
+    ],
+    "v": [
+     -12,
+     8
+    ],
+    "paddle": 114,
+    "left": 119
+   },
+   "event": null
+  },
+  {
+   "step": 72,
+   "action": 1,
+   "state_before": {
+    "ball": [
+     80.0,
+     141.0
+    ],
+    "v": [
+     -12,
+     8
+    ],
+    "paddle": 124,
+    "left": 127
+   },
+   "event": null
+  },
+  {
+   "step": 73,
+   "action": 1,
+   "state_before": {
+    "ball": [
+     68.0,
+     149.0
+    ],
+    "v": [
+     -12,
+     8
+    ],
+    "paddle": 134,
+    "left": 135
+   },
+   "event": null
+  },
+  {
+   "step": 74,
+   "action": 2,
+   "state_before": {
+    "ball": [
+     56.0,
+     157.0
+    ],
+    "v": [
+     -12,
+     8
+    ],
+    "paddle": 144,
+    "left": 143
+   },
+   "event": null
+  },
+  {
+   "step": 75,
+   "action": 1,
+   "state_before": {
+    "ball": [
+     44.0,
+     165.0
+    ],
+    "v": [
+     -12,
+     8
+    ],
+    "paddle": 144,
+    "left": 151
+   },
+   "event": null
+  },
+  {
+   "step": 76,
+   "action": 1,
+   "state_before": {
+    "ball": [
+     32.0,
+     173.0
+    ],
+    "v": [
+     -12,
+     8
+    ],
+    "paddle": 154,
+    "left": 159
+   },
+   "event": null
+  },
+  {
+   "step": 77,
+   "action": 1,
+   "state_before": {
+    "ball": [
+     20.0,
+     181.0
+    ],
+    "v": [
+     12,
+     8
+    ],
+    "paddle": 164,
+    "left": 167
+   },
+   "event": null
+  },
+  {
+   "step": 78,
+   "action": 2,
+   "state_before": {
+    "ball": [
+     32.0,
+     189.0
+    ],
+    "v": [
+     12,
+     8
+    ],
+    "paddle": 174,
+    "left": 175
+   },
+   "event": null
+  },
+  {
+   "step": 79,
+   "action": 2,
+   "state_before": {
+    "ball": [
+     44.0,
+     183.0
+    ],
+    "v": [
+     12,
+     -8
+    ],
+    "paddle": 174,
+    "left": 178
+   },
+   "event": null
+  }
+ ],
+ "summary": {
+  "game": "pong",
+  "steps": 80,
+  "seed": 7,
+  "bundle": "decider-2b-vision_int8.litertlm",
+  "backend": "gpu",
+  "hits": 4,
+  "misses": 0,
+  "median_wall_s": 0.292,
+  "left_hits": 4,
+  "serves": 1
+ }
+}
