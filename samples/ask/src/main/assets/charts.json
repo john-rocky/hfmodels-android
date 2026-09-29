@@ -1,0 +1,1850 @@
+[
+ {
+  "id": "chart_00",
+  "n": 3,
+  "heights": [
+   133,
+   163,
+   57
+  ],
+  "colours": [
+   "red",
+   "green",
+   "purple"
+  ],
+  "context": "This is a visual question about the image.",
+  "taller": {
+   "a": 2,
+   "b": 0
+  },
+  "questions": [
+   {
+    "id": "tallest",
+    "question": "Which bar is the tallest?",
+    "options": [
+     "the red bar",
+     "the green bar",
+     "the purple bar"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "shortest",
+    "question": "Which bar is the shortest?",
+    "options": [
+     "the red bar",
+     "the green bar",
+     "the purple bar"
+    ],
+    "expected": 2
+   },
+   {
+    "id": "count",
+    "question": "How many bars are in the chart?",
+    "options": [
+     "2",
+     "3",
+     "4",
+     "5",
+     "6"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "taller",
+    "question": "Is the purple bar taller than the red bar?",
+    "options": [
+     "no",
+     "yes"
+    ],
+    "expected": 0
+   },
+   {
+    "id": "leftmost",
+    "question": "Which bar is on the far left?",
+    "options": [
+     "the red bar",
+     "the green bar",
+     "the purple bar"
+    ],
+    "expected": 0
+   }
+  ]
+ },
+ {
+  "id": "chart_01",
+  "n": 4,
+  "heights": [
+   88,
+   51,
+   187,
+   135
+  ],
+  "colours": [
+   "red",
+   "purple",
+   "green",
+   "yellow"
+  ],
+  "context": "This is a visual question about the image.",
+  "taller": {
+   "a": 0,
+   "b": 1
+  },
+  "questions": [
+   {
+    "id": "tallest",
+    "question": "Which bar is the tallest?",
+    "options": [
+     "the red bar",
+     "the purple bar",
+     "the green bar",
+     "the yellow bar"
+    ],
+    "expected": 2
+   },
+   {
+    "id": "shortest",
+    "question": "Which bar is the shortest?",
+    "options": [
+     "the red bar",
+     "the purple bar",
+     "the green bar",
+     "the yellow bar"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "count",
+    "question": "How many bars are in the chart?",
+    "options": [
+     "2",
+     "3",
+     "4",
+     "5",
+     "6"
+    ],
+    "expected": 2
+   },
+   {
+    "id": "taller",
+    "question": "Is the red bar taller than the purple bar?",
+    "options": [
+     "no",
+     "yes"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "leftmost",
+    "question": "Which bar is on the far left?",
+    "options": [
+     "the red bar",
+     "the purple bar",
+     "the green bar",
+     "the yellow bar"
+    ],
+    "expected": 0
+   }
+  ]
+ },
+ {
+  "id": "chart_02",
+  "n": 5,
+  "heights": [
+   122,
+   152,
+   96,
+   68,
+   180
+  ],
+  "colours": [
+   "red",
+   "purple",
+   "yellow",
+   "green",
+   "blue"
+  ],
+  "context": "This is a visual question about the image.",
+  "taller": {
+   "a": 3,
+   "b": 2
+  },
+  "questions": [
+   {
+    "id": "tallest",
+    "question": "Which bar is the tallest?",
+    "options": [
+     "the red bar",
+     "the purple bar",
+     "the yellow bar",
+     "the green bar",
+     "the blue bar"
+    ],
+    "expected": 4
+   },
+   {
+    "id": "shortest",
+    "question": "Which bar is the shortest?",
+    "options": [
+     "the red bar",
+     "the purple bar",
+     "the yellow bar",
+     "the green bar",
+     "the blue bar"
+    ],
+    "expected": 3
+   },
+   {
+    "id": "count",
+    "question": "How many bars are in the chart?",
+    "options": [
+     "2",
+     "3",
+     "4",
+     "5",
+     "6"
+    ],
+    "expected": 3
+   },
+   {
+    "id": "taller",
+    "question": "Is the green bar taller than the yellow bar?",
+    "options": [
+     "no",
+     "yes"
+    ],
+    "expected": 0
+   },
+   {
+    "id": "leftmost",
+    "question": "Which bar is on the far left?",
+    "options": [
+     "the red bar",
+     "the purple bar",
+     "the yellow bar",
+     "the green bar",
+     "the blue bar"
+    ],
+    "expected": 0
+   }
+  ]
+ },
+ {
+  "id": "chart_03",
+  "n": 3,
+  "heights": [
+   153,
+   76,
+   128
+  ],
+  "colours": [
+   "blue",
+   "purple",
+   "yellow"
+  ],
+  "context": "This is a visual question about the image.",
+  "taller": {
+   "a": 2,
+   "b": 1
+  },
+  "questions": [
+   {
+    "id": "tallest",
+    "question": "Which bar is the tallest?",
+    "options": [
+     "the blue bar",
+     "the purple bar",
+     "the yellow bar"
+    ],
+    "expected": 0
+   },
+   {
+    "id": "shortest",
+    "question": "Which bar is the shortest?",
+    "options": [
+     "the blue bar",
+     "the purple bar",
+     "the yellow bar"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "count",
+    "question": "How many bars are in the chart?",
+    "options": [
+     "2",
+     "3",
+     "4",
+     "5",
+     "6"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "taller",
+    "question": "Is the yellow bar taller than the purple bar?",
+    "options": [
+     "no",
+     "yes"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "leftmost",
+    "question": "Which bar is on the far left?",
+    "options": [
+     "the blue bar",
+     "the purple bar",
+     "the yellow bar"
+    ],
+    "expected": 0
+   }
+  ]
+ },
+ {
+  "id": "chart_04",
+  "n": 4,
+  "heights": [
+   137,
+   46,
+   99,
+   167
+  ],
+  "colours": [
+   "blue",
+   "purple",
+   "red",
+   "green"
+  ],
+  "context": "This is a visual question about the image.",
+  "taller": {
+   "a": 2,
+   "b": 3
+  },
+  "questions": [
+   {
+    "id": "tallest",
+    "question": "Which bar is the tallest?",
+    "options": [
+     "the blue bar",
+     "the purple bar",
+     "the red bar",
+     "the green bar"
+    ],
+    "expected": 3
+   },
+   {
+    "id": "shortest",
+    "question": "Which bar is the shortest?",
+    "options": [
+     "the blue bar",
+     "the purple bar",
+     "the red bar",
+     "the green bar"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "count",
+    "question": "How many bars are in the chart?",
+    "options": [
+     "2",
+     "3",
+     "4",
+     "5",
+     "6"
+    ],
+    "expected": 2
+   },
+   {
+    "id": "taller",
+    "question": "Is the red bar taller than the green bar?",
+    "options": [
+     "no",
+     "yes"
+    ],
+    "expected": 0
+   },
+   {
+    "id": "leftmost",
+    "question": "Which bar is on the far left?",
+    "options": [
+     "the blue bar",
+     "the purple bar",
+     "the red bar",
+     "the green bar"
+    ],
+    "expected": 0
+   }
+  ]
+ },
+ {
+  "id": "chart_05",
+  "n": 5,
+  "heights": [
+   167,
+   41,
+   70,
+   128,
+   100
+  ],
+  "colours": [
+   "green",
+   "blue",
+   "red",
+   "purple",
+   "yellow"
+  ],
+  "context": "This is a visual question about the image.",
+  "taller": {
+   "a": 0,
+   "b": 1
+  },
+  "questions": [
+   {
+    "id": "tallest",
+    "question": "Which bar is the tallest?",
+    "options": [
+     "the green bar",
+     "the blue bar",
+     "the red bar",
+     "the purple bar",
+     "the yellow bar"
+    ],
+    "expected": 0
+   },
+   {
+    "id": "shortest",
+    "question": "Which bar is the shortest?",
+    "options": [
+     "the green bar",
+     "the blue bar",
+     "the red bar",
+     "the purple bar",
+     "the yellow bar"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "count",
+    "question": "How many bars are in the chart?",
+    "options": [
+     "2",
+     "3",
+     "4",
+     "5",
+     "6"
+    ],
+    "expected": 3
+   },
+   {
+    "id": "taller",
+    "question": "Is the green bar taller than the blue bar?",
+    "options": [
+     "no",
+     "yes"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "leftmost",
+    "question": "Which bar is on the far left?",
+    "options": [
+     "the green bar",
+     "the blue bar",
+     "the red bar",
+     "the purple bar",
+     "the yellow bar"
+    ],
+    "expected": 0
+   }
+  ]
+ },
+ {
+  "id": "chart_06",
+  "n": 3,
+  "heights": [
+   176,
+   45,
+   92
+  ],
+  "colours": [
+   "blue",
+   "green",
+   "red"
+  ],
+  "context": "This is a visual question about the image.",
+  "taller": {
+   "a": 0,
+   "b": 2
+  },
+  "questions": [
+   {
+    "id": "tallest",
+    "question": "Which bar is the tallest?",
+    "options": [
+     "the blue bar",
+     "the green bar",
+     "the red bar"
+    ],
+    "expected": 0
+   },
+   {
+    "id": "shortest",
+    "question": "Which bar is the shortest?",
+    "options": [
+     "the blue bar",
+     "the green bar",
+     "the red bar"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "count",
+    "question": "How many bars are in the chart?",
+    "options": [
+     "2",
+     "3",
+     "4",
+     "5",
+     "6"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "taller",
+    "question": "Is the blue bar taller than the red bar?",
+    "options": [
+     "no",
+     "yes"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "leftmost",
+    "question": "Which bar is on the far left?",
+    "options": [
+     "the blue bar",
+     "the green bar",
+     "the red bar"
+    ],
+    "expected": 0
+   }
+  ]
+ },
+ {
+  "id": "chart_07",
+  "n": 4,
+  "heights": [
+   45,
+   146,
+   185,
+   103
+  ],
+  "colours": [
+   "red",
+   "purple",
+   "green",
+   "blue"
+  ],
+  "context": "This is a visual question about the image.",
+  "taller": {
+   "a": 1,
+   "b": 2
+  },
+  "questions": [
+   {
+    "id": "tallest",
+    "question": "Which bar is the tallest?",
+    "options": [
+     "the red bar",
+     "the purple bar",
+     "the green bar",
+     "the blue bar"
+    ],
+    "expected": 2
+   },
+   {
+    "id": "shortest",
+    "question": "Which bar is the shortest?",
+    "options": [
+     "the red bar",
+     "the purple bar",
+     "the green bar",
+     "the blue bar"
+    ],
+    "expected": 0
+   },
+   {
+    "id": "count",
+    "question": "How many bars are in the chart?",
+    "options": [
+     "2",
+     "3",
+     "4",
+     "5",
+     "6"
+    ],
+    "expected": 2
+   },
+   {
+    "id": "taller",
+    "question": "Is the purple bar taller than the green bar?",
+    "options": [
+     "no",
+     "yes"
+    ],
+    "expected": 0
+   },
+   {
+    "id": "leftmost",
+    "question": "Which bar is on the far left?",
+    "options": [
+     "the red bar",
+     "the purple bar",
+     "the green bar",
+     "the blue bar"
+    ],
+    "expected": 0
+   }
+  ]
+ },
+ {
+  "id": "chart_08",
+  "n": 5,
+  "heights": [
+   158,
+   183,
+   126,
+   43,
+   80
+  ],
+  "colours": [
+   "purple",
+   "yellow",
+   "red",
+   "green",
+   "blue"
+  ],
+  "context": "This is a visual question about the image.",
+  "taller": {
+   "a": 3,
+   "b": 2
+  },
+  "questions": [
+   {
+    "id": "tallest",
+    "question": "Which bar is the tallest?",
+    "options": [
+     "the purple bar",
+     "the yellow bar",
+     "the red bar",
+     "the green bar",
+     "the blue bar"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "shortest",
+    "question": "Which bar is the shortest?",
+    "options": [
+     "the purple bar",
+     "the yellow bar",
+     "the red bar",
+     "the green bar",
+     "the blue bar"
+    ],
+    "expected": 3
+   },
+   {
+    "id": "count",
+    "question": "How many bars are in the chart?",
+    "options": [
+     "2",
+     "3",
+     "4",
+     "5",
+     "6"
+    ],
+    "expected": 3
+   },
+   {
+    "id": "taller",
+    "question": "Is the green bar taller than the red bar?",
+    "options": [
+     "no",
+     "yes"
+    ],
+    "expected": 0
+   },
+   {
+    "id": "leftmost",
+    "question": "Which bar is on the far left?",
+    "options": [
+     "the purple bar",
+     "the yellow bar",
+     "the red bar",
+     "the green bar",
+     "the blue bar"
+    ],
+    "expected": 0
+   }
+  ]
+ },
+ {
+  "id": "chart_09",
+  "n": 3,
+  "heights": [
+   171,
+   141,
+   68
+  ],
+  "colours": [
+   "green",
+   "blue",
+   "purple"
+  ],
+  "context": "This is a visual question about the image.",
+  "taller": {
+   "a": 1,
+   "b": 2
+  },
+  "questions": [
+   {
+    "id": "tallest",
+    "question": "Which bar is the tallest?",
+    "options": [
+     "the green bar",
+     "the blue bar",
+     "the purple bar"
+    ],
+    "expected": 0
+   },
+   {
+    "id": "shortest",
+    "question": "Which bar is the shortest?",
+    "options": [
+     "the green bar",
+     "the blue bar",
+     "the purple bar"
+    ],
+    "expected": 2
+   },
+   {
+    "id": "count",
+    "question": "How many bars are in the chart?",
+    "options": [
+     "2",
+     "3",
+     "4",
+     "5",
+     "6"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "taller",
+    "question": "Is the blue bar taller than the purple bar?",
+    "options": [
+     "no",
+     "yes"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "leftmost",
+    "question": "Which bar is on the far left?",
+    "options": [
+     "the green bar",
+     "the blue bar",
+     "the purple bar"
+    ],
+    "expected": 0
+   }
+  ]
+ },
+ {
+  "id": "chart_10",
+  "n": 4,
+  "heights": [
+   128,
+   189,
+   82,
+   163
+  ],
+  "colours": [
+   "purple",
+   "blue",
+   "yellow",
+   "green"
+  ],
+  "context": "This is a visual question about the image.",
+  "taller": {
+   "a": 2,
+   "b": 1
+  },
+  "questions": [
+   {
+    "id": "tallest",
+    "question": "Which bar is the tallest?",
+    "options": [
+     "the purple bar",
+     "the blue bar",
+     "the yellow bar",
+     "the green bar"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "shortest",
+    "question": "Which bar is the shortest?",
+    "options": [
+     "the purple bar",
+     "the blue bar",
+     "the yellow bar",
+     "the green bar"
+    ],
+    "expected": 2
+   },
+   {
+    "id": "count",
+    "question": "How many bars are in the chart?",
+    "options": [
+     "2",
+     "3",
+     "4",
+     "5",
+     "6"
+    ],
+    "expected": 2
+   },
+   {
+    "id": "taller",
+    "question": "Is the yellow bar taller than the blue bar?",
+    "options": [
+     "no",
+     "yes"
+    ],
+    "expected": 0
+   },
+   {
+    "id": "leftmost",
+    "question": "Which bar is on the far left?",
+    "options": [
+     "the purple bar",
+     "the blue bar",
+     "the yellow bar",
+     "the green bar"
+    ],
+    "expected": 0
+   }
+  ]
+ },
+ {
+  "id": "chart_11",
+  "n": 5,
+  "heights": [
+   110,
+   143,
+   67,
+   169,
+   42
+  ],
+  "colours": [
+   "red",
+   "blue",
+   "green",
+   "yellow",
+   "purple"
+  ],
+  "context": "This is a visual question about the image.",
+  "taller": {
+   "a": 3,
+   "b": 2
+  },
+  "questions": [
+   {
+    "id": "tallest",
+    "question": "Which bar is the tallest?",
+    "options": [
+     "the red bar",
+     "the blue bar",
+     "the green bar",
+     "the yellow bar",
+     "the purple bar"
+    ],
+    "expected": 3
+   },
+   {
+    "id": "shortest",
+    "question": "Which bar is the shortest?",
+    "options": [
+     "the red bar",
+     "the blue bar",
+     "the green bar",
+     "the yellow bar",
+     "the purple bar"
+    ],
+    "expected": 4
+   },
+   {
+    "id": "count",
+    "question": "How many bars are in the chart?",
+    "options": [
+     "2",
+     "3",
+     "4",
+     "5",
+     "6"
+    ],
+    "expected": 3
+   },
+   {
+    "id": "taller",
+    "question": "Is the yellow bar taller than the green bar?",
+    "options": [
+     "no",
+     "yes"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "leftmost",
+    "question": "Which bar is on the far left?",
+    "options": [
+     "the red bar",
+     "the blue bar",
+     "the green bar",
+     "the yellow bar",
+     "the purple bar"
+    ],
+    "expected": 0
+   }
+  ]
+ },
+ {
+  "id": "chart_12",
+  "n": 3,
+  "heights": [
+   122,
+   185,
+   44
+  ],
+  "colours": [
+   "red",
+   "blue",
+   "green"
+  ],
+  "context": "This is a visual question about the image.",
+  "taller": {
+   "a": 2,
+   "b": 0
+  },
+  "questions": [
+   {
+    "id": "tallest",
+    "question": "Which bar is the tallest?",
+    "options": [
+     "the red bar",
+     "the blue bar",
+     "the green bar"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "shortest",
+    "question": "Which bar is the shortest?",
+    "options": [
+     "the red bar",
+     "the blue bar",
+     "the green bar"
+    ],
+    "expected": 2
+   },
+   {
+    "id": "count",
+    "question": "How many bars are in the chart?",
+    "options": [
+     "2",
+     "3",
+     "4",
+     "5",
+     "6"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "taller",
+    "question": "Is the green bar taller than the red bar?",
+    "options": [
+     "no",
+     "yes"
+    ],
+    "expected": 0
+   },
+   {
+    "id": "leftmost",
+    "question": "Which bar is on the far left?",
+    "options": [
+     "the red bar",
+     "the blue bar",
+     "the green bar"
+    ],
+    "expected": 0
+   }
+  ]
+ },
+ {
+  "id": "chart_13",
+  "n": 4,
+  "heights": [
+   180,
+   72,
+   102,
+   131
+  ],
+  "colours": [
+   "yellow",
+   "green",
+   "blue",
+   "red"
+  ],
+  "context": "This is a visual question about the image.",
+  "taller": {
+   "a": 0,
+   "b": 3
+  },
+  "questions": [
+   {
+    "id": "tallest",
+    "question": "Which bar is the tallest?",
+    "options": [
+     "the yellow bar",
+     "the green bar",
+     "the blue bar",
+     "the red bar"
+    ],
+    "expected": 0
+   },
+   {
+    "id": "shortest",
+    "question": "Which bar is the shortest?",
+    "options": [
+     "the yellow bar",
+     "the green bar",
+     "the blue bar",
+     "the red bar"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "count",
+    "question": "How many bars are in the chart?",
+    "options": [
+     "2",
+     "3",
+     "4",
+     "5",
+     "6"
+    ],
+    "expected": 2
+   },
+   {
+    "id": "taller",
+    "question": "Is the yellow bar taller than the red bar?",
+    "options": [
+     "no",
+     "yes"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "leftmost",
+    "question": "Which bar is on the far left?",
+    "options": [
+     "the yellow bar",
+     "the green bar",
+     "the blue bar",
+     "the red bar"
+    ],
+    "expected": 0
+   }
+  ]
+ },
+ {
+  "id": "chart_14",
+  "n": 5,
+  "heights": [
+   107,
+   135,
+   40,
+   169,
+   77
+  ],
+  "colours": [
+   "blue",
+   "green",
+   "yellow",
+   "red",
+   "purple"
+  ],
+  "context": "This is a visual question about the image.",
+  "taller": {
+   "a": 4,
+   "b": 3
+  },
+  "questions": [
+   {
+    "id": "tallest",
+    "question": "Which bar is the tallest?",
+    "options": [
+     "the blue bar",
+     "the green bar",
+     "the yellow bar",
+     "the red bar",
+     "the purple bar"
+    ],
+    "expected": 3
+   },
+   {
+    "id": "shortest",
+    "question": "Which bar is the shortest?",
+    "options": [
+     "the blue bar",
+     "the green bar",
+     "the yellow bar",
+     "the red bar",
+     "the purple bar"
+    ],
+    "expected": 2
+   },
+   {
+    "id": "count",
+    "question": "How many bars are in the chart?",
+    "options": [
+     "2",
+     "3",
+     "4",
+     "5",
+     "6"
+    ],
+    "expected": 3
+   },
+   {
+    "id": "taller",
+    "question": "Is the purple bar taller than the red bar?",
+    "options": [
+     "no",
+     "yes"
+    ],
+    "expected": 0
+   },
+   {
+    "id": "leftmost",
+    "question": "Which bar is on the far left?",
+    "options": [
+     "the blue bar",
+     "the green bar",
+     "the yellow bar",
+     "the red bar",
+     "the purple bar"
+    ],
+    "expected": 0
+   }
+  ]
+ },
+ {
+  "id": "chart_15",
+  "n": 3,
+  "heights": [
+   171,
+   98,
+   52
+  ],
+  "colours": [
+   "red",
+   "green",
+   "yellow"
+  ],
+  "context": "This is a visual question about the image.",
+  "taller": {
+   "a": 2,
+   "b": 1
+  },
+  "questions": [
+   {
+    "id": "tallest",
+    "question": "Which bar is the tallest?",
+    "options": [
+     "the red bar",
+     "the green bar",
+     "the yellow bar"
+    ],
+    "expected": 0
+   },
+   {
+    "id": "shortest",
+    "question": "Which bar is the shortest?",
+    "options": [
+     "the red bar",
+     "the green bar",
+     "the yellow bar"
+    ],
+    "expected": 2
+   },
+   {
+    "id": "count",
+    "question": "How many bars are in the chart?",
+    "options": [
+     "2",
+     "3",
+     "4",
+     "5",
+     "6"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "taller",
+    "question": "Is the yellow bar taller than the green bar?",
+    "options": [
+     "no",
+     "yes"
+    ],
+    "expected": 0
+   },
+   {
+    "id": "leftmost",
+    "question": "Which bar is on the far left?",
+    "options": [
+     "the red bar",
+     "the green bar",
+     "the yellow bar"
+    ],
+    "expected": 0
+   }
+  ]
+ },
+ {
+  "id": "chart_16",
+  "n": 4,
+  "heights": [
+   76,
+   188,
+   132,
+   161
+  ],
+  "colours": [
+   "blue",
+   "red",
+   "green",
+   "yellow"
+  ],
+  "context": "This is a visual question about the image.",
+  "taller": {
+   "a": 2,
+   "b": 0
+  },
+  "questions": [
+   {
+    "id": "tallest",
+    "question": "Which bar is the tallest?",
+    "options": [
+     "the blue bar",
+     "the red bar",
+     "the green bar",
+     "the yellow bar"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "shortest",
+    "question": "Which bar is the shortest?",
+    "options": [
+     "the blue bar",
+     "the red bar",
+     "the green bar",
+     "the yellow bar"
+    ],
+    "expected": 0
+   },
+   {
+    "id": "count",
+    "question": "How many bars are in the chart?",
+    "options": [
+     "2",
+     "3",
+     "4",
+     "5",
+     "6"
+    ],
+    "expected": 2
+   },
+   {
+    "id": "taller",
+    "question": "Is the green bar taller than the blue bar?",
+    "options": [
+     "no",
+     "yes"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "leftmost",
+    "question": "Which bar is on the far left?",
+    "options": [
+     "the blue bar",
+     "the red bar",
+     "the green bar",
+     "the yellow bar"
+    ],
+    "expected": 0
+   }
+  ]
+ },
+ {
+  "id": "chart_17",
+  "n": 5,
+  "heights": [
+   41,
+   179,
+   153,
+   114,
+   72
+  ],
+  "colours": [
+   "purple",
+   "blue",
+   "yellow",
+   "red",
+   "green"
+  ],
+  "context": "This is a visual question about the image.",
+  "taller": {
+   "a": 2,
+   "b": 4
+  },
+  "questions": [
+   {
+    "id": "tallest",
+    "question": "Which bar is the tallest?",
+    "options": [
+     "the purple bar",
+     "the blue bar",
+     "the yellow bar",
+     "the red bar",
+     "the green bar"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "shortest",
+    "question": "Which bar is the shortest?",
+    "options": [
+     "the purple bar",
+     "the blue bar",
+     "the yellow bar",
+     "the red bar",
+     "the green bar"
+    ],
+    "expected": 0
+   },
+   {
+    "id": "count",
+    "question": "How many bars are in the chart?",
+    "options": [
+     "2",
+     "3",
+     "4",
+     "5",
+     "6"
+    ],
+    "expected": 3
+   },
+   {
+    "id": "taller",
+    "question": "Is the yellow bar taller than the green bar?",
+    "options": [
+     "no",
+     "yes"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "leftmost",
+    "question": "Which bar is on the far left?",
+    "options": [
+     "the purple bar",
+     "the blue bar",
+     "the yellow bar",
+     "the red bar",
+     "the green bar"
+    ],
+    "expected": 0
+   }
+  ]
+ },
+ {
+  "id": "chart_18",
+  "n": 3,
+  "heights": [
+   190,
+   115,
+   48
+  ],
+  "colours": [
+   "purple",
+   "yellow",
+   "green"
+  ],
+  "context": "This is a visual question about the image.",
+  "taller": {
+   "a": 0,
+   "b": 1
+  },
+  "questions": [
+   {
+    "id": "tallest",
+    "question": "Which bar is the tallest?",
+    "options": [
+     "the purple bar",
+     "the yellow bar",
+     "the green bar"
+    ],
+    "expected": 0
+   },
+   {
+    "id": "shortest",
+    "question": "Which bar is the shortest?",
+    "options": [
+     "the purple bar",
+     "the yellow bar",
+     "the green bar"
+    ],
+    "expected": 2
+   },
+   {
+    "id": "count",
+    "question": "How many bars are in the chart?",
+    "options": [
+     "2",
+     "3",
+     "4",
+     "5",
+     "6"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "taller",
+    "question": "Is the purple bar taller than the yellow bar?",
+    "options": [
+     "no",
+     "yes"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "leftmost",
+    "question": "Which bar is on the far left?",
+    "options": [
+     "the purple bar",
+     "the yellow bar",
+     "the green bar"
+    ],
+    "expected": 0
+   }
+  ]
+ },
+ {
+  "id": "chart_19",
+  "n": 4,
+  "heights": [
+   112,
+   46,
+   171,
+   86
+  ],
+  "colours": [
+   "blue",
+   "green",
+   "red",
+   "yellow"
+  ],
+  "context": "This is a visual question about the image.",
+  "taller": {
+   "a": 2,
+   "b": 1
+  },
+  "questions": [
+   {
+    "id": "tallest",
+    "question": "Which bar is the tallest?",
+    "options": [
+     "the blue bar",
+     "the green bar",
+     "the red bar",
+     "the yellow bar"
+    ],
+    "expected": 2
+   },
+   {
+    "id": "shortest",
+    "question": "Which bar is the shortest?",
+    "options": [
+     "the blue bar",
+     "the green bar",
+     "the red bar",
+     "the yellow bar"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "count",
+    "question": "How many bars are in the chart?",
+    "options": [
+     "2",
+     "3",
+     "4",
+     "5",
+     "6"
+    ],
+    "expected": 2
+   },
+   {
+    "id": "taller",
+    "question": "Is the red bar taller than the green bar?",
+    "options": [
+     "no",
+     "yes"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "leftmost",
+    "question": "Which bar is on the far left?",
+    "options": [
+     "the blue bar",
+     "the green bar",
+     "the red bar",
+     "the yellow bar"
+    ],
+    "expected": 0
+   }
+  ]
+ },
+ {
+  "id": "chart_20",
+  "n": 5,
+  "heights": [
+   118,
+   52,
+   185,
+   153,
+   78
+  ],
+  "colours": [
+   "red",
+   "purple",
+   "blue",
+   "green",
+   "yellow"
+  ],
+  "context": "This is a visual question about the image.",
+  "taller": {
+   "a": 0,
+   "b": 4
+  },
+  "questions": [
+   {
+    "id": "tallest",
+    "question": "Which bar is the tallest?",
+    "options": [
+     "the red bar",
+     "the purple bar",
+     "the blue bar",
+     "the green bar",
+     "the yellow bar"
+    ],
+    "expected": 2
+   },
+   {
+    "id": "shortest",
+    "question": "Which bar is the shortest?",
+    "options": [
+     "the red bar",
+     "the purple bar",
+     "the blue bar",
+     "the green bar",
+     "the yellow bar"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "count",
+    "question": "How many bars are in the chart?",
+    "options": [
+     "2",
+     "3",
+     "4",
+     "5",
+     "6"
+    ],
+    "expected": 3
+   },
+   {
+    "id": "taller",
+    "question": "Is the red bar taller than the yellow bar?",
+    "options": [
+     "no",
+     "yes"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "leftmost",
+    "question": "Which bar is on the far left?",
+    "options": [
+     "the red bar",
+     "the purple bar",
+     "the blue bar",
+     "the green bar",
+     "the yellow bar"
+    ],
+    "expected": 0
+   }
+  ]
+ },
+ {
+  "id": "chart_21",
+  "n": 3,
+  "heights": [
+   47,
+   188,
+   118
+  ],
+  "colours": [
+   "green",
+   "yellow",
+   "blue"
+  ],
+  "context": "This is a visual question about the image.",
+  "taller": {
+   "a": 1,
+   "b": 0
+  },
+  "questions": [
+   {
+    "id": "tallest",
+    "question": "Which bar is the tallest?",
+    "options": [
+     "the green bar",
+     "the yellow bar",
+     "the blue bar"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "shortest",
+    "question": "Which bar is the shortest?",
+    "options": [
+     "the green bar",
+     "the yellow bar",
+     "the blue bar"
+    ],
+    "expected": 0
+   },
+   {
+    "id": "count",
+    "question": "How many bars are in the chart?",
+    "options": [
+     "2",
+     "3",
+     "4",
+     "5",
+     "6"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "taller",
+    "question": "Is the yellow bar taller than the green bar?",
+    "options": [
+     "no",
+     "yes"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "leftmost",
+    "question": "Which bar is on the far left?",
+    "options": [
+     "the green bar",
+     "the yellow bar",
+     "the blue bar"
+    ],
+    "expected": 0
+   }
+  ]
+ },
+ {
+  "id": "chart_22",
+  "n": 4,
+  "heights": [
+   54,
+   80,
+   121,
+   179
+  ],
+  "colours": [
+   "blue",
+   "yellow",
+   "red",
+   "purple"
+  ],
+  "context": "This is a visual question about the image.",
+  "taller": {
+   "a": 1,
+   "b": 3
+  },
+  "questions": [
+   {
+    "id": "tallest",
+    "question": "Which bar is the tallest?",
+    "options": [
+     "the blue bar",
+     "the yellow bar",
+     "the red bar",
+     "the purple bar"
+    ],
+    "expected": 3
+   },
+   {
+    "id": "shortest",
+    "question": "Which bar is the shortest?",
+    "options": [
+     "the blue bar",
+     "the yellow bar",
+     "the red bar",
+     "the purple bar"
+    ],
+    "expected": 0
+   },
+   {
+    "id": "count",
+    "question": "How many bars are in the chart?",
+    "options": [
+     "2",
+     "3",
+     "4",
+     "5",
+     "6"
+    ],
+    "expected": 2
+   },
+   {
+    "id": "taller",
+    "question": "Is the yellow bar taller than the purple bar?",
+    "options": [
+     "no",
+     "yes"
+    ],
+    "expected": 0
+   },
+   {
+    "id": "leftmost",
+    "question": "Which bar is on the far left?",
+    "options": [
+     "the blue bar",
+     "the yellow bar",
+     "the red bar",
+     "the purple bar"
+    ],
+    "expected": 0
+   }
+  ]
+ },
+ {
+  "id": "chart_23",
+  "n": 5,
+  "heights": [
+   190,
+   47,
+   77,
+   111,
+   164
+  ],
+  "colours": [
+   "green",
+   "blue",
+   "purple",
+   "yellow",
+   "red"
+  ],
+  "context": "This is a visual question about the image.",
+  "taller": {
+   "a": 1,
+   "b": 3
+  },
+  "questions": [
+   {
+    "id": "tallest",
+    "question": "Which bar is the tallest?",
+    "options": [
+     "the green bar",
+     "the blue bar",
+     "the purple bar",
+     "the yellow bar",
+     "the red bar"
+    ],
+    "expected": 0
+   },
+   {
+    "id": "shortest",
+    "question": "Which bar is the shortest?",
+    "options": [
+     "the green bar",
+     "the blue bar",
+     "the purple bar",
+     "the yellow bar",
+     "the red bar"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "count",
+    "question": "How many bars are in the chart?",
+    "options": [
+     "2",
+     "3",
+     "4",
+     "5",
+     "6"
+    ],
+    "expected": 3
+   },
+   {
+    "id": "taller",
+    "question": "Is the blue bar taller than the yellow bar?",
+    "options": [
+     "no",
+     "yes"
+    ],
+    "expected": 0
+   },
+   {
+    "id": "leftmost",
+    "question": "Which bar is on the far left?",
+    "options": [
+     "the green bar",
+     "the blue bar",
+     "the purple bar",
+     "the yellow bar",
+     "the red bar"
+    ],
+    "expected": 0
+   }
+  ]
+ }
+]

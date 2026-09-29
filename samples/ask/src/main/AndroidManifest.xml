@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- INTERNET (first download) and the GPU's uses-native-library entries come from the SDK's manifests. -->
+    <application
+        android:label="@string/app_name"
+        android:allowBackup="false"
+        android:largeHeap="true">
+        <!-- Recording mode (autostart) is described in the KDoc of MainActivity.kt and in README.md. -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Material.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
