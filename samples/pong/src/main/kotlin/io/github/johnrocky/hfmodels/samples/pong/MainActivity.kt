@@ -183,17 +183,20 @@ class MainActivity : ComponentActivity() {
                 Tasks.Chat,
                 LoadOptions(descriptorJson = descriptor, backendPolicy = policy()),
             ) { e ->
-                detail = when (e) {
-                    is LoadEvent.Resolving -> "Resolving"
-                    is LoadEvent.DownloadStarted -> { loadDownloaded = true; "Downloading ${mb(e.totalBytes)}" }
-                    is LoadEvent.Downloading -> "Downloading ${mb(e.bytes)} / ${mb(e.totalBytes)}"
-                    is LoadEvent.Verifying -> "Verifying sha256"
-                    is LoadEvent.Initializing -> "Initializing profile ${e.profileId}"
-                    is LoadEvent.Fallback -> "Fallback: ${e.reason}"
-                    is LoadEvent.Ready -> "Ready: profile ${e.info.profileId}"
+                // Initializing, Fallback and Downloading arrive on the SDK's worker threads; the views are touched on the main thread only.
+                runOnUiThread {
+                    detail = when (e) {
+                        is LoadEvent.Resolving -> "Resolving"
+                        is LoadEvent.DownloadStarted -> { loadDownloaded = true; "Downloading ${mb(e.totalBytes)}" }
+                        is LoadEvent.Downloading -> "Downloading ${mb(e.bytes)} / ${mb(e.totalBytes)}"
+                        is LoadEvent.Verifying -> "Verifying sha256"
+                        is LoadEvent.Initializing -> "Initializing profile ${e.profileId}"
+                        is LoadEvent.Fallback -> "Fallback: ${e.reason}"
+                        is LoadEvent.Ready -> "Ready: profile ${e.info.profileId}"
+                    }
+                    if (e !is LoadEvent.Downloading) Log.i(TAG, "load $detail")
+                    render()
                 }
-                if (e !is LoadEvent.Downloading) Log.i(TAG, "load $detail")
-                render()
             }
             loadMs = SystemClock.elapsedRealtime() - t0
             chat = model
