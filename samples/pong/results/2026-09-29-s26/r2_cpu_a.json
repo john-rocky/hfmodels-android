@@ -1,0 +1,1414 @@
+{
+  "steps": 60,
+  "completed_steps": 60,
+  "stopped": false,
+  "failure": null,
+  "seed": 7,
+  "backend_policy": "cpu",
+  "profile": "cpu",
+  "variant": "int8",
+  "model": "litert-community\/decider-2b-vision-LiteRT@6c024e946bb8489f3faacb2514b0c61b355d1fdb",
+  "sdk_version": "0.1.3-SNAPSHOT",
+  "runtime_version": "0.16.1",
+  "device": {
+    "model": "SM-S942Q",
+    "display": "BP4A.251205.006.S942QOPS1AZF2"
+  },
+  "load_ms": 13064,
+  "load_downloaded": false,
+  "answer_ms_median": 1257,
+  "answer_ms_p90": 1354.4,
+  "conversation_ms_median": 1.4,
+  "hits": 3,
+  "misses": 0,
+  "left_hits": 3,
+  "left_misses": 0,
+  "serves": 1,
+  "unparsed": 0,
+  "thermal_before": 0,
+  "thermal_after": 1,
+  "total_s": 79.3,
+  "prompt": "Context:\nYou play Pong (Atari) and control the right paddle. Move the paddle so the ball hits it; the ball bounces off paddles and walls. Missing the ball loses a point. The image shows the current game screen.\n\nQuestion: What should you do right now?\nOptions:\n(A) move paddle up\n(B) move paddle down\n(C) stay\nAnswer: (",
+  "steps_log": [
+    {
+      "step": 0,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1843.5,
+      "stream_ms": 1843.7,
+      "conversation_ms": 2034.4,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          40,
+          100
+        ],
+        "v": [
+          12,
+          2
+        ],
+        "paddle": 90,
+        "left": 90
+      },
+      "event": null
+    },
+    {
+      "step": 1,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1297.1,
+      "stream_ms": 1297.4,
+      "conversation_ms": 1.2,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          52,
+          102
+        ],
+        "v": [
+          12,
+          2
+        ],
+        "paddle": 90,
+        "left": 94
+      },
+      "event": null
+    },
+    {
+      "step": 2,
+      "letter": "B",
+      "raw_text": "B",
+      "action": 1,
+      "answer_ms": 938,
+      "stream_ms": 938.1,
+      "conversation_ms": 0.9,
+      "close_ms": 0.1,
+      "state_before": {
+        "ball": [
+          64,
+          104
+        ],
+        "v": [
+          12,
+          2
+        ],
+        "paddle": 90,
+        "left": 96
+      },
+      "event": null
+    },
+    {
+      "step": 3,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 945.5,
+      "stream_ms": 945.8,
+      "conversation_ms": 2.3,
+      "close_ms": 0.1,
+      "state_before": {
+        "ball": [
+          76,
+          106
+        ],
+        "v": [
+          12,
+          2
+        ],
+        "paddle": 100,
+        "left": 98
+      },
+      "event": null
+    },
+    {
+      "step": 4,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 979,
+      "stream_ms": 979.1,
+      "conversation_ms": 0.7,
+      "close_ms": 0.1,
+      "state_before": {
+        "ball": [
+          88,
+          108
+        ],
+        "v": [
+          12,
+          2
+        ],
+        "paddle": 100,
+        "left": 100
+      },
+      "event": null
+    },
+    {
+      "step": 5,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 982.7,
+      "stream_ms": 984.8,
+      "conversation_ms": 1,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          100,
+          110
+        ],
+        "v": [
+          12,
+          2
+        ],
+        "paddle": 100,
+        "left": 102
+      },
+      "event": null
+    },
+    {
+      "step": 6,
+      "letter": "B",
+      "raw_text": "B",
+      "action": 1,
+      "answer_ms": 1072.4,
+      "stream_ms": 1072.7,
+      "conversation_ms": 1.1,
+      "close_ms": 2.5,
+      "state_before": {
+        "ball": [
+          112,
+          112
+        ],
+        "v": [
+          12,
+          2
+        ],
+        "paddle": 100,
+        "left": 104
+      },
+      "event": null
+    },
+    {
+      "step": 7,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1087.7,
+      "stream_ms": 1088.1,
+      "conversation_ms": 1,
+      "close_ms": 2.3,
+      "state_before": {
+        "ball": [
+          124,
+          114
+        ],
+        "v": [
+          12,
+          2
+        ],
+        "paddle": 110,
+        "left": 106
+      },
+      "event": null
+    },
+    {
+      "step": 8,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1196.1,
+      "stream_ms": 1196.4,
+      "conversation_ms": 1.3,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          136,
+          116
+        ],
+        "v": [
+          12,
+          2
+        ],
+        "paddle": 110,
+        "left": 108
+      },
+      "event": "hit"
+    },
+    {
+      "step": 9,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1230.9,
+      "stream_ms": 1231.3,
+      "conversation_ms": 1.5,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          128,
+          118
+        ],
+        "v": [
+          -12,
+          2
+        ],
+        "paddle": 110,
+        "left": 110
+      },
+      "event": null
+    },
+    {
+      "step": 10,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1260.1,
+      "stream_ms": 1260.4,
+      "conversation_ms": 1.3,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          116,
+          120
+        ],
+        "v": [
+          -12,
+          2
+        ],
+        "paddle": 110,
+        "left": 112
+      },
+      "event": null
+    },
+    {
+      "step": 11,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1245.2,
+      "stream_ms": 1245.5,
+      "conversation_ms": 1.3,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          104,
+          122
+        ],
+        "v": [
+          -12,
+          2
+        ],
+        "paddle": 110,
+        "left": 114
+      },
+      "event": null
+    },
+    {
+      "step": 12,
+      "letter": "B",
+      "raw_text": "B",
+      "action": 1,
+      "answer_ms": 1262.3,
+      "stream_ms": 1263,
+      "conversation_ms": 1.5,
+      "close_ms": 0.4,
+      "state_before": {
+        "ball": [
+          92,
+          124
+        ],
+        "v": [
+          -12,
+          2
+        ],
+        "paddle": 110,
+        "left": 116
+      },
+      "event": null
+    },
+    {
+      "step": 13,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1240.7,
+      "stream_ms": 1241.2,
+      "conversation_ms": 1.4,
+      "close_ms": 0.3,
+      "state_before": {
+        "ball": [
+          80,
+          126
+        ],
+        "v": [
+          -12,
+          2
+        ],
+        "paddle": 120,
+        "left": 118
+      },
+      "event": null
+    },
+    {
+      "step": 14,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1242.2,
+      "stream_ms": 1242.8,
+      "conversation_ms": 1.9,
+      "close_ms": 0.3,
+      "state_before": {
+        "ball": [
+          68,
+          128
+        ],
+        "v": [
+          -12,
+          2
+        ],
+        "paddle": 120,
+        "left": 120
+      },
+      "event": null
+    },
+    {
+      "step": 15,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1248.1,
+      "stream_ms": 1248.5,
+      "conversation_ms": 1.4,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          56,
+          130
+        ],
+        "v": [
+          -12,
+          2
+        ],
+        "paddle": 120,
+        "left": 122
+      },
+      "event": null
+    },
+    {
+      "step": 16,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1253.8,
+      "stream_ms": 1254.1,
+      "conversation_ms": 1.6,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          44,
+          132
+        ],
+        "v": [
+          -12,
+          2
+        ],
+        "paddle": 120,
+        "left": 124
+      },
+      "event": null
+    },
+    {
+      "step": 17,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1253.3,
+      "stream_ms": 1253.7,
+      "conversation_ms": 2,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          32,
+          134
+        ],
+        "v": [
+          -12,
+          2
+        ],
+        "paddle": 120,
+        "left": 126
+      },
+      "event": null
+    },
+    {
+      "step": 18,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1242.7,
+      "stream_ms": 1243.1,
+      "conversation_ms": 1.3,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          20,
+          136
+        ],
+        "v": [
+          12,
+          2
+        ],
+        "paddle": 120,
+        "left": 128
+      },
+      "event": null
+    },
+    {
+      "step": 19,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1252,
+      "stream_ms": 1252.2,
+      "conversation_ms": 1.3,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          32,
+          138
+        ],
+        "v": [
+          12,
+          2
+        ],
+        "paddle": 120,
+        "left": 130
+      },
+      "event": null
+    },
+    {
+      "step": 20,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1254.9,
+      "stream_ms": 1255.2,
+      "conversation_ms": 1.3,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          44,
+          140
+        ],
+        "v": [
+          12,
+          2
+        ],
+        "paddle": 120,
+        "left": 132
+      },
+      "event": null
+    },
+    {
+      "step": 21,
+      "letter": "B",
+      "raw_text": "B",
+      "action": 1,
+      "answer_ms": 1250.6,
+      "stream_ms": 1250.9,
+      "conversation_ms": 1.4,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          56,
+          142
+        ],
+        "v": [
+          12,
+          2
+        ],
+        "paddle": 120,
+        "left": 134
+      },
+      "event": null
+    },
+    {
+      "step": 22,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1248.7,
+      "stream_ms": 1249.1,
+      "conversation_ms": 1.3,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          68,
+          144
+        ],
+        "v": [
+          12,
+          2
+        ],
+        "paddle": 130,
+        "left": 136
+      },
+      "event": null
+    },
+    {
+      "step": 23,
+      "letter": "B",
+      "raw_text": "B",
+      "action": 1,
+      "answer_ms": 1243.9,
+      "stream_ms": 1244.2,
+      "conversation_ms": 3.4,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          80,
+          146
+        ],
+        "v": [
+          12,
+          2
+        ],
+        "paddle": 130,
+        "left": 138
+      },
+      "event": null
+    },
+    {
+      "step": 24,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1249.3,
+      "stream_ms": 1249.5,
+      "conversation_ms": 1.3,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          92,
+          148
+        ],
+        "v": [
+          12,
+          2
+        ],
+        "paddle": 140,
+        "left": 140
+      },
+      "event": null
+    },
+    {
+      "step": 25,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1257.2,
+      "stream_ms": 1257.6,
+      "conversation_ms": 1.4,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          104,
+          150
+        ],
+        "v": [
+          12,
+          2
+        ],
+        "paddle": 140,
+        "left": 142
+      },
+      "event": null
+    },
+    {
+      "step": 26,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1238.8,
+      "stream_ms": 1239,
+      "conversation_ms": 1.3,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          116,
+          152
+        ],
+        "v": [
+          12,
+          2
+        ],
+        "paddle": 140,
+        "left": 144
+      },
+      "event": null
+    },
+    {
+      "step": 27,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1246.5,
+      "stream_ms": 1246.8,
+      "conversation_ms": 1.3,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          128,
+          154
+        ],
+        "v": [
+          12,
+          2
+        ],
+        "paddle": 140,
+        "left": 146
+      },
+      "event": "hit"
+    },
+    {
+      "step": 28,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1256.7,
+      "stream_ms": 1257,
+      "conversation_ms": 2.4,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          136,
+          156
+        ],
+        "v": [
+          -12,
+          4
+        ],
+        "paddle": 140,
+        "left": 148
+      },
+      "event": null
+    },
+    {
+      "step": 29,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1272.7,
+      "stream_ms": 1273,
+      "conversation_ms": 1.3,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          124,
+          160
+        ],
+        "v": [
+          -12,
+          4
+        ],
+        "paddle": 140,
+        "left": 150
+      },
+      "event": null
+    },
+    {
+      "step": 30,
+      "letter": "B",
+      "raw_text": "B",
+      "action": 1,
+      "answer_ms": 1240.6,
+      "stream_ms": 1241,
+      "conversation_ms": 1.4,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          112,
+          164
+        ],
+        "v": [
+          -12,
+          4
+        ],
+        "paddle": 140,
+        "left": 154
+      },
+      "event": null
+    },
+    {
+      "step": 31,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1266.4,
+      "stream_ms": 1266.7,
+      "conversation_ms": 1.4,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          100,
+          168
+        ],
+        "v": [
+          -12,
+          4
+        ],
+        "paddle": 150,
+        "left": 158
+      },
+      "event": null
+    },
+    {
+      "step": 32,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1263.3,
+      "stream_ms": 1263.5,
+      "conversation_ms": 1.4,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          88,
+          172
+        ],
+        "v": [
+          -12,
+          4
+        ],
+        "paddle": 150,
+        "left": 162
+      },
+      "event": null
+    },
+    {
+      "step": 33,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1245.4,
+      "stream_ms": 1245.7,
+      "conversation_ms": 1.4,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          76,
+          176
+        ],
+        "v": [
+          -12,
+          4
+        ],
+        "paddle": 150,
+        "left": 166
+      },
+      "event": null
+    },
+    {
+      "step": 34,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1254.7,
+      "stream_ms": 1255,
+      "conversation_ms": 1.5,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          64,
+          180
+        ],
+        "v": [
+          -12,
+          4
+        ],
+        "paddle": 150,
+        "left": 170
+      },
+      "event": null
+    },
+    {
+      "step": 35,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1240.8,
+      "stream_ms": 1241.1,
+      "conversation_ms": 1.5,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          52,
+          184
+        ],
+        "v": [
+          -12,
+          4
+        ],
+        "paddle": 150,
+        "left": 174
+      },
+      "event": null
+    },
+    {
+      "step": 36,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1253.3,
+      "stream_ms": 1253.7,
+      "conversation_ms": 1.3,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          40,
+          188
+        ],
+        "v": [
+          -12,
+          4
+        ],
+        "paddle": 150,
+        "left": 178
+      },
+      "event": null
+    },
+    {
+      "step": 37,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1255.7,
+      "stream_ms": 1256,
+      "conversation_ms": 1.3,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          28,
+          188
+        ],
+        "v": [
+          -12,
+          -4
+        ],
+        "paddle": 150,
+        "left": 178
+      },
+      "event": null
+    },
+    {
+      "step": 38,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1278.9,
+      "stream_ms": 1279.2,
+      "conversation_ms": 1.6,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          24,
+          184
+        ],
+        "v": [
+          12,
+          -4
+        ],
+        "paddle": 150,
+        "left": 178
+      },
+      "event": null
+    },
+    {
+      "step": 39,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1318.2,
+      "stream_ms": 1318.6,
+      "conversation_ms": 2.7,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          36,
+          180
+        ],
+        "v": [
+          12,
+          -4
+        ],
+        "paddle": 150,
+        "left": 178
+      },
+      "event": null
+    },
+    {
+      "step": 40,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1355.6,
+      "stream_ms": 1355.9,
+      "conversation_ms": 1.4,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          48,
+          176
+        ],
+        "v": [
+          12,
+          -4
+        ],
+        "paddle": 150,
+        "left": 174
+      },
+      "event": null
+    },
+    {
+      "step": 41,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1332.4,
+      "stream_ms": 1332.7,
+      "conversation_ms": 1.6,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          60,
+          172
+        ],
+        "v": [
+          12,
+          -4
+        ],
+        "paddle": 150,
+        "left": 170
+      },
+      "event": null
+    },
+    {
+      "step": 42,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1354.4,
+      "stream_ms": 1355,
+      "conversation_ms": 1.4,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          72,
+          168
+        ],
+        "v": [
+          12,
+          -4
+        ],
+        "paddle": 150,
+        "left": 166
+      },
+      "event": null
+    },
+    {
+      "step": 43,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1352.5,
+      "stream_ms": 1352.9,
+      "conversation_ms": 2,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          84,
+          164
+        ],
+        "v": [
+          12,
+          -4
+        ],
+        "paddle": 150,
+        "left": 162
+      },
+      "event": null
+    },
+    {
+      "step": 44,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1369.7,
+      "stream_ms": 1370,
+      "conversation_ms": 1.8,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          96,
+          160
+        ],
+        "v": [
+          12,
+          -4
+        ],
+        "paddle": 150,
+        "left": 158
+      },
+      "event": null
+    },
+    {
+      "step": 45,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1362.4,
+      "stream_ms": 1362.9,
+      "conversation_ms": 1.9,
+      "close_ms": 0.4,
+      "state_before": {
+        "ball": [
+          108,
+          156
+        ],
+        "v": [
+          12,
+          -4
+        ],
+        "paddle": 150,
+        "left": 154
+      },
+      "event": null
+    },
+    {
+      "step": 46,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1348.7,
+      "stream_ms": 1349.1,
+      "conversation_ms": 1.4,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          120,
+          152
+        ],
+        "v": [
+          12,
+          -4
+        ],
+        "paddle": 150,
+        "left": 150
+      },
+      "event": null
+    },
+    {
+      "step": 47,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1342.5,
+      "stream_ms": 1342.8,
+      "conversation_ms": 1.5,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          132,
+          148
+        ],
+        "v": [
+          12,
+          -4
+        ],
+        "paddle": 150,
+        "left": 146
+      },
+      "event": "hit"
+    },
+    {
+      "step": 48,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1346.1,
+      "stream_ms": 1346.4,
+      "conversation_ms": 1.4,
+      "close_ms": 0.3,
+      "state_before": {
+        "ball": [
+          132,
+          144
+        ],
+        "v": [
+          -12,
+          -7
+        ],
+        "paddle": 150,
+        "left": 142
+      },
+      "event": null
+    },
+    {
+      "step": 49,
+      "letter": "A",
+      "raw_text": "A",
+      "action": 0,
+      "answer_ms": 1348.7,
+      "stream_ms": 1349.1,
+      "conversation_ms": 1.9,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          120,
+          137
+        ],
+        "v": [
+          -12,
+          -7
+        ],
+        "paddle": 150,
+        "left": 138
+      },
+      "event": null
+    },
+    {
+      "step": 50,
+      "letter": "A",
+      "raw_text": "A",
+      "action": 0,
+      "answer_ms": 1333.8,
+      "stream_ms": 1334.1,
+      "conversation_ms": 1.4,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          108,
+          130
+        ],
+        "v": [
+          -12,
+          -7
+        ],
+        "paddle": 140,
+        "left": 131
+      },
+      "event": null
+    },
+    {
+      "step": 51,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1357.5,
+      "stream_ms": 1357.9,
+      "conversation_ms": 1.4,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          96,
+          123
+        ],
+        "v": [
+          -12,
+          -7
+        ],
+        "paddle": 130,
+        "left": 124
+      },
+      "event": null
+    },
+    {
+      "step": 52,
+      "letter": "A",
+      "raw_text": "A",
+      "action": 0,
+      "answer_ms": 1350.9,
+      "stream_ms": 1351.2,
+      "conversation_ms": 1.5,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          84,
+          116
+        ],
+        "v": [
+          -12,
+          -7
+        ],
+        "paddle": 130,
+        "left": 117
+      },
+      "event": null
+    },
+    {
+      "step": 53,
+      "letter": "A",
+      "raw_text": "A",
+      "action": 0,
+      "answer_ms": 1349.1,
+      "stream_ms": 1349.5,
+      "conversation_ms": 3.7,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          72,
+          109
+        ],
+        "v": [
+          -12,
+          -7
+        ],
+        "paddle": 120,
+        "left": 110
+      },
+      "event": null
+    },
+    {
+      "step": 54,
+      "letter": "A",
+      "raw_text": "A",
+      "action": 0,
+      "answer_ms": 1344.8,
+      "stream_ms": 1345.1,
+      "conversation_ms": 1.5,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          60,
+          102
+        ],
+        "v": [
+          -12,
+          -7
+        ],
+        "paddle": 110,
+        "left": 103
+      },
+      "event": null
+    },
+    {
+      "step": 55,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1361.6,
+      "stream_ms": 1361.9,
+      "conversation_ms": 1.4,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          48,
+          95
+        ],
+        "v": [
+          -12,
+          -7
+        ],
+        "paddle": 100,
+        "left": 96
+      },
+      "event": null
+    },
+    {
+      "step": 56,
+      "letter": "A",
+      "raw_text": "A",
+      "action": 0,
+      "answer_ms": 1344.9,
+      "stream_ms": 1345.3,
+      "conversation_ms": 1.4,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          36,
+          88
+        ],
+        "v": [
+          -12,
+          -7
+        ],
+        "paddle": 100,
+        "left": 89
+      },
+      "event": null
+    },
+    {
+      "step": 57,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1343.6,
+      "stream_ms": 1343.8,
+      "conversation_ms": 2.4,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          24,
+          81
+        ],
+        "v": [
+          -12,
+          -7
+        ],
+        "paddle": 90,
+        "left": 82
+      },
+      "event": null
+    },
+    {
+      "step": 58,
+      "letter": "A",
+      "raw_text": "A",
+      "action": 0,
+      "answer_ms": 1344.5,
+      "stream_ms": 1344.7,
+      "conversation_ms": 1.4,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          28,
+          74
+        ],
+        "v": [
+          12,
+          -7
+        ],
+        "paddle": 90,
+        "left": 75
+      },
+      "event": null
+    },
+    {
+      "step": 59,
+      "letter": "C",
+      "raw_text": "C",
+      "action": 2,
+      "answer_ms": 1352.9,
+      "stream_ms": 1353.3,
+      "conversation_ms": 1.4,
+      "close_ms": 0.2,
+      "state_before": {
+        "ball": [
+          40,
+          67
+        ],
+        "v": [
+          12,
+          -7
+        ],
+        "paddle": 80,
+        "left": 68
+      },
+      "event": null
+    }
+  ]
+}

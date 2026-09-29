@@ -1,0 +1,9 @@
+Context:
+You play Pong (Atari) and control the right paddle. Move the paddle so the ball hits it; the ball bounces off paddles and walls. Missing the ball loses a point. The image shows the current game screen.
+
+Question: What should you do right now?
+Options:
+(A) move paddle up
+(B) move paddle down
+(C) stay
+Answer: (

@@ -1,0 +1,10 @@
+)
+
+Question: Which bar is the shortest?
+Options:
+(A) the red bar
+(B) the purple bar
+(C) the yellow bar
+(D) the green bar
+(E) the blue bar
+Answer: (

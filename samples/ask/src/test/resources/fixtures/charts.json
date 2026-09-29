@@ -1,0 +1,278 @@
+[
+ {
+  "id": "chart_00",
+  "n": 3,
+  "heights": [
+   133,
+   163,
+   57
+  ],
+  "colours": [
+   "red",
+   "green",
+   "purple"
+  ],
+  "context": "This is a visual question about the image.",
+  "questions": [
+   {
+    "id": "tallest",
+    "question": "Which bar is the tallest?",
+    "options": [
+     "the red bar",
+     "the green bar",
+     "the purple bar"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "shortest",
+    "question": "Which bar is the shortest?",
+    "options": [
+     "the red bar",
+     "the green bar",
+     "the purple bar"
+    ],
+    "expected": 2
+   },
+   {
+    "id": "count",
+    "question": "How many bars are in the chart?",
+    "options": [
+     "2",
+     "3",
+     "4",
+     "5",
+     "6"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "taller",
+    "question": "Is the purple bar taller than the red bar?",
+    "options": [
+     "no",
+     "yes"
+    ],
+    "expected": 0
+   },
+   {
+    "id": "second",
+    "question": "Which bar is the second tallest?",
+    "options": [
+     "the red bar",
+     "the green bar",
+     "the purple bar"
+    ],
+    "expected": 0
+   },
+   {
+    "id": "leftmost",
+    "question": "Which bar is on the far left?",
+    "options": [
+     "the red bar",
+     "the green bar",
+     "the purple bar"
+    ],
+    "expected": 0
+   }
+  ],
+  "turn_texts": [
+   "Context:\nThis is a visual question about the image.\n\nQuestion: Which bar is the tallest?\nOptions:\n(A) the red bar\n(B) the green bar\n(C) the purple bar\nAnswer: (",
+   ")\n\nQuestion: Which bar is the shortest?\nOptions:\n(A) the red bar\n(B) the green bar\n(C) the purple bar\nAnswer: (",
+   ")\n\nQuestion: How many bars are in the chart?\nOptions:\n(A) 2\n(B) 3\n(C) 4\n(D) 5\n(E) 6\nAnswer: (",
+   ")\n\nQuestion: Is the purple bar taller than the red bar?\nOptions:\n(A) no\n(B) yes\nAnswer: (",
+   ")\n\nQuestion: Which bar is the second tallest?\nOptions:\n(A) the red bar\n(B) the green bar\n(C) the purple bar\nAnswer: (",
+   ")\n\nQuestion: Which bar is on the far left?\nOptions:\n(A) the red bar\n(B) the green bar\n(C) the purple bar\nAnswer: ("
+  ]
+ },
+ {
+  "id": "chart_01",
+  "n": 4,
+  "heights": [
+   88,
+   51,
+   187,
+   135
+  ],
+  "colours": [
+   "red",
+   "purple",
+   "green",
+   "yellow"
+  ],
+  "context": "This is a visual question about the image.",
+  "questions": [
+   {
+    "id": "tallest",
+    "question": "Which bar is the tallest?",
+    "options": [
+     "the red bar",
+     "the purple bar",
+     "the green bar",
+     "the yellow bar"
+    ],
+    "expected": 2
+   },
+   {
+    "id": "shortest",
+    "question": "Which bar is the shortest?",
+    "options": [
+     "the red bar",
+     "the purple bar",
+     "the green bar",
+     "the yellow bar"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "count",
+    "question": "How many bars are in the chart?",
+    "options": [
+     "2",
+     "3",
+     "4",
+     "5",
+     "6"
+    ],
+    "expected": 2
+   },
+   {
+    "id": "taller",
+    "question": "Is the red bar taller than the purple bar?",
+    "options": [
+     "no",
+     "yes"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "second",
+    "question": "Which bar is the second tallest?",
+    "options": [
+     "the red bar",
+     "the purple bar",
+     "the green bar",
+     "the yellow bar"
+    ],
+    "expected": 3
+   },
+   {
+    "id": "leftmost",
+    "question": "Which bar is on the far left?",
+    "options": [
+     "the red bar",
+     "the purple bar",
+     "the green bar",
+     "the yellow bar"
+    ],
+    "expected": 0
+   }
+  ],
+  "turn_texts": [
+   "Context:\nThis is a visual question about the image.\n\nQuestion: Which bar is the tallest?\nOptions:\n(A) the red bar\n(B) the purple bar\n(C) the green bar\n(D) the yellow bar\nAnswer: (",
+   ")\n\nQuestion: Which bar is the shortest?\nOptions:\n(A) the red bar\n(B) the purple bar\n(C) the green bar\n(D) the yellow bar\nAnswer: (",
+   ")\n\nQuestion: How many bars are in the chart?\nOptions:\n(A) 2\n(B) 3\n(C) 4\n(D) 5\n(E) 6\nAnswer: (",
+   ")\n\nQuestion: Is the red bar taller than the purple bar?\nOptions:\n(A) no\n(B) yes\nAnswer: (",
+   ")\n\nQuestion: Which bar is the second tallest?\nOptions:\n(A) the red bar\n(B) the purple bar\n(C) the green bar\n(D) the yellow bar\nAnswer: (",
+   ")\n\nQuestion: Which bar is on the far left?\nOptions:\n(A) the red bar\n(B) the purple bar\n(C) the green bar\n(D) the yellow bar\nAnswer: ("
+  ]
+ },
+ {
+  "id": "chart_02",
+  "n": 5,
+  "heights": [
+   122,
+   152,
+   96,
+   68,
+   180
+  ],
+  "colours": [
+   "red",
+   "purple",
+   "yellow",
+   "green",
+   "blue"
+  ],
+  "context": "This is a visual question about the image.",
+  "questions": [
+   {
+    "id": "tallest",
+    "question": "Which bar is the tallest?",
+    "options": [
+     "the red bar",
+     "the purple bar",
+     "the yellow bar",
+     "the green bar",
+     "the blue bar"
+    ],
+    "expected": 4
+   },
+   {
+    "id": "shortest",
+    "question": "Which bar is the shortest?",
+    "options": [
+     "the red bar",
+     "the purple bar",
+     "the yellow bar",
+     "the green bar",
+     "the blue bar"
+    ],
+    "expected": 3
+   },
+   {
+    "id": "count",
+    "question": "How many bars are in the chart?",
+    "options": [
+     "2",
+     "3",
+     "4",
+     "5",
+     "6"
+    ],
+    "expected": 3
+   },
+   {
+    "id": "taller",
+    "question": "Is the green bar taller than the yellow bar?",
+    "options": [
+     "no",
+     "yes"
+    ],
+    "expected": 0
+   },
+   {
+    "id": "second",
+    "question": "Which bar is the second tallest?",
+    "options": [
+     "the red bar",
+     "the purple bar",
+     "the yellow bar",
+     "the green bar",
+     "the blue bar"
+    ],
+    "expected": 1
+   },
+   {
+    "id": "leftmost",
+    "question": "Which bar is on the far left?",
+    "options": [
+     "the red bar",
+     "the purple bar",
+     "the yellow bar",
+     "the green bar",
+     "the blue bar"
+    ],
+    "expected": 0
+   }
+  ],
+  "turn_texts": [
+   "Context:\nThis is a visual question about the image.\n\nQuestion: Which bar is the tallest?\nOptions:\n(A) the red bar\n(B) the purple bar\n(C) the yellow bar\n(D) the green bar\n(E) the blue bar\nAnswer: (",
+   ")\n\nQuestion: Which bar is the shortest?\nOptions:\n(A) the red bar\n(B) the purple bar\n(C) the yellow bar\n(D) the green bar\n(E) the blue bar\nAnswer: (",
+   ")\n\nQuestion: How many bars are in the chart?\nOptions:\n(A) 2\n(B) 3\n(C) 4\n(D) 5\n(E) 6\nAnswer: (",
+   ")\n\nQuestion: Is the green bar taller than the yellow bar?\nOptions:\n(A) no\n(B) yes\nAnswer: (",
+   ")\n\nQuestion: Which bar is the second tallest?\nOptions:\n(A) the red bar\n(B) the purple bar\n(C) the yellow bar\n(D) the green bar\n(E) the blue bar\nAnswer: (",
+   ")\n\nQuestion: Which bar is on the far left?\nOptions:\n(A) the red bar\n(B) the purple bar\n(C) the yellow bar\n(D) the green bar\n(E) the blue bar\nAnswer: ("
+  ]
+ }
+]

@@ -1,0 +1,11 @@
+Context:
+This is a visual question about the image.
+
+Question: Which bar is the tallest?
+Options:
+(A) the red bar
+(B) the purple bar
+(C) the yellow bar
+(D) the green bar
+(E) the blue bar
+Answer: (

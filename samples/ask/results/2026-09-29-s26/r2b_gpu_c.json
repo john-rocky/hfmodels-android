@@ -1,0 +1,139 @@
+{
+  "picture": 1,
+  "pictures": 1,
+  "chart": {
+    "id": "chart_02",
+    "n": 5,
+    "heights": [
+      122,
+      152,
+      96,
+      68,
+      180
+    ],
+    "colours": [
+      "red",
+      "purple",
+      "yellow",
+      "green",
+      "blue"
+    ]
+  },
+  "chart_scale": 3,
+  "questions": [
+    {
+      "turn": 1,
+      "id": "tallest",
+      "question": "Which bar is the tallest?",
+      "options": [
+        "the red bar",
+        "the purple bar",
+        "the yellow bar",
+        "the green bar",
+        "the blue bar"
+      ],
+      "letter": "B",
+      "raw_text": "B",
+      "idx": 1,
+      "expected": 4,
+      "ok": false,
+      "answer_ms": 1143.5,
+      "stream_ms": 1144,
+      "conversation_ms": 4826.4
+    },
+    {
+      "turn": 2,
+      "id": "shortest",
+      "question": "Which bar is the shortest?",
+      "options": [
+        "the red bar",
+        "the purple bar",
+        "the yellow bar",
+        "the green bar",
+        "the blue bar"
+      ],
+      "letter": "D",
+      "raw_text": "D",
+      "idx": 3,
+      "expected": 3,
+      "ok": true,
+      "answer_ms": 317.4,
+      "stream_ms": 317.7
+    },
+    {
+      "turn": 3,
+      "id": "count",
+      "question": "How many bars are in the chart?",
+      "options": [
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "letter": "D",
+      "raw_text": "D",
+      "idx": 3,
+      "expected": 3,
+      "ok": true,
+      "answer_ms": 305,
+      "stream_ms": 305.9
+    },
+    {
+      "turn": 4,
+      "id": "taller",
+      "question": "Is the green bar taller than the yellow bar?",
+      "options": [
+        "no",
+        "yes"
+      ],
+      "letter": "A",
+      "raw_text": "A",
+      "idx": 0,
+      "expected": 0,
+      "ok": true,
+      "answer_ms": 434.8,
+      "stream_ms": 435.1
+    },
+    {
+      "turn": 5,
+      "id": "leftmost",
+      "question": "Which bar is on the far left?",
+      "options": [
+        "the red bar",
+        "the purple bar",
+        "the yellow bar",
+        "the green bar",
+        "the blue bar"
+      ],
+      "letter": "A",
+      "raw_text": "A",
+      "idx": 0,
+      "expected": 0,
+      "ok": true,
+      "answer_ms": 291.5,
+      "stream_ms": 292.4
+    }
+  ],
+  "completed_turns": 5,
+  "matches": 4,
+  "stopped": false,
+  "failure": null,
+  "load_ms": 38831,
+  "load_downloaded": false,
+  "close_ms": 3.5,
+  "profile": "gpu",
+  "backend_policy": "gpu",
+  "variant": "int8",
+  "model": "litert-community\/decider-2b-vision-LiteRT@6c024e946bb8489f3faacb2514b0c61b355d1fdb",
+  "sdk_version": "0.1.3-SNAPSHOT",
+  "runtime_version": "0.16.1",
+  "device": {
+    "model": "SM-S942Q",
+    "display": "BP4A.251205.006.S942QOPS1AZF2"
+  },
+  "thermal_before": 1,
+  "thermal_after": 1,
+  "total_s": 16.2,
+  "prompt_turn1": "Context:\nThis is a visual question about the image.\n\nQuestion: Which bar is the tallest?\nOptions:\n(A) the red bar\n(B) the purple bar\n(C) the yellow bar\n(D) the green bar\n(E) the blue bar\nAnswer: ("
+}
