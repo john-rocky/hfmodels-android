@@ -35,8 +35,10 @@ import org.junit.runner.RunWith
  *   4. the SemIf authored144 rows vs the official laya answers computed on a Mac (agreement, accuracy);
  *   5. release.
  * One RESULT line per step under tag `hfmodels-decide`. Arguments: variant (en_s512_wfp16 |
- * en_s256_wfp16 | ml_s256_fp32), backend (gpu | cpu | auto), rows (parity rows, default all),
- * authored (authored144 rows, default all), repeats (timing, default 5).
+ * en_s256_wfp16 | ml_s256_fp32 | …), backend (gpu | cpu | npu | auto), rows (parity rows, default all),
+ * authored (authored144 rows, default all), repeats (timing, default 5), dir (the pushed files,
+ * default /data/local/tmp/hfmodels/laya; the test APK's own external files dir works as well). An
+ * npu run needs the Qualcomm libraries in the test APK (litert/src/androidTest/jniLibs, docs/api.md "NPU").
  *
  *   ./gradlew :litert:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=io.github.johnrocky.hfmodels.litert.EncoderDecisionsDeviceTest \
  *     -Pandroid.testInstrumentationRunnerArguments.variant=en_s512_wfp16 -Pandroid.testInstrumentationRunnerArguments.backend=gpu
@@ -61,9 +63,9 @@ class EncoderDecisionsDeviceTest {
     @Test fun loadParityTimingRelease(): Unit = runBlocking {
         val v = VARIANTS.getValue(variant)
         val models = HfModels(ctx)
-        val policy = when (backend) { "cpu" -> BackendPolicy.Require(BackendKind.CPU); "gpu" -> BackendPolicy.Require(BackendKind.GPU); else -> BackendPolicy.Auto }
+        val policy = when (backend) { "cpu" -> BackendPolicy.Require(BackendKind.CPU); "gpu" -> BackendPolicy.Require(BackendKind.GPU); "npu" -> BackendPolicy.Require(BackendKind.NPU); else -> BackendPolicy.Auto }
         val opts = LoadOptions(backendPolicy = policy, networkPolicy = NetworkPolicy.Offline, descriptorJson = descriptor(variant))
-        Log.i(TAG, "device=${Build.MODEL} build=${Build.DISPLAY} android=${Build.VERSION.RELEASE} litert=${BuildConfig.LITERT_VERSION} variant=$variant backend=$backend")
+        Log.i(TAG, "device=${Build.MODEL} soc=${Build.SOC_MANUFACTURER}/${Build.SOC_MODEL} build=${Build.DISPLAY} android=${Build.VERSION.RELEASE} litert=${BuildConfig.LITERT_VERSION} variant=$variant backend=$backend")
         var model: TypedDecisions? = null
         try {
             // 1. load

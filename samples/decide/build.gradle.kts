@@ -29,6 +29,9 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+    // The npu backend loads the Qualcomm runtime from the app's native library dir: extract it at install
+    // (src/main/jniLibs, never committed: tools/fetch_npu_libs.sh). Without those files the npu choice reports NATIVE_MODULE_MISSING.
+    packaging { jniLibs { useLegacyPackaging = true } }
 }
 
 dependencies {

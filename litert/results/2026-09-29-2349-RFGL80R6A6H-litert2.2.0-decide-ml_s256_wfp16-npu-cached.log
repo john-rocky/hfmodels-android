@@ -1,0 +1,26 @@
+# hfmodels typed-decisions device gate  date=2026-09-29T14:49:37Z serial=RFGL80R6A6H device=SM-S942Q soc=QTI/SM8850 build=BP4A.251205.006.S942QOPS1AZF2 android=16
+# git=4bd7e25 variant=ml_s256_wfp16 backend=npu thermal=Thermal Status: 1 battery_temp_x10C=390 files=/data/user/0/io.github.johnrocky.hfmodels.litert.test/files/laya (run-as copies of the published bytes, laya-LiteRT bca6002d)
+# instrument rc=0 end=2026-09-29T14:49:55Z thermal=Thermal Status: 1 battery_temp_x10C=396
+OK (1 test)
+--------- beginning of main
+09-29 23:49:37.985 10315 10329 I hfmodels-decide: device=SM-S942Q soc=QTI/SM8850 build=BP4A.251205.006.S942QOPS1AZF2 android=16 litert=2.2.0 variant=ml_s256_wfp16 backend=npu
+09-29 23:49:38.003 10315 10333 I hfmodels: resolve convaiinnovations/laya: commit=1c5edc17 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=b7ffd807
+09-29 23:49:38.015 10315 10333 I hfmodels: resolve convaiinnovations/laya: commit=1c5edc17 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=b7ffd807
+09-29 23:49:41.468 10315 10333 I hfmodels: tokenizer tokenizer.json: 256000 tokens, load_ms=3429
+09-29 23:49:42.400 10315 10329 I hfmodels: ready convaiinnovations/laya@1c5edc17 variant=ml_s256_wfp16 profile=npu inference=NPU prepare_ms=4369
+09-29 23:49:42.400 10315 10329 I hfmodels-decide: RESULT step=load ok=true variant=ml_s256_wfp16 backend=npu import_ms=0 load_ms=4392 profile=npu window=256 head=256 notes=compile_ms=930 on npu (Qualcomm HTP V81, JIT, burst; the first compile on a phone takes tens of seconds, later loads read the cache) | observed backend is UNKNOWN: litert 2.2.0 reports no per-op execution target; 'initialized' is the accelerator the CompiledModel was created with
+09-29 23:49:52.357 10315 10329 I hfmodels-decide: RESULT step=parity ok=true variant=ml_s256_wfp16 backend=npu rows=201 calibration=laya_ml_calibration.json argmax_flips=0 max_marker_logit_abs_err=0.34301 (worst ML_C02/refund_requested) max_prob_abs_err=0.00680 max_score_abs_err=0.00250 max_act_logit_rel_err=7.36e-03 exact_rounded=20/201 question_ms_median=33.9 p90=35.4 min=32.5 max=38.9
+09-29 23:49:54.885 10315 10329 I hfmodels-decide: RESULT step=timing ok=true variant=ml_s256_wfp16 backend=npu questions=4 state_tokens=25 shared_ms_median=139.6 direct_ms_median=143.0 prefill_then_decide_ms_median=138.2 state_tokenize_ms_median=1.05 per_question_ms=36.0,34.7,34.9,34.5 repeats=5
+09-29 23:49:54.886 10315 10329 I hfmodels-decide: RESULT step=authored144 ok=true variant=ml_s256_wfp16 backend=npu skipped: /data/user/0/io.github.johnrocky.hfmodels.litert.test/files/laya/fixtures/authored144_laya_oracle.json not pushed
+09-29 23:49:54.964 10315 10329 I hfmodels-decide: RESULT step=release ok=true variant=ml_s256_wfp16 backend=npu close_ms=78
+09-29 23:49:54.964 10315 10329 I hfmodels-decide: RESULT ok=true variant=ml_s256_wfp16 backend=npu device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 failures=
+## residency (       9 lines)
+09-29 23:49:41.472 10315 10342 I litert  : [npu_registry.cc:30] NPU accelerator registered.
+09-29 23:49:41.498 10315 10342 I litert  : [compiled_model.cc:754] NPU JIT compilation caching enabled with cache dir: /data/user/0/io.github.johnrocky.hfmodels.litert.test/cache
+09-29 23:49:41.505 10315 10342 I litert  :   HtpPerformanceMode       : Burst(2)
+09-29 23:49:42.124 10315 10342 I litert  : [compiled_model.cc:1233] Flatbuffer model initialized from cached model.
+09-29 23:49:42.126 10315 10342 I litert  :   HtpPerformanceMode       : Burst(2)
+09-29 23:49:42.229 10315 10342 I tflite  : Replacing 1 out of 1 node(s) with delegate (DispatchDelegate) node, yielding 1 partitions for subgraph 0 (main).
+09-29 23:49:42.397 10315 10342 I litert  : [compiled_model.cc:754] NPU JIT compilation caching enabled with cache dir: /data/user/0/io.github.johnrocky.hfmodels.litert.test/cache
+09-29 23:49:42.398 10315 10342 I litert  : [compiled_model.cc:1250] 0 compiler plugins were applied successfully: 
+09-29 23:49:42.398 10315 10342 I tflite  : Replacing 4 out of 4 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 1 partitions for subgraph 0 (main).

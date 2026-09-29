@@ -1,5 +1,6 @@
 package io.github.johnrocky.hfmodels.litert
 
+import android.content.Context
 import com.google.ai.edge.litert.Accelerator
 import com.google.ai.edge.litert.CompiledModel
 import com.google.ai.edge.litert.Environment
@@ -29,8 +30,8 @@ import kotlinx.coroutines.withContext
 
 /**
  * One decision encoder on LiteRT `CompiledModel`: the main graph (tokens -> per-position scores +
- * pooled vector) and the small act head. Every native call runs on one dedicated thread; the
- * process-wide `Environment` is created once and kept. One `decide` at a time.
+ * pooled vector) and the small act head (always created on the CPU). Every native call runs on one
+ * dedicated thread; the process-wide `Environment` is created once and kept. One `decide` at a time.
  */
 internal class LiteRtDecisionModel private constructor(
     override val info: PreparedModelInfo,
@@ -161,7 +162,21 @@ internal class LiteRtDecisionModel private constructor(
         val executor = Executors.newSingleThreadExecutor { r -> Thread(r, "hfmodels-litert").apply { isDaemon = true } }
         val dispatcher = executor.asCoroutineDispatcher()
         @Volatile private var env: Environment? = null
-        fun environment(): Environment = env ?: Environment.create().also { env = it }
+
+        /**
+         * Created once per process. An app that packages the NPU libraries gets both library dirs (dispatch and the JIT
+         * compiler plugin: without the plugin dir a graph requested on the NPU runs on the CPU) and, through the Context
+         * overload, a JIT cache in its cache dir (a cached compile takes well under a second, the first one tens of
+         * seconds); every other app keeps the plain Environment, as before the NPU path existed.
+         */
+        fun environment(context: Context?): Environment = env ?: run {
+            val npu = context != null && LiteRtNpu.ready(context)
+            val created = if (npu) {
+                val dir = context!!.applicationInfo.nativeLibraryDir
+                Environment.create(context, mapOf(Environment.Option.DispatchLibraryDir to dir, Environment.Option.CompilerPluginLibraryDir to dir))
+            } else Environment.create()
+            created.also { env = it }
+        }
         fun <T> call(block: () -> T): T {
             if (Thread.currentThread().name == "hfmodels-litert") return block()
             try { return executor.submit(Callable { block() }).get() } catch (e: ExecutionException) { throw e.cause ?: e }
@@ -176,11 +191,18 @@ internal class LiteRtDecisionModel private constructor(
         /** Compiles the graphs on the model thread. Throws the runtime's exception unchanged; the handler maps it. */
         fun open(spec: Spec, info: PreparedModelInfo, limits: DecisionLimits, builder: LayaSequenceBuilder, cal: LayaCalibration, host: PrepareHost): LiteRtDecisionModel = Runtime.call {
             val options = CompiledModel.Options(spec.accelerator).apply {
-                if (spec.accelerator == Accelerator.GPU) {
-                    if (spec.gpuFp32) gpuOptions = CompiledModel.GpuOptions(precision = CompiledModel.GpuOptions.Precision.FP32)
-                } else cpuOptions = CompiledModel.CpuOptions(numThreads = spec.cpuThreads)
+                when (spec.accelerator) {
+                    Accelerator.GPU -> if (spec.gpuFp32) gpuOptions = CompiledModel.GpuOptions(precision = CompiledModel.GpuOptions.Precision.FP32)
+                    // The HTP computes in fp16; the published NPU profiles are the graphs rewritten to stay finite there. BURST = the clocks the S26 numbers were measured at.
+                    Accelerator.NPU -> qualcommOptions = CompiledModel.QualcommOptions(htpPerformanceMode = CompiledModel.QualcommOptions.HtpPerformanceMode.BURST)
+                    else -> cpuOptions = CompiledModel.CpuOptions(numThreads = spec.cpuThreads)
+                }
             }
-            val env = Runtime.environment()
+            val env = Runtime.environment(host.appContext)
+            // LiteRT 2.2.0 falls back to the CPU when the NPU cannot be used; refuse instead of reporting an NPU load.
+            if (spec.accelerator == Accelerator.NPU && Accelerator.NPU !in env.getAvailableAccelerators()) {
+                throw IllegalStateException("LiteRT has no NPU accelerator in this process (the Qualcomm runtime did not load)")
+            }
             val main = graph(spec.mainFile, options, env, listOf("input_ids", "attention_mask", "qtype_onehot"), listOf("token_logits", "pooled_cls"))
             val act = try { spec.actFile?.let { graph(it, CompiledModel.Options(Accelerator.CPU), env, listOf("pooled_cls", "feats"), listOf("act_logits")) } } catch (t: Throwable) { main.close(); throw t }
             LiteRtDecisionModel(info, limits, builder, cal, main, act, spec.hidden, host)

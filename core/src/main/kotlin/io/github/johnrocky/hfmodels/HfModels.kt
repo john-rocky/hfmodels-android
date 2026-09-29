@@ -133,6 +133,7 @@ class HfModels internal constructor(
                 override val cacheDir: File get() = this@HfModels.cacheDir
                 override val log: HfLog get() = this@HfModels.log
                 override val sdkVersion: String get() = HfModelsVersion.SDK_VERSION
+                override val appContext: Context? get() = this@HfModels.appContext
                 override fun onModelClosed(model: PreparedModel) { releaseSlot(model) }
             }
             val t0 = System.nanoTime()

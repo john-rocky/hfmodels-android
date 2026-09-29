@@ -205,7 +205,7 @@
     }
   ],
   "typed_decisions": {
-    "$comment": "hfmodels-litert (EncoderDecisions on CompiledModel) verified combinations: one device, one day. Variants are the development descriptor's (catalog/dev/convaiinnovations__laya-litert-dev.hfmodels.json); the graphs were side-loaded for these runs and are the same bytes as litert-community/laya-LiteRT publishes (sha256 identical for every published variant, checked 2026-09-23). Numbers: median per-question ms of the parity loop (warm), then the p90 over the same rows; thermal state rose during the session (status 1 at 40 C by the end). Rows dated 2026-09-23 were added later on the same phone (ml_s512_fp32, 512-window parity rows).",
+    "$comment": "hfmodels-litert (EncoderDecisions on CompiledModel) verified combinations: one device, one day. Variants are the development descriptor's (catalog/dev/convaiinnovations__laya-litert-dev.hfmodels.json); the graphs were side-loaded for these runs and are the same bytes as litert-community/laya-LiteRT publishes (sha256 identical for every published variant, checked 2026-09-23). Numbers: median per-question ms of the parity loop (warm), then the p90 over the same rows; thermal state rose during the session (status 1 at 40 C by the end). Rows dated 2026-09-23 were added later on the same phone (ml_s512_fp32, 512-window parity rows). Rows dated 2026-09-29 are on the graph bytes litert-community/laya-LiteRT publishes since that day (commit bca6002d: fp16-safe rewrites that keep the fp32 results; the rows before were measured on the earlier bytes) and add the npu backend (Qualcomm HTP through LiteRT's JIT compile, BURST, the act head on the CPU; the Qualcomm runtime packaged in the test APK by tools/fetch_npu_libs.sh). An npu row counts only when the log shows the whole graph as one DispatchDelegate node. Thermal state is in each row's note: the phone started the session at 35.6 C and reached status 2 by the last row.",
     "device": {
       "model": "SM-S942Q (Galaxy S26)",
       "serial": "RFGL80R6A6H",
@@ -366,6 +366,62 @@
         "authored144_agreement": "24/24",
         "note": "thermal status 1 throughout; authored144 max_prob_abs_err 0.101 is the temperature difference between the fitted calibration file and the publisher's config, as for the ml_s256_fp32 row",
         "log": "litert/results/2026-09-21-2342-RFGL80R6A6H-litert2.2.0-decide-ml_s256_wfp16-cpu.log"
+      },
+      {
+        "variant": "ml_s256_wfp16",
+        "backend": "npu",
+        "result": "PASS",
+        "date": "2026-09-29",
+        "question_ms_median": 32.6,
+        "question_ms_p90": 34.1,
+        "parity_rows": 201,
+        "argmax_flips": 0,
+        "max_prob_abs_err": 0.0068,
+        "authored144_agreement": "skipped (oracle not pushed)",
+        "note": "whole graph on the NPU: 1813 of 1813 ops in 1 partition, 1 DispatchDelegate node; first compile 76.0 s; a second process read LiteRT's cache (compile 0.93 s, 33.9 ms per question, same answers); thermal status 1 (38.1 C) at the start",
+        "log": "litert/results/2026-09-29-2348-RFGL80R6A6H-litert2.2.0-decide-ml_s256_wfp16-npu.log"
+      },
+      {
+        "variant": "en_s256_fp32",
+        "backend": "npu",
+        "result": "PASS",
+        "date": "2026-09-29",
+        "question_ms_median": 65.3,
+        "question_ms_p90": 67.2,
+        "parity_rows": 140,
+        "argmax_flips": 0,
+        "max_prob_abs_err": 0.0054,
+        "authored144_agreement": "skipped (oracle not pushed)",
+        "note": "whole graph on the NPU: 2159 of 2159 ops in 1 partition, 1 DispatchDelegate node; first compile 65.2 s; thermal status 1 (39.6 C) at the start",
+        "log": "litert/results/2026-09-29-2349-RFGL80R6A6H-litert2.2.0-decide-en_s256_fp32-npu.log"
+      },
+      {
+        "variant": "ml_s256_fp32",
+        "backend": "gpu",
+        "result": "PASS",
+        "date": "2026-09-29",
+        "question_ms_median": 55.7,
+        "question_ms_p90": 124.7,
+        "parity_rows": 201,
+        "argmax_flips": 0,
+        "max_prob_abs_err": 0.0001,
+        "authored144_agreement": "skipped (oracle not pushed)",
+        "note": "the 2026-09-29 bytes; 1713 of 1713 nodes on LITERT_CL; thermal status 1 (38.9 C) at the start, the p90 is the phone slowing down",
+        "log": "litert/results/2026-09-29-2351-RFGL80R6A6H-litert2.2.0-decide-ml_s256_fp32-gpu.log"
+      },
+      {
+        "variant": "en_s256_fp32",
+        "backend": "gpu",
+        "result": "PASS",
+        "date": "2026-09-29",
+        "question_ms_median": 234.5,
+        "question_ms_p90": 276.0,
+        "parity_rows": 140,
+        "argmax_flips": 0,
+        "max_prob_abs_err": 0.0,
+        "authored144_agreement": "skipped (oracle not pushed)",
+        "note": "the 2026-09-29 bytes; 2159 of 2159 nodes on LITERT_CL; 140/140 rounded answers identical; thermal status 2 (41.7 C) at the start, so the time is not comparable with the 2026-09-21 rows",
+        "log": "litert/results/2026-09-29-2352-RFGL80R6A6H-litert2.2.0-decide-en_s256_fp32-gpu.log"
       }
     ]
   },

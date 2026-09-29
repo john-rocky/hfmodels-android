@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "model_id": "convaiinnovations/laya",
-  "$comment": "DEVELOPMENT descriptor. The tokenizer and config files are the publisher's at commit 1c5edc17; the litert/*.tflite graphs are the conversion's local outputs (CPU-parity-checked on 2026-09-21, not published on the Hub yet), imported by side-load. Not in the bundled catalog. Replaced by the published repo's own hfmodels.json when the graphs ship.",
+  "$comment": "DEVELOPMENT descriptor. The tokenizer and config files are the publisher's at commit 1c5edc17; the litert/*.tflite graphs are the conversion's local outputs (CPU-parity-checked on 2026-09-21, not published on the Hub yet), imported by side-load. Not in the bundled catalog. Replaced by the published repo's own hfmodels.json when the graphs ship. 2026-09-29: the published graphs were replaced by fp16-safe rewrites (fp32-exact; LayerNorm power-of-two pre-scale, -1e4 masks), so every graph that litert-community/laya-LiteRT publishes carries the published sha256 here (commit bca6002de867804dfb98d04568d9089cca44a1f0); en_s256_wfp16 is not published and keeps the older local graph. The npu profiles (ml_s256_wfp16, en_s256_fp32) are the ones the S26 NPU gate runs.",
   "tasks": [
     "decide"
   ],
@@ -30,8 +30,8 @@
           "id": "main",
           "role": "model",
           "path": "litert/laya_en_s512_wfp16.tflite",
-          "bytes": 843929120,
-          "sha256": "882643ae98cbc040ac28726c1106167be0d8b3dd2a8feb902dd9d1e607204020"
+          "bytes": 843929776,
+          "sha256": "6be0cb36ec29c94e94940ee2eaf44bebdb7e6f995c585fbc20471132f6eb8f90"
         },
         {
           "id": "act",
@@ -276,8 +276,8 @@
           "id": "main",
           "role": "model",
           "path": "litert/laya_ml_s256_fp32.tflite",
-          "bytes": 1287375376,
-          "sha256": "38d63fd6015aecae1cc05e5ec6fcfa8ea700f576d1363d32fcb4393c5c8a8828"
+          "bytes": 1287376352,
+          "sha256": "98ba7a57d054ad96c80155283f40a5034eda7d5c14bce60115436c97f4595c2a"
         },
         {
           "id": "act",
@@ -400,8 +400,8 @@
           "id": "main",
           "role": "model",
           "path": "litert/laya_en_s512_fp32.tflite",
-          "bytes": 1685803264,
-          "sha256": "2edc029fed8016648a893f498c0aa92dc8fb45d47e6e59d9393a667d39807e15"
+          "bytes": 1685805312,
+          "sha256": "6bcd53c001540d63e3366df80ebc850ab1623f887445f8fae7993f6ae65bb10a"
         },
         {
           "id": "act",
@@ -523,8 +523,8 @@
           "id": "main",
           "role": "model",
           "path": "litert/laya_en_s256_fp32.tflite",
-          "bytes": 1684754688,
-          "sha256": "60cd44a92f70f9edc5ebad9007677ae5ca02c14acbab21a25addc13c7c6eb0af"
+          "bytes": 1684756736,
+          "sha256": "683c03749b123fdb7ec168f257b9d54462c3fc8205539cb2fb83bc617962ecc8"
         },
         {
           "id": "act",
@@ -557,6 +557,30 @@
       ],
       "default_profile": "gpu",
       "profiles": [
+        {
+          "id": "npu",
+          "priority": 120,
+          "files": [
+            "main",
+            "act",
+            "tokenizer",
+            "tokenizer_config",
+            "config"
+          ],
+          "enabled_inputs": [
+            "text"
+          ],
+          "components": {
+            "inference": "npu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "default_selectable": true
+        },
         {
           "id": "gpu",
           "priority": 100,
@@ -646,8 +670,8 @@
           "id": "main",
           "role": "model",
           "path": "litert/laya_ml_s256_wfp16.tflite",
-          "bytes": 644077088,
-          "sha256": "4e56e65788ae506aa8e7b247ef8504bab40fc13ce99f2f72cdf5f2cad81c84b6"
+          "bytes": 644077360,
+          "sha256": "84016a50a42f915a06567f2c31f95a95cc47c87ae1100c9fe60e699f6272b1d2"
         },
         {
           "id": "act",
@@ -680,6 +704,30 @@
       ],
       "default_profile": "gpu",
       "profiles": [
+        {
+          "id": "npu",
+          "priority": 120,
+          "files": [
+            "main",
+            "act",
+            "tokenizer",
+            "tokenizer_config",
+            "config"
+          ],
+          "enabled_inputs": [
+            "text"
+          ],
+          "components": {
+            "inference": "npu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "default_selectable": true
+        },
         {
           "id": "gpu",
           "priority": 100,
@@ -770,8 +818,8 @@
           "id": "main",
           "role": "model",
           "path": "litert/laya_ml_s512_fp32.tflite",
-          "bytes": 1288292880,
-          "sha256": "1decd8d3e81afaeb929b4a33c583e6d867cb76bc23b04ab2634e2f848e20377e"
+          "bytes": 1288293856,
+          "sha256": "6fa52d9c19f129c2f3e8db8dcc60a597f7919c3bd56c35a41b947aa3188dc58b"
         },
         {
           "id": "act",

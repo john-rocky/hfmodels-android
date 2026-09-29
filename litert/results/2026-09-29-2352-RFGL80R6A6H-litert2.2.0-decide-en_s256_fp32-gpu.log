@@ -1,0 +1,28 @@
+# hfmodels typed-decisions device gate  date=2026-09-29T14:52:06Z serial=RFGL80R6A6H device=SM-S942Q soc=QTI/SM8850 build=BP4A.251205.006.S942QOPS1AZF2 android=16
+# git=4bd7e25 variant=en_s256_fp32 backend=gpu thermal=Thermal Status: 2 battery_temp_x10C=417 files=/data/user/0/io.github.johnrocky.hfmodels.litert.test/files/laya (run-as copies of the published bytes, laya-LiteRT bca6002d)
+# instrument rc=0 end=2026-09-29T14:53:14Z thermal=Thermal Status: 2 battery_temp_x10C=416
+OK (1 test)
+--------- beginning of main
+09-29 23:52:06.157 10651 10665 I hfmodels-decide: RESULT step=timing ok=true variant=ml_s256_fp32 backend=gpu questions=4 state_tokens=25 shared_ms_median=486.3 direct_ms_median=492.4 prefill_then_decide_ms_median=477.9 state_tokenize_ms_median=1.82 per_question_ms=113.4,114.5,116.4,116.9 repeats=5
+09-29 23:52:06.158 10651 10665 I hfmodels-decide: RESULT step=authored144 ok=true variant=ml_s256_fp32 backend=gpu skipped: /data/user/0/io.github.johnrocky.hfmodels.litert.test/files/laya/fixtures/authored144_laya_oracle.json not pushed
+09-29 23:52:06.336 10651 10665 I hfmodels-decide: RESULT step=release ok=true variant=ml_s256_fp32 backend=gpu close_ms=179
+09-29 23:52:06.337 10651 10665 I hfmodels-decide: RESULT ok=true variant=ml_s256_fp32 backend=gpu device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 failures=
+09-29 23:52:07.915 11247 11261 I hfmodels-decide: device=SM-S942Q soc=QTI/SM8850 build=BP4A.251205.006.S942QOPS1AZF2 android=16 litert=2.2.0 variant=en_s256_fp32 backend=gpu
+09-29 23:52:07.946 11247 11265 I hfmodels: resolve convaiinnovations/laya: commit=1c5edc17 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=b7ffd807
+09-29 23:52:07.964 11247 11265 I hfmodels: resolve convaiinnovations/laya: commit=1c5edc17 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=b7ffd807
+09-29 23:52:09.067 11247 11265 I hfmodels: tokenizer tokenizer.json: 50280 tokens, load_ms=1075
+09-29 23:52:19.111 11247 11261 I hfmodels: ready convaiinnovations/laya@1c5edc17 variant=en_s256_fp32 profile=gpu inference=GPU prepare_ms=11123
+09-29 23:52:19.111 11247 11261 I hfmodels-decide: RESULT step=load ok=true variant=en_s256_fp32 backend=gpu import_ms=0 load_ms=11154 profile=gpu window=256 head=192 notes=compile_ms=10042 on gpu (precision fp32) | observed backend is UNKNOWN: litert 2.2.0 reports no per-op execution target; 'initialized' is the accelerator the CompiledModel was created with
+09-29 23:52:54.256 11247 11261 I hfmodels-decide: RESULT step=parity ok=true variant=en_s256_fp32 backend=gpu rows=140 calibration=rl_agent_config.json argmax_flips=0 max_marker_logit_abs_err=0.00022 (worst D01/jailbreak) max_prob_abs_err=0.00000 max_score_abs_err=0.00000 max_act_logit_rel_err=1.30e-05 exact_rounded=140/140 question_ms_median=234.5 p90=276.0 min=209.6 max=317.4
+09-29 23:53:14.548 11247 11261 I hfmodels-decide: RESULT step=timing ok=true variant=en_s256_fp32 backend=gpu questions=4 state_tokens=27 shared_ms_median=1106.6 direct_ms_median=1149.5 prefill_then_decide_ms_median=1151.2 state_tokenize_ms_median=1.27 per_question_ms=290.3,290.3,286.6,284.0 repeats=5
+09-29 23:53:14.549 11247 11261 I hfmodels-decide: RESULT step=authored144 ok=true variant=en_s256_fp32 backend=gpu skipped: /data/user/0/io.github.johnrocky.hfmodels.litert.test/files/laya/fixtures/authored144_laya_oracle.json not pushed
+09-29 23:53:14.784 11247 11261 I hfmodels-decide: RESULT step=release ok=true variant=en_s256_fp32 backend=gpu close_ms=235
+09-29 23:53:14.784 11247 11261 I hfmodels-decide: RESULT ok=true variant=en_s256_fp32 backend=gpu device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 failures=
+## residency (       7 lines)
+09-29 23:52:09.073 11247 11270 I litert  : [npu_registry.cc:30] NPU accelerator registered.
+09-29 23:52:09.145 11247 11270 I litert  : [compiled_model.cc:754] NPU JIT compilation caching enabled with cache dir: /data/user/0/io.github.johnrocky.hfmodels.litert.test/cache
+09-29 23:52:10.445 11247 11270 I litert  : [compiled_model.cc:1250] 0 compiler plugins were applied successfully: 
+09-29 23:52:10.609 11247 11270 I tflite  : Replacing 2159 out of 2159 node(s) with delegate (LITERT_CL) node, yielding 1 partitions for subgraph 0 (main).
+09-29 23:52:19.103 11247 11270 I litert  : [compiled_model.cc:754] NPU JIT compilation caching enabled with cache dir: /data/user/0/io.github.johnrocky.hfmodels.litert.test/cache
+09-29 23:52:19.106 11247 11270 I litert  : [compiled_model.cc:1250] 0 compiler plugins were applied successfully: 
+09-29 23:52:19.108 11247 11270 I tflite  : Replacing 4 out of 4 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 1 partitions for subgraph 0 (main).

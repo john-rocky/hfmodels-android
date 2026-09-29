@@ -9,7 +9,7 @@
     "id": "apache-2.0",
     "url": "https://huggingface.co/litert-community/laya-LiteRT/blob/main/LICENSE"
   },
-  "provenance": "convaiinnovations/laya@1c5edc17a7acd8701df6fc341c0d179f1c62c982 (Apache-2.0) converted to classic LiteRT graphs, one static window per file; the tokenizer and config files are the publisher's at that commit; multilingual/calibration.json is a temperature fit made for this conversion. The wfp16 variants keep only a cpu profile: on the verified phone LiteRT 2.2.0's GPU accelerator fails to compile them (their DEQUANTIZE nodes fall to the CPU partition).",
+  "provenance": "convaiinnovations/laya@1c5edc17a7acd8701df6fc341c0d179f1c62c982 (Apache-2.0) converted to classic LiteRT graphs, one static window per file; the tokenizer and config files are the publisher's at that commit; multilingual/calibration.json is a temperature fit made for this conversion. Since 2026-09-29 every graph carries rewrites that leave its fp32 results unchanged and keep fp16 arithmetic finite (power-of-two scaling before LayerNorm, -1e4 attention masks, and in the multilingual graphs a power-of-two rescale of two feed-forward layers). The wfp16 variants have no gpu profile: on the verified phone LiteRT 2.2.0's GPU accelerator fails to compile them (their DEQUANTIZE nodes fall to the CPU partition). The npu profiles (Qualcomm HTP, compiled on the phone; an app names them with BackendPolicy.Require(NPU)) are on the two variants that passed on the verified phone's NPU; the default profiles are unchanged.",
   "variants": [
     {
       "id": "ml_s256_fp32",
@@ -84,11 +84,11 @@
             {
               "level": "PUBLISHER_TESTED",
               "result": "PASS",
-              "note": "201/201 captured rows argmax identical, max |dp| 0.0001; 54 ms per question (median, warm); litert/results/2026-09-21-1440-RFGL80R6A6H-litert2.2.0-decide-ml_s256_fp32-gpu.log",
+              "note": "graph bytes of 2026-09-29 (fp16-safe rewrite, fp32-exact): 201/201 rows argmax identical, max |dp| 0.0001; 55.7 ms per question (median; p90 124.7 as the phone reached thermal status 1-2); 1713 of 1713 nodes on LITERT_CL; litert/results/2026-09-29-2351-RFGL80R6A6H-litert2.2.0-decide-ml_s256_fp32-gpu.log",
               "device": "SM-S942Q (Galaxy S26)",
               "os_build": "BP4A.251205.006.S942QOPS1AZF2",
               "runtime": "litert 2.2.0",
-              "date": "2026-09-21"
+              "date": "2026-09-29"
             }
           ]
         },
@@ -305,6 +305,41 @@
       "default_profile": "cpu",
       "profiles": [
         {
+          "id": "npu",
+          "priority": 120,
+          "files": [
+            "main",
+            "act",
+            "tokenizer",
+            "tokenizer_config",
+            "config"
+          ],
+          "enabled_inputs": [
+            "text"
+          ],
+          "components": {
+            "inference": "npu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "default_selectable": true,
+          "verification": [
+            {
+              "level": "PUBLISHER_TESTED",
+              "result": "PASS",
+              "note": "201/201 captured rows argmax identical, max |dp| 0.0068; 32.6 ms per question (median, warm; 33.9 ms in a second process); whole graph on the NPU (1813 of 1813 ops, 1 DispatchDelegate node); first compile 76.0 s, 0.93 s from LiteRT's cache; litert/results/2026-09-29-2348-RFGL80R6A6H-litert2.2.0-decide-ml_s256_wfp16-npu.log, 2026-09-29-2349-...-npu-cached.log",
+              "device": "SM-S942Q (Galaxy S26)",
+              "os_build": "BP4A.251205.006.S942QOPS1AZF2",
+              "runtime": "litert 2.2.0",
+              "date": "2026-09-29"
+            }
+          ]
+        },
+        {
           "id": "cpu",
           "priority": 100,
           "files": [
@@ -392,6 +427,41 @@
       "default_profile": "gpu",
       "profiles": [
         {
+          "id": "npu",
+          "priority": 120,
+          "files": [
+            "main",
+            "act",
+            "tokenizer",
+            "tokenizer_config",
+            "config"
+          ],
+          "enabled_inputs": [
+            "text"
+          ],
+          "components": {
+            "inference": "npu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "default_selectable": true,
+          "verification": [
+            {
+              "level": "PUBLISHER_TESTED",
+              "result": "PASS",
+              "note": "140/140 rows argmax identical, max |dp| 0.0054; 65.3 ms per question (median, warm); whole graph on the NPU (2159 of 2159 ops, 1 DispatchDelegate node); first compile 65.2 s; litert/results/2026-09-29-2349-RFGL80R6A6H-litert2.2.0-decide-en_s256_fp32-npu.log",
+              "device": "SM-S942Q (Galaxy S26)",
+              "os_build": "BP4A.251205.006.S942QOPS1AZF2",
+              "runtime": "litert 2.2.0",
+              "date": "2026-09-29"
+            }
+          ]
+        },
+        {
           "id": "gpu",
           "priority": 100,
           "files": [
@@ -421,11 +491,11 @@
             {
               "level": "PUBLISHER_TESTED",
               "result": "PASS",
-              "note": "140/140 rows; 127 ms per question; litert/results/2026-09-21-1442-RFGL80R6A6H-litert2.2.0-decide-en_s256_fp32-gpu.log",
+              "note": "graph bytes of 2026-09-29: 140/140 rows argmax identical, max |dp| 0.0000, 140/140 rounded answers identical; 234.5 ms per question at thermal status 2 (127 ms on 2026-09-21 on the earlier bytes); 2159 of 2159 nodes on LITERT_CL; litert/results/2026-09-29-2352-RFGL80R6A6H-litert2.2.0-decide-en_s256_fp32-gpu.log",
               "device": "SM-S942Q (Galaxy S26)",
               "os_build": "BP4A.251205.006.S942QOPS1AZF2",
               "runtime": "litert 2.2.0",
-              "date": "2026-09-21"
+              "date": "2026-09-29"
             }
           ]
         },
