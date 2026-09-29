@@ -23,8 +23,11 @@ import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -100,15 +103,17 @@ class HfModels internal constructor(
         val token = plan.options.credentials?.tokenFor(plan.ref.repoId)
         val files = LinkedHashMap<String, File>()
         var doneBefore = plan.files.filter { store.isCached(it.artifactRef()) }.sumOf { it.bytes }
-        for (f in plan.files) {
-            val ref = f.artifactRef()
-            if (store.isCached(ref)) { files[f.id] = store.fileFor(ref); continue }
-            val base = doneBefore
-            val file = shared(ref, token, plan.options.networkPolicy == NetworkPolicy.Offline) { bytes, _ ->
-                onProgress(LoadEvent.Downloading(base + bytes, plan.totalBytes))
+        onCallersDispatcher(onProgress) { emit ->
+            for (f in plan.files) {
+                val ref = f.artifactRef()
+                if (store.isCached(ref)) { files[f.id] = store.fileFor(ref); continue }
+                val base = doneBefore
+                val file = shared(ref, token, plan.options.networkPolicy == NetworkPolicy.Offline) { bytes, _ ->
+                    emit(LoadEvent.Downloading(base + bytes, plan.totalBytes))
+                }
+                files[f.id] = file
+                doneBefore += f.bytes
             }
-            files[f.id] = file
-            doneBefore += f.bytes
         }
         onProgress(LoadEvent.Verifying)
         for (f in plan.files) {
@@ -131,7 +136,7 @@ class HfModels internal constructor(
                 override fun onModelClosed(model: PreparedModel) { releaseSlot(model) }
             }
             val t0 = System.nanoTime()
-            val model = withContext(Dispatchers.IO) { plan.task.handler.prepare(local, host, onProgress) }
+            val model = onCallersDispatcher(onProgress) { emit -> withContext(Dispatchers.IO) { plan.task.handler.prepare(local, host, emit) } }
             active = model
             log.i("ready ${plan.ref.repoId}@${plan.modelOrigin.commit.take(8)} variant=${plan.variant.id} profile=${model.info.profileId} " +
                 model.info.components.entries.joinToString(" ") { "${it.key}=${it.value.initialized}" } + " prepare_ms=${(System.nanoTime() - t0) / 1_000_000}")
@@ -200,6 +205,29 @@ class HfModels internal constructor(
     }
 
     // ---- internals ------------------------------------------------------------------------
+
+    /**
+     * Runs [block] with an event sink whose events reach [onProgress] on the caller's dispatcher, in order,
+     * as docs/api.md promises for LoadEvent. The store reports Downloading from its transfer thread and the
+     * handlers report Initializing / Fallback from the IO thread that prepares the engine; delivered as is,
+     * an app that writes a view in the callback dies with CalledFromWrongThreadException at Initializing
+     * (Galaxy S26, 2026-09-29, samples/pong). A callback that throws does not cut the native work half-way:
+     * the block runs to its end, a model it produced is closed, and the exception is rethrown.
+     */
+    private suspend fun <T> onCallersDispatcher(onProgress: (LoadEvent) -> Unit, block: suspend ((LoadEvent) -> Unit) -> T): T = coroutineScope {
+        val events = Channel<LoadEvent>(Channel.UNLIMITED)
+        var failure: Throwable? = null
+        val relay = launch {
+            for (e in events) {
+                if (failure != null) continue
+                try { onProgress(e) } catch (t: Throwable) { if (t is CancellationException) throw t; failure = t }
+            }
+        }
+        val result = try { block { events.trySend(it) } } finally { events.close() }
+        relay.join()
+        failure?.let { (result as? PreparedModel)?.close(); throw it }
+        result
+    }
 
     private fun releaseSlot(model: PreparedModel) {
         if (active === model) active = null
