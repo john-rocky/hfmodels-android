@@ -23,6 +23,9 @@ android {
     buildFeatures { buildConfig = true }
     // The device test side-loads the development descriptor (catalog/dev) as a test-APK asset.
     sourceSets { named("androidTest") { assets.srcDir(rootProject.file("catalog/dev")) } }
+    // Its npu runs load the Qualcomm runtime from the test APK's native library dir: extracted, not mapped from the APK
+    // (src/androidTest/jniLibs, never committed: tools/fetch_npu_libs.sh). Applies to the test APK only, not to the AAR.
+    packaging { jniLibs { useLegacyPackaging = true } }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17

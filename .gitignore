@@ -36,3 +36,9 @@ litert/results/_*
 # Scoring probe: the branch's Kotlin sources and the JNI/LiteRT libraries are synced in, never committed
 probes/scoring/jniLibs/
 probes/scoring/src/main/kotlin/com/google/
+
+# Qualcomm NPU runtime (LiteRT release + QAIRT): may ship only inside an application, never in this repository.
+# tools/fetch_npu_libs.sh puts it into these jniLibs dirs for the device test and the decide sample.
+litert/src/androidTest/jniLibs/
+samples/decide/src/main/jniLibs/
+*.so

@@ -177,6 +177,11 @@ class ResolverTest {
         val plan = resolver.inspect(ModelRef("org/model"), FakeChat, LoadOptions())
         assertEquals("gpu", plan.profile.id)
         assertTrue(plan.excludedProfiles.any { it.first == "npu" && it.second.contains("NPU") })
+        // Named explicitly it is loadable (the first device gate of an NPU profile runs before any PASS exists), reported UNVERIFIED.
+        val named = resolver.inspect(ModelRef("org/model"), FakeChat, LoadOptions(backendPolicy = BackendPolicy.Require(BackendKind.NPU)))
+        assertEquals("npu", named.profile.id)
+        assertEquals(VerificationLevel.UNVERIFIED, named.verification)
+        assertEquals("npu", resolver.inspect(ModelRef("org/model"), FakeChat, LoadOptions(backendPolicy = BackendPolicy.RequireProfile("npu"))).profile.id)
         // A GPU profile whose only record is a FAIL (the process died on the reference phone) is skipped by Auto even as the
         // default profile, and still available to Require(GPU) / RequireProfile.
         val gpuFail = """,{"id": "gpu_fail", "priority": 200, "files": ["weights"], "enabled_inputs": ["text"], "components": {"language": "gpu"}, "requirements": {"min_android_api": 31, "abis": ["arm64-v8a"]}, "fallback_profiles": ["cpu"], "default_selectable": true,

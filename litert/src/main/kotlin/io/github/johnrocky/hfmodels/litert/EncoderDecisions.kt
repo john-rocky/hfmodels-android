@@ -27,7 +27,9 @@ import java.io.File
  * ```
  *
  * The descriptor names the task `decide`, the runtime `litert` and the handler
- * `litert.typed_decisions` ABI 1. Profile components use the key `inference` (`cpu` / `gpu`).
+ * `litert.typed_decisions` ABI 1. Profile components use the key `inference` (`cpu` / `gpu` / `npu`).
+ * `npu` is the Qualcomm HTP through LiteRT's on-device (JIT) compile; the app packages the vendor
+ * libraries (docs/api.md, "NPU") and asks for it with `BackendPolicy.Require(BackendKind.NPU)`.
  */
 object EncoderDecisions : Task<TypedDecisions> {
     override val id = "decide"
@@ -92,10 +94,11 @@ internal object LiteRtDecisionHandler : Handler<TypedDecisions> {
             val accelerator = when (backend) {
                 BackendKind.CPU -> Accelerator.CPU
                 BackendKind.GPU -> Accelerator.GPU
-                BackendKind.NPU -> throw ModelException(ErrorCode.NATIVE_MODULE_MISSING, "profile '${profile.id}' asks for an NPU; no NPU module ships in this release")
+                BackendKind.NPU -> Accelerator.NPU
             }
             val tc = System.nanoTime()
             val model = try {
+                if (backend == BackendKind.NPU) LiteRtNpu.requireReady(host.appContext)
                 val info = PreparedModelInfo(
                     repoId = plan.ref.repoId, commit = plan.modelOrigin.commit, descriptorSha256 = plan.descriptorSha256, descriptorOrigin = plan.descriptorOrigin,
                     bindingSource = plan.bindingSource, variantId = plan.variant.id, profileId = profile.id, sdkVersion = host.sdkVersion,
@@ -113,7 +116,7 @@ internal object LiteRtDecisionHandler : Handler<TypedDecisions> {
                 val reason = "${t.javaClass.simpleName}: ${t.message}"
                 host.log.w("compile on profile '${profile.id}' failed: $reason", t)
                 val next = profile.fallbackProfiles.asSequence().mapNotNull { plan.variant.profile(it) }.firstOrNull { p -> p.files.all { local.files.containsKey(it) } && fallbackHistory.none { h -> h.endsWith("-> ${p.id}") } }
-                if (next == null || plan.options.backendPolicy !is BackendPolicy.Auto || attempts > 3) throw ModelException(
+                if (next == null || plan.options.backendPolicy !is BackendPolicy.Auto || attempts > 3) throw (t as? ModelException) ?: ModelException(
                     ErrorCode.INITIALIZATION_FAILED, "CompiledModel failed on profile '${profile.id}' (inference=$backend): $reason",
                     details = mapOf("stage" to "compile", "profile" to profile.id, "fallback_tried" to fallbackHistory.joinToString()), cause = t,
                 )
@@ -122,7 +125,11 @@ internal object LiteRtDecisionHandler : Handler<TypedDecisions> {
                 profile = next
                 continue
             }
-            notes += "compile_ms=${(System.nanoTime() - tc) / 1_000_000} on ${backend.name.lowercase()}" + (if (backend == BackendKind.GPU) " (precision ${if (gpuFp32) "fp32" else "default"})" else " ($cpuThreads threads)")
+            notes += "compile_ms=${(System.nanoTime() - tc) / 1_000_000} on ${backend.name.lowercase()}" + when (backend) {
+                BackendKind.GPU -> " (precision ${if (gpuFp32) "fp32" else "default"})"
+                BackendKind.NPU -> " (Qualcomm HTP ${LiteRtNpu.hexagon()}, JIT, burst; the first compile on a phone takes tens of seconds, later loads read the cache)"
+                BackendKind.CPU -> " ($cpuThreads threads)"
+            }
             notes += "observed backend is UNKNOWN: litert $runtimeVersion reports no per-op execution target; 'initialized' is the accelerator the CompiledModel was created with"
             if (actFile == null) notes += "no act head in this variant: action.act_probability is not reported"
             if (fallbackHistory.isNotEmpty()) notes += "fallback applied: " + fallbackHistory.joinToString(" | ")

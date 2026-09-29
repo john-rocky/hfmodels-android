@@ -72,9 +72,9 @@ class MainActivity : ComponentActivity() {
         val variant: Spinner = findViewById(R.id.variant)
         variant.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, decisions.variants)
         val backend: Spinner = findViewById(R.id.backend)
-        backend.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, listOf("auto", "gpu", "cpu"))
+        backend.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, BACKENDS)
         findViewById<Button>(R.id.load).setOnClickListener {
-            val kind = when (backend.selectedItem as String) { "gpu" -> BackendKind.GPU; "cpu" -> BackendKind.CPU; else -> null }
+            val kind = when (backend.selectedItem as String) { "gpu" -> BackendKind.GPU; "npu" -> BackendKind.NPU; "cpu" -> BackendKind.CPU; else -> null }
             scope.launch {
                 try {
                     val t0 = System.nanoTime()
@@ -89,7 +89,7 @@ class MainActivity : ComponentActivity() {
         // For scripted runs: `adb shell am start -n <pkg>/.MainActivity --es variant en_s256_fp32 --es backend gpu` preselects and loads.
         intent.getStringExtra("hf_token")?.let { decisions.token = it }   // --es hf_token <token> for a private or gated copy
         intent.getStringExtra("variant")?.let { v -> decisions.variants.indexOf(v).takeIf { it >= 0 }?.let { variant.setSelection(it) } }
-        intent.getStringExtra("backend")?.let { b -> listOf("auto", "gpu", "cpu").indexOf(b).takeIf { it >= 0 }?.let { backend.setSelection(it) } }
+        intent.getStringExtra("backend")?.let { b -> BACKENDS.indexOf(b).takeIf { it >= 0 }?.let { backend.setSelection(it) } }
         if (intent.hasExtra("variant")) findViewById<Button>(R.id.load).post { findViewById<Button>(R.id.load).performClick() }
 
         // (a) voice gate
@@ -232,6 +232,8 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         private const val MIC_REQUEST = 1
+        /** `npu` needs a variant with an npu profile and the Qualcomm runtime in this APK (README, "NPU"). */
+        val BACKENDS = listOf("auto", "gpu", "npu", "cpu")
         val GATE_QUESTIONS: Map<String, Question> = linkedMapOf(
             "needs_response" to Question.Noul("The speaker is asking the assistant a question or giving it an instruction."),
             "kind" to Question.Choice("What is this utterance?", linkedMapOf("question" to "asks for information", "request_or_command" to "asks for an action", "statement_or_remark" to "says something without asking", "filler_or_noise" to "fragments, hesitations or nothing meaningful")),

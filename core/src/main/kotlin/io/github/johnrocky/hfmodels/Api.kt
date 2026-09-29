@@ -194,6 +194,8 @@ interface PrepareHost {
     val cacheDir: File
     val log: HfLog
     val sdkVersion: String
+    /** The application context, or null outside an app (JVM tests). An NPU handler reads the app's native library dir and cache dir from it. */
+    val appContext: android.content.Context? get() = null
     /** The handler calls this exactly once when the model's native resources are gone. */
     fun onModelClosed(model: PreparedModel)
 }

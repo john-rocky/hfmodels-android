@@ -168,7 +168,6 @@ internal class Resolver(
                 required != null && !p.enabledInputs.containsAll(required) -> "does not enable ${required - p.enabledInputs}"
                 p.requirements.minAndroidApi > device.androidApi -> "needs Android API ${p.requirements.minAndroidApi}, device has ${device.androidApi}"
                 p.requirements.abis.none { it in device.abis } -> "needs ABI ${p.requirements.abis}, device has ${device.abis}"
-                p.components.values.any { it == BackendKind.NPU } && p.verification.none { it.result == "PASS" } -> "NPU profile without a verification record is never auto-selected"
                 else -> null
             }
             if (reason != null) excluded += p.id to reason
@@ -187,10 +186,12 @@ internal class Resolver(
             }
             BackendPolicy.Auto -> {
                 // A profile with a FAIL record and no PASS is never auto-selected (a process death on the reference device is
-                // recorded that way); Require / RequireProfile can still name it knowingly.
+                // recorded that way), nor is an NPU profile without a PASS record; Require / RequireProfile can still name either knowingly.
                 val failedOnly = candidates.filter { p -> p.verification.any { it.result == "FAIL" } && p.verification.none { it.result == "PASS" } }
                 failedOnly.forEach { p -> excluded += p.id to "a verification record says FAIL and none says PASS (${p.verification.first { it.result == "FAIL" }.device}); not auto-selected" }
-                val selectable = candidates.filter { it.defaultSelectable && it !in failedOnly }
+                val unverifiedNpu = candidates.filter { p -> p !in failedOnly && p.components.values.any { it == BackendKind.NPU } && p.verification.none { it.result == "PASS" } }
+                unverifiedNpu.forEach { p -> excluded += p.id to "NPU profile without a PASS verification record is never auto-selected" }
+                val selectable = candidates.filter { it.defaultSelectable && it !in failedOnly && it !in unverifiedNpu }
                 candidates.filter { !it.defaultSelectable }.forEach { excluded += it.id to "default_selectable=false" }
                 selectable.firstOrNull { it.id == variant.defaultProfile }
                     ?: selectable.maxWithOrNull(compareBy<Profile> { it.priority }.thenByDescending { it.id })
