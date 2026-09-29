@@ -73,4 +73,28 @@ Logcat tag `ask`: `READY profile=… load_ms=…`, `PICTURE p/N chart=… bars=�
 
 ## Numbers
 
-Measured in the next round.
+Measured on 2026-09-29 on one Galaxy S26 (SM-S942Q, Android 16, build BP4A.251205.006.S942QOPS1AZF2) with litertlm-android 0.16.1 and the `int8` file, side-loaded as above, one picture per run. The records are in [`results/2026-09-29-s26/`](results/2026-09-29-s26/). The last column compares the phone's letters with a run of the same five turns on a Mac with a new engine per chart.
+
+| run | chart | bars | backend | load ms | answer ms, questions 1 to 5 | match the chart | equal to the Mac run |
+|---|---|---|---|---|---|---|---|
+| r2b_gpu_a | chart_00 | 3 | GPU | 46,589 | 990.5 / 289.9 / 288.9 / 409.1 / 268.6 | 5 of 5 | 5 of 5 |
+| r3_take1 | chart_02 | 5 | GPU | 38,706 | 935.4 / 256.3 / 256.5 / 331.0 / 245.8 | 4 of 5 | 4 of 5 |
+| r3_take2 | chart_01 | 4 | GPU | 39,477 | 903.2 / 247.7 / 251.2 / 336.2 / 241.1 | 5 of 5 | 5 of 5 |
+| r2b_cpu_c | chart_02 | 5 | CPU | 10,497 | 2,113.2 / 1,015.1 / 709.5 / 659.6 / 561.5 | 5 of 5 | 5 of 5 |
+| r2b_gpu_c | chart_02 | 5 | GPU | 38,831 | 1,143.5 / 317.4 / 305.0 / 434.8 / 291.5 | 4 of 5 | 4 of 5 |
+
+The first question carries the picture: it took 0.9 to 1.1 s on the GPU and 2.1 s on the CPU. The text-only questions after it took 0.24 to 0.43 s on the GPU and 0.56 to 1.0 s on the CPU.
+
+Creating the conversation took 4.8 to 5.3 s on the GPU and 2.8 s on the CPU. It happens before the first question is shown, so it is not in the answer times.
+
+Loading took 38.7 to 39.5 s on the GPU (46.6 s the first time, which included hashing and importing the pushed file) and 10.5 s on the CPU.
+
+The app's peak VmHWM was 3,347,124 to 4,271,352 kB with the GPU and 3,742,560 kB with the CPU. The phone's lowest MemAvailable during a run was 835,632 to 1,338,432 kB with the GPU and 5,971,500 kB with the CPU.
+
+Each run started at thermal status 0. The status the app read before and after the questions was 2 in three GPU runs, 1 in the fourth, and 0 in the CPU run: the GPU load raises it.
+
+One answer differed between the backends. On chart_02, asked which bar is the tallest, the GPU profile answered "the purple bar" (152 px) in both GPU runs; the CPU profile and the Mac run answered "the blue bar" (180 px), which is the tallest. The other four questions of chart_02 gave the same answers, and the PNG the model got had the same pixels in every run. The cause is not established.
+
+The same request shape on a Mac (LiteRT-LM 0.16.1 Python API, a new engine per chart, CPU) matched the charts' data on 117 of the 120 questions of `assets/charts.json` (tallest 24/24, shortest 23/24, count 22/24, taller 24/24, far left 24/24).
+
+One phone, one day; not a benchmark.

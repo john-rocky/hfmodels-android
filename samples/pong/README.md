@@ -54,6 +54,18 @@ Logcat tag `pong`: `READY profile=… load_ms=…`, one `STEP n letter=… actio
 
 `./gradlew :samples:pong:testReleaseUnitTest` checks the parts that do not need a phone against reference files in `src/test/resources/fixtures`: the prompt bytes, the 160x210 frames pixel for pixel, the 256x256 resize, the game physics replayed over an 80-step trace, and the answer parsing.
 
-## Numbers
+## Known problem: answers after the first decision
 
-Measured in the next round.
+Measured on 2026-09-29 on the same Galaxy S26 as `samples/ask` (SM-S942Q, Android 16, build BP4A.251205.006.S942QOPS1AZF2, litertlm-android 0.16.1, the `int8` file), 60 decisions per run. The records are in [`results/2026-09-29-s26/`](results/2026-09-29-s26/).
+
+| run | backend | seed | answer ms, median | letters equal to a fresh-state reference |
+|---|---|---|---|---|
+| r2_gpu_a | GPU | 7 | 637.9 | 33 of 60 |
+| r2_gpu_b | GPU | 11 | 645.7 | 32 of 60 |
+| r2_cpu_a | CPU | 7 | 1,257 | 34 of 60 |
+
+The reference reads the same PNG with the same prompt on a Mac, one decision at a time from a fresh state. The PNGs the phone sent were pixel-identical to the Mac's render of the same game states (60 of 60 in each run), so the difference is not in the picture.
+
+The cause: every decision opens a new conversation on one loaded model, and on this model family LiteRT-LM carries the previous conversation's state over into the next one ([google-ai-edge/LiteRT-LM#3165](https://github.com/google-ai-edge/LiteRT-LM/issues/3165)). After the first decision, the letter on screen is not the model's answer to the frame alone.
+
+The sample is kept as the reproduction of that report. [`samples/ask`](../ask/) shows the shape that works: one conversation per loaded model, and a new load for the next picture.

@@ -1,0 +1,73 @@
+{
+ "summary": {
+  "chart": "chart_00",
+  "n": 5,
+  "same_as_mac_conv": 5,
+  "same_as_ref": 5,
+  "matches_data": 5,
+  "png_max_abs_diff": 0,
+  "result": "demo/round2/out/ask-result-1790652938.json"
+ },
+ "rows": [
+  {
+   "id": "tallest",
+   "phone": 1,
+   "mac_conv": 1,
+   "ref": 1,
+   "ref_p_top": 0.9989,
+   "expected": 1,
+   "same_as_mac_conv": true,
+   "same_as_ref": true,
+   "matches_data": true,
+   "answer_ms": 990.5
+  },
+  {
+   "id": "shortest",
+   "phone": 2,
+   "mac_conv": 2,
+   "ref": 2,
+   "ref_p_top": 0.9969,
+   "expected": 2,
+   "same_as_mac_conv": true,
+   "same_as_ref": true,
+   "matches_data": true,
+   "answer_ms": 289.9
+  },
+  {
+   "id": "count",
+   "phone": 1,
+   "mac_conv": 1,
+   "ref": 1,
+   "ref_p_top": 0.9972,
+   "expected": 1,
+   "same_as_mac_conv": true,
+   "same_as_ref": true,
+   "matches_data": true,
+   "answer_ms": 288.9
+  },
+  {
+   "id": "taller",
+   "phone": 0,
+   "mac_conv": 0,
+   "ref": 0,
+   "ref_p_top": 0.9832,
+   "expected": 0,
+   "same_as_mac_conv": true,
+   "same_as_ref": true,
+   "matches_data": true,
+   "answer_ms": 409.1
+  },
+  {
+   "id": "leftmost",
+   "phone": 0,
+   "mac_conv": 0,
+   "ref": 0,
+   "ref_p_top": 0.9996,
+   "expected": 0,
+   "same_as_mac_conv": true,
+   "same_as_ref": true,
+   "matches_data": true,
+   "answer_ms": 268.6
+  }
+ ]
+}
