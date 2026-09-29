@@ -77,6 +77,8 @@ class MainActivity : ComponentActivity() {
     private companion object {
         const val TAG = "pong"
         const val REPO = "litert-community/decider-2b-vision-LiteRT"
+        // The Hub commit the descriptor in assets was generated from.
+        const val REVISION = "6c024e946bb8489f3faacb2514b0c61b355d1fdb"
         const val VARIANT = "int8"
         const val DESCRIPTOR_ASSET = "decider-2b-vision.hfmodels.json"
         const val SIDE = 256
@@ -177,7 +179,7 @@ class MainActivity : ComponentActivity() {
         val t0 = SystemClock.elapsedRealtime()
         return try {
             val model = models.fromPretrained(
-                ModelRef(REPO, variant = VARIANT),
+                ModelRef(REPO, revision = REVISION, variant = VARIANT),
                 Tasks.Chat,
                 LoadOptions(descriptorJson = descriptor, backendPolicy = policy()),
             ) { e ->

@@ -20,7 +20,7 @@ The answer time on screen is measured from calling `stream` to the first chunk t
 
 ## Run it
 
-The model file is not in the APK. The first Load downloads it from the Hub and checks its sha256. During development a copy pushed into the app's files directory is hashed and imported instead:
+The model file is not in the APK. The app loads the model at Hub commit `6c024e946bb8489f3faacb2514b0c61b355d1fdb` (`ModelRef(…, revision = …)`), the commit the descriptor in `assets` was generated from. The first Load downloads it from the Hub and checks its sha256. During development a copy pushed into the app's files directory is hashed and imported instead:
 
 ```sh
 ./gradlew :samples:pong:assembleRelease
