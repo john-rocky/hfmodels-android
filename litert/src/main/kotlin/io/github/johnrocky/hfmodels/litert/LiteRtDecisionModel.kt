@@ -190,13 +190,19 @@ internal class LiteRtDecisionModel private constructor(
 
         /** Compiles the graphs on the model thread. Throws the runtime's exception unchanged; the handler maps it. */
         fun open(spec: Spec, info: PreparedModelInfo, limits: DecisionLimits, builder: LayaSequenceBuilder, cal: LayaCalibration, host: PrepareHost): LiteRtDecisionModel = Runtime.call {
+            // LiteRT 2.2.0 starts the NPU runtime once per process, from the options of the first graph it compiles on any
+            // accelerator, and the HTP performance mode is fixed then. So every graph of an app that packages the NPU
+            // libraries carries BURST (the clocks the S26 numbers were measured at; the HTP computes in fp16, and the
+            // published NPU profiles are the graphs rewritten to stay finite there). Without it, a GPU or CPU model
+            // opened first leaves a later NPU model about 5x slower.
+            val burst = if (host.appContext?.let(LiteRtNpu::ready) == true) CompiledModel.QualcommOptions(htpPerformanceMode = CompiledModel.QualcommOptions.HtpPerformanceMode.BURST) else null
             val options = CompiledModel.Options(spec.accelerator).apply {
                 when (spec.accelerator) {
                     Accelerator.GPU -> if (spec.gpuFp32) gpuOptions = CompiledModel.GpuOptions(precision = CompiledModel.GpuOptions.Precision.FP32)
-                    // The HTP computes in fp16; the published NPU profiles are the graphs rewritten to stay finite there. BURST = the clocks the S26 numbers were measured at.
-                    Accelerator.NPU -> qualcommOptions = CompiledModel.QualcommOptions(htpPerformanceMode = CompiledModel.QualcommOptions.HtpPerformanceMode.BURST)
+                    Accelerator.NPU -> Unit
                     else -> cpuOptions = CompiledModel.CpuOptions(numThreads = spec.cpuThreads)
                 }
+                qualcommOptions = burst
             }
             val env = Runtime.environment(host.appContext)
             // LiteRT 2.2.0 falls back to the CPU when the NPU cannot be used; refuse instead of reporting an NPU load.
@@ -204,7 +210,7 @@ internal class LiteRtDecisionModel private constructor(
                 throw IllegalStateException("LiteRT has no NPU accelerator in this process (the Qualcomm runtime did not load)")
             }
             val main = graph(spec.mainFile, options, env, listOf("input_ids", "attention_mask", "qtype_onehot"), listOf("token_logits", "pooled_cls"))
-            val act = try { spec.actFile?.let { graph(it, CompiledModel.Options(Accelerator.CPU), env, listOf("pooled_cls", "feats"), listOf("act_logits")) } } catch (t: Throwable) { main.close(); throw t }
+            val act = try { spec.actFile?.let { graph(it, CompiledModel.Options(Accelerator.CPU).apply { qualcommOptions = burst }, env, listOf("pooled_cls", "feats"), listOf("act_logits")) } } catch (t: Throwable) { main.close(); throw t }
             LiteRtDecisionModel(info, limits, builder, cal, main, act, spec.hidden, host)
         }
 
