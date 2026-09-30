@@ -7,70 +7,11 @@ import kotlin.math.exp
 import kotlin.math.ln
 import kotlin.math.max
 
-/**
- * The host side of a `laya`-family decision encoder (convaiinnovations/laya 0.3.4), ported from the
- * publisher's `common.py` (sequence construction) and the pure-NumPy `host_decode` contract that
- * the graph conversion verified row by row against the official `Agent.predict`:
- *
- *   [CLS] <type> question: <instructions> [SEP] [MASK] opt0 [MASK] opt1 … [SEP] <state> [SEP]
- *
- * Each option is one mask marker plus at most 48 text tokens; the head (instructions + options) is
- * budgeted to `headMaxLen` tokens, the state fills what remains of `maxLen` (right-truncated). The
- * model scores every position; the host gathers the marker positions, applies the checkpoint's
- * temperature for the question type and option count, and rounds like the reference.
+/*
+ * The laya-specific host side of a decision encoder (convaiinnovations/laya 0.3.4): the publisher's
+ * temperature settings and the pure-NumPy `host_decode` contract that the graph conversion verified
+ * row by row against the official `Agent.predict`. The sequence itself is DecisionSequenceBuilder.
  */
-internal class LayaSequenceBuilder(private val tok: HfTokenizer, val maxLen: Int, val headMaxLen: Int) {
-    class Built(val ids: IntArray, val markers: IntArray, val qtype: Int, val stateTokens: Int, val stateTruncated: Boolean)
-
-    /** The text form of a state: strings as they are, anything structured as the publisher's `json.dumps`. */
-    fun serializeState(state: Any): String = if (state is String) state else Json.dumps(state)
-
-    /** Tokenizes the serialized state once (the part `prefill` shares between questions). */
-    fun stateIds(serialized: String): IntArray = tok.encode(serialized.replace(tok.maskToken, " "))
-
-    fun renderOptions(q: Question): List<String> = when (q) {
-        is Question.Choice -> q.criteria.map { (k, v) -> if (v == null || v == "") k else "$k: $v" }
-        is Question.Score -> q.criteria.mapIndexed { i, c -> "level $i: $c" }
-        is Question.Noul -> {
-            val f = q.criteria?.get("false"); val t = q.criteria?.get("true")
-            listOf(
-                "false: " + (if (f == null || f == "") "no, the statement does not hold" else f),
-                "true: " + (if (t == null || t == "") "yes, the statement holds" else t),
-            )
-        }
-    }
-
-    fun qtype(q: Question): Int = when (q) { is Question.Choice -> 0; is Question.Score -> 1; is Question.Noul -> 2 }
-
-    fun build(q: Question, stateIds: IntArray): Built {
-        val mask = tok.maskToken
-        val typeName = when (q) { is Question.Choice -> "choice"; is Question.Score -> "score"; is Question.Noul -> "noul" }
-        val ins = q.instructions.replace(mask, " ")
-        var head = tok.encode("$typeName question: $ins")
-        val opts = renderOptions(q)
-        var optIds: List<IntArray> = opts.map { o -> intArrayOf(tok.maskId) + tok.encode(" " + o.replace(mask, " ")).let { if (it.size > 48) it.copyOf(48) else it } }
-        var optBudget = headMaxLen - optIds.sumOf { it.size }
-        if (optBudget < 16) {
-            val per = max(4, (headMaxLen - 16) / max(1, optIds.size))
-            optIds = optIds.map { if (it.size > per) it.copyOf(per) else it }
-            optBudget = headMaxLen - optIds.sumOf { it.size }
-        }
-        val headKeep = max(8, optBudget)
-        if (head.size > headKeep) head = head.copyOf(headKeep)
-        val ids = IntList(maxLen)
-        ids.add(tok.clsId); ids.addAll(head); ids.add(tok.sepId)
-        val markers = IntArray(optIds.size)
-        for ((i, o) in optIds.withIndex()) { markers[i] = ids.size; ids.addAll(o) }
-        ids.add(tok.sepId)
-        val room = max(0, maxLen - ids.size - 1)
-        val st = if (stateIds.size > room) stateIds.copyOf(room) else stateIds
-        ids.addAll(st)
-        ids.add(tok.sepId)
-        val all = ids.toArray()
-        val cut = if (all.size > maxLen) all.copyOf(maxLen) else all
-        return Built(cut, markers.filter { it < maxLen }.toIntArray(), qtype(q), st.size, stateIds.size > room)
-    }
-}
 
 /** The publisher's temperature settings (`rl_agent_config.json`). */
 internal class LayaCalibration(val temperature: DoubleArray, val byOptions: Map<String, Double>, val maxLen: Int, val headMaxLen: Int, val encoder: String) {

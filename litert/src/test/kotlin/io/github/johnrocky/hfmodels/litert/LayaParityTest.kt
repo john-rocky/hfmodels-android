@@ -52,7 +52,7 @@ class LayaParityTest {
 
     private fun sequenceParity(sub: String, rowsFile: String, fixturesFile: String, window: Int, head: Int) {
         val tok = tokenizer(sub)
-        val builder = LayaSequenceBuilder(tok, window, head)
+        val builder = DecisionSequenceBuilder(tok, window, head, DecisionFamily.LAYA)
         val rows = (Json.parseObject(resource(rowsFile))["rows"] as List<*>).associateBy { (it as Map<*, *>)["row_id"] as String }
         val fixtures = Json.parse(resource(fixturesFile)) as List<*>
         var checked = 0; var failures = 0

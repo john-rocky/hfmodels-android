@@ -14,7 +14,8 @@ import java.text.Normalizer
  *    `byte_fallback`, `fuse_unk`).
  * Added tokens are matched leftmost-longest on the raw text before anything else, with `lstrip` /
  * `rstrip`. `encode` never adds the template's special tokens; the sequence builder places them.
- * Parity with the upstream tokenizers is checked by `HfTokenizerTest` against ids the publisher's
+ * The special tokens come from `tokenizer_config.json` or from the descriptor ([SpecialTokens]).
+ * Parity with the upstream tokenizers is checked by the parity tests against ids the publisher's
  * own tokenizer produced.
  */
 internal class HfTokenizer private constructor(
@@ -38,6 +39,9 @@ internal class HfTokenizer private constructor(
     enum class Kind { BYTE_LEVEL, METASPACE }
 
     class Added(val content: String, val id: Int, val lstrip: Boolean, val rstrip: Boolean)
+
+    /** The template's special tokens by text (`<bos>` / `[CLS]` …); each must be in the vocab or the added tokens. */
+    class SpecialTokens(val cls: String, val sep: String, val mask: String, val pad: String, val unk: String? = null)
 
     val vocabSize: Int get() = vocab.size
 
@@ -194,8 +198,14 @@ internal class HfTokenizer private constructor(
         fun load(tokenizerJson: File, tokenizerConfig: File): HfTokenizer {
             val cfg = Json.parseObject(tokenizerConfig.readText())
             fun tok(key: String) = (cfg[key] as? String) ?: ((cfg[key] as? Map<*, *>)?.get("content") as? String) ?: throw invalid("tokenizer_config.json has no '$key'")
-            val clsTok = tok("cls_token"); val sepTok = tok("sep_token"); val maskTok = tok("mask_token"); val padTok = tok("pad_token")
             val unkTok = (cfg["unk_token"] as? String) ?: ((cfg["unk_token"] as? Map<*, *>)?.get("content") as? String)
+            return load(tokenizerJson, SpecialTokens(tok("cls_token"), tok("sep_token"), tok("mask_token"), tok("pad_token"), unkTok))
+        }
+
+        /** Loads `tokenizer.json` with the special tokens named by the caller (a repo without `tokenizer_config.json`). */
+        fun load(tokenizerJson: File, specials: SpecialTokens): HfTokenizer {
+            val clsTok = specials.cls; val sepTok = specials.sep; val maskTok = specials.mask; val padTok = specials.pad
+            val unkTok = specials.unk
 
             var kind: Kind? = null
             var nfc = false

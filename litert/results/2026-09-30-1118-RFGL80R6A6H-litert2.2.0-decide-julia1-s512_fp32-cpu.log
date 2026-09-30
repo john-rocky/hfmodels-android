@@ -1,0 +1,16 @@
+# hfmodels typed-decisions device gate  date=2026-09-30T02:18:10Z serial=RFGL80R6A6H device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 android=16
+# git=9bb949e test=JuliaDecisionsDeviceTest variant=s512_fp32 backend=cpu thermal=Thermal Status: 2 battery_level= level: 79 battery_temp_x10C= temperature: 440 screen= mWakefulness=Awake
+# gradle rc=0 end=2026-09-30T02:20:01Z thermal_end=Thermal Status: 2 battery_temp_end_x10C= temperature: 434
+--------- beginning of main
+09-30 11:18:18.922 22095 22111 I hfmodels-decide: device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 android=16 litert=2.2.0 model=litert-community/Julia-1-LiteRT@b92a0d21 variant=s512_fp32 backend=cpu
+09-30 11:18:18.929 22095 22119 I hfmodels: resolve litert-community/Julia-1-LiteRT: commit=b92a0d21 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=96bf04c3
+09-30 11:18:18.935 22095 22119 I hfmodels: resolve litert-community/Julia-1-LiteRT: commit=b92a0d21 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=96bf04c3
+09-30 11:18:23.919 22095 22119 I hfmodels: tokenizer tokenizer.json: 256000 tokens, load_ms=4974
+09-30 11:18:24.063 22095 22111 I hfmodels: ready litert-community/Julia-1-LiteRT@b92a0d21 variant=s512_fp32 profile=cpu inference=CPU prepare_ms=5118
+09-30 11:18:24.063 22095 22111 I hfmodels-decide: RESULT step=load ok=true variant=s512_fp32 backend=cpu import_ms=0 load_ms=5130 profile=cpu window=512 head=507 max_options=20 notes=family=julia compile_ms=142 on cpu (4 threads) | observed backend is UNKNOWN: litert 2.2.0 reports no per-op execution target; 'initialized' is the accelerator the CompiledModel was created with | host token lookup: julia1_token_table_fp16.bin (float16, 256000 rows x 384) feeds inputs_embeds | no calibration in this family: probabilities are the softmax of the raw marker scores (T=1), unrounded, as the publisher's runtime reports them
+09-30 11:18:33.866 22095 22111 I hfmodels-decide: RESULT step=sequence ok=true variant=s512_fp32 backend=cpu rows=2065 mismatches=0 longer_than_window=35 (reported truncated) window=512
+09-30 11:19:24.549 22095 22111 I hfmodels-decide: parity 200/300: flips=0 max_dp=0.00374 median_ms=255.7
+09-30 11:19:49.326 22095 22111 I hfmodels-decide: RESULT step=parity ok=true variant=s512_fp32 backend=cpu rows=300 argmax_flips=0 max_prob_abs_err=0.00485 (worst agent_trace_observability_000052:action) rows_over_0.01=0 max_marker_logit_abs_err=0.0315 dp_tol=0.01 question_ms_median=255.5 p90=257.4 min=227.0 max=294.9 lookup_ms_median=0.48 per_type: choice=120rows/0flips/device_correct 76/120/publisher_correct 76/120 noul=60rows/0flips/device_correct 53/60/publisher_correct 53/60 score=120rows/0flips/device_correct 78/120/publisher_correct 78/120
+09-30 11:20:00.879 22095 22111 I hfmodels-decide: RESULT step=timing ok=true variant=s512_fp32 backend=cpu repeats=5 decide_4q_total_ms_median=916.9 four_decide_1q_total_ms_median=916.4 answers={department=billing 0.908, urgency=0.936, refund_requested=0.946, tone=neutral 0.992}
+09-30 11:20:00.906 22095 22111 I hfmodels-decide: RESULT step=release ok=true variant=s512_fp32 backend=cpu close_ms=27
+09-30 11:20:00.906 22095 22111 I hfmodels-decide: RESULT ok=true model=litert-community/Julia-1-LiteRT variant=s512_fp32 backend=cpu device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 failures=

@@ -425,6 +425,116 @@
       }
     ]
   },
+  "typed_decisions_julia1": {
+    "$comment": "hfmodels-litert (EncoderDecisions, family julia) on litert-community/Julia-1-LiteRT@b92a0d21 (host-lookup graphs, float16 token table, tokenizer.json), verified on one device on one day through the public API: litert/src/androidTest/.../JuliaDecisionsDeviceTest.kt run by tools/decide_gate.sh with GATE_TEST=JuliaDecisionsDeviceTest. Reference = the publisher's runtime (SupersonicLabs/Julia-1, CPU FP32, strict encoding, one request per forward) raw marker logits on the 2,000 questions of the LocalLLaMA/typed-decisions test split and the 100 parity cases of SupersonicLabs/Julia-1-ONNX (tools/julia1_fixture.py); probabilities compared at T=1, the publisher's decoding. sequence_rows_identical = rows whose token ids, marker positions and qtype equal the publisher's sequence(); rows longer than the window are reported as truncated and not compared. question_ms = the SDK's per-question wall clock of decide(state, question) (sequence, host lookup, write, run, readback), median / p90 / min / max over the parity rows, warm. The three runs were consecutive and the phone warmed (thermal status 0 -> 1 -> 2, battery 35.2 -> 44.0 C); rows in run order.",
+    "device": {
+      "model": "SM-S942Q (Galaxy S26)",
+      "serial": "RFGL80R6A6H",
+      "android": "16",
+      "build": "BP4A.251205.006.S942QOPS1AZF2"
+    },
+    "date": "2026-09-30",
+    "runtime": "com.google.ai.edge.litert:litert:2.2.0 (GPU with explicit FP32 precision; CPU 4 threads)",
+    "rows": [
+      {
+        "variant": "s512_fp32",
+        "backend": "gpu",
+        "result": "PASS",
+        "parity_rows": 2065,
+        "sequence_rows_identical": "2065/2065 (35 rows longer than 512 tokens reported truncated)",
+        "argmax_flips": 0,
+        "max_prob_abs_err": 0.0077,
+        "rows_over_0.01": 0,
+        "max_marker_logit_abs_err": 0.0602,
+        "question_ms_median": 114.0,
+        "question_ms_p90": 123.1,
+        "question_ms_min": 58.6,
+        "question_ms_max": 133.3,
+        "lookup_ms_median": 1.0,
+        "compile_ms": 1261,
+        "load_ms": 3982,
+        "typed_decisions_correct_device": {
+          "choice": "414/586",
+          "score": "534/786",
+          "noul": "477/593"
+        },
+        "typed_decisions_correct_publisher_same_rows": {
+          "choice": "414/586",
+          "score": "534/786",
+          "noul": "477/593"
+        },
+        "decide_4q_ms_median": 453.3,
+        "four_decide_1q_ms_median": 463.7,
+        "thermal": "status 0 -> 1, battery 35.2 -> 40.3 C",
+        "log": "litert/results/2026-09-30-1102-RFGL80R6A6H-litert2.2.0-decide-julia1-s512_fp32-gpu.log"
+      },
+      {
+        "variant": "s1024_fp32",
+        "backend": "gpu",
+        "result": "PASS",
+        "parity_rows": 2100,
+        "sequence_rows_identical": "2100/2100",
+        "argmax_flips": 0,
+        "max_prob_abs_err": 0.0077,
+        "rows_over_0.01": 0,
+        "max_marker_logit_abs_err": 0.0602,
+        "question_ms_median": 292.2,
+        "question_ms_p90": 306.9,
+        "question_ms_min": 159.1,
+        "question_ms_max": 331.1,
+        "lookup_ms_median": 1.79,
+        "compile_ms": 2408,
+        "load_ms": 7409,
+        "typed_decisions_correct_device": {
+          "choice": "426/600",
+          "score": "542/800",
+          "noul": "483/600"
+        },
+        "typed_decisions_correct_publisher_same_rows": {
+          "choice": "426/600",
+          "score": "542/800",
+          "noul": "483/600"
+        },
+        "decide_4q_ms_median": 1261.9,
+        "four_decide_1q_ms_median": 1265.6,
+        "thermal": "status 1 -> 2, battery 40.3 -> 44.0 C",
+        "log": "litert/results/2026-09-30-1106-RFGL80R6A6H-litert2.2.0-decide-julia1-s1024_fp32-gpu.log"
+      },
+      {
+        "variant": "s512_fp32",
+        "backend": "cpu",
+        "result": "PASS",
+        "parity_rows": 300,
+        "sequence_rows_identical": "2065/2065",
+        "argmax_flips": 0,
+        "max_prob_abs_err": 0.0049,
+        "rows_over_0.01": 0,
+        "max_marker_logit_abs_err": 0.0315,
+        "question_ms_median": 255.5,
+        "question_ms_p90": 257.4,
+        "question_ms_min": 227.0,
+        "question_ms_max": 294.9,
+        "lookup_ms_median": 0.48,
+        "compile_ms": 142,
+        "load_ms": 5130,
+        "typed_decisions_correct_device": {
+          "choice": "76/120",
+          "score": "78/120",
+          "noul": "53/60"
+        },
+        "typed_decisions_correct_publisher_same_rows": {
+          "choice": "76/120",
+          "score": "78/120",
+          "noul": "53/60"
+        },
+        "decide_4q_ms_median": 916.9,
+        "four_decide_1q_ms_median": 916.4,
+        "thermal": "status 2 throughout, battery 44.0 -> 43.4 C",
+        "note": "the first 300 rows of the fixture in file order (the run was limited to yield the phone)",
+        "log": "litert/results/2026-09-30-1118-RFGL80R6A6H-litert2.2.0-decide-julia1-s512_fp32-cpu.log"
+      }
+    ]
+  },
   "typed_decisions_runtime_probe": {
     "$comment": "NOT a shipped SDK path. probes/scoring on the Galaxy S26: the LiteRT-LM Kotlin binding of the kotlin-text-scoring branch (Session.runTextScoring / saveCheckpoint / rewindToCheckpoint) with the pending fix of google-ai-edge/LiteRT-LM#3562 applied, built and synced in as the README of the probe says. One decision = one prefill of the rendered prompt, the three option letters scored, a rewind between them (shared arm); the direct arm prefills afresh for every letter. Medians over the rows, warm, one phone, one afternoon; the thermal status is recorded per run. The agreement columns compare the quantized bundle with the fp32 last-position logits of the same prompts (and, for MiniCPM5-2B, with the same bundle's own graph read on a Mac); they measure quantization, not the binding. No ranking between runtimes is implied.",
     "device": {
