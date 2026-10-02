@@ -1,0 +1,26 @@
+# hfmodels typed-decisions device gate  date=2026-10-02T14:37:24Z serial=RFGL80R6A6H device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZH9 android=16
+# git=fe96742 test=EncoderDecisionsDeviceTest variant=en_s256_fp32 backend=gpu thermal=Thermal Status: 0 battery_level= level: 79 battery_temp_x10C= temperature: 369 screen= mWakefulness=Awake
+# gradle rc=0 end=2026-10-02T14:38:25Z thermal_end=Thermal Status: 1 battery_temp_end_x10C= temperature: 397
+--------- beginning of main
+10-02 23:37:34.043 28297 28311 I hfmodels-decide: device=SM-S942Q soc=QTI/SM8850 build=BP4A.251205.006.S942QOPS1AZH9 android=16 litert=2.2.0 variant=en_s256_fp32 backend=gpu
+10-02 23:37:34.051 28297 28316 I hfmodels: resolve convaiinnovations/laya: commit=1c5edc17 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=b7ffd807
+10-02 23:37:34.058 28297 28316 I hfmodels: resolve convaiinnovations/laya: commit=1c5edc17 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=b7ffd807
+10-02 23:37:34.714 28297 28316 I hfmodels: tokenizer tokenizer.json: 50280 tokens, load_ms=633
+10-02 23:37:42.642 28297 28311 I hfmodels: ready convaiinnovations/laya@1c5edc17 variant=en_s256_fp32 profile=gpu inference=GPU prepare_ms=8567
+10-02 23:37:42.643 28297 28311 I hfmodels-decide: RESULT step=load ok=true variant=en_s256_fp32 backend=gpu import_ms=0 load_ms=8588 profile=gpu window=256 head=192 notes=family=laya compile_ms=7926 on gpu (precision fp32) | observed backend is UNKNOWN: litert 2.2.0 reports no per-op execution target; 'initialized' is the accelerator the CompiledModel was created with
+10-02 23:38:09.767 28297 28311 I hfmodels-decide: RESULT step=parity ok=true variant=en_s256_fp32 backend=gpu rows=140 calibration=rl_agent_config.json argmax_flips=0 max_marker_logit_abs_err=0.00022 (worst D01/jailbreak) max_prob_abs_err=0.00000 max_score_abs_err=0.00000 max_act_logit_rel_err=1.30e-05 exact_rounded=140/140 question_ms_median=134.1 p90=271.0 min=123.0 max=279.6
+10-02 23:38:23.860 28297 28311 I hfmodels-decide: RESULT step=timing ok=true variant=en_s256_fp32 backend=gpu questions=4 state_tokens=27 shared_ms_median=762.2 direct_ms_median=784.8 prefill_then_decide_ms_median=746.3 state_tokenize_ms_median=1.26 per_question_ms=195.5,190.2,185.8,183.1 repeats=5
+10-02 23:38:23.861 28297 28311 I hfmodels-decide: RESULT step=authored144 ok=true variant=en_s256_fp32 backend=gpu skipped: /data/user/0/io.github.johnrocky.hfmodels.litert.test/files/laya/fixtures/authored144_laya_oracle.json not pushed
+10-02 23:38:24.074 28297 28311 I hfmodels-decide: RESULT step=release ok=true variant=en_s256_fp32 backend=gpu close_ms=213
+10-02 23:38:24.075 28297 28311 I hfmodels-decide: RESULT ok=true variant=en_s256_fp32 backend=gpu device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZH9 failures=
+## residency (10 lines, pid 28297)
+10-02 23:37:34.718 28297 28323 I litert  : [npu_registry.cc:30] NPU accelerator registered.
+10-02 23:37:34.766 28297 28323 I litert  : [compiled_model.cc:754] NPU JIT compilation caching enabled with cache dir: /data/user/0/io.github.johnrocky.hfmodels.litert.test/cache
+10-02 23:37:34.773 28297 28323 I litert  :   HtpPerformanceMode       : Burst(2)
+10-02 23:37:35.608 28297 28323 I litert  : [compiled_model.cc:1250] 0 compiler plugins were applied successfully: 
+10-02 23:37:35.612 28297 28323 I litert  :   HtpPerformanceMode       : Burst(2)
+10-02 23:37:35.785 28297 28323 I tflite  : Replacing 2159 out of 2159 node(s) with delegate (LITERT_CL) node, yielding 1 partitions for subgraph 0 (main).
+10-02 23:37:42.637 28297 28323 I litert  : [compiled_model.cc:754] NPU JIT compilation caching enabled with cache dir: /data/user/0/io.github.johnrocky.hfmodels.litert.test/cache
+10-02 23:37:42.637 28297 28323 I litert  :   HtpPerformanceMode       : Burst(2)
+10-02 23:37:42.638 28297 28323 I litert  : [compiled_model.cc:1250] 0 compiler plugins were applied successfully: 
+10-02 23:37:42.639 28297 28323 I tflite  : Replacing 4 out of 4 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 1 partitions for subgraph 0 (main).

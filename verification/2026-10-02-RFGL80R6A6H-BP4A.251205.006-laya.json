@@ -1,0 +1,54 @@
+[
+  {
+    "model_id": "litert-community/laya-LiteRT",
+    "model_commit": "bca6002de867804dfb98d04568d9089cca44a1f0",
+    "level": "PUBLISHER_TESTED",
+    "device": "SM-S942Q (Galaxy S26)",
+    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+    "runtime": "litert 2.2.0",
+    "result": "PASS",
+    "date": "2026-10-02",
+    "variant": "en_s256_fp32",
+    "profile": "npu",
+    "evidence": "litert/results/2026-10-02-2336-RFGL80R6A6H-litert2.2.0-decide-en_s256_fp32-npu.log"
+  },
+  {
+    "model_id": "litert-community/laya-LiteRT",
+    "model_commit": "bca6002de867804dfb98d04568d9089cca44a1f0",
+    "level": "PUBLISHER_TESTED",
+    "device": "SM-S942Q (Galaxy S26)",
+    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+    "runtime": "litert 2.2.0",
+    "result": "PASS",
+    "date": "2026-10-02",
+    "variant": "en_s256_fp32",
+    "profile": "gpu",
+    "evidence": "litert/results/2026-10-02-2337-RFGL80R6A6H-litert2.2.0-decide-en_s256_fp32-gpu.log"
+  },
+  {
+    "model_id": "litert-community/laya-LiteRT",
+    "model_commit": "bca6002de867804dfb98d04568d9089cca44a1f0",
+    "level": "PUBLISHER_TESTED",
+    "device": "SM-S942Q (Galaxy S26)",
+    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+    "runtime": "litert 2.2.0",
+    "result": "PASS",
+    "date": "2026-10-02",
+    "variant": "ml_s256_wfp16",
+    "profile": "npu",
+    "evidence": "litert/results/2026-10-02-2359-RFGL80R6A6H-litert2.2.0-decide-ml_s256_wfp16-npu.log"
+  },
+  {
+    "model_id": "litert-community/laya-LiteRT",
+    "model_commit": "bca6002de867804dfb98d04568d9089cca44a1f0",
+    "level": "PUBLISHER_TESTED",
+    "device": "SM-S942Q (Galaxy S26)",
+    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+    "runtime": "litert 2.2.0",
+    "result": "PASS",
+    "date": "2026-10-03",
+    "variant": "ml_s256_fp32",
+    "profile": "gpu",
+    "evidence": "litert/results/2026-10-03-0002-RFGL80R6A6H-litert2.2.0-decide-ml_s256_fp32-auto.log"
+  }
+]

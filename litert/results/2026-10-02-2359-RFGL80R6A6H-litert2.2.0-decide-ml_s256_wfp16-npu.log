@@ -1,0 +1,32 @@
+# hfmodels typed-decisions device gate  date=2026-10-02T14:59:33Z serial=RFGL80R6A6H device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZH9 android=16
+# git=2040e45 test=EncoderDecisionsDeviceTest variant=ml_s256_wfp16 backend=npu thermal=Thermal Status: 0 battery_level= level: 79 battery_temp_x10C= temperature: 343 screen= mWakefulness=Awake
+# gradle rc=0 end=2026-10-02T15:01:16Z thermal_end=Thermal Status: 0 battery_temp_end_x10C= temperature: 366
+--------- beginning of main
+10-02 23:59:43.681  2532  2547 I hfmodels-decide: device=SM-S942Q soc=QTI/SM8850 build=BP4A.251205.006.S942QOPS1AZH9 android=16 litert=2.2.0 variant=ml_s256_wfp16 backend=npu
+10-02 23:59:43.686  2532  2564 I hfmodels: resolve convaiinnovations/laya: commit=1c5edc17 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=b7ffd807
+10-02 23:59:44.241  2532  2564 I hfmodels: imported laya_ml_s256_wfp16.tflite: 644077360 bytes, sha256 ok, from /data/user/0/io.github.johnrocky.hfmodels.litert.test/files/laya/laya_ml_s256_wfp16.tflite
+10-02 23:59:44.243  2532  2564 I hfmodels: imported laya_ml_act_head_fp32.tflite: 795816 bytes, sha256 ok, from /data/user/0/io.github.johnrocky.hfmodels.litert.test/files/laya/laya_ml_act_head_fp32.tflite
+10-02 23:59:44.276  2532  2564 I hfmodels: imported tokenizer.json: 34363188 bytes, sha256 ok, from /data/user/0/io.github.johnrocky.hfmodels.litert.test/files/laya/multilingual/tokenizer/tokenizer.json
+10-02 23:59:44.277  2532  2564 I hfmodels: imported tokenizer_config.json: 524 bytes, sha256 ok, from /data/user/0/io.github.johnrocky.hfmodels.litert.test/files/laya/multilingual/tokenizer/tokenizer_config.json
+10-02 23:59:44.278  2532  2564 I hfmodels: imported laya_ml_calibration.json: 9156 bytes, sha256 ok, from /data/user/0/io.github.johnrocky.hfmodels.litert.test/files/laya/laya_ml_calibration.json
+10-02 23:59:44.280  2532  2564 I hfmodels: resolve convaiinnovations/laya: commit=1c5edc17 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=b7ffd807
+10-02 23:59:47.080  2532  2564 I hfmodels: tokenizer tokenizer.json: 256000 tokens, load_ms=2784
+10-03 00:01:03.356  2532  2547 I hfmodels: ready convaiinnovations/laya@1c5edc17 variant=ml_s256_wfp16 profile=npu inference=NPU prepare_ms=79064
+10-03 00:01:03.356  2532  2547 I hfmodels-decide: RESULT step=load ok=true variant=ml_s256_wfp16 backend=npu import_ms=591 load_ms=79078 profile=npu window=256 head=256 notes=family=laya compile_ms=76274 on npu (Qualcomm HTP V81, JIT, burst; the first compile on a phone takes tens of seconds, later loads read the cache) | observed backend is UNKNOWN: litert 2.2.0 reports no per-op execution target; 'initialized' is the accelerator the CompiledModel was created with
+10-03 00:01:12.550  2532  2547 I hfmodels-decide: RESULT step=parity ok=true variant=ml_s256_wfp16 backend=npu rows=201 calibration=laya_ml_calibration.json argmax_flips=0 max_marker_logit_abs_err=0.34301 (worst ML_C02/refund_requested) max_prob_abs_err=0.00680 max_score_abs_err=0.00250 max_act_logit_rel_err=7.36e-03 exact_rounded=20/201 question_ms_median=31.8 p90=33.3 min=30.6 max=37.7
+10-03 00:01:14.899  2532  2547 I hfmodels-decide: RESULT step=timing ok=true variant=ml_s256_wfp16 backend=npu questions=4 state_tokens=25 shared_ms_median=131.5 direct_ms_median=132.2 prefill_then_decide_ms_median=128.5 state_tokenize_ms_median=0.93 per_question_ms=32.5,31.9,31.7,31.9 repeats=5
+10-03 00:01:14.900  2532  2547 I hfmodels-decide: RESULT step=authored144 ok=true variant=ml_s256_wfp16 backend=npu skipped: /data/user/0/io.github.johnrocky.hfmodels.litert.test/files/laya/fixtures/authored144_laya_oracle.json not pushed
+10-03 00:01:15.034  2532  2547 I hfmodels-decide: RESULT step=release ok=true variant=ml_s256_wfp16 backend=npu close_ms=134
+10-03 00:01:15.035  2532  2547 I hfmodels-decide: RESULT ok=true variant=ml_s256_wfp16 backend=npu device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZH9 failures=
+## residency (11 lines, pid 2532)
+10-02 23:59:47.084  2532  2605 I litert  : [npu_registry.cc:30] NPU accelerator registered.
+10-02 23:59:47.103  2532  2605 I litert  : [compiled_model.cc:754] NPU JIT compilation caching enabled with cache dir: /data/user/0/io.github.johnrocky.hfmodels.litert.test/cache
+10-02 23:59:47.108  2532  2605 I litert  :   HtpPerformanceMode       : Burst(2)
+10-02 23:59:47.390  2532  2605 I litert  : [compiler_plugin.cc:741] Partitioned subgraph<0>, selected 1813 ops, from a total of 1813 ops. resulted in 1 partitions.
+10-03 00:01:02.456  2532  2605 I litert  : [compiled_model.cc:1250] 1 compiler plugins were applied successfully: Qualcomm compiler plugin (ver 0.1.0)
+10-03 00:01:03.238  2532  2605 I litert  :   HtpPerformanceMode       : Burst(2)
+10-03 00:01:03.243  2532  2605 I tflite  : Replacing 1 out of 1 node(s) with delegate (DispatchDelegate) node, yielding 1 partitions for subgraph 0 (main).
+10-03 00:01:03.350  2532  2605 I litert  : [compiled_model.cc:754] NPU JIT compilation caching enabled with cache dir: /data/user/0/io.github.johnrocky.hfmodels.litert.test/cache
+10-03 00:01:03.350  2532  2605 I litert  :   HtpPerformanceMode       : Burst(2)
+10-03 00:01:03.351  2532  2605 I litert  : [compiled_model.cc:1250] 0 compiler plugins were applied successfully: 
+10-03 00:01:03.352  2532  2605 I tflite  : Replacing 4 out of 4 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 1 partitions for subgraph 0 (main).

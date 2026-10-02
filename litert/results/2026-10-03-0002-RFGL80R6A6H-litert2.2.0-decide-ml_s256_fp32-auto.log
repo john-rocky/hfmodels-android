@@ -1,0 +1,27 @@
+# hfmodels typed-decisions device gate  date=2026-10-02T15:02:09Z serial=RFGL80R6A6H device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZH9 android=16
+# git=2040e45 test=EncoderDecisionsDeviceTest variant=ml_s256_fp32 backend=auto thermal=Thermal Status: 0 battery_level= level: 79 battery_temp_x10C= temperature: 364 screen= mWakefulness=Awake
+# gradle rc=0 end=2026-10-02T15:02:50Z thermal_end=Thermal Status: 1 battery_temp_end_x10C= temperature: 381
+--------- beginning of main
+10-03 00:02:19.426  3960  3974 I hfmodels-decide: device=SM-S942Q soc=QTI/SM8850 build=BP4A.251205.006.S942QOPS1AZH9 android=16 litert=2.2.0 variant=ml_s256_fp32 backend=auto
+10-03 00:02:19.439  3960  3980 I hfmodels: resolve convaiinnovations/laya: commit=1c5edc17 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=b7ffd807
+10-03 00:02:20.791  3960  3980 I hfmodels: imported laya_ml_s256_fp32.tflite: 1287376352 bytes, sha256 ok, from /data/user/0/io.github.johnrocky.hfmodels.litert.test/files/laya/laya_ml_s256_fp32.tflite
+10-03 00:02:20.793  3960  3980 I hfmodels: resolve convaiinnovations/laya: commit=1c5edc17 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=b7ffd807
+10-03 00:02:23.682  3960  3980 I hfmodels: tokenizer tokenizer.json: 256000 tokens, load_ms=2873
+10-03 00:02:28.825  3960  3974 I hfmodels: ready convaiinnovations/laya@1c5edc17 variant=ml_s256_fp32 profile=gpu inference=GPU prepare_ms=8020
+10-03 00:02:28.825  3960  3974 I hfmodels-decide: RESULT step=load ok=true variant=ml_s256_fp32 backend=auto import_ms=1349 load_ms=8034 profile=gpu window=256 head=256 notes=family=laya compile_ms=5140 on gpu (precision fp32) | observed backend is UNKNOWN: litert 2.2.0 reports no per-op execution target; 'initialized' is the accelerator the CompiledModel was created with
+10-03 00:02:43.997  3960  3974 I hfmodels-decide: RESULT step=parity ok=true variant=ml_s256_fp32 backend=auto rows=201 calibration=laya_ml_calibration.json argmax_flips=0 max_marker_logit_abs_err=0.00005 (worst ML_F04/is_sensitive) max_prob_abs_err=0.00010 max_score_abs_err=0.00010 max_act_logit_rel_err=5.01e-06 exact_rounded=199/201 question_ms_median=54.8 p90=59.2 min=51.6 max=65.3
+10-03 00:02:49.731  3960  3974 I hfmodels-decide: RESULT step=timing ok=true variant=ml_s256_fp32 backend=auto questions=4 state_tokens=25 shared_ms_median=219.6 direct_ms_median=224.8 prefill_then_decide_ms_median=433.8 state_tokenize_ms_median=1.12 per_question_ms=113.2,116.3,115.8,116.5 repeats=5
+10-03 00:02:49.732  3960  3974 I hfmodels-decide: RESULT step=authored144 ok=true variant=ml_s256_fp32 backend=auto skipped: /data/user/0/io.github.johnrocky.hfmodels.litert.test/files/laya/fixtures/authored144_laya_oracle.json not pushed
+10-03 00:02:49.892  3960  3974 I hfmodels-decide: RESULT step=release ok=true variant=ml_s256_fp32 backend=auto close_ms=161
+10-03 00:02:49.893  3960  3974 I hfmodels-decide: RESULT ok=true variant=ml_s256_fp32 backend=auto device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZH9 failures=
+## residency (10 lines, pid 3960)
+10-03 00:02:23.693  3960  4103 I litert  : [npu_registry.cc:30] NPU accelerator registered.
+10-03 00:02:23.715  3960  4103 I litert  : [compiled_model.cc:754] NPU JIT compilation caching enabled with cache dir: /data/user/0/io.github.johnrocky.hfmodels.litert.test/cache
+10-03 00:02:23.736  3960  4103 I litert  :   HtpPerformanceMode       : Burst(2)
+10-03 00:02:23.952  3960  4103 I litert  : [compiled_model.cc:1250] 0 compiler plugins were applied successfully: 
+10-03 00:02:23.963  3960  4103 I litert  :   HtpPerformanceMode       : Burst(2)
+10-03 00:02:24.130  3960  4103 I tflite  : Replacing 1713 out of 1713 node(s) with delegate (LITERT_CL) node, yielding 1 partitions for subgraph 0 (main).
+10-03 00:02:28.818  3960  4103 I litert  : [compiled_model.cc:754] NPU JIT compilation caching enabled with cache dir: /data/user/0/io.github.johnrocky.hfmodels.litert.test/cache
+10-03 00:02:28.819  3960  4103 I litert  :   HtpPerformanceMode       : Burst(2)
+10-03 00:02:28.819  3960  4103 I litert  : [compiled_model.cc:1250] 0 compiler plugins were applied successfully: 
+10-03 00:02:28.820  3960  4103 I tflite  : Replacing 4 out of 4 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 1 partitions for subgraph 0 (main).

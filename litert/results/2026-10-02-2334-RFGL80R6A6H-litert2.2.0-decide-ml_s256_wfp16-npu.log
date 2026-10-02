@@ -1,0 +1,26 @@
+# hfmodels typed-decisions device gate  date=2026-10-02T14:34:08Z serial=RFGL80R6A6H device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZH9 android=16
+# git=fe96742 test=EncoderDecisionsDeviceTest variant=ml_s256_wfp16 backend=npu thermal=Thermal Status: 0 battery_level= level: 79 battery_temp_x10C= temperature: 357 screen= mWakefulness=Awake
+# gradle rc=1 end=2026-10-02T14:34:20Z thermal_end=Thermal Status: 0 battery_temp_end_x10C= temperature: 358
+--------- beginning of main
+10-02 23:34:18.690 27012 27026 I hfmodels-decide: device=SM-S942Q soc=QTI/SM8850 build=BP4A.251205.006.S942QOPS1AZH9 android=16 litert=2.2.0 variant=ml_s256_wfp16 backend=npu
+10-02 23:34:18.703 27012 27031 I hfmodels: resolve convaiinnovations/laya: commit=1c5edc17 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=b7ffd807
+10-02 23:34:19.330 27012 27031 I hfmodels: imported laya_ml_s256_wfp16.tflite: 644077360 bytes, sha256 ok, from /data/user/0/io.github.johnrocky.hfmodels.litert.test/files/laya/laya_ml_s256_wfp16.tflite
+10-02 23:34:19.333 27012 27031 I hfmodels: imported laya_ml_act_head_fp32.tflite: 795816 bytes, sha256 ok, from /data/user/0/io.github.johnrocky.hfmodels.litert.test/files/laya/laya_ml_act_head_fp32.tflite
+10-02 23:34:19.333 27012 27031 I hfmodels: imported tokenizer_config.json: 524 bytes, sha256 ok, from /data/user/0/io.github.johnrocky.hfmodels.litert.test/files/laya/multilingual/tokenizer/tokenizer_config.json
+10-02 23:34:19.334 27012 27031 I hfmodels: imported laya_ml_calibration.json: 9156 bytes, sha256 ok, from /data/user/0/io.github.johnrocky.hfmodels.litert.test/files/laya/laya_ml_calibration.json
+10-02 23:34:19.336 27012 27031 I hfmodels: resolve convaiinnovations/laya: commit=1c5edc17 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=b7ffd807
+10-02 23:34:19.354 27012 27026 E hfmodels-decide: failed
+10-02 23:34:19.354 27012 27026 E hfmodels-decide: ModelException(MANIFEST_INVALID, retryable=false, details={}): handler_config.head_tokens 256 leaves no room in the 256-token window
+10-02 23:34:19.354 27012 27026 E hfmodels-decide: 	at io.github.johnrocky.hfmodels.litert.LiteRtDecisionHandler.prepare(EncoderDecisions.kt:89)
+10-02 23:34:19.354 27012 27026 E hfmodels-decide: 	at io.github.johnrocky.hfmodels.litert.LiteRtDecisionHandler.prepare(EncoderDecisions.kt:53)
+10-02 23:34:19.354 27012 27026 E hfmodels-decide: 	at io.github.johnrocky.hfmodels.HfModels$prepare$3$model$1$1.invokeSuspend(HfModels.kt:140)
+10-02 23:34:19.354 27012 27026 E hfmodels-decide: 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
+10-02 23:34:19.354 27012 27026 E hfmodels-decide: 	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:100)
+10-02 23:34:19.354 27012 27026 E hfmodels-decide: 	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:124)
+10-02 23:34:19.354 27012 27026 E hfmodels-decide: 	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
+10-02 23:34:19.354 27012 27026 E hfmodels-decide: 	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:586)
+10-02 23:34:19.354 27012 27026 E hfmodels-decide: 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:798)
+10-02 23:34:19.354 27012 27026 E hfmodels-decide: 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:717)
+10-02 23:34:19.354 27012 27026 E hfmodels-decide: 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:704)
+10-02 23:34:19.355 27012 27026 I hfmodels-decide: RESULT ok=false variant=ml_s256_wfp16 backend=npu device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZH9 failures=exception: ModelException: MANIFEST_INVALID: handler_config.head_tokens 256 leaves no room in the 256-token window
+## residency (0 lines, pid 27012)

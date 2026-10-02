@@ -338,6 +338,33 @@
                     "result": "PASS",
                     "date": "2026-09-30",
                     "evidence": "litert/results/2026-09-30-1102-RFGL80R6A6H-litert2.2.0-decide-julia1-s512_fp32-gpu.log"
+                  },
+                  {
+                    "level": "PUBLISHER_TESTED",
+                    "device": "SM-S942Q (Galaxy S26)",
+                    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+                    "runtime": "litert 2.2.0",
+                    "result": "PASS",
+                    "date": "2026-10-02",
+                    "evidence": "litert/results/2026-10-02-2326-RFGL80R6A6H-litert2.2.0-decide-julia1-s512_fp32-gpu.log"
+                  },
+                  {
+                    "level": "PUBLISHER_TESTED",
+                    "device": "SM-S942Q (Galaxy S26)",
+                    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+                    "runtime": "litert 2.2.0",
+                    "result": "PASS",
+                    "date": "2026-10-02",
+                    "evidence": "litert/results/2026-10-02-2338-RFGL80R6A6H-litert2.2.0-decide-julia1-s512_fp32-gpu-npulibs.log"
+                  },
+                  {
+                    "level": "PUBLISHER_TESTED",
+                    "device": "SM-S942Q (Galaxy S26)",
+                    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+                    "runtime": "litert 2.2.0",
+                    "result": "PASS",
+                    "date": "2026-10-03",
+                    "evidence": "litert/results/2026-10-03-0002-RFGL80R6A6H-litert2.2.0-decide-julia1-s512_fp32-gpu-npulibs.log"
                   }
                 ]
               },
@@ -372,6 +399,15 @@
                     "result": "PASS",
                     "date": "2026-09-30",
                     "evidence": "litert/results/2026-09-30-1118-RFGL80R6A6H-litert2.2.0-decide-julia1-s512_fp32-cpu.log"
+                  },
+                  {
+                    "level": "PUBLISHER_TESTED",
+                    "device": "SM-S942Q (Galaxy S26)",
+                    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+                    "runtime": "litert 2.2.0",
+                    "result": "PASS",
+                    "date": "2026-10-02",
+                    "evidence": "litert/results/2026-10-02-2330-RFGL80R6A6H-litert2.2.0-decide-julia1-s512_fp32-cpu.log"
                   }
                 ]
               }

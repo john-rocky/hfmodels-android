@@ -1,0 +1,62 @@
+# hfmodels typed-decisions device gate  date=2026-10-02T15:01:22Z serial=RFGL80R6A6H device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZH9 android=16
+# git=2040e45 test=EncoderDecisionsDeviceTest variant=ml_s256_wfp16 backend=gpu thermal=Thermal Status: 0 battery_level= level: 79 battery_temp_x10C= temperature: 370 screen= mWakefulness=Awake
+# gradle rc=1 end=2026-10-02T15:01:39Z thermal_end=Thermal Status: 0 battery_temp_end_x10C= temperature: 368
+--------- beginning of main
+10-03 00:01:32.157  3468  3527 I hfmodels-decide: device=SM-S942Q soc=QTI/SM8850 build=BP4A.251205.006.S942QOPS1AZH9 android=16 litert=2.2.0 variant=ml_s256_wfp16 backend=gpu
+10-03 00:01:32.165  3468  3546 I hfmodels: resolve convaiinnovations/laya: commit=1c5edc17 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=b7ffd807
+10-03 00:01:32.170  3468  3546 I hfmodels: resolve convaiinnovations/laya: commit=1c5edc17 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=b7ffd807
+10-03 00:01:35.338  3468  3546 I hfmodels: tokenizer tokenizer.json: 256000 tokens, load_ms=3149
+10-03 00:01:38.501  3468  3546 W hfmodels: compile on profile 'gpu' failed: LiteRtException: Failed to compile model
+10-03 00:01:38.501  3468  3546 W hfmodels: com.google.ai.edge.litert.LiteRtException: Failed to compile model
+10-03 00:01:38.501  3468  3546 W hfmodels: 	at com.google.ai.edge.litert.CompiledModel.nativeCreateFromFile(Native Method)
+10-03 00:01:38.501  3468  3546 W hfmodels: 	at com.google.ai.edge.litert.CompiledModel.access$nativeCreateFromFile(Model.kt:56)
+10-03 00:01:38.501  3468  3546 W hfmodels: 	at com.google.ai.edge.litert.CompiledModel$Companion.nativeCreateFromFile(Model.kt:0)
+10-03 00:01:38.501  3468  3546 W hfmodels: 	at com.google.ai.edge.litert.CompiledModel$Companion.createFromFile(Model.kt:564)
+10-03 00:01:38.501  3468  3546 W hfmodels: 	at com.google.ai.edge.litert.CompiledModel$Companion.createFromFile$default(Model.kt:544)
+10-03 00:01:38.501  3468  3546 W hfmodels: 	at com.google.ai.edge.litert.CompiledModel$Companion.create(Model.kt:600)
+10-03 00:01:38.501  3468  3546 W hfmodels: 	at io.github.johnrocky.hfmodels.litert.LiteRtDecisionModel$Companion.graph(LiteRtDecisionModel.kt:262)
+10-03 00:01:38.501  3468  3546 W hfmodels: 	at io.github.johnrocky.hfmodels.litert.LiteRtDecisionModel$Companion.open$lambda$4(LiteRtDecisionModel.kt:255)
+10-03 00:01:38.501  3468  3546 W hfmodels: 	at io.github.johnrocky.hfmodels.litert.LiteRtDecisionModel$Companion$$ExternalSyntheticLambda0.invoke(D8$$SyntheticClass:0)
+10-03 00:01:38.501  3468  3546 W hfmodels: 	at io.github.johnrocky.hfmodels.litert.LiteRtDecisionModel$Runtime.call$lambda$4(LiteRtDecisionModel.kt:206)
+10-03 00:01:38.501  3468  3546 W hfmodels: 	at io.github.johnrocky.hfmodels.litert.LiteRtDecisionModel$Runtime$$ExternalSyntheticLambda0.call(D8$$SyntheticClass:0)
+10-03 00:01:38.501  3468  3546 W hfmodels: 	at java.util.concurrent.FutureTask.run(FutureTask.java:328)
+10-03 00:01:38.501  3468  3546 W hfmodels: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1100)
+10-03 00:01:38.501  3468  3546 W hfmodels: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+10-03 00:01:38.501  3468  3546 W hfmodels: 	at java.lang.Thread.run(Thread.java:1571)
+10-03 00:01:38.503  3468  3527 E hfmodels-decide: failed
+10-03 00:01:38.503  3468  3527 E hfmodels-decide: ModelException(INITIALIZATION_FAILED, retryable=false, details={stage=compile, profile=gpu, fallback_tried=}): CompiledModel failed on profile 'gpu' (inference=GPU): LiteRtException: Failed to compile model
+10-03 00:01:38.503  3468  3527 E hfmodels-decide: 	at io.github.johnrocky.hfmodels.litert.LiteRtDecisionHandler.prepare(EncoderDecisions.kt:139)
+10-03 00:01:38.503  3468  3527 E hfmodels-decide: 	at io.github.johnrocky.hfmodels.litert.LiteRtDecisionHandler.prepare(EncoderDecisions.kt:55)
+10-03 00:01:38.503  3468  3527 E hfmodels-decide: 	at io.github.johnrocky.hfmodels.HfModels$prepare$3$model$1$1.invokeSuspend(HfModels.kt:140)
+10-03 00:01:38.503  3468  3527 E hfmodels-decide: 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
+10-03 00:01:38.503  3468  3527 E hfmodels-decide: 	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:100)
+10-03 00:01:38.503  3468  3527 E hfmodels-decide: 	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:124)
+10-03 00:01:38.503  3468  3527 E hfmodels-decide: 	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
+10-03 00:01:38.503  3468  3527 E hfmodels-decide: 	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:586)
+10-03 00:01:38.503  3468  3527 E hfmodels-decide: 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:798)
+10-03 00:01:38.503  3468  3527 E hfmodels-decide: 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:717)
+10-03 00:01:38.503  3468  3527 E hfmodels-decide: 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:704)
+10-03 00:01:38.503  3468  3527 E hfmodels-decide: Caused by: com.google.ai.edge.litert.LiteRtException: Failed to compile model
+10-03 00:01:38.503  3468  3527 E hfmodels-decide: 	at com.google.ai.edge.litert.CompiledModel.nativeCreateFromFile(Native Method)
+10-03 00:01:38.503  3468  3527 E hfmodels-decide: 	at com.google.ai.edge.litert.CompiledModel.access$nativeCreateFromFile(Model.kt:56)
+10-03 00:01:38.503  3468  3527 E hfmodels-decide: 	at com.google.ai.edge.litert.CompiledModel$Companion.nativeCreateFromFile(Model.kt:0)
+10-03 00:01:38.503  3468  3527 E hfmodels-decide: 	at com.google.ai.edge.litert.CompiledModel$Companion.createFromFile(Model.kt:564)
+10-03 00:01:38.503  3468  3527 E hfmodels-decide: 	at com.google.ai.edge.litert.CompiledModel$Companion.createFromFile$default(Model.kt:544)
+10-03 00:01:38.503  3468  3527 E hfmodels-decide: 	at com.google.ai.edge.litert.CompiledModel$Companion.create(Model.kt:600)
+10-03 00:01:38.503  3468  3527 E hfmodels-decide: 	at io.github.johnrocky.hfmodels.litert.LiteRtDecisionModel$Companion.graph(LiteRtDecisionModel.kt:262)
+10-03 00:01:38.503  3468  3527 E hfmodels-decide: 	at io.github.johnrocky.hfmodels.litert.LiteRtDecisionModel$Companion.open$lambda$4(LiteRtDecisionModel.kt:255)
+10-03 00:01:38.503  3468  3527 E hfmodels-decide: 	at io.github.johnrocky.hfmodels.litert.LiteRtDecisionModel$Companion$$ExternalSyntheticLambda0.invoke(D8$$SyntheticClass:0)
+10-03 00:01:38.503  3468  3527 E hfmodels-decide: 	at io.github.johnrocky.hfmodels.litert.LiteRtDecisionModel$Runtime.call$lambda$4(LiteRtDecisionModel.kt:206)
+10-03 00:01:38.503  3468  3527 E hfmodels-decide: 	at io.github.johnrocky.hfmodels.litert.LiteRtDecisionModel$Runtime$$ExternalSyntheticLambda0.call(D8$$SyntheticClass:0)
+10-03 00:01:38.503  3468  3527 E hfmodels-decide: 	at java.util.concurrent.FutureTask.run(FutureTask.java:328)
+10-03 00:01:38.503  3468  3527 E hfmodels-decide: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1100)
+10-03 00:01:38.503  3468  3527 E hfmodels-decide: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+10-03 00:01:38.503  3468  3527 E hfmodels-decide: 	at java.lang.Thread.run(Thread.java:1571)
+10-03 00:01:38.503  3468  3527 I hfmodels-decide: RESULT ok=false variant=ml_s256_wfp16 backend=gpu device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZH9 failures=exception: ModelException: INITIALIZATION_FAILED: CompiledModel failed on profile 'gpu' (inference=GPU): LiteRtException: Failed to compile model
+## residency (6 lines, pid 3468)
+10-03 00:01:35.342  3468  3572 I litert  : [npu_registry.cc:30] NPU accelerator registered.
+10-03 00:01:35.366  3468  3572 I litert  : [compiled_model.cc:754] NPU JIT compilation caching enabled with cache dir: /data/user/0/io.github.johnrocky.hfmodels.litert.test/cache
+10-03 00:01:35.372  3468  3572 I litert  :   HtpPerformanceMode       : Burst(2)
+10-03 00:01:36.232  3468  3572 I litert  : [compiled_model.cc:1250] 0 compiler plugins were applied successfully: 
+10-03 00:01:36.237  3468  3572 I litert  :   HtpPerformanceMode       : Burst(2)
+10-03 00:01:36.370  3468  3572 I tflite  : Replacing 1707 out of 1813 node(s) with delegate (LITERT_CL) node, yielding 2 partitions for subgraph 0 (main).

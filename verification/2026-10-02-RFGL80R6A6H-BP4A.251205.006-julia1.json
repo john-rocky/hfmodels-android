@@ -1,0 +1,54 @@
+[
+  {
+    "model_id": "litert-community/Julia-1-LiteRT",
+    "model_commit": "b92a0d21eb1aedad6afdc815e027a47896d16eb3",
+    "level": "PUBLISHER_TESTED",
+    "device": "SM-S942Q (Galaxy S26)",
+    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+    "runtime": "litert 2.2.0",
+    "result": "PASS",
+    "date": "2026-10-02",
+    "variant": "s512_fp32",
+    "profile": "gpu",
+    "evidence": "litert/results/2026-10-02-2326-RFGL80R6A6H-litert2.2.0-decide-julia1-s512_fp32-gpu.log"
+  },
+  {
+    "model_id": "litert-community/Julia-1-LiteRT",
+    "model_commit": "b92a0d21eb1aedad6afdc815e027a47896d16eb3",
+    "level": "PUBLISHER_TESTED",
+    "device": "SM-S942Q (Galaxy S26)",
+    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+    "runtime": "litert 2.2.0",
+    "result": "PASS",
+    "date": "2026-10-02",
+    "variant": "s512_fp32",
+    "profile": "cpu",
+    "evidence": "litert/results/2026-10-02-2330-RFGL80R6A6H-litert2.2.0-decide-julia1-s512_fp32-cpu.log"
+  },
+  {
+    "model_id": "litert-community/Julia-1-LiteRT",
+    "model_commit": "b92a0d21eb1aedad6afdc815e027a47896d16eb3",
+    "level": "PUBLISHER_TESTED",
+    "device": "SM-S942Q (Galaxy S26)",
+    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+    "runtime": "litert 2.2.0",
+    "result": "PASS",
+    "date": "2026-10-02",
+    "variant": "s512_fp32",
+    "profile": "gpu",
+    "evidence": "litert/results/2026-10-02-2338-RFGL80R6A6H-litert2.2.0-decide-julia1-s512_fp32-gpu-npulibs.log"
+  },
+  {
+    "model_id": "litert-community/Julia-1-LiteRT",
+    "model_commit": "b92a0d21eb1aedad6afdc815e027a47896d16eb3",
+    "level": "PUBLISHER_TESTED",
+    "device": "SM-S942Q (Galaxy S26)",
+    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+    "runtime": "litert 2.2.0",
+    "result": "PASS",
+    "date": "2026-10-03",
+    "variant": "s512_fp32",
+    "profile": "gpu",
+    "evidence": "litert/results/2026-10-03-0002-RFGL80R6A6H-litert2.2.0-decide-julia1-s512_fp32-gpu-npulibs.log"
+  }
+]
