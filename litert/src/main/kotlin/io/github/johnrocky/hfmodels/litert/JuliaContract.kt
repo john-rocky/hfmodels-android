@@ -1,8 +1,24 @@
 package io.github.johnrocky.hfmodels.litert
 
+import io.github.johnrocky.hfmodels.ErrorCode
+import io.github.johnrocky.hfmodels.ModelException
 import io.github.johnrocky.hfmodels.decide.Answer
 import io.github.johnrocky.hfmodels.decide.Question
 import kotlin.math.max
+
+/**
+ * The head budget of the reference host (`julia_litert.py` in the model repo): `min(512, window - 5)`
+ * tokens for the instructions and the options unless the descriptor declares `head_tokens`, and only a
+ * budget below `window - 4` "keeps the author's strict rules" (CLS and three SEPs frame the sequence,
+ * the state needs at least one token). A julia rule only: laya's config may give the head the whole window.
+ */
+internal object JuliaHead {
+    fun tokens(declared: Int?, window: Int): Int {
+        val head = declared ?: minOf(512, window - 5)
+        if (head + 4 >= window) throw ModelException(ErrorCode.MANIFEST_INVALID, "handler_config.head_tokens $head leaves no room in the $window-token window")
+        return head
+    }
+}
 
 /**
  * `julia/typed.py predict_typed`: the marker scores of one question -> the answer, the way the
