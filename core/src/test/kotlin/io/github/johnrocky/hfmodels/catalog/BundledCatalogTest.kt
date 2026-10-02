@@ -20,7 +20,8 @@ class BundledCatalogTest {
             assertEquals("john-rocky/hfmodels-android", e.origin.repo)
             val v = e.descriptor.variant(null)!!
             assertTrue(v.files.all { it.bytes > 0 && it.sha256.length == 64 })
-            assertTrue(v.runtimeRange.contains("0.16.1"))
+            // Each entry is checked against the version its runtime is pinned to (gradle.properties).
+            assertTrue(v.runtimeRange.contains(mapOf("litert_lm" to "0.16.1", "litert" to "2.2.0").getValue(v.runtime)))
             assertTrue(v.profile(v.defaultProfile)!!.enabledInputs.contains(InputKind.TEXT))
         }
         assertTrue(c.find("litert-community/gemma-4-E2B-it-litert-lm", "b3ca0d2f076785a8f4b2219ddbd2bdb99954eae1") != null)
