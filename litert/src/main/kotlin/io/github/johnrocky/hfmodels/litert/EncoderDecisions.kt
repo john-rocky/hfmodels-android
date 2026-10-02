@@ -16,6 +16,7 @@ import io.github.johnrocky.hfmodels.decide.DecisionLimits
 import io.github.johnrocky.hfmodels.decide.TypedDecisions
 import io.github.johnrocky.hfmodels.descriptor.Profile
 import java.io.File
+import org.json.JSONObject
 
 /**
  * The typed-decisions task on a classic `.tflite` decision encoder run by LiteRT's `CompiledModel`
@@ -40,7 +41,8 @@ object EncoderDecisions : Task<TypedDecisions> {
  * `handler_config` keys:
  *  - `family`: `laya` (default) or `julia`; the option rendering and the decoding contract ([DecisionFamily]);
  *  - `window`: the graph's static sequence length; `head_tokens`: the head budget (laya: from the config
- *    file; julia: `min(512, window - 5)`, the publisher's reference host);
+ *    file, up to the whole window; julia: `min(512, window - 5)`, the publisher's reference host, and
+ *    never `window - 4` or more);
  *  - `hidden`: the encoder width (laya: the pooled vector, 1024 / 768; julia: the embedding row, 384);
  *  - `files`: `{main, act_head, table, tokenizer, tokenizer_config, config}` -> file ids of the variant.
  *    `table` names a `[vocab, hidden]` embedding table and switches the graph input to `inputs_embeds`
@@ -85,8 +87,7 @@ internal object LiteRtDecisionHandler : Handler<TypedDecisions> {
         if (specials == null && tokenizerConfigFile == null) throw ModelException(ErrorCode.MANIFEST_INVALID, "handler_config needs files.tokenizer_config or special_tokens (cls, sep, mask, pad)")
 
         val calibration = if (family == DecisionFamily.LAYA) LayaCalibration.parse(configFile!!.readText()) else null
-        val headTokens = hc.optInt("head_tokens", calibration?.headMaxLen ?: minOf(512, window - 5))
-        if (headTokens + 4 >= window) throw ModelException(ErrorCode.MANIFEST_INVALID, "handler_config.head_tokens $headTokens leaves no room in the $window-token window")
+        val headTokens = headTokens(hc, family, window, calibration)
         val t0 = System.nanoTime()
         val tokenizer = try {
             if (specials != null) HfTokenizer.load(tokenizerFile, specials) else HfTokenizer.load(tokenizerFile, tokenizerConfigFile!!)
@@ -155,6 +156,19 @@ internal object LiteRtDecisionHandler : Handler<TypedDecisions> {
             if (family == DecisionFamily.JULIA) notes += "no calibration in this family: probabilities are the softmax of the raw marker scores (T=1), unrounded, as the publisher's runtime reports them"
             if (fallbackHistory.isNotEmpty()) notes += "fallback applied: " + fallbackHistory.joinToString(" | ")
             return model
+        }
+    }
+
+    /**
+     * `head_tokens`, else the family's default, checked by the family's own rule: laya's config may give the
+     * head the whole window (the multilingual 256-token graphs: `max_len` 256, `head_max_len` 256; decide()
+     * refuses a question whose options do not fit), julia refuses a head that reaches into the frame ([JuliaHead]).
+     */
+    internal fun headTokens(hc: JSONObject, family: DecisionFamily, window: Int, calibration: LayaCalibration?): Int {
+        val declared = hc.optInt("head_tokens", 0).takeIf { it > 0 }
+        return when (family) {
+            DecisionFamily.LAYA -> declared ?: calibration!!.headMaxLen
+            DecisionFamily.JULIA -> JuliaHead.tokens(declared, window)
         }
     }
 }
