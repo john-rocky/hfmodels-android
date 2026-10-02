@@ -21,9 +21,9 @@ android {
         buildConfigField("String", "LITERT_VERSION", "\"$litertVersion\"")
     }
     buildFeatures { buildConfig = true }
-    // The device test side-loads the development descriptor (catalog/dev) as a test-APK asset.
-    sourceSets { named("androidTest") { assets.srcDir(rootProject.file("catalog/dev")) } }
-    // Its npu runs load the Qualcomm runtime from the test APK's native library dir: extracted, not mapped from the APK
+    // The device tests side-load descriptors as test-APK assets: the development one (catalog/dev) and the bundled entries.
+    sourceSets { named("androidTest") { assets.srcDir(rootProject.file("catalog/dev")); assets.srcDir(rootProject.file("catalog/entries")) } }
+    // Their npu runs load the Qualcomm runtime from the test APK's native library dir: extracted, not mapped from the APK
     // (src/androidTest/jniLibs, never committed: tools/fetch_npu_libs.sh). Applies to the test APK only, not to the AAR.
     packaging { jniLibs { useLegacyPackaging = true } }
     compileOptions {
@@ -35,6 +35,7 @@ android {
         unitTests.all {
             // Parity tests need the publisher's tokenizer files and fixtures; point at a local copy.
             it.systemProperty("hfmodels.layaRoot", System.getProperty("hfmodels.layaRoot") ?: (System.getenv("HFMODELS_LAYA_ROOT") ?: ""))
+            it.systemProperty("hfmodels.julia1Root", System.getProperty("hfmodels.julia1Root") ?: (System.getenv("HFMODELS_JULIA1_ROOT") ?: ""))
             it.maxHeapSize = "3g"
         }
     }

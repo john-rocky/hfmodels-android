@@ -1,0 +1,236 @@
+{
+  "model_id": "litert-community/Julia-1-LiteRT",
+  "revision": "b92a0d21eb1aedad6afdc815e027a47896d16eb3",
+  "tasks": [
+    "decide"
+  ],
+  "default_variant": "s512_fp32",
+  "license": {
+    "id": "apache-2.0",
+    "url": "https://huggingface.co/litert-community/Julia-1-LiteRT/blob/main/LICENSE"
+  },
+  "provenance": "SupersonicLabs/Julia-1@a85b127321d580d65176c89ced8273f305745d85 (Apache-2.0; mmBERT-small with a decision head, 144M parameters) converted to classic LiteRT graphs in the host-lookup form: the graph takes the looked-up token embeddings (inputs_embeds), the token table ships as a flat float16 file (the checkpoint's float32 table rounded; measured effect on the probabilities at most 0.0077), and the tokenizer is the publisher's tokenizer.json (mmBERT / Gemma vocabulary, 256,000 tokens). One static window per graph (512 and 1024 tokens). The publisher's runtime applies no calibration (T=1) and has no act head. GPU FP32 only: on the verified phone the fp16 paths (GPU default precision, NPU) change answers, so no NPU profile is declared.",
+  "variants": [
+    {
+      "id": "s512_fp32",
+      "runtime": "litert",
+      "handler": {
+        "id": "litert.typed_decisions",
+        "abi": 1
+      },
+      "runtime_range": {
+        "min_inclusive": "2.2.0",
+        "max_exclusive": "3.0.0"
+      },
+      "inputs": [
+        "text"
+      ],
+      "files": [
+        {
+          "id": "main",
+          "role": "model",
+          "path": "julia1_s512_fp32.tflite"
+        },
+        {
+          "id": "table",
+          "role": "model",
+          "path": "julia1_token_table_fp16.bin"
+        },
+        {
+          "id": "tokenizer",
+          "role": "tokenizer",
+          "path": "tokenizer.json"
+        }
+      ],
+      "default_profile": "gpu",
+      "profiles": [
+        {
+          "id": "gpu",
+          "priority": 100,
+          "files": [
+            "main",
+            "table",
+            "tokenizer"
+          ],
+          "enabled_inputs": [
+            "text"
+          ],
+          "components": {
+            "inference": "gpu"
+          },
+          "default_selectable": true,
+          "fallback_profiles": [
+            "cpu"
+          ],
+          "verification": [
+            {
+              "level": "PUBLISHER_TESTED",
+              "result": "PASS",
+              "note": "2,065/2,065 rows argmax identical to the publisher's runtime, max |dp| 0.0077 (float16 table); 114 ms per question (median, warm); litert/results/2026-09-30-1102-RFGL80R6A6H-litert2.2.0-decide-julia1-s512_fp32-gpu.log",
+              "device": "SM-S942Q (Galaxy S26)",
+              "os_build": "BP4A.251205.006.S942QOPS1AZF2",
+              "runtime": "litert 2.2.0",
+              "date": "2026-09-30"
+            }
+          ]
+        },
+        {
+          "id": "cpu",
+          "priority": 50,
+          "files": [
+            "main",
+            "table",
+            "tokenizer"
+          ],
+          "enabled_inputs": [
+            "text"
+          ],
+          "components": {
+            "inference": "cpu"
+          },
+          "default_selectable": true,
+          "verification": [
+            {
+              "level": "PUBLISHER_TESTED",
+              "result": "PASS",
+              "note": "300/300 rows argmax identical, max |dp| 0.0049; 256 ms per question (median, 4 threads); litert/results/2026-09-30-1118-RFGL80R6A6H-litert2.2.0-decide-julia1-s512_fp32-cpu.log",
+              "device": "SM-S942Q (Galaxy S26)",
+              "os_build": "BP4A.251205.006.S942QOPS1AZF2",
+              "runtime": "litert 2.2.0",
+              "date": "2026-09-30"
+            }
+          ]
+        }
+      ],
+      "handler_config": {
+        "family": "julia",
+        "window": 512,
+        "head_tokens": 507,
+        "hidden": 384,
+        "files": {
+          "main": "main",
+          "table": "table",
+          "tokenizer": "tokenizer"
+        },
+        "table_dtype": "float16",
+        "special_tokens": {
+          "cls": "<bos>",
+          "sep": "<eos>",
+          "mask": "<mask>",
+          "pad": "<pad>",
+          "unk": "<unk>"
+        },
+        "gpu_precision": "fp32",
+        "cpu_threads": 4,
+        "languages": [
+          "multilingual"
+        ]
+      }
+    },
+    {
+      "id": "s1024_fp32",
+      "runtime": "litert",
+      "handler": {
+        "id": "litert.typed_decisions",
+        "abi": 1
+      },
+      "runtime_range": {
+        "min_inclusive": "2.2.0",
+        "max_exclusive": "3.0.0"
+      },
+      "inputs": [
+        "text"
+      ],
+      "files": [
+        {
+          "id": "main",
+          "role": "model",
+          "path": "julia1_s1024_fp32.tflite"
+        },
+        {
+          "id": "table",
+          "role": "model",
+          "path": "julia1_token_table_fp16.bin"
+        },
+        {
+          "id": "tokenizer",
+          "role": "tokenizer",
+          "path": "tokenizer.json"
+        }
+      ],
+      "default_profile": "gpu",
+      "profiles": [
+        {
+          "id": "gpu",
+          "priority": 100,
+          "files": [
+            "main",
+            "table",
+            "tokenizer"
+          ],
+          "enabled_inputs": [
+            "text"
+          ],
+          "components": {
+            "inference": "gpu"
+          },
+          "default_selectable": true,
+          "fallback_profiles": [
+            "cpu"
+          ],
+          "verification": [
+            {
+              "level": "PUBLISHER_TESTED",
+              "result": "PASS",
+              "note": "2,100/2,100 rows argmax identical, max |dp| 0.0077; 292 ms per question (median, warm); litert/results/2026-09-30-1106-RFGL80R6A6H-litert2.2.0-decide-julia1-s1024_fp32-gpu.log",
+              "device": "SM-S942Q (Galaxy S26)",
+              "os_build": "BP4A.251205.006.S942QOPS1AZF2",
+              "runtime": "litert 2.2.0",
+              "date": "2026-09-30"
+            }
+          ]
+        },
+        {
+          "id": "cpu",
+          "priority": 50,
+          "files": [
+            "main",
+            "table",
+            "tokenizer"
+          ],
+          "enabled_inputs": [
+            "text"
+          ],
+          "components": {
+            "inference": "cpu"
+          },
+          "default_selectable": true
+        }
+      ],
+      "handler_config": {
+        "family": "julia",
+        "window": 1024,
+        "head_tokens": 512,
+        "hidden": 384,
+        "files": {
+          "main": "main",
+          "table": "table",
+          "tokenizer": "tokenizer"
+        },
+        "table_dtype": "float16",
+        "special_tokens": {
+          "cls": "<bos>",
+          "sep": "<eos>",
+          "mask": "<mask>",
+          "pad": "<pad>",
+          "unk": "<unk>"
+        },
+        "gpu_precision": "fp32",
+        "cpu_threads": 4,
+        "languages": [
+          "multilingual"
+        ]
+      }
+    }
+  ]
+}

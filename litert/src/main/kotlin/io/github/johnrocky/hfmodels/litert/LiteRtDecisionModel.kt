@@ -25,24 +25,32 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.withContext
 
 /**
- * One decision encoder on LiteRT `CompiledModel`: the main graph (tokens -> per-position scores +
- * pooled vector) and the small act head (always created on the CPU). Every native call runs on one
+ * One decision encoder on LiteRT `CompiledModel`: the main graph (one question's sequence -> a
+ * score per position, plus a pooled vector on laya) and, on laya, the small act head (always created
+ * on the CPU). The graph takes token ids (`input_ids`) or, when the variant ships a token table,
+ * embeddings the host looks up (`inputs_embeds`, [TokenTable]). Every native call runs on one
  * dedicated thread; the process-wide `Environment` is created once and kept. One `decide` at a time.
  */
 internal class LiteRtDecisionModel private constructor(
     override val info: PreparedModelInfo,
     override val limits: DecisionLimits,
-    private val builder: LayaSequenceBuilder,
-    internal val calibration: LayaCalibration,
+    /** Test hook as well: device parity checks build the publisher's rows through it. */
+    internal val builder: DecisionSequenceBuilder,
+    private val decoder: Decoder,
     private val main: Graph,
     private val act: Graph?,
-    private val hidden: Int,
+    private val table: TokenTable?,
+    private val padId: Int,
     private val host: PrepareHost,
+    /** Test hook: the laya temperature settings this load decodes with (null on a family without calibration). */
+    internal val calibration: LayaCalibration?,
 ) : TypedDecisions {
+    /** Family-specific: marker scores (and act logits) -> the answer. */
+    fun interface Decoder { fun answer(q: Question, rawLogits: FloatArray, actLogits: FloatArray): Answer }
+
     private class Graph(val model: CompiledModel, val inputs: Map<String, TensorBuffer>, val outputs: Map<String, TensorBuffer>) {
         fun close() { (inputs.values + outputs.values).forEach { runCatching { it.close() } }; runCatching { model.close() } }
     }
@@ -51,11 +59,14 @@ internal class LiteRtDecisionModel private constructor(
     private val closing = AtomicBoolean(false)
     private val closed = CompletableDeferred<Unit>()
     private val window = builder.maxLen
-    private val inputIds = IntArray(window)
+    private val inputIds = if (table == null) IntArray(window) else null
+    private val embeds = if (table != null) FloatArray(window * table.hidden) else null
     private val attention = FloatArray(window)
     private val qtypeOneHot = FloatArray(3)
     /** Test hook: the marker and act logits of the last forward (device parity checks read them). */
     @Volatile internal var lastRaw: Pair<FloatArray, FloatArray>? = null
+    /** Test hook: milliseconds the host spent looking up the last forward's embeddings (0 on a token-id graph). */
+    @Volatile internal var lastLookupMs: Double = 0.0
 
     override suspend fun decide(state: Any, questions: Map<String, Question>): Decisions = withBusy {
         val t0 = System.nanoTime()
@@ -86,6 +97,7 @@ internal class LiteRtDecisionModel private constructor(
         var truncated = false
         for ((id, q) in questions) {
             val tq = System.nanoTime()
+            builder.validate(q)
             val built = builder.build(q, stateIds)
             if (built.markers.size != builder.renderOptions(q).size) throw ModelException(
                 ErrorCode.CONTEXT_LIMIT_EXCEEDED, "question '$id' does not fit the ${window}-token window: ${built.markers.size} of ${builder.renderOptions(q).size} options kept",
@@ -95,21 +107,32 @@ internal class LiteRtDecisionModel private constructor(
             truncated = truncated || built.stateTruncated
             val (raw, actLogits) = run(built)
             lastRaw = raw to actLogits
-            answers[id] = LayaDecode.answer(q, raw, actLogits, calibration)
+            answers[id] = decoder.answer(q, raw, actLogits)
             perQuestion += (System.nanoTime() - tq) / 1e6
         }
         return Decisions(answers, info.repoId, DecisionTiming(stateMs, perQuestion, (System.nanoTime() - t0) / 1e6), stateTokens, truncated)
     }
 
     /** One forward of the main graph (and the act head): marker logits and act logits. Native calls on the model thread. */
-    private fun run(built: LayaSequenceBuilder.Built): Pair<FloatArray, FloatArray> = native {
+    private fun run(built: DecisionSequenceBuilder.Built): Pair<FloatArray, FloatArray> = native {
         val n = built.ids.size
-        java.util.Arrays.fill(inputIds, 0); java.util.Arrays.fill(attention, 0f)
-        System.arraycopy(built.ids, 0, inputIds, 0, n)
+        java.util.Arrays.fill(attention, 0f)
         for (i in 0 until n) attention[i] = 1f
         java.util.Arrays.fill(qtypeOneHot, 0f); qtypeOneHot[built.qtype] = 1f
         try {
-            main.inputs.getValue("input_ids").writeInt(inputIds)
+            if (table != null) {
+                val e = embeds!!
+                val h = table.hidden
+                val tl = System.nanoTime()
+                for (p in 0 until window) table.copyRow(if (p < n) built.ids[p] else padId, e, p * h)
+                lastLookupMs = (System.nanoTime() - tl) / 1e6
+                main.inputs.getValue("inputs_embeds").writeFloat(e)
+            } else {
+                val ids = inputIds!!
+                java.util.Arrays.fill(ids, 0)
+                System.arraycopy(built.ids, 0, ids, 0, n)
+                main.inputs.getValue("input_ids").writeInt(ids)
+            }
             main.inputs.getValue("attention_mask").writeFloat(attention)
             main.inputs.getValue("qtype_onehot").writeFloat(qtypeOneHot)
             main.model.run(main.inputs, main.outputs, SIGNATURE)
@@ -151,6 +174,7 @@ internal class LiteRtDecisionModel private constructor(
         if (closed.isCompleted) return
         runCatching { act?.close() }.onFailure { host.log.w("act head close: ${it.message}") }
         runCatching { main.close() }.onFailure { host.log.w("main graph close: ${it.message}") }
+        runCatching { table?.close() }.onFailure { host.log.w("token table close: ${it.message}") }
         host.onModelClosed(this)
         closed.complete(Unit)
     }
@@ -186,10 +210,26 @@ internal class LiteRtDecisionModel private constructor(
     companion object {
         const val SIGNATURE = "serving_default"
 
-        class Spec(val mainFile: File, val actFile: File?, val window: Int, val hidden: Int, val accelerator: Accelerator, val gpuFp32: Boolean, val cpuThreads: Int)
+        /**
+         * What to compile. `tableFile` set = a host-lookup graph (`inputs_embeds` of width `hidden`,
+         * the table's rows in `tableDtype`); null = a token-id graph (`input_ids`).
+         */
+        class Spec(
+            val mainFile: File,
+            val actFile: File?,
+            val tableFile: File?,
+            val tableDtype: TokenTable.Dtype,
+            val window: Int,
+            val hidden: Int,
+            val accelerator: Accelerator,
+            val gpuFp32: Boolean,
+            val cpuThreads: Int,
+            val family: DecisionFamily,
+            val padId: Int,
+        )
 
         /** Compiles the graphs on the model thread. Throws the runtime's exception unchanged; the handler maps it. */
-        fun open(spec: Spec, info: PreparedModelInfo, limits: DecisionLimits, builder: LayaSequenceBuilder, cal: LayaCalibration, host: PrepareHost): LiteRtDecisionModel = Runtime.call {
+        fun open(spec: Spec, info: PreparedModelInfo, limits: DecisionLimits, builder: DecisionSequenceBuilder, decoder: Decoder, calibration: LayaCalibration?, host: PrepareHost): LiteRtDecisionModel = Runtime.call {
             // LiteRT 2.2.0 starts the NPU runtime once per process, from the options of the first graph it compiles on any
             // accelerator, and the HTP performance mode is fixed then. So every graph of an app that packages the NPU
             // libraries carries BURST (the clocks the S26 numbers were measured at; the HTP computes in fp16, and the
@@ -209,9 +249,13 @@ internal class LiteRtDecisionModel private constructor(
             if (spec.accelerator == Accelerator.NPU && Accelerator.NPU !in env.getAvailableAccelerators()) {
                 throw IllegalStateException("LiteRT has no NPU accelerator in this process (the Qualcomm runtime did not load)")
             }
-            val main = graph(spec.mainFile, options, env, listOf("input_ids", "attention_mask", "qtype_onehot"), listOf("token_logits", "pooled_cls"))
-            val act = try { spec.actFile?.let { graph(it, CompiledModel.Options(Accelerator.CPU).apply { qualcommOptions = burst }, env, listOf("pooled_cls", "feats"), listOf("act_logits")) } } catch (t: Throwable) { main.close(); throw t }
-            LiteRtDecisionModel(info, limits, builder, cal, main, act, spec.hidden, host)
+            val table = spec.tableFile?.let { TokenTable.open(it, spec.hidden, spec.tableDtype) }
+            try {
+                val inputs = listOf(if (table != null) "inputs_embeds" else "input_ids", "attention_mask", "qtype_onehot")
+                val main = graph(spec.mainFile, options, env, inputs, spec.family.graphOutputs)
+                val act = try { spec.actFile?.let { graph(it, CompiledModel.Options(Accelerator.CPU).apply { qualcommOptions = burst }, env, listOf("pooled_cls", "feats"), listOf("act_logits")) } } catch (t: Throwable) { main.close(); throw t }
+                LiteRtDecisionModel(info, limits, builder, decoder, main, act, table, spec.padId, host, calibration)
+            } catch (t: Throwable) { table?.close(); throw t }
         }
 
         private fun graph(file: File, options: CompiledModel.Options, env: Environment, inputs: List<String>, outputs: List<String>): Graph {

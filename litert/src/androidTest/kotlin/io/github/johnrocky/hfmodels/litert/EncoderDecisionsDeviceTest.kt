@@ -101,7 +101,7 @@ class EncoderDecisionsDeviceTest {
                 val refAct = (r["raw_act_logits"] as List<*>).map { (it as Number).toDouble() }
                 // The expected answer: the captured (official fp32) logits decoded with the calibration THIS variant declares, so a
                 // fitted calibration file and the publisher's config are both checked against the same reference logits.
-                val official = LayaDecode.answer(q, refRaw.map { it.toFloat() }.toFloatArray(), refAct.map { it.toFloat() }.toFloatArray(), impl.calibration).toMap()
+                val official = LayaDecode.answer(q, refRaw.map { it.toFloat() }.toFloatArray(), refAct.map { it.toFloat() }.toFloatArray(), impl.calibration!!).toMap()
                 val got = d.answers.getValue("q")
                 checked++
                 val le = refRaw.indices.maxOf { abs(refRaw[it] - raw[it]) }

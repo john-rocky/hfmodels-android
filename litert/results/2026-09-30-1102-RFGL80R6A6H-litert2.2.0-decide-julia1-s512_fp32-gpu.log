@@ -1,0 +1,28 @@
+# hfmodels typed-decisions device gate  date=2026-09-30T02:02:25Z serial=RFGL80R6A6H device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 android=16
+# git=9bb949e test=JuliaDecisionsDeviceTest variant=s512_fp32 backend=gpu thermal=Thermal Status: 0 battery_level= level: 79 battery_temp_x10C= temperature: 352 screen= mWakefulness=Awake
+# gradle rc=0 end=2026-09-30T02:06:53Z thermal_end=Thermal Status: 1 battery_temp_end_x10C= temperature: 403
+--------- beginning of main
+09-30 11:02:33.266 19994 20008 I hfmodels-decide: device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 android=16 litert=2.2.0 model=litert-community/Julia-1-LiteRT@b92a0d21 variant=s512_fp32 backend=gpu
+09-30 11:02:33.271 19994 20013 I hfmodels: resolve litert-community/Julia-1-LiteRT: commit=b92a0d21 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=96bf04c3
+09-30 11:02:33.500 19994 20013 I hfmodels: imported julia1_s512_fp32.tflite: 185095348 bytes, sha256 ok, from /data/local/tmp/hfmodels/julia1/julia1_s512_fp32.tflite
+09-30 11:02:33.656 19994 20013 I hfmodels: imported julia1_token_table_fp16.bin: 196608000 bytes, sha256 ok, from /data/local/tmp/hfmodels/julia1/julia1_token_table_fp16.bin
+09-30 11:02:33.684 19994 20013 I hfmodels: imported tokenizer.json: 34363188 bytes, sha256 ok, from /data/local/tmp/hfmodels/julia1/tokenizer.json
+09-30 11:02:33.685 19994 20013 I hfmodels: resolve litert-community/Julia-1-LiteRT: commit=b92a0d21 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=96bf04c3
+09-30 11:02:36.405 19994 20013 I hfmodels: tokenizer tokenizer.json: 256000 tokens, load_ms=2713
+09-30 11:02:37.667 19994 20008 I hfmodels: ready litert-community/Julia-1-LiteRT@b92a0d21 variant=s512_fp32 profile=gpu inference=GPU prepare_ms=3976
+09-30 11:02:37.667 19994 20008 I hfmodels-decide: RESULT step=load ok=true variant=s512_fp32 backend=gpu import_ms=412 load_ms=3982 profile=gpu window=512 head=507 max_options=20 notes=family=julia compile_ms=1261 on gpu (precision fp32) | observed backend is UNKNOWN: litert 2.2.0 reports no per-op execution target; 'initialized' is the accelerator the CompiledModel was created with | host token lookup: julia1_token_table_fp16.bin (float16, 256000 rows x 384) feeds inputs_embeds | no calibration in this family: probabilities are the softmax of the raw marker scores (T=1), unrounded, as the publisher's runtime reports them
+09-30 11:02:43.982 19994 20008 I hfmodels-decide: RESULT step=sequence ok=true variant=s512_fp32 backend=gpu rows=2065 mismatches=0 longer_than_window=35 (reported truncated) window=512
+09-30 11:02:58.149 19994 20008 I hfmodels-decide: parity 200/2065: flips=0 max_dp=0.00372 median_ms=62.3
+09-30 11:03:18.952 19994 20008 I hfmodels-decide: parity 400/2065: flips=0 max_dp=0.00731 median_ms=77.9
+09-30 11:03:41.006 19994 20008 I hfmodels-decide: parity 600/2065: flips=0 max_dp=0.00731 median_ms=98.5
+09-30 11:04:04.956 19994 20008 I hfmodels-decide: parity 800/2065: flips=0 max_dp=0.00731 median_ms=99.9
+09-30 11:04:30.157 19994 20008 I hfmodels-decide: parity 1000/2065: flips=0 max_dp=0.00731 median_ms=101.5
+09-30 11:04:56.463 19994 20008 I hfmodels-decide: parity 1200/2065: flips=0 max_dp=0.00731 median_ms=104.0
+09-30 11:05:22.128 19994 20008 I hfmodels-decide: parity 1400/2065: flips=0 max_dp=0.00731 median_ms=111.2
+09-30 11:05:48.027 19994 20008 I hfmodels-decide: parity 1600/2065: flips=0 max_dp=0.00731 median_ms=113.1
+09-30 11:06:13.798 19994 20008 I hfmodels-decide: parity 1800/2065: flips=0 max_dp=0.00731 median_ms=113.6
+09-30 11:06:39.200 19994 20008 I hfmodels-decide: parity 2000/2065: flips=0 max_dp=0.00770 median_ms=113.9
+09-30 11:06:46.825 19994 20008 I hfmodels-decide: RESULT step=parity ok=true variant=s512_fp32 backend=gpu rows=2065 argmax_flips=0 max_prob_abs_err=0.00770 (worst security_incidents_000081:true_positive) rows_over_0.01=0 max_marker_logit_abs_err=0.0602 dp_tol=0.01 question_ms_median=114.0 p90=123.1 min=58.6 max=133.3 lookup_ms_median=1.00 per_type: choice=686rows/0flips/device_correct 414/586/publisher_correct 414/586 noul=593rows/0flips/device_correct 477/593/publisher_correct 477/593 score=786rows/0flips/device_correct 534/786/publisher_correct 534/786
+09-30 11:06:52.324 19994 20008 I hfmodels-decide: RESULT step=timing ok=true variant=s512_fp32 backend=gpu repeats=5 decide_4q_total_ms_median=453.3 four_decide_1q_total_ms_median=463.7 answers={department=billing 0.908, urgency=0.936, refund_requested=0.946, tone=neutral 0.992}
+09-30 11:06:52.386 19994 20008 I hfmodels-decide: RESULT step=release ok=true variant=s512_fp32 backend=gpu close_ms=61
+09-30 11:06:52.386 19994 20008 I hfmodels-decide: RESULT ok=true model=litert-community/Julia-1-LiteRT variant=s512_fp32 backend=gpu device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZF2 failures=
