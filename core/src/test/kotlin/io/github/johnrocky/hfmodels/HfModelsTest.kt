@@ -5,10 +5,14 @@ import io.github.johnrocky.hfmodels.descriptor.Fixtures
 import io.github.johnrocky.hfmodels.hub.HfHub
 import io.github.johnrocky.hfmodels.resolve.DeviceFacts
 import io.github.johnrocky.hfmodels.resolve.FakeChat
+import io.github.johnrocky.hfmodels.resolve.FakePrepared
 import io.github.johnrocky.hfmodels.store.HttpUrlConnectionSource
 import io.github.johnrocky.hfmodels.store.ModelStore
 import java.io.File
+import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.CountDownLatch
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -17,6 +21,7 @@ import kotlinx.coroutines.withTimeout
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Before
@@ -172,6 +177,53 @@ class HfModelsTest {
             val elsewhere = seen.filter { it.second !== caller }.map { "${it.first} on ${it.second.name}" }
             assertTrue("delivered off the caller's dispatcher: $elsewhere", elsewhere.isEmpty())
         } finally { model.closeAndJoin() }
+    }
+
+    /** FakeChat whose prepare, once begun, waits for [release] (an engine init a cancel cannot interrupt); it records what it made. */
+    private class GatedChat : Task<FakePrepared> {
+        val started = CountDownLatch(1)
+        val release = CountDownLatch(1)
+        val made = CopyOnWriteArrayList<FakePrepared>()
+        override val id = FakeChat.id
+        override val handler = object : Handler<FakePrepared> by FakeChat.handler {
+            override fun prepare(local: LocalModel<FakePrepared>, host: PrepareHost, onProgress: (LoadEvent) -> Unit): FakePrepared {
+                started.countDown()
+                release.await()
+                return FakeChat.handler.prepare(local, host, onProgress).also { made += it }
+            }
+        }
+    }
+
+    @Test fun aLoadCancelledWhileTheHandlerRunsClosesTheModelItMade() = runBlocking {
+        val gated = GatedChat()
+        val local = models.download(models.inspect(ModelRef("org/model"), gated))
+        val load = launch(Dispatchers.Default) { models.prepare(local) }
+        gated.started.await()
+        load.cancel()
+        gated.release.countDown()
+        load.join()
+        assertTrue(load.isCancelled)
+        assertTrue("made and never closed", gated.made.single().closed)
+        // The slot is free again: the next load is not MODEL_BUSY.
+        models.prepare(models.download(models.inspect(ModelRef("org/model"), FakeChat))).closeAndJoin()
+    }
+
+    @Test fun aReadyCallbackThatThrowsClosesTheModelAndRethrows() = runBlocking {
+        val gated = GatedChat().apply { release.countDown() }
+        val local = models.download(models.inspect(ModelRef("org/model"), gated))
+        val e = runCatching { models.prepare(local) { if (it is LoadEvent.Ready) throw IllegalStateException("the screen is gone") } }.exceptionOrNull()
+        assertEquals("the screen is gone", e?.message)
+        assertTrue("left open in the slot", gated.made.single().closed)
+        models.prepare(models.download(models.inspect(ModelRef("org/model"), FakeChat))).closeAndJoin()
+    }
+
+    @Test fun aLoadNotCancelledReturnsTheModelOpen() = runBlocking {
+        val gated = GatedChat().apply { release.countDown() }
+        val model = models.prepare(models.download(models.inspect(ModelRef("org/model"), gated)))
+        assertSame(gated.made.single(), model)
+        assertFalse(model.closed)
+        model.closeAndJoin()
+        assertTrue(model.closed)
     }
 
     @Test fun closedClientRefuses() = runBlocking {

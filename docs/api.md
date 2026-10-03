@@ -57,7 +57,7 @@ fun unbind(repoId: String): Boolean
 suspend fun closeAndJoin()                                                      // closes the prepared model too; close() is the non-suspending request
 ```
 
-One `HfModels` per process (it owns one model slot: a second `prepare` while a model is open fails with `MODEL_BUSY`; `closeAndJoin()` the open model first). Hold it in the `Application` or a ViewModel; construct it with the application context.
+One `HfModels` per process (it owns one model slot: a second `prepare` while a model is open fails with `MODEL_BUSY`; `closeAndJoin()` the open model first). Hold it in the `Application` or a ViewModel; construct it with the application context. Cancelling a load while its engine starts does not interrupt that native work: it runs to its end, the model it made is closed, and the caller gets the `CancellationException`; an `onProgress` that throws, at `Ready` too, closes the model and the exception is rethrown (main, 0.2.0; up to 0.1.2 a cancelled load's model stayed open with no owner, and one whose `Ready` callback threw stayed in the slot, refusing the next load with `MODEL_BUSY`).
 
 ```kotlin
 data class ModelRef(val repoId: String, val revision: String? = null, val variant: String? = null)   // "owner/name"; revision = branch, tag or commit; variant = an id from the descriptor
