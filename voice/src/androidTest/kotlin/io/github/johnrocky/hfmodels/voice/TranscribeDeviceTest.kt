@@ -38,7 +38,9 @@ import org.junit.runner.RunWith
  * RESULT lines under tag `hfmodels-transcribe`. Arguments: variant (small_fp16 | medium_fp16), backend
  * (gpu | cpu | auto), dir (default /data/local/tmp/hfmodels/zipformer: the model files and tokens.txt),
  * fixtures (default /data/local/tmp/hfmodels-voice/commands: c01..c10.wav, 16 kHz mono s16, and
- * commands.tsv, id<TAB>expected text; tools/voice_fixtures.sh makes them).
+ * commands.tsv, id<TAB>expected text; tools/voice_fixtures.sh makes them). Two measurement switches, off by
+ * default: preroll_ms (zeros put before each WAV for steps 2 and 3) and gpu_precision (default | fp32, written
+ * into every variant's handler_config of the descriptor before the load).
  *
  *   tools/transcribe_gate.sh small_fp16 gpu
  */
@@ -51,6 +53,8 @@ class TranscribeDeviceTest {
     private val backend = args.getString("backend") ?: "gpu"
     private val base = File(args.getString("dir") ?: "/data/local/tmp/hfmodels/zipformer")
     private val fixtures = File(args.getString("fixtures") ?: "/data/local/tmp/hfmodels-voice/commands")
+    private val prerollMs = args.getString("preroll_ms")?.toInt() ?: 0
+    private val gpuPrecision = args.getString("gpu_precision")
     private val failures = ArrayList<String>()
 
     private fun result(step: String, ok: Boolean, detail: String) {
@@ -61,10 +65,14 @@ class TranscribeDeviceTest {
     @Test fun loadTranscribeTimingEndpointRelease(): Unit = runBlocking {
         val models = HfModels(ctx)
         val policy = when (backend) { "cpu" -> BackendPolicy.Require(BackendKind.CPU); "gpu" -> BackendPolicy.Require(BackendKind.GPU); else -> BackendPolicy.Auto }
-        val descriptor = testCtx.assets.open(DESCRIPTOR_ASSET).bufferedReader().use { it.readText() }
-        val commit = JSONObject(descriptor).getString("revision")
+        val asset = testCtx.assets.open(DESCRIPTOR_ASSET).bufferedReader().use { it.readText() }
+        val commit = JSONObject(asset).getString("revision")
+        val descriptor = if (gpuPrecision == null) asset else JSONObject(asset).apply {
+            val vs = getJSONArray("variants")
+            for (i in 0 until vs.length()) vs.getJSONObject(i).getJSONObject("handler_config").put("gpu_precision", gpuPrecision)
+        }.toString()
         val opts = LoadOptions(backendPolicy = policy, networkPolicy = NetworkPolicy.Offline, descriptorJson = descriptor)
-        Log.i(TAG, "device=${Build.MODEL} soc=${Build.SOC_MANUFACTURER}/${Build.SOC_MODEL} build=${Build.DISPLAY} android=${Build.VERSION.RELEASE} model=$REPO@${commit.take(8)} variant=$variant backend=$backend")
+        Log.i(TAG, "device=${Build.MODEL} soc=${Build.SOC_MANUFACTURER}/${Build.SOC_MODEL} build=${Build.DISPLAY} android=${Build.VERSION.RELEASE} model=$REPO@${commit.take(8)} variant=$variant backend=$backend preroll_ms=$prerollMs gpu_precision=${gpuPrecision ?: "descriptor"}")
         var model: Transcriber? = null
         try {
             // 1. load
@@ -83,7 +91,8 @@ class TranscribeDeviceTest {
 
             // 2. one transcription per fixture
             val expected = File(fixtures, "commands.tsv").readLines(Charsets.UTF_8).filter { it.isNotBlank() }.map { it.substringBefore('\t') to it.substringAfter('\t') }
-            val audio = expected.associate { (id, _) -> id to readWav(File(fixtures, "$id.wav")) }
+            val wavs = expected.associate { (id, _) -> id to readWav(File(fixtures, "$id.wav")) }
+            val audio = if (prerollMs == 0) wavs else wavs.mapValues { (_, pcm) -> FloatArray(prerollMs * 16) + pcm }
             var exact = 0; var norm = 0
             val first = HashMap<String, String>()
             for ((id, expect) in expected) {
@@ -95,7 +104,7 @@ class TranscribeDeviceTest {
                 if (n) norm++
                 result("transcribe", true, "file=$id exact=$e norm=$n ms_feature=${"%.1f".format(t.timing.featureMs)} ms_infer=${"%.1f".format(t.timing.inferenceMs)} ms_total=${"%.1f".format(t.timing.totalMs)} audio_s=${"%.2f".format(audio.getValue(id).size / 16000.0)} got=\"${t.text}\" expect=\"$expect\"")
             }
-            result("summary", true, "files=${expected.size} exact=$exact norm=$norm")
+            result("summary", true, "files=${expected.size} exact=$exact norm=$norm preroll_ms=$prerollMs gpu_precision=${gpuPrecision ?: "descriptor"}")
 
             // 3. warm: the ten files again
             val feature = ArrayList<Double>(); val infer = ArrayList<Double>(); val total = ArrayList<Double>()
@@ -111,7 +120,7 @@ class TranscribeDeviceTest {
             val spans = ArrayList<String>()
             var utterances = 0
             for ((id, _) in expected) {
-                val pcm = audio.getValue(id)
+                val pcm = wavs.getValue(id)
                 val ep = Endpointer()
                 val chunk = 320
                 var fed = 0
