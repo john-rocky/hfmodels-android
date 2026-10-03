@@ -48,6 +48,10 @@ class VoiceLoop(
         require(config.endpointer.sampleRate == transcriber.limits.sampleRate) {
             "the endpointer cuts ${config.endpointer.sampleRate} Hz audio; the transcriber takes ${transcriber.limits.sampleRate} Hz"
         }
+        // The endpointer's cut is the only thing that keeps listen's utterances inside the transcriber's window.
+        require(config.endpointer.maxUtteranceMs <= transcriber.limits.windowSeconds * 1000) {
+            "the endpointer cuts utterances of up to ${config.endpointer.maxUtteranceMs} ms; the transcriber takes ${transcriber.limits.windowSeconds} s"
+        }
         config.player?.let { require(it.sampleRate == speaker.sampleRate) { "the player plays ${it.sampleRate} Hz; the speaker writes ${speaker.sampleRate} Hz" } }
         config.voice?.let { require(it in speaker.voices) { "voice '$it' is not one of the speaker's (${speaker.voices.joinToString()})" } }
         val runner = ToolRunner(chat, tools, config.toolFormat, config.systemInstruction ?: { defaultSystemInstruction(it) }, config.maxToolTurns, config.thinking)
@@ -159,9 +163,9 @@ data class VoiceLoopConfig(
     val voice: String? = null,
     val speed: Float = 1f,
     val systemInstruction: ((now: String) -> String)? = null,
-    val maxToolTurns: Int = 4,
+    val maxToolTurns: Int = ToolRunner.MAX_TOOL_TURNS,
     val thinking: Boolean = false,
-    val endpointer: Endpointer = Endpointer(preRollMs = 300, hangoverMs = 800, maxUtteranceMs = 16000),
+    val endpointer: Endpointer = Endpointer(),
     val player: SpeechPlayer? = null,
     val emptyReplyText: String = "Sorry, I did not get that.",
     val failureText: String = "Sorry, I could not finish that.",

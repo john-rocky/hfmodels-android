@@ -17,13 +17,18 @@ package io.github.johnrocky.hfmodels.voice
  */
 class Endpointer(
     val sampleRate: Int = 16000,
-    val startRms: Float = 0.02f,
+    val startRms: Float = DEFAULT_START_RMS,
     val startMs: Int = 100,
     val hangoverMs: Int = 800,
     val maxUtteranceMs: Int = 16000,
     val frameMs: Int = 20,
     val preRollMs: Int = 300,
 ) {
+    companion object {
+        /** A voice spoken toward the phone; quieter sound, such as a speaker's, needs a lower level. */
+        const val DEFAULT_START_RMS = 0.02f
+    }
+
     sealed class Event {
         object SpeechStart : Event() { override fun toString() = "SpeechStart" }
 

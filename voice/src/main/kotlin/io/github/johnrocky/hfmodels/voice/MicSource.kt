@@ -23,8 +23,9 @@ import kotlinx.coroutines.flow.callbackFlow
  * Collecting [chunks] opens an [AudioRecord] and reads it on its own thread; cancelling the collector stops
  * and releases it before the collection ends. `RECORD_AUDIO` is the app's: requested and granted before
  * collecting (without it the [AudioRecord] does not initialize and the flow ends with an [IllegalStateException]).
- * A chunk that cannot be delivered at once waits on the reader thread, so a slow collector loses audio in the
- * recorder's own buffer.
+ * A recorder that stops delivering ends the flow with an [IllegalStateException] too: when it is gone, or after
+ * 400 reads in a row that return nothing (about two seconds without a sample). A chunk that cannot be delivered
+ * at once waits on the reader thread, so a slow collector loses audio in the recorder's own buffer.
  */
 class MicSource(
     val sampleRate: Int = 16000,
@@ -57,11 +58,13 @@ class MicSource(
         val reader = thread(name = "hfmodels-mic", isDaemon = true) {
             val shorts = ShortArray(chunkSamples)
             var filled = 0
+            var failures = 0
             try {
                 while (running.get()) {
                     val n = record.read(shorts, filled, chunkSamples - filled)
                     when {
                         n > 0 -> {
+                            failures = 0
                             filled += n
                             if (filled == chunkSamples) {
                                 if (trySendBlocking(FloatArray(chunkSamples) { shorts[it] / 32768f }).isFailure) break
@@ -73,8 +76,15 @@ class MicSource(
                             if (running.get()) close(IllegalStateException("AudioRecord.read returned $n"))
                             break
                         }
-                        // 0 or a transient error (ERROR, ERROR_BAD_VALUE): read again, after a pause so the thread does not spin.
-                        else -> Thread.sleep(TRANSIENT_RETRY_MS)
+                        // 0 or a transient error (ERROR, ERROR_BAD_VALUE): read again, after a pause so the thread does not spin,
+                        // until it has failed too long in a row.
+                        else -> {
+                            if (++failures >= MAX_TRANSIENT_FAILURES) {
+                                if (running.get()) close(IllegalStateException("AudioRecord.read returned $n $failures times in a row"))
+                                break
+                            }
+                            Thread.sleep(TRANSIENT_RETRY_MS)
+                        }
                     }
                 }
             } catch (t: Throwable) {
@@ -96,5 +106,12 @@ class MicSource(
     private companion object {
         const val READER_JOIN_MS = 1_000L
         const val TRANSIENT_RETRY_MS = 5L
+
+        /**
+         * Reads in a row that return nothing before the flow ends with an error: 400 x 5 ms is about two seconds
+         * without a sample, which a working recorder never takes (it delivers a chunk every chunkMs), so a listen over
+         * a dead microphone ends instead of waiting for an utterance that cannot come.
+         */
+        const val MAX_TRANSIENT_FAILURES = 400
     }
 }

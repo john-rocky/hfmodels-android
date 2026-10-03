@@ -73,13 +73,15 @@ internal class LiteRtLmChatModel(
         // The load's channels apply unless the caller decided (null = ours; an empty list disables them).
         // The app runs the tools: the runtime hands the calls over in Message.toolCalls and never runs one itself.
         val effective = (if (config.channels == null && thinking.channels.isNotEmpty()) config.copy(channels = thinking.channels) else config).copy(automaticToolCalling = false)
-        val conv = withContext(nativeDispatcher) {
+        // A caller cancelled during the native call gets nothing, and the conversation it would have had is closed
+        // instead of left open outside [sessions], where the model's close would never reach it.
+        return handOver(nativeDispatcher, {
             checkUsable()
-            try { engine.createConversation(effective) } catch (t: Throwable) {
+            val conv = try { engine.createConversation(effective) } catch (t: Throwable) {
                 throw ModelException(ErrorCode.INITIALIZATION_FAILED, "createConversation failed: ${t.javaClass.simpleName}: ${t.message}", details = mapOf("stage" to "createConversation"), cause = t)
             }
-        }
-        return Session(conv).also { sessions += it }
+            Session(conv).also { sessions += it }
+        }) { it.closeAndJoin() }
     }
 
     override fun close() {

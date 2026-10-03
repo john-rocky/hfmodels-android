@@ -39,7 +39,7 @@ class ToolRunner(
     private val format: ToolFormat,
     /** The system text for a turn, given the local date and time ("Saturday, 2026-10-03 15:04"). */
     private val systemInstruction: (now: String) -> String = { defaultSystemInstruction(it) },
-    private val maxToolTurns: Int = 4,
+    private val maxToolTurns: Int = MAX_TOOL_TURNS,
     /** Ask a model with a reasoning channel to reason (its no-think variant otherwise); ignored by a model without one. */
     private val thinking: Boolean = false,
 ) {
@@ -144,6 +144,9 @@ class ToolRunner(
     }
 
     companion object {
+        /** The default of [ToolRunner]'s and [VoiceLoopConfig]'s `maxToolTurns`: model rounds that may call tools before the request fails. */
+        const val MAX_TOOL_TURNS = 4
+
         /** phone-agent's system text (its QWENXML form), with the local date and time. */
         fun defaultSystemInstruction(now: String): String =
             "You are a phone assistant. The current date and time is $now. " +
