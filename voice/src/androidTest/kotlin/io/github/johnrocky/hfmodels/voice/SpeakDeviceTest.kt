@@ -40,18 +40,22 @@ import org.junit.runner.RunWith
  *   1. load: import, lexicon, graphs; the profile and each graph's load ms (from the notes);
  *   2. g2p: the publisher's three bench sentences (make_bench_inputs.py) through `phonemeIds`, compared
  *      with `ids_i` of bench_inputs.npz (espeak through the pip package's tokenizer);
- *   3. parity: the same sentences through `synthesize(text, voice, 1f)` against `ref_wav_i` / `ref_dur_i`
- *      (the publisher's fp32 graphs at speed 1.0, untrimmed): frames, lengths and two spectral
- *      correlations, `comparable=false` where the ids differed;
- *   4. speak: the ten fixed replies once (16-bit WAVs to `<external files>/tts/<variant>/`), then again warm, median;
+ *   3. parity: the same sentences through `synthesize` against `ref_wav_i` / `ref_dur_i` (the publisher's
+ *      fp32 graphs at graph speed 1.0, untrimmed), at the speed that puts 1.0 into the graph (1.25 for the
+ *      bench voice, whose prior is 0.8): frames, lengths and two spectral correlations, `comparable=false`
+ *      where the ids differed;
+ *   4. speak: the ten fixed replies at the default speed (say.py's pace) once (16-bit WAVs to
+ *      `<external files>/tts/<variant>/`), then again warm, median;
  *   5. memory: VmHWM (peak RSS) before the load, after it and after the replies;
  *   6. release.
  * RESULT lines under tag `hfmodels-speak`. Arguments: variant (fp32 | fp16), dir (default
  * /data/local/tmp/hfmodels/kitten), fixtures (default /data/local/tmp/hfmodels-voice/replies: replies.tsv,
  * id<TAB>text; tools/voice_fixtures.sh), voice (default expr-voice-2-m, the bench's), bench (default
- * <dir>/bench_inputs.npz).
+ * <dir>/bench_inputs.npz), xnnpack_off (graphs to run without XNNPACK, comma-separated, e.g. `predictor`;
+ * written into every variant's handler_config before the load; the WAVs go to `tts/<variant>-xnnpackoff-<graphs>/`).
  *
  *   tools/speak_gate.sh fp32
+ *   GATE_TAG=speak-kitten-xnnpackoff-predictor tools/speak_gate.sh fp32 -Pandroid.testInstrumentationRunnerArguments.xnnpack_off=predictor
  */
 @RunWith(AndroidJUnit4::class)
 class SpeakDeviceTest {
@@ -63,6 +67,7 @@ class SpeakDeviceTest {
     private val fixtures = File(args.getString("fixtures") ?: "/data/local/tmp/hfmodels-voice/replies")
     private val voice = args.getString("voice") ?: "expr-voice-2-m"
     private val bench = File(args.getString("bench") ?: File(base, "bench_inputs.npz").path)
+    private val xnnpackOff = args.getString("xnnpack_off")?.split(',')?.map { it.trim() }?.filter { it.isNotEmpty() }.orEmpty()
     private val failures = ArrayList<String>()
 
     private fun result(step: String, ok: Boolean, detail: String) {
@@ -73,11 +78,18 @@ class SpeakDeviceTest {
     @Test fun loadG2pParitySpeakMemoryRelease(): Unit = runBlocking {
         val hwmBefore = status("VmHWM")
         val models = HfModels(ctx)
-        val descriptor = testCtx.assets.open(DESCRIPTOR_ASSET).bufferedReader().use { it.readText() }
-        val commit = JSONObject(descriptor).getString("revision")
+        val asset = testCtx.assets.open(DESCRIPTOR_ASSET).bufferedReader().use { it.readText() }
+        val commit = JSONObject(asset).getString("revision")
+        val descriptor = if (xnnpackOff.isEmpty()) asset else JSONObject(asset).apply {
+            val vs = getJSONArray("variants")
+            for (i in 0 until vs.length()) vs.getJSONObject(i).getJSONObject("handler_config").put("xnnpack", JSONObject().apply { for (g in xnnpackOff) put(g, false) })
+        }.toString()
+        val prior = JSONObject(asset).getJSONArray("variants").getJSONObject(0).getJSONObject("handler_config").optJSONObject("speed_priors")?.optDouble(voice, 1.0) ?: 1.0
+        // The speed that puts 1.0 into the graph, the bench's: 1.25 for a prior of 0.8 (1.25 x 0.8 is 1.0 in float32).
+        val benchSpeed = (1.0 / prior).toFloat()
         val opts = LoadOptions(backendPolicy = BackendPolicy.Auto, networkPolicy = NetworkPolicy.Offline, descriptorJson = descriptor)
-        val out = File(ctx.getExternalFilesDir(null), "tts/$variant").apply { mkdirs() }
-        Log.i(TAG, "device=${Build.MODEL} soc=${Build.SOC_MANUFACTURER}/${Build.SOC_MODEL} build=${Build.DISPLAY} android=${Build.VERSION.RELEASE} model=$REPO@${commit.take(8)} variant=$variant voice=$voice wav_dir=${out.path}")
+        val out = File(ctx.getExternalFilesDir(null), "tts/$variant" + if (xnnpackOff.isEmpty()) "" else "-xnnpackoff-${xnnpackOff.joinToString("+")}").apply { mkdirs() }
+        Log.i(TAG, "device=${Build.MODEL} soc=${Build.SOC_MANUFACTURER}/${Build.SOC_MODEL} build=${Build.DISPLAY} android=${Build.VERSION.RELEASE} model=$REPO@${commit.take(8)} variant=$variant voice=$voice prior=$prior bench_speed=$benchSpeed xnnpack_off=${xnnpackOff.joinToString("+").ifEmpty { "none" }} wav_dir=${out.path}")
         var model: Speaker? = null
         try {
             // 1. load
@@ -110,14 +122,14 @@ class SpeakDeviceTest {
             // 3. parity: the same sentences synthesized, against the publisher's fp32 output
             var firstCallMs = 0.0
             for ((i, text) in BENCH.withIndex()) {
-                val a = m.synthesize(text, voice, 1f)
+                val a = m.synthesize(text, voice, benchSpeed)
                 if (i == 0) firstCallMs = a.timing.totalMs
                 val refWav = npz.floats("ref_wav_$i")
                 val refFrames = npz.ints("ref_dur_$i").sum()
                 val n = minOf(a.samples.size, refWav.size)
                 var maxAbs = 0.0
                 for (k in 0 until n) maxAbs = maxOf(maxAbs, abs((a.samples[k] - refWav[k]).toDouble()))
-                result("parity", true, "i=$i comparable=${idsEqual[i]} frames_equal=${a.timing.frames == refFrames} frames=${a.timing.frames}/$refFrames " +
+                result("parity", true, "i=$i speed=$benchSpeed graph_speed=${(benchSpeed.toDouble() * prior).toFloat()} comparable=${idsEqual[i]} frames_equal=${a.timing.frames == refFrames} frames=${a.timing.frames}/$refFrames " +
                     "samples=${a.samples.size}/${refWav.size} untrimmed=${600 * a.timing.frames}/${refWav.size} logmel_corr=${"%.4f".format(logMelCorr(a.samples, refWav))} " +
                     "logspec_corr=${"%.4f".format(logSpecCorr(a.samples, refWav))} maxabs=${"%.3g".format(maxAbs)} ms_total=${"%.1f".format(a.timing.totalMs)}")
                 writeWav(File(out, "bench$i.wav"), a)

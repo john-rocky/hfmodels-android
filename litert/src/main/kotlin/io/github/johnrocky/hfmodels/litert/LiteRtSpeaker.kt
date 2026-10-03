@@ -14,7 +14,7 @@ import kotlinx.coroutines.withContext
 
 /**
  * KittenTTS on classic LiteRT: [KittenG2P] (dictionary + the out-of-dictionary graph) -> the style row
- * for the text's length -> [KittenSynthesizer]. Every native call runs on the shared LiteRT thread
+ * for the text's length -> [KittenSynthesizer], with `speed` times the voice's prior. Every native call runs on the shared LiteRT thread
  * ([LiteRtDecisionModel.Runtime]); the G2P runs there whole, so an out-of-dictionary word does not hop
  * threads. One `synthesize` at a time.
  */
@@ -24,6 +24,8 @@ internal class LiteRtSpeaker(
     override val sampleRate: Int,
     override val maxChars: Int,
     private val styles: Map<String, NpzVoices.Table>,
+    /** The descriptor's `speed_priors`: the voice's factor on `speed` before the graph (none: 1). */
+    private val priors: Map<String, Double>,
     private val g2p: KittenG2P,
     private val neural: KittenNeuralG2P,
     private val synth: KittenSynthesizer,
@@ -48,7 +50,7 @@ internal class LiteRtSpeaker(
             val style = table.row(minOf(chars, table.rows - 1))
             val out = withContext(LiteRtDecisionModel.Runtime.dispatcher) {
                 checkNotClosed()
-                try { synth.synthesize(ids, style, speed) } catch (t: Throwable) {
+                try { synth.synthesize(ids, style, graphSpeed(speed, priors[name] ?: 1.0)) } catch (t: Throwable) {
                     throw ModelException(ErrorCode.INFERENCE_FAILED, "synthesis failed: ${t.javaClass.simpleName}: ${t.message}", details = mapOf("stage" to "synthesize", "symbols" to ids.size.toString()), cause = t)
                 }
             }
@@ -99,6 +101,9 @@ internal class LiteRtSpeaker(
     }
 
     companion object {
+        /** say.py's `speed * SPEED_PRIORS.get(voice, 1.0)` in double, then float32 for the graph: 1.25 x 0.8 is 1.0 exactly. */
+        fun graphSpeed(speed: Float, prior: Double): Float = (speed.toDouble() * prior).toFloat()
+
         /** Empty, or longer than [maxChars] code points: INVALID_INPUT. Returns the length in code points (Python's `len`). */
         fun checkText(text: String, maxChars: Int): Int {
             if (text.isBlank()) throw ModelException(ErrorCode.INVALID_INPUT, "the text is empty")

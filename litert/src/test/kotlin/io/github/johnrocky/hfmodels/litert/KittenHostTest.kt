@@ -9,7 +9,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Test
 
-/** The kitten family's host side: voices.npz, the G2P's normalization and symbol mapping, the row repeat and the trim. */
+/** The kitten family's host side: voices.npz, the G2P's normalization and symbol mapping, the speed the graph gets, the row repeat and the trim. */
 class KittenHostTest {
     /** voices_small.npz: np.savez of voice-a = arange(12).reshape(3, 4) * 0.5 - 1 and voice-b = arange(12).reshape(3, 4) / -8 + 0.25, float32. */
     @Test fun npzVoicesReadsWhatNumpyWrote() {
@@ -63,6 +63,22 @@ class KittenHostTest {
         // A mixed-case word is a word, not an acronym (the sample's tokenizer): "LiteRT" -> "litert".
         g2p.ipa("LiteRT")
         assertEquals(listOf("zorblax", "litert"), oov)
+    }
+
+    @Test fun theWordIIsItsLetterNameNotAGraphLookup() {
+        val oov = ArrayList<String>()
+        // The dictionary has no "i" (g2p_dict.txt.gz of Matcha-TTS@8d650e79): without the rule it would go to the graph.
+        val g2p = KittenG2P(dictionary, emptyMap()) { oov += it; "<$it>" }
+        assertEquals("ˈaɪ sˈɛt , ˈaɪ .", g2p.ipa("I set, I."))
+        assertEquals(emptyList<String>(), oov)
+    }
+
+    @Test fun speedTimesThePriorIsWhatTheGraphGets() {
+        // say.py: speed * SPEED_PRIORS[voice] in double, float32 into the graph.
+        assertEquals(1.0f, LiteRtSpeaker.graphSpeed(1.25f, 0.8), 0f)
+        assertEquals(0.8f, LiteRtSpeaker.graphSpeed(1f, 0.8), 0f)
+        assertEquals(0.9f, LiteRtSpeaker.graphSpeed(1f, 0.9), 0f)
+        assertEquals(1.5f, LiteRtSpeaker.graphSpeed(1.5f, 1.0), 0f)
     }
 
     @Test fun symbolIdsKeepTheLastIndexOfADuplicateAndDropUnknownCharacters() {

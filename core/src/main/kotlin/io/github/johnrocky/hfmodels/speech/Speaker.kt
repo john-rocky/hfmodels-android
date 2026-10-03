@@ -22,8 +22,9 @@ interface Speaker : PreparedModel {
     val maxChars: Int
 
     /**
-     * [voice]: one of [voices], null = `voices[0]`. [speed] goes to the model unchanged (1 = the
-     * model's own pace; the publisher's `say.py` multiplies it by a per-voice prior, this call does not).
+     * [voice]: one of [voices], null = `voices[0]`. [speed]: 1 = the publisher's default pace for the
+     * voice, 2 = twice that (the descriptor's per-voice `speed_priors` factor multiplies it before the
+     * model, as the publisher's `say.py` does; 0.8 for most kitten voices).
      */
     suspend fun synthesize(text: String, voice: String? = null, speed: Float = 1f): SpeechAudio
 

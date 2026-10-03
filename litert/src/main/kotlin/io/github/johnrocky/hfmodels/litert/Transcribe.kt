@@ -40,7 +40,7 @@ object Transcribe : Task<Transcriber> {
  *  - `files`: `{main, tokens}` -> file ids of the variant (the graph and `tokens.txt`);
  *  - `sample_rate` (16000, the only rate the fbank is defined for) and `window_seconds` (16): the
  *    longest audio one call takes; the graph's fbank input must be `window_seconds * 100` frames;
- *  - `blank_id` (default 0); `cpu_threads` (default 4);
+ *  - `blank_id` (default 0; must be one of the graph's classes); `cpu_threads` (default 4);
  *  - `gpu_precision`: `default` (default; what the LiteRT model zoo app runs) or `fp32`;
  *  - `languages` (informational list).
  */
@@ -68,6 +68,7 @@ internal object LiteRtTranscribeHandler : Handler<Transcriber> {
         val windowSeconds = hc.optDouble("window_seconds", 0.0).takeIf { it > 0.0 } ?: throw ModelException(ErrorCode.MANIFEST_INVALID, "handler_config.window_seconds is missing")
         val frames = Math.round(windowSeconds * sampleRate / ZipformerFbank.HOP).toInt()
         val blank = hc.optInt("blank_id", 0)
+        if (blank < 0) throw ModelException(ErrorCode.MANIFEST_INVALID, "handler_config.blank_id $blank: expected a class id >= 0")
         val cpuThreads = hc.optInt("cpu_threads", 4)
         val gpuFp32 = when (val p = hc.optString("gpu_precision", "default")) {
             "default" -> false
@@ -109,6 +110,8 @@ internal object LiteRtTranscribeHandler : Handler<Transcriber> {
                 )
                 LiteRtTranscriber.open(mainFile, accelerator, gpuFp32, cpuThreads, contract, pieces, info, limits, host)
             } catch (t: Throwable) {
+                // A graph or tokens file that does not match the descriptor fails the same way on every backend: no fallback.
+                if (t is ModelException && t.details["stage"] in DESCRIPTOR_STAGES) throw t
                 val reason = "${t.javaClass.simpleName}: ${t.message}"
                 host.log.w("compile on profile '${profile.id}' failed: $reason", t)
                 val next = profile.fallbackProfiles.asSequence().mapNotNull { plan.variant.profile(it) }.firstOrNull { p -> p.files.all { local.files.containsKey(it) } && fallbackHistory.none { h -> h.endsWith("-> ${p.id}") } }
@@ -131,4 +134,7 @@ internal object LiteRtTranscribeHandler : Handler<Transcriber> {
             return model
         }
     }
+
+    /** Stages of [LiteRtTranscriber.open]'s INITIALIZATION_FAILED that mean the descriptor and the files disagree. */
+    private val DESCRIPTOR_STAGES = setOf("contract", "tokens")
 }

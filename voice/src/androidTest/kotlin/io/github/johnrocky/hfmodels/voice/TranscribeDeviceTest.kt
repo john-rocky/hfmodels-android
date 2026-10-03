@@ -32,8 +32,9 @@ import org.junit.runner.RunWith
  *   2. transcribe: each fixture WAV once, one RESULT line per file (exact and normalized match with the
  *      expected text; normalized = lower case, every run of characters outside [a-z0-9] -> one space, trimmed);
  *   3. timing: the ten files again (warm), median feature / inference / total ms;
- *   4. endpointer: the same WAVs through [Endpointer] in 20 ms chunks, then flush; one line with each
- *      utterance's start and end;
+ *   4. endpointer: the same WAVs through [Endpointer] in 20 ms chunks, then flush; each utterance, its
+ *      pre-roll included, through transcribe (one line per file), and one line with the normalized matches,
+ *      the pre-roll each file got and each utterance's start and end;
  *   5. release.
  * RESULT lines under tag `hfmodels-transcribe`. Arguments: variant (small_fp16 | medium_fp16), backend
  * (gpu | cpu | auto), dir (default /data/local/tmp/hfmodels/zipformer: the model files and tokens.txt),
@@ -116,26 +117,28 @@ class TranscribeDeviceTest {
             }
             result("timing", same == expected.size, "warm_calls=${expected.size} ms_feature_median=${"%.1f".format(median(feature))} ms_infer_median=${"%.1f".format(median(infer))} ms_total_median=${"%.1f".format(median(total))} ms_infer_min=${"%.1f".format(infer.min())} ms_infer_max=${"%.1f".format(infer.max())} same_text_as_first=$same/${expected.size}")
 
-            // 4. endpointer: 20 ms chunks, then flush
+            // 4. endpointer: 20 ms chunks, then flush; each utterance, its pre-roll included, through transcribe
             val spans = ArrayList<String>()
+            val prerolls = ArrayList<String>()
             var utterances = 0
-            for ((id, _) in expected) {
+            var epNorm = 0
+            for ((id, expect) in expected) {
                 val pcm = wavs.getValue(id)
-                val ep = Endpointer()
-                val chunk = 320
-                var fed = 0
-                val found = ArrayList<String>()
-                while (fed < pcm.size) {
-                    val n = minOf(chunk, pcm.size - fed)
-                    val evs = ep.feed(pcm.copyOfRange(fed, fed + n))
-                    fed += n
-                    for (ev in evs) if (ev is Endpointer.Event.Utterance) found += "${(fed - ev.pcm.size) / 16}-${fed / 16}ms(hangover)"
-                }
-                ep.flush()?.let { found += "${(fed - it.pcm.size) / 16}-${fed / 16}ms(flush)" }
-                utterances += found.size
-                spans += "$id=${if (found.isEmpty()) "none" else found.joinToString("+")}/${pcm.size / 16}ms"
+                val cut = endpoint(pcm, Endpointer())
+                // The pre-roll this file got: the first utterance with it, less the same utterance without it.
+                val bare = endpoint(pcm, Endpointer(preRollMs = 0))
+                utterances += cut.size
+                spans += "$id=${if (cut.isEmpty()) "none" else cut.joinToString("+") { it.span }}/${pcm.size / 16}ms"
+                val preRollMs = if (cut.isEmpty() || bare.isEmpty()) null else (cut[0].pcm.size - bare[0].pcm.size) / 16
+                prerolls += "$id=${preRollMs ?: "-"}"
+                val text = cut.map { m.transcribe(it.pcm).text }.joinToString(" ").trim()
+                val n = normalize(text) == normalize(expect)
+                if (n) epNorm++
+                result("endpointer_text", true, "file=$id norm=$n utterances=${cut.size} pre_roll_ms=${preRollMs ?: "-"} samples=${cut.joinToString("+") { it.pcm.size.toString() }} got=\"$text\" expect=\"$expect\"")
             }
-            result("endpointer", utterances > 0, "files=${expected.size} utterances=$utterances chunk_ms=20 start_rms=${Endpointer().startRms} hangover_ms=${Endpointer().hangoverMs} spans(start-end/file_length): ${spans.joinToString(" ")}")
+            val ep = Endpointer()
+            result("endpointer", utterances > 0, "files=${expected.size} utterances=$utterances norm=$epNorm/${expected.size} chunk_ms=20 start_rms=${ep.startRms} hangover_ms=${ep.hangoverMs} pre_roll_ms=${ep.preRollMs} " +
+                "pre_roll_used_ms(what each WAV holds before its first voiced run, at most pre_roll_ms; the fixtures have no silence of their own in front): ${prerolls.joinToString(" ")} spans(start-end/file_length): ${spans.joinToString(" ")}")
 
             // 5. release
             val t2 = SystemClock.elapsedRealtime()
@@ -151,6 +154,22 @@ class TranscribeDeviceTest {
         }
         Log.i(TAG, "RESULT ok=${failures.isEmpty()} model=$REPO variant=$variant backend=$backend device=${Build.MODEL} build=${Build.DISPLAY} failures=${failures.joinToString(" | ")}")
         assertTrue(failures.joinToString("\n"), failures.isEmpty())
+    }
+
+    private class Cut(val pcm: FloatArray, val span: String)
+
+    /** [pcm] through [ep] in 20 ms chunks, then flush; each utterance with its span in the file (start-end ms, and what ended it). */
+    private fun endpoint(pcm: FloatArray, ep: Endpointer): List<Cut> {
+        val out = ArrayList<Cut>()
+        var fed = 0
+        while (fed < pcm.size) {
+            val n = minOf(320, pcm.size - fed)
+            val evs = ep.feed(pcm.copyOfRange(fed, fed + n))
+            fed += n
+            for (ev in evs) if (ev is Endpointer.Event.Utterance) out += Cut(ev.pcm, "${(fed - ev.pcm.size) / 16}-${fed / 16}ms(hangover)")
+        }
+        ep.flush()?.let { out += Cut(it.pcm, "${(fed - it.pcm.size) / 16}-${fed / 16}ms(flush)") }
+        return out
     }
 
     private fun normalize(s: String) = s.lowercase().replace(Regex("[^a-z0-9]+"), " ").trim()

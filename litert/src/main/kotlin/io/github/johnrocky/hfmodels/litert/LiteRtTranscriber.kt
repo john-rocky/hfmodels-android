@@ -111,7 +111,11 @@ internal class LiteRtTranscriber private constructor(
             if (samples < ZipformerFbank.WIN) throw ModelException(ErrorCode.INVALID_INPUT, "$samples samples is shorter than one ${ZipformerFbank.WIN}-sample analysis frame", details = mapOf("samples" to samples.toString()))
         }
 
-        /** Compiles the graph on the LiteRT thread and checks it against [contract]. Throws the runtime's exception unchanged; the handler maps it. */
+        /**
+         * Compiles the graph on the LiteRT thread and checks it against [contract] (shapes, the blank id) and the tokens.
+         * A mismatch is INITIALIZATION_FAILED with stage `contract` or `tokens`, which the handler does not retry on another
+         * backend; the runtime's own exceptions are thrown unchanged and the handler maps them.
+         */
         fun open(file: File, accelerator: Accelerator, gpuFp32: Boolean, cpuThreads: Int, contract: ZipformerCtc, pieces: Map<Int, String>, info: PreparedModelInfo, limits: TranscriberLimits, host: PrepareHost): LiteRtTranscriber = LiteRtDecisionModel.Runtime.call {
             // As in LiteRtDecisionModel.open: in an app that packages the NPU libraries every graph carries BURST, so a
             // transcriber compiled first does not leave a later NPU model at the slower default HTP mode.
@@ -140,6 +144,7 @@ internal class LiteRtTranscriber private constructor(
                     details = mapOf("stage" to "contract", "inputs" to inSizes.toString(), "outputs" to outSizes.toString()),
                 )
                 val classes = outSizes[logitsSlot] / contract.tOut
+                if (contract.blank >= classes) throw ModelException(ErrorCode.INITIALIZATION_FAILED, "handler_config.blank_id ${contract.blank} is not one of the graph's $classes classes", details = mapOf("stage" to "contract", "classes" to classes.toString()))
                 val missing = (0 until classes).firstOrNull { it !in pieces }
                 if (missing != null) throw ModelException(ErrorCode.INITIALIZATION_FAILED, "the graph scores $classes classes but tokens has no piece for id $missing", details = mapOf("stage" to "tokens"))
                 LiteRtTranscriber(info, limits, contract, pieces, classes, model, ins, outs, fbankSlot, biasSlots, logitsSlot, host)

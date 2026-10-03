@@ -112,17 +112,20 @@ internal class KittenSynthesizer private constructor(
         private val VOCODER_INPUTS = setOf("asr", "f0", "n", "har", "style")
         private val SPC_OUTPUTS = setOf("StatefulPartitionedCall:0", "StatefulPartitionedCall:1", "StatefulPartitionedCall:2")
 
+        /** The three graphs by the names `loadMs`, `afterEach` and `xnnpackOff` use. */
+        val GRAPHS = listOf("predictor", "prosody", "vocoder")
+
         /**
-         * Opens the three graphs (Interpreter, XNNPACK, [threads] threads) and checks their input and output
-         * names; [loadMs] gets each graph's construction time, [afterEach] is called with its key (a device
-         * test reads the memory there). On the LiteRT thread. Throws the runtime's exception unchanged; the
-         * handler maps it.
+         * Opens the three graphs (Interpreter, [threads] threads, XNNPACK except on the graphs in [xnnpackOff])
+         * and checks their input and output names; [loadMs] gets each graph's construction time, [afterEach]
+         * is called with its key (a device test reads the memory there). On the LiteRT thread. Throws the
+         * runtime's exception unchanged; the handler maps it.
          */
-        fun open(predictorFile: File, prosodyFile: File, vocoderFile: File, threads: Int, tailTrim: Int, minSamples: Int, loadMs: MutableMap<String, Long>, afterEach: (String) -> Unit = {}): KittenSynthesizer {
+        fun open(predictorFile: File, prosodyFile: File, vocoderFile: File, threads: Int, tailTrim: Int, minSamples: Int, loadMs: MutableMap<String, Long>, xnnpackOff: Set<String> = emptySet(), afterEach: (String) -> Unit = {}): KittenSynthesizer {
             val opened = ArrayList<Interpreter>(3)
             fun graph(key: String, file: File, inputs: Set<String>, outputs: Set<String>?, placeholders: Map<String, IntArray> = emptyMap()): Interpreter {
                 val t0 = System.nanoTime()
-                val options = Interpreter.Options().setNumThreads(threads).setUseXNNPACK(true)
+                val options = Interpreter.Options().setNumThreads(threads).setUseXNNPACK(key !in xnnpackOff)
                 val it = if (placeholders.isEmpty()) Interpreter(file, options) else Interpreter(withInputShapes(file, placeholders), options)
                 opened += it
                 loadMs[key] = (System.nanoTime() - t0) / 1_000_000

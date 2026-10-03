@@ -39,8 +39,10 @@ object Speak : Task<Speaker> {
  *    `g2p_meta.json`, `symbols.json`);
  *  - `sample_rate` (24000, the vocoder's 600 samples per frame); `voices` (names in `voices.npz`, the
  *    first is the default) and `default_voice` (must be the first); `style_rows` (400) and `style_dim` (256);
- *  - `speed_priors` (voice -> factor): the publisher's `say.py` multiplies `speed` by it; this handler
- *    does not, `speed` goes to the graph unchanged;
+ *  - `speed_priors` (voice -> factor): `speed` times the voice's factor goes to the graph, as the
+ *    publisher's `say.py` does it (a voice without one: 1), so `speed = 1` is say.py's default pace;
+ *  - `xnnpack` (graph -> bool, each default true): whether the predictor, prosody and vocoder graphs run
+ *    with the XNNPACK delegate (false = the Interpreter's built-in kernels);
  *  - `cpu_threads` (default 4); `tail_trim` (5000) and `min_samples` (1200): the pip package's trim of
  *    each chunk's end; `max_chars` (400): one chunk's limit; `languages` (informational list).
  */
@@ -79,7 +81,15 @@ internal object LiteRtSpeakHandler : Handler<Speaker> {
         val minSamples = hc.optInt("min_samples", 1200)
         val maxChars = hc.optInt("max_chars", 400)
         if (cpuThreads < 1 || tailTrim < 0 || minSamples < 0 || maxChars < 1 || styleRows < 1) invalid("handler_config: cpu_threads, max_chars and style_rows must be >= 1, tail_trim and min_samples >= 0")
-        val priors = hc.optJSONObject("speed_priors")?.let { o -> o.keys().asSequence().sorted().joinToString(" ") { "$it=${o.get(it)}" } }
+        val priors = hc.optJSONObject("speed_priors")?.let { o ->
+            o.keys().asSequence().associateWith { k -> o.optDouble(k, Double.NaN).also { if (!it.isFinite() || it <= 0.0) invalid("handler_config.speed_priors.$k must be a number above 0") } }
+        }.orEmpty()
+        val xnnpackOff = hc.optJSONObject("xnnpack")?.let { o ->
+            o.keys().asSequence().filter { k ->
+                if (k !in KittenSynthesizer.GRAPHS) invalid("handler_config.xnnpack.$k: not one of the kitten graphs (${KittenSynthesizer.GRAPHS.joinToString()})")
+                !((o.get(k) as? Boolean) ?: invalid("handler_config.xnnpack.$k must be true or false"))
+            }.toSet()
+        }.orEmpty()
 
         val backend = profile.components["inference"] ?: invalid("profile '${profile.id}' has no 'inference' component")
         if (backend != BackendKind.CPU) throw ModelException(
@@ -111,7 +121,7 @@ internal object LiteRtSpeakHandler : Handler<Speaker> {
             val options = CompiledModel.Options(Accelerator.CPU).apply { cpuOptions = CompiledModel.CpuOptions(numThreads = cpuThreads); qualcommOptions = burst }
             val neural = timed("g2p_graph") { stage("g2p_graph") { KittenNeuralG2P.open(file.getValue("g2p_model"), meta, options, LiteRtDecisionModel.Runtime.environment(host.appContext)) } }
             val synth = try {
-                stage("interpreter") { KittenSynthesizer.open(file.getValue("predictor"), file.getValue("prosody"), file.getValue("vocoder"), cpuThreads, tailTrim, minSamples, ms) }
+                stage("interpreter") { KittenSynthesizer.open(file.getValue("predictor"), file.getValue("prosody"), file.getValue("vocoder"), cpuThreads, tailTrim, minSamples, ms, xnnpackOff = xnnpackOff) }
             } catch (t: Throwable) { runCatching { neural.close() }; throw t }
             neural to synth
         }
@@ -119,8 +129,9 @@ internal object LiteRtSpeakHandler : Handler<Speaker> {
 
         val notes = ArrayList<String>()
         notes += "family=kitten load_ms " + ms.entries.joinToString(" ") { "${it.key}=${it.value}" } + " (dictionary ${dictionary.size} words)"
-        notes += "interpreter api (xnnpack, $cpuThreads threads): predictor ${file.getValue("predictor").name}, prosody ${file.getValue("prosody").name}, vocoder ${file.getValue("vocoder").name}; g2p graph on CompiledModel cpu ($cpuThreads threads)"
-        notes += "speed goes to the graph unchanged" + (priors?.let { "; the publisher's say.py multiplies it by speed_priors ($it), this handler does not" } ?: "")
+        val xnnpack = if (xnnpackOff.isEmpty()) "xnnpack" else "xnnpack off on ${KittenSynthesizer.GRAPHS.filter { it in xnnpackOff }.joinToString("+")}"
+        notes += "interpreter api ($xnnpack, $cpuThreads threads): predictor ${file.getValue("predictor").name}, prosody ${file.getValue("prosody").name}, vocoder ${file.getValue("vocoder").name}; g2p graph on CompiledModel cpu ($cpuThreads threads)"
+        notes += "speed x speed_priors[voice] goes to the graph (say.py's pace at speed 1)" + if (priors.isEmpty()) "; no priors, so speed goes unchanged" else ": " + priors.entries.sortedBy { it.key }.joinToString(" ") { "${it.key}=${it.value}" }
         notes += "style row = min(chars, ${styleRows - 1}); tail_trim $tailTrim samples, min_samples $minSamples; max_chars $maxChars per call"
         notes += "observed backend is UNKNOWN: litert $runtimeVersion reports no per-op execution target; 'initialized' is the CPU the graphs were created for"
         val info = PreparedModelInfo(
@@ -132,7 +143,7 @@ internal object LiteRtSpeakHandler : Handler<Speaker> {
             excludedProfiles = plan.excludedProfiles, fallbackHistory = emptyList(), verification = plan.verification,
             notes = notes, files = local.files.mapValues { it.value.absolutePath },
         )
-        return LiteRtSpeaker(info, voices, sampleRate, maxChars, styles, g2p, neural, synth, host)
+        return LiteRtSpeaker(info, voices, sampleRate, maxChars, styles, priors, g2p, neural, synth, host)
     }
 
     private const val SAMPLE_RATE = 24000

@@ -14,9 +14,9 @@ import org.json.JSONObject
  * sample does it: an espeak en-us IPA dictionary first (`g2p_dict.txt.gz`, word<TAB>ipa), [oov]
  * (the DeepPhonemizer graph, [KittenNeuralG2P]) for words it lacks. Host normalization: a run of two
  * or more capitals is spelled letter by letter ("GPU" -> "gee pee you"), numbers are read as words
- * ("4090" -> "four thousand ninety"), and punctuation is its own space-separated token, as the pip
- * package's `basic_english_tokenize` leaves it. The IPA maps one character to one symbol of the
- * 178-symbol table; characters outside the table are dropped.
+ * ("4090" -> "four thousand ninety"), the word "I" is espeak's letter name (`ˈaɪ`), and punctuation
+ * is its own space-separated token, as the pip package's `basic_english_tokenize` leaves it. The IPA
+ * maps one character to one symbol of the 178-symbol table; characters outside the table are dropped.
  */
 internal class KittenG2P(
     private val dictionary: Map<String, String>,
@@ -35,6 +35,8 @@ internal class KittenG2P(
             val token = match.value
             when {
                 ACRONYM.matches(token) -> append(token.lowercase().mapNotNull { LETTER_IPA[it] }.joinToString(""))
+                // The pronoun: the dictionary has no "i", and the graph's answer for it is not ours to rely on.
+                token == "I" -> append(LETTER_IPA.getValue('i'))
                 token[0].isDigit() -> for (word in numberToWords(token)) append(dictionary[word] ?: oov(word))
                 WORD.matches(token) -> token.lowercase().let { append(dictionary[it] ?: oov(it)) }
                 else -> append(token)

@@ -5,11 +5,13 @@ package io.github.johnrocky.hfmodels.voice
  * window per call. Feed consecutive chunks of any size; the state is kept between calls.
  *
  * A frame of [frameMs] is voiced when its RMS is at least [startRms]. Speech starts after
- * [startMs] of consecutive voiced frames ([Event.SpeechStart]); the utterance begins at the first
- * of those frames. It ends once [hangoverMs] of consecutive unvoiced frames have passed, and the
- * [Event.Utterance] carries the audio from speech start to the end of the hangover. An utterance
- * that reaches [maxUtteranceMs] is cut there and emitted (never longer); the frames after the cut
- * go through the start rule again. [flush] returns the open utterance at stream end.
+ * [startMs] of consecutive voiced frames ([Event.SpeechStart]); the utterance begins [preRollMs]
+ * before the first of those frames (as much of it as was heard since the stream started or the
+ * last utterance ended: a soft onset below the start level is kept). It ends once [hangoverMs] of
+ * consecutive unvoiced frames have passed, and the [Event.Utterance] carries the audio from the
+ * pre-roll to the end of the hangover. An utterance that reaches [maxUtteranceMs] (rounded down to
+ * whole frames) is cut there and emitted (never longer); the frames after the cut go through the
+ * start rule again. [flush] returns the open utterance at stream end.
  *
  * Not thread-safe: one stream, one caller.
  */
@@ -20,11 +22,12 @@ class Endpointer(
     val hangoverMs: Int = 800,
     val maxUtteranceMs: Int = 16000,
     val frameMs: Int = 20,
+    val preRollMs: Int = 300,
 ) {
     sealed class Event {
         object SpeechStart : Event() { override fun toString() = "SpeechStart" }
 
-        /** The utterance from speech start to the end of the hangover, never longer than maxUtteranceMs. */
+        /** The utterance from the pre-roll to the end of the hangover, never longer than maxUtteranceMs. */
         data class Utterance(val pcm: FloatArray) : Event() {
             override fun equals(other: Any?) = other is Utterance && pcm.contentEquals(other.pcm)
             override fun hashCode() = pcm.contentHashCode()
@@ -35,18 +38,28 @@ class Endpointer(
     private val frameSamples = sampleRate * frameMs / 1000
     private val startFrames = (startMs + frameMs - 1) / frameMs
     private val hangoverFrames = (hangoverMs + frameMs - 1) / frameMs
-    private val maxSamples = (sampleRate.toLong() * maxUtteranceMs / 1000).toInt()
+    private val preRollFrames = if (preRollMs <= 0) 0 else (preRollMs + frameMs - 1) / frameMs
+    /** Whole frames only: the frame that reaches the maximum is appended whole, so a cut never drops part of a frame. */
+    private val maxSamples = if (frameSamples > 0) (sampleRate.toLong() * maxUtteranceMs / 1000 / frameSamples * frameSamples).toInt() else 0
     private val minMeanSquare = startRms.toDouble() * startRms
 
     init {
-        require(frameSamples > 0 && startFrames > 0 && hangoverFrames > 0 && maxSamples >= frameSamples) { "frame, start, hangover and max lengths must be positive, and max at least one frame" }
+        require(frameSamples > 0 && startFrames > 0 && hangoverFrames > 0 && preRollMs >= 0) { "frame, start and hangover lengths must be positive, and the pre-roll not negative" }
+        require(maxSamples >= (startFrames + preRollFrames) * frameSamples) { "maxUtteranceMs must hold the pre-roll and the start run (${(startFrames + preRollFrames) * frameMs} ms)" }
     }
 
     private val pending = FloatArray(frameSamples)
     private var pendingN = 0
     private var inSpeech = false
-    /** While idle: the consecutive voiced frames so far, kept so the utterance starts at the first of them. */
-    private val run = FloatArray(startFrames * frameSamples)
+    /**
+     * While idle: the last frames heard (at most the pre-roll and the start run), oldest first from
+     * [idleHead]. The voiced run is always the newest [runFrames] of them, so on speech start the
+     * whole ring is the pre-roll followed by the run.
+     */
+    private val idle = FloatArray((preRollFrames + startFrames) * frameSamples)
+    private val idleCap = preRollFrames + startFrames
+    private var idleHead = 0
+    private var idleFrames = 0
     private var runFrames = 0
     private var utterance = FloatArray(0)
     private var utteranceN = 0
@@ -72,7 +85,7 @@ class Endpointer(
     /** The open utterance at stream end (with the samples of an unfinished frame), or null when no speech is open. Resets the state. */
     fun flush(): Event.Utterance? {
         val open = if (inSpeech) {
-            append(pending, pendingN)
+            append(pending, 0, pendingN)
             Event.Utterance(utterance.copyOf(utteranceN))
         } else null
         reset()
@@ -82,9 +95,15 @@ class Endpointer(
     fun reset() {
         pendingN = 0
         inSpeech = false
-        runFrames = 0
+        clearIdle()
         utteranceN = 0
         silentFrames = 0
+    }
+
+    private fun clearIdle() {
+        idleHead = 0
+        idleFrames = 0
+        runFrames = 0
     }
 
     private fun frame(events: MutableList<Event>) {
@@ -92,18 +111,20 @@ class Endpointer(
         for (k in 0 until frameSamples) ss += pending[k].toDouble() * pending[k]
         val voiced = ss / frameSamples >= minMeanSquare
         if (!inSpeech) {
-            if (!voiced) { runFrames = 0; return }
-            System.arraycopy(pending, 0, run, runFrames * frameSamples, frameSamples)
-            runFrames++
+            // Keep the frame either way: an unvoiced one is pre-roll for a later run.
+            val slot = (idleHead + idleFrames) % idleCap
+            System.arraycopy(pending, 0, idle, slot * frameSamples, frameSamples)
+            if (idleFrames < idleCap) idleFrames++ else idleHead = (idleHead + 1) % idleCap
+            runFrames = if (voiced) runFrames + 1 else 0
             if (runFrames < startFrames) return
             inSpeech = true
             silentFrames = 0
             utteranceN = 0
             events += Event.SpeechStart
-            append(run, runFrames * frameSamples)
-            runFrames = 0
+            for (f in 0 until idleFrames) append(idle, ((idleHead + f) % idleCap) * frameSamples, frameSamples)
+            clearIdle()
         } else {
-            append(pending, frameSamples)
+            append(pending, 0, frameSamples)
             silentFrames = if (voiced) 0 else silentFrames + 1
         }
         if (utteranceN >= maxSamples || silentFrames >= hangoverFrames) {
@@ -114,12 +135,12 @@ class Endpointer(
         }
     }
 
-    /** Appends up to the max length; what does not fit is dropped (the cut). */
-    private fun append(src: FloatArray, n: Int) {
+    /** Appends up to the max length. Whole frames always fit (the max is a whole number of frames, checked after each one); so does the unfinished frame at [flush]. */
+    private fun append(src: FloatArray, from: Int, n: Int) {
         val take = minOf(n, maxSamples - utteranceN)
         if (take <= 0) return
         if (utterance.size < utteranceN + take) utterance = utterance.copyOf(minOf(maxSamples, maxOf(utteranceN + take, utterance.size * 2, sampleRate)))
-        System.arraycopy(src, 0, utterance, utteranceN, take)
+        System.arraycopy(src, from, utterance, utteranceN, take)
         utteranceN += take
     }
 }

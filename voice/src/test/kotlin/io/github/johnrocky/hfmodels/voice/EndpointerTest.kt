@@ -3,8 +3,10 @@ package io.github.johnrocky.hfmodels.voice
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.sin
+import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -47,23 +49,46 @@ class EndpointerTest {
         assertNull(e.flush())
     }
 
-    @Test fun oneUtteranceIsSpeechPlusHangover() {
-        val e = Endpointer()
-        val events = stream(e, concat(silence(0.5), tone(1.0), silence(1.5)))
+    @Test fun oneUtteranceIsSpeechPlusHangoverWithoutPreRoll() {
+        val e = Endpointer(preRollMs = 0)
+        val input = concat(silence(0.5), tone(1.0), silence(1.5))
+        val events = stream(e, input)
         assertEquals(2, events.size)
         assertEquals(Endpointer.Event.SpeechStart, events[0])
         val u = utterances(events).single()
-        val expected = sr * (1000 + e.hangoverMs) / 1000
-        assertTrue("utterance ${u.pcm.size} samples, expected $expected +- one 320-sample frame", abs(u.pcm.size - expected) <= 320)
-        // The utterance starts at the tone, not in the silence before it.
-        assertTrue(abs(u.pcm[sr / 1000 * 5]) > 0.005f || abs(u.pcm[sr / 1000 * 5 + 1]) > 0.005f)
+        // The tone starts on a frame boundary (0.5 s = frame 25): the utterance is the input from there, the hangover included.
+        assertArrayEquals(input.copyOfRange(sr / 2, sr / 2 + sr * (1000 + e.hangoverMs) / 1000), u.pcm, 0f)
+    }
+
+    @Test fun preRollPutsTheAudioBeforeTheRunInFront() {
+        val e = Endpointer()
+        assertEquals(300, e.preRollMs)
+        val input = concat(silence(0.5), tone(1.0), silence(1.5))
+        val u = utterances(stream(e, input)).single()
+        // 300 ms of the near-silence before the tone, then the tone and the hangover: the input slice, sample for sample.
+        val from = sr / 2 - sr * 300 / 1000
+        assertArrayEquals(input.copyOfRange(from, sr / 2 + sr * (1000 + e.hangoverMs) / 1000), u.pcm, 0f)
+        assertTrue((0 until sr * 300 / 1000).all { abs(u.pcm[it]) <= 0.001f })
+    }
+
+    @Test fun preRollIsOnlyWhatWasHeard() {
+        // Speech from the first sample: nothing to put in front.
+        val atOnce = concat(tone(1.0), silence(1.5))
+        assertArrayEquals(atOnce.copyOfRange(0, sr * 1800 / 1000), utterances(stream(Endpointer(), atOnce)).single().pcm, 0f)
+        // 100 ms of silence first: 100 ms of pre-roll, not 300.
+        val short = concat(silence(0.1), tone(1.0), silence(1.5))
+        assertArrayEquals(short.copyOfRange(0, sr * 1900 / 1000), utterances(stream(Endpointer(), short)).single().pcm, 0f)
     }
 
     @Test fun twoUtterancesWithAGap() {
-        val events = stream(Endpointer(), concat(silence(0.5), tone(1.0), silence(1.5), tone(0.7), silence(1.5)), chunk = 320)
-        assertEquals(listOf("SpeechStart", "Utterance", "SpeechStart", "Utterance"), events.map { it.toString().substringBefore('(') })
-        val sizes = utterances(events).map { it.pcm.size }
-        assertTrue(sizes.toString(), abs(sizes[0] - 1.8 * sr) <= 320 && abs(sizes[1] - 1.5 * sr) <= 320)
+        val input = concat(silence(0.5), tone(1.0), silence(1.5), tone(0.7), silence(1.5))
+        for ((preRoll, extra) in listOf(0 to 0.0, 300 to 0.3)) {
+            val events = stream(Endpointer(preRollMs = preRoll), input, chunk = 320)
+            assertEquals(listOf("SpeechStart", "Utterance", "SpeechStart", "Utterance"), events.map { it.toString().substringBefore('(') })
+            val sizes = utterances(events).map { it.pcm.size }
+            // The second pre-roll comes from the gap after the first utterance's hangover, not from the first utterance.
+            assertTrue("pre-roll $preRoll: $sizes", abs(sizes[0] - (1.8 + extra) * sr) <= 320 && abs(sizes[1] - (1.5 + extra) * sr) <= 320)
+        }
     }
 
     @Test fun longSoundIsCutAtTheMaximum() {
@@ -73,9 +98,23 @@ class EndpointerTest {
         val max = sr * e.maxUtteranceMs / 1000
         assertEquals(max, u.first().pcm.size)
         assertTrue(u.all { it.pcm.size <= max })
-        // The remaining 4 s opens a second utterance (the start rule's 100 ms included), returned by flush().
+        // The remaining 4 s opens a second utterance (the start rule's 100 ms included, no pre-roll from the first), returned by flush().
         assertEquals(2, u.size)
         assertEquals(20 * sr - max, u[1].pcm.size)
         assertEquals(2, events.count { it == Endpointer.Event.SpeechStart })
+    }
+
+    @Test fun aMaximumBetweenFramesIsRoundedDownAndNothingIsDropped() {
+        // 1010 ms = 16160 samples = 50.5 frames: the cut falls after frame 50, and the next utterance starts at frame 51.
+        val e = Endpointer(maxUtteranceMs = 1010, preRollMs = 0)
+        val input = tone(2.0)
+        val u = utterances(stream(e, input, chunk = 320))
+        assertEquals(listOf(16000, 16000), u.map { it.pcm.size })
+        assertArrayEquals(input, concat(*u.map { it.pcm }.toTypedArray()), 0f)
+    }
+
+    @Test fun theMaximumMustHoldThePreRollAndTheStartRun() {
+        assertThrows(IllegalArgumentException::class.java) { Endpointer(maxUtteranceMs = 300, preRollMs = 300) }
+        Endpointer(maxUtteranceMs = 400, preRollMs = 300)
     }
 }
