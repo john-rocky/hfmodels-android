@@ -6,7 +6,7 @@
   "tasks": [
     "transcribe"
   ],
-  "default_variant": "small_fp16",
+  "default_variant": "medium_fp16",
   "license": {
     "id": "apache-2.0",
     "url": "https://huggingface.co/litert-community/Zipformer-medium-CR-CTC-LiteRT/blob/7732ad6c15ec43402968d5ae04acfa7a204027f5/README.md"

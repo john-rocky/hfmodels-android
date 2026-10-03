@@ -1,6 +1,6 @@
-// hfmodels-voice: the voice loop's pieces on top of the transcriber (hfmodels-litert) and the chat model
-// (hfmodels-litertlm). This round holds the Endpointer only. Depending on hfmodels-litert, an app needs
-// android.uniquePackageNames=false on AGP 9 (gradle.properties).
+// hfmodels-voice: the voice loop's pieces on top of the transcriber and the speaker (hfmodels-litert) and the chat
+// model (hfmodels-litertlm). It holds the Endpointer and the SentenceSplitter so far. Depending on hfmodels-litert,
+// an app needs android.uniquePackageNames=false on AGP 9 (gradle.properties).
 plugins {
     id("com.android.library")
     id("com.vanniktech.maven.publish") version "0.33.0"
@@ -16,9 +16,9 @@ android {
         consumerProguardFiles("consumer-rules.pro")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-    // The device gate (TranscribeDeviceTest: the transcriber and the Endpointer in one process) side-loads the
-    // development descriptor as a test-APK asset. It lives here, not in hfmodels-litert, because the Endpointer
-    // is in this module and this module depends on hfmodels-litert.
+    // The device gates (TranscribeDeviceTest: the transcriber and the Endpointer in one process; SpeakDeviceTest) side-load
+    // the development descriptors as test-APK assets. They live here, not in hfmodels-litert, because the Endpointer is in
+    // this module and this module depends on hfmodels-litert.
     sourceSets { named("androidTest") { assets.srcDir(rootProject.file("catalog/dev")) } }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
