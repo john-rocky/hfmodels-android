@@ -24,12 +24,13 @@ internal class DebertaEncoded(val ids: IntArray, val questionSpans: List<IntRang
  * tokens. The graph takes the looked-up embeddings, the attention mask and two routing inputs, `q_routing` and
  * `o_routing [1, optionSlots, window]`: row j is 1/len over the text tokens of option j's question, and of option j.
  *
- * A question is one forward (the author's `decide()` packs every question into one; [forward] with a list does that
- * for the parity checks). The options are the family rule's strings: a choice's descriptions (the key when there is
- * none; the answer is the key), a score's levels, a noul's fixed `no` / `yes` (its criteria are not read, the author's
- * schema fixes them). Decoding is the author's read-out: softmax of the logits / `temperature` (1.05) in double
- * precision, `choice` = the first maximum, `score` = Σ i·pᵢ, `noul` = p(yes); the author's `confidence` (the top
- * probability) goes to `extras.max_probability`, `confidence` is the SDK's field. A request longer than the window,
+ * The questions of one decide() go into one forward, as the author's `decide()` does ([plan]); when they do not fit
+ * the window or the option slots they are split in question order into several forwards. The options are the family
+ * rule's strings: a choice's descriptions (the key when there is none; the answer is the key), a score's levels, a
+ * noul's fixed `no` / `yes` (its criteria are not read, the author's schema fixes them). Decoding is the author's
+ * read-out: softmax of the logits / `temperature` (1.05) in double precision, `choice` = the first maximum, `score` =
+ * Σ i·pᵢ, `noul` = p(yes); the author's `confidence` (the top probability) goes to `extras.max_probability`,
+ * `confidence` is the SDK's field. A request longer than the window,
  * or with more options than the graph has slots, is refused; only the state is cut.
  */
 internal class DebertaDecisionContract(
@@ -43,7 +44,7 @@ internal class DebertaDecisionContract(
     override val padId: Int get() = tokenizer.padId
     override val head: Head? get() = null
     override val notes: List<String> = listOf(
-        "one forward per question (the author's decide() packs every question into one forward): options = a choice's descriptions (the key when there is none), a score's levels, a noul's no / yes; " +
+        "the questions of one decide() in one forward as the author's decide() does, split in question order when they do not fit the window or the option slots: options = a choice's descriptions (the key when there is none), a score's levels, a noul's no / yes; " +
             "the state is cut to its first $stateTokenLimit tokens; a request longer than the ${limits.windowTokens}-token window or with more than $optionSlots options is refused; " +
             "probabilities are the softmax of the logits / $temperature (the author's calibration), extras.max_probability is the author's confidence",
     )
@@ -59,6 +60,37 @@ internal class DebertaDecisionContract(
     override fun stateIds(state: Any): IntArray = tokenizer.encode(if (state is String) state else Json.dumps(state))
 
     override fun forward(questionId: String, q: Question, stateIds: IntArray): Forward = forward(listOf(q), stateIds, questionId)
+
+    /**
+     * The author's form: every question in one forward while the state (cut to `state_tokens`), the questions and their
+     * options fit the window and the option slots; otherwise the questions are split in order, a new forward starting at
+     * the first question that does not fit. A question that does not fit alone is refused as [forward] refuses it.
+     */
+    override fun plan(questions: Map<String, Question>, stateIds: IntArray): List<Batch> {
+        class Cost(val id: String, val q: Question, val tokens: Int, val options: Int, val ms: Double)
+        // [CLS] [STATE] state ... [SEP]; each question adds [Q] instructions and [OPT] option per option.
+        val frame = 2 + minOf(stateIds.size, stateTokenLimit) + 1
+        val costs = questions.map { (id, q) ->
+            val t = System.nanoTime()
+            val options = options(q, id)
+            val tokens = 1 + tokenizer.encode(q.instructions).size + options.sumOf { 1 + tokenizer.encode(it).size }
+            if (frame + tokens > window || options.size > optionSlots) forward(listOf(q), stateIds, id)   // refuses with the forward's error
+            Cost(id, q, tokens, options.size, (System.nanoTime() - t) / 1e6)
+        }
+        val groups = ArrayList<MutableList<Cost>>()
+        var tokens = 0; var options = 0
+        for (c in costs) {
+            if (groups.isEmpty() || frame + tokens + c.tokens > window || options + c.options > optionSlots) { groups += ArrayList<Cost>(); tokens = 0; options = 0 }
+            groups.last() += c; tokens += c.tokens; options += c.options
+        }
+        return groups.map { g ->
+            val t = System.nanoTime()
+            val f = forward(g.map { it.q }, stateIds, g.first().id)
+            var from = 0
+            val planned = g.map { c -> Planned(c.id, c.q, from until from + c.options).also { from += c.options } }
+            Batch(f, planned, g.sumOf { it.ms } + (System.nanoTime() - t) / 1e6)
+        }
+    }
 
     /** Every question in one forward, the author's `decide()` (the parity checks replay the Collator's captured requests through it). */
     fun forward(questions: List<Question>, stateIds: IntArray, questionId: String = "q"): Forward {

@@ -9,9 +9,7 @@ import io.github.johnrocky.hfmodels.ErrorCode
 import io.github.johnrocky.hfmodels.ModelException
 import io.github.johnrocky.hfmodels.PrepareHost
 import io.github.johnrocky.hfmodels.PreparedModelInfo
-import io.github.johnrocky.hfmodels.decide.Answer
 import io.github.johnrocky.hfmodels.decide.DecisionLimits
-import io.github.johnrocky.hfmodels.decide.DecisionTiming
 import io.github.johnrocky.hfmodels.decide.Decisions
 import io.github.johnrocky.hfmodels.decide.PreparedState
 import io.github.johnrocky.hfmodels.decide.Question
@@ -30,8 +28,8 @@ import kotlinx.coroutines.withContext
 /**
  * One decision encoder on LiteRT `CompiledModel`: the main graph (one question's sequence -> option
  * scores) and, when the family has one, a small head graph after it (laya's act head, always created on
- * the CPU). The family's [DecisionContract] builds each forward, names the graph inputs and outputs and
- * decodes the scores; this class runs them. The graph takes token ids or, when the variant ships a token
+ * the CPU). The family's [DecisionContract] plans and builds the forwards, names the graph inputs and outputs
+ * and decodes the scores; this class runs them. The graph takes token ids or, when the variant ships a token
  * table, embeddings the host looks up ([TokenTable]). Every native call runs on one dedicated thread; the
  * process-wide `Environment` is created once and kept. One `decide` at a time.
  */
@@ -82,24 +80,9 @@ internal class LiteRtDecisionModel private constructor(
         }
     }
 
-    private fun answer(stateIds: IntArray, questions: Map<String, Question>, stateMs: Double, t0: Long): Decisions {
-        if (questions.isEmpty()) throw ModelException(ErrorCode.INVALID_INPUT, "no questions")
-        val answers = LinkedHashMap<String, Answer>()
-        val perQuestion = ArrayList<Double>(questions.size)
-        var stateTokens = stateIds.size
-        var truncated = false
-        for ((id, q) in questions) {
-            val tq = System.nanoTime()
-            val f = contract.forward(id, q, stateIds)
-            stateTokens = f.stateTokens
-            truncated = truncated || f.stateTruncated
-            val (raw, headLogits) = run(f)
-            lastRaw = raw to (headLogits ?: floatArrayOf(0f, 0f))
-            answers[id] = contract.decode(q, raw, headLogits)
-            perQuestion += (System.nanoTime() - tq) / 1e6
-        }
-        return Decisions(answers, info.repoId, DecisionTiming(stateMs, perQuestion, (System.nanoTime() - t0) / 1e6), stateTokens, truncated)
-    }
+    /** The contract's plan, one forward per batch ([DecisionRun]). */
+    private fun answer(stateIds: IntArray, questions: Map<String, Question>, stateMs: Double, t0: Long): Decisions =
+        DecisionRun.decide(contract, stateIds, questions, info.repoId, stateMs, t0) { f -> run(f).also { (raw, head) -> lastRaw = raw to (head ?: floatArrayOf(0f, 0f)) } }
 
     /** Test hook: the option scores of one forward the caller built (device checks replay the publisher's own requests through it). */
     internal fun scores(f: Forward): FloatArray { checkUsable(); return run(f).first }

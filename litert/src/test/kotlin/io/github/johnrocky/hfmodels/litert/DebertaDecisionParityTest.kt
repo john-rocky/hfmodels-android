@@ -248,6 +248,137 @@ class DebertaDecisionParityTest {
         println("(e) packed: ${packed.size}/${packed.size} rows' six questions in one request with the card host's ids and spans; decode max |dp| $packedDp; one question per forward vs packed in the host: max |dp| ${fixture["single_vs_packed_max_abs_dp"]}, answers changed ${fixture["single_vs_packed_answer_changes"]}")
     }
 
+    /** The routing a packed forward must carry: row j is 1/len over option j's question text, and over option j's text. */
+    private fun expectedRouting(qSpans: List<List<Int>>, optSpans: List<List<List<Int>>>, w: Int): Pair<FloatArray, FloatArray> {
+        val q = FloatArray(128 * w); val o = FloatArray(128 * w)
+        var slot = 0
+        for ((qs, group) in qSpans.zip(optSpans)) for (os in group) {
+            if (qs[1] > qs[0]) for (t in qs[0] until qs[1]) q[slot * w + t] = 1f / (qs[1] - qs[0])
+            if (os[1] > os[0]) for (t in os[0] until os[1]) o[slot * w + t] = 1f / (os[1] - os[0])
+            slot++
+        }
+        return q to o
+    }
+
+    private fun questionMap(qs: List<Question>) = LinkedHashMap<String, Question>().also { m -> qs.forEachIndexed { i, q -> m["q$i"] = q } }
+
+    /** decide()'s path ([DecisionRun] over the plan) on the author's captured requests: every request in one forward, the captured logits sliced per question and decoded. */
+    @Test fun packedDecideGivesTheAuthorsAnswers() {
+        val requests = records("android/sample/app/src/test/resources/decoder_cases.json", "cases") + records("fixtures/app_gate_fixtures.json", "requests")
+        var questionsSeen = 0; var same = 0; var maxDp = 0.0; var idsChecked = 0; var fit256 = 0; var split256 = 0; var refused256 = 0
+        val perWindow = linkedMapOf(512 to IntArray(3), 256 to IntArray(3))   // requests in one forward, questions, same answers
+        for ((c, w) in listOf(contract(512) to 512, contract(256) to 256)) {
+            for (r in requests) {
+                val qs = (r["questions"] as List<*>).map { question(it as Map<*, *>) }
+                val map = questionMap(qs)
+                val stateIds = c.stateIds(r["state"] as String)
+                val plan = try { c.plan(map, stateIds) } catch (e: ModelException) {
+                    // A question that does not fit 256 tokens even alone (a long state takes 256): refused, as the author's 256 graph would.
+                    assertEquals(256, w); assertEquals(ErrorCode.CONTEXT_LIMIT_EXCEEDED, e.code)
+                    (r["ids"] as List<*>?)?.let { assertTrue(it.size > 256) }
+                    refused256++
+                    continue
+                }
+                if (w == 256 && plan.size > 1) {
+                    // Too long for one 256-token forward: split in question order, every question once, each forward within the window and the slots.
+                    assertEquals(map.keys.toList(), plan.flatMap { b -> b.questions.map { it.id } })
+                    for (b in plan) {
+                        assertTrue(b.forward.ids.size <= 256 && b.forward.reads.size <= 128)
+                        assertEquals((0 until b.forward.reads.size).toList(), b.questions.flatMap { it.scores.toList() })
+                    }
+                    split256++
+                    continue
+                }
+                assertEquals("${r["id"]} at $w: one forward", 1, plan.size)
+                if (w == 256) fit256++
+                val f = plan.single().forward
+                (r["ids"] as List<*>?)?.let { ids ->
+                    assertEquals("${r["id"]} at $w: ids", ints(ids), f.ids.toList())
+                    val (q, o) = expectedRouting(spans(r["q_spans"]), (r["opt_spans"] as List<*>).map { spans(it) }, w)
+                    assertTrue("${r["id"]} at $w: routing", f.routing.contentEquals(q) && f.extraInputs.single().contentEquals(o))
+                    idsChecked++
+                }
+                val logits = (r["logits"] as List<*>).flatMap { (it as List<*>).map { v -> (v as Number).toFloat() } }.toFloatArray()
+                val d = DecisionRun.decide(c, stateIds, map, "m", 0.0, System.nanoTime()) { fw -> assertEquals(f.ids.toList(), fw.ids.toList()); logits to null }
+                perWindow.getValue(w)[0]++
+                assertEquals(1, d.timing.questionMs.toSet().size)
+                for ((i, a) in d.answers.values.withIndex()) {
+                    val api = (r["api"] as List<*>)[i] as Map<*, *>
+                    val (ok, dp) = when (a) {
+                        is Answer.Choice -> (a.choice == api["choice"]) to (api["probabilities"] as Map<*, *>).entries.maxOf { (k, v) -> abs(a.probabilities.getValue(k as String) - (v as Number).toDouble()) }
+                        is Answer.Score -> (abs(a.score - (api["score"] as Number).toDouble()) < 1e-5) to (api["probabilities"] as Map<*, *>).values.withIndex().maxOf { (k, v) -> abs(a.probabilities.getValue(k.toString()) - (v as Number).toDouble()) }
+                        is Answer.Noul -> (abs(a.noul - (api["noul"] as Number).toDouble()) < 1e-6) to abs(a.noul - (api["noul"] as Number).toDouble())
+                    }
+                    questionsSeen++; perWindow.getValue(w)[1]++
+                    if (ok) { same++; perWindow.getValue(w)[2]++ } else println("${r["id"]} at $w q$i: $a vs the author's $api")
+                    maxDp = maxOf(maxDp, dp)
+                }
+            }
+        }
+        assertEquals("packed decide() answers", questionsSeen, same)
+        val (r512, q512, s512) = perWindow.getValue(512).toList(); val (r256, q256, s256) = perWindow.getValue(256).toList()
+        println("packed decide(): at 512 $r512/${requests.size} requests in one forward, $s512/$q512 questions give the author's answer; at 256 $r256 in one forward ($s256/$q256 questions the author's answer), $split256 split in question order, $refused256 refused (a question does not fit alone); max |dp| $maxDp; $idsChecked forwards with the Collator's ids and routing")
+    }
+
+    /** The round-1 sentences' six questions through decide()'s plan: one forward with the card host's packed ids and routing, its logits decoded to the host's probabilities. */
+    @Test fun packedPlanMatchesTheHostRequest() {
+        val fixture = Json.parseObject(file("r4/decide_form.json").readText())
+        val packed = (fixture["packed"] as List<*>).map { it as Map<*, *> }
+        val c = contract(256)
+        var ok = 0; var maxDp = 0.0
+        for (r in packed) {
+            val qs = (r["questions"] as List<*>).map { Question.fromMap(it as Map<*, *>) }
+            val stateIds = c.stateIds(r["text"] as String)
+            val plan = c.plan(questionMap(qs), stateIds)
+            val f = plan.single().forward
+            val (q, o) = expectedRouting(spans(r["q_spans"]), (r["opt_spans"] as List<*>).map { spans(it) }, 256)
+            val logits = (r["logits"] as List<*>).flatMap { (it as List<*>).map { v -> (v as Number).toFloat() } }.toFloatArray()
+            val d = DecisionRun.decide(c, stateIds, questionMap(qs), "m", 0.0, System.nanoTime()) { logits to null }
+            var rowOk = f.ids.toList() == ints(r["ids"]) && f.routing.contentEquals(q) && f.extraInputs.single().contentEquals(o)
+            for ((i, a) in d.answers.values.withIndex()) {
+                val ref = ((r["probabilities"] as List<*>)[i] as List<*>).map { (it as Number).toDouble() }
+                val p = when (a) { is Answer.Choice -> a.probabilities.values.toList(); is Answer.Score -> a.probabilities.values.toList(); is Answer.Noul -> listOf(1.0 - a.noul, a.noul) }
+                val dp = ref.indices.maxOf { abs(p[it] - ref[it]) }
+                maxDp = maxOf(maxDp, dp)
+                if (dp > 1e-12) rowOk = false
+            }
+            if (rowOk) ok++ else println("packed ${r["id"]}: differs from the host")
+        }
+        assertEquals(packed.size, ok)
+        println("packed plan: $ok/${packed.size} rows' six questions in one forward with the card host's ids and q / o routing; decide() probabilities vs the host's max |dp| $maxDp")
+    }
+
+    @Test fun planSplitsInQuestionOrderAndRefusesWhatCannotFit() {
+        val c = contract(256)
+        val state = c.stateIds((0 until 60).joinToString(" ") { "word$it" })
+        fun questions(n: Int) = linkedMapOf<String, Question>(
+            "a" to Question.Choice("Which of these words appear in the text?", *(0 until n).map { "word number $it" }.toTypedArray()),
+            "b" to Question.Score("How long is the text?", listOf("very short", "short", "medium", "long", "very long")),
+            "c" to Question.Noul("The text lists words."),
+        )
+        fun fits(qs: Collection<Question>) = runCatching { c.encode(qs.toList(), state) }.isSuccess
+        // The smallest first question that still fits alone but not with the other two.
+        val qs = (2..60).map { questions(it) }.first { q -> fits(listOf(q.getValue("a"))) && !fits(q.values) }
+        val plan = c.plan(qs, state)
+        assertTrue(plan.size >= 2)
+        assertEquals(listOf("a", "b", "c"), plan.flatMap { b -> b.questions.map { it.id } })
+        for ((i, b) in plan.withIndex()) {
+            val group = b.questions.map { it.question }
+            assertEquals(c.encode(group, state).ids.toList(), b.forward.ids.toList())
+            // Greedy in question order: the next question would not have fitted this forward.
+            if (i + 1 < plan.size) assertTrue(!fits(group + plan[i + 1].questions.first().question))
+        }
+        // Option slots: two 100-option choices cannot share one forward's 128 slots.
+        val wide = linkedMapOf<String, Question>(
+            "x" to Question.Choice("x?", *(0 until 100).map { "x$it" }.toTypedArray()),
+            "y" to Question.Choice("y?", *(0 until 100).map { "y$it" }.toTypedArray()),
+        )
+        assertEquals(listOf(listOf("x"), listOf("y")), contract(512).plan(wide, c.stateIds("short")).map { b -> b.questions.map { it.id } })
+        // A question that does not fit alone is refused as forward() refuses it.
+        val long = linkedMapOf<String, Question>("ok" to Question.Noul("fine"), "too long" to Question.Choice((0 until 300).joinToString(" ") { "very" }, "a", "b"))
+        try { c.plan(long, state); fail("a question longer than the window was planned") } catch (e: ModelException) { assertEquals(ErrorCode.CONTEXT_LIMIT_EXCEEDED, e.code); assertEquals("too long", e.details["question"]) }
+    }
+
     @Test fun limitsAndTheStateCut() {
         val c = contract(256)
         val b = Question.Choice("What is this sentence?", linkedMapOf("nothing" to "an opinion", "promise" to null))

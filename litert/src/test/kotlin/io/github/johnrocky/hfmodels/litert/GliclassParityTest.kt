@@ -173,6 +173,38 @@ class GliclassParityTest {
         }
     }
 
+    /** decide()'s path ([DecisionRun] over the default plan): the six questions of a sentence, one request each, the host's logits decoded per question; the state's real token count. */
+    @Test fun decideRunsOneRequestPerQuestion() {
+        val requests = (Json.parseObject(file("r4/decide_form.json").readText())["requests"] as List<*>).map { it as Map<*, *> }
+        val c = contract(128)
+        var rows = 0; var questions = 0; var same = 0
+        for ((id, group) in requests.groupBy { it["id"] as String }) {
+            val text = group.first()["text"] as String
+            val map = LinkedHashMap<String, Question>().also { m -> for (r in group) m[r["form"] as String] = Question.fromMap(r["question"] as Map<*, *>) }
+            val byIds = group.associate { ints(it["ids"]) to floats(it["logits"]) }
+            val stateIds = c.stateIds(text)
+            val plan = c.plan(map, stateIds)
+            assertEquals(map.keys.map { listOf(it) }, plan.map { b -> b.questions.map { it.id } })
+            for (b in plan) assertEquals("$id: the text's tokens", tokenizer.encode(text).size - 2, b.forward.stateTokens)
+            val d = DecisionRun.decide(c, stateIds, map, "m", 0.0, System.nanoTime()) { f -> byIds.getValue(f.ids.toList()) to null }
+            assertEquals(map.size, d.timing.questionMs.size)
+            assertEquals(tokenizer.encode(text).size - 2, d.stateTokens)
+            for (r in group) {
+                questions++
+                val a = d.answers.getValue(r["form"] as String)
+                if (when (a) {
+                        is Answer.Choice -> a.choice == r["choice"]
+                        is Answer.Score -> abs(a.score - (r["score"] as Number).toDouble()) <= 1e-6
+                        is Answer.Noul -> abs(a.noul - (r["noul"] as Number).toDouble()) <= 1e-6
+                    }) same++
+            }
+            rows++
+        }
+        assertEquals(questions, same)
+        assertEquals(0, c.forward("q", Question.Noul("Is it empty?"), c.stateIds("")).stateTokens)
+        println("decide(): $rows sentences x 6 questions, one request per question; $same/$questions answers equal the card host's; the state's token count equals its own tokens in every request")
+    }
+
     /** The rules decide() applies before any model call (the tokenizer from the root). */
     @Test fun questionsBecomeOneRequestTheWayTheSieveAskedThem() {
         assumeTrue("set -Dhfmodels.gliclassRoot", root != null)

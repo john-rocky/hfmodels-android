@@ -38,7 +38,7 @@ import org.junit.runner.RunWith
  *   4. demo: the round-1 sieve's 30 chat sentences through `decide(text, question)`, the question with the options
  *      "key: description" (r1's policy form) and with keys only, vs the Mac answers of the card's Python host (same
  *      answer n/30, max |dp| <= dp_tol, the encoded length equal to the host's, warm ms per question);
- *   5. timing: `decide(state, 4 questions)` vs 4 x `decide(state, 1 question)`, warm (one forward per question);
+ *   5. timing: `decide(state, 4 questions)` (packed into one forward, as the author's decide()) vs 4 x `decide(state, 1 question)`, warm;
  *   6. release.
  * One RESULT line per step under tag `hfmodels-decide`, numbers unrounded. Arguments: variant (s256_wfp16 |
  * s512_wfp16), backend (gpu | cpu | auto), dir, fixtures (default `<dir>/fixtures`: `app_gate_fixtures.json`, the
@@ -195,7 +195,7 @@ class DebertaDecisionDeviceTest {
                 single += (SystemClock.elapsedRealtimeNanos() - t) / 1e6
             }
             val last = m.decide(state, qs)
-            result("timing", true, "repeats=$repeats decide_4q_total_ms_median=${batched.sorted()[batched.size / 2]} four_decide_1q_total_ms_median=${single.sorted()[single.size / 2]} state_tokens=${last.stateTokens} per_question_ms=${last.timing.questionMs.joinToString(",")} " +
+            result("timing", true, "repeats=$repeats forwards_for_4q=${c.plan(qs, c.stateIds(state)).size} decide_4q_total_ms_median=${batched.sorted()[batched.size / 2]} four_decide_1q_total_ms_median=${single.sorted()[single.size / 2]} state_tokens=${last.stateTokens} per_question_ms=${last.timing.questionMs.joinToString(",")} " +
                 "answers=${last.answers.mapValues { (_, a) -> when (a) { is Answer.Choice -> a.choice + " " + a.probabilities.getValue(a.choice); is Answer.Score -> a.score.toString(); is Answer.Noul -> a.noul.toString() } }}")
 
             // 6. release

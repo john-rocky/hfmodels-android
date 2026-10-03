@@ -28,9 +28,10 @@ internal class GliclassEncoded(val linearized: String, val ids: IntArray, val la
  * (float32 softmax, the first maximum: [GlinerDecode], the same torch-shaped softmax). A request longer than the
  * window, or with more labels than the graph has slots, is refused, never cut.
  *
- * The publisher tokenizes the prompt and the text as one string, so the text is tokenized with each question's
- * request: [stateIds] keeps the serialized state's UTF-16 code units, and [Forward.stateTokens] counts the text's
- * tokens on their own.
+ * The publisher's contract tokenizes the prompt and the text as one string (nothing separates them, so the tokens at
+ * the seam depend on both), so the text is tokenized with each question's request: [stateIds] keeps the serialized
+ * state's UTF-16 code units, not token ids, and [Forward.stateTokens] is the number of tokens the text adds to the
+ * request (its own tokens whenever it does not start with whitespace).
  */
 internal class GliclassContract(
     private val tokenizer: ByteLevelBpeTokenizer,
@@ -60,8 +61,11 @@ internal class GliclassContract(
 
     override fun forward(questionId: String, q: Question, stateIds: IntArray): Forward {
         val text = String(CharArray(stateIds.size) { stateIds[it].toChar() })
-        val f = forward(text, labels(q), prompt(q), questionId)
-        return Forward(f.ids, f.routing, f.reads, tokenizer.encode(text).size - 2, false)
+        val labels = labels(q)
+        val f = forward(text, labels, prompt(q), questionId)
+        // The request without the text (and without the space that joins it) is the rest of the sequence.
+        val textTokens = if (text.isEmpty()) 0 else f.ids.size - tokenizer.encode(linearize("", labels, q.instructions)).size
+        return Forward(f.ids, f.routing, f.reads, textTokens, false)
     }
 
     /** One request from its parts, the way the pipeline and the card's host take it (the parity checks replay the captured calls through it). */
