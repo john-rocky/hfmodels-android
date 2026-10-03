@@ -17,6 +17,10 @@ import java.io.File
  *    position and the host gathers the option markers ([MarkerContract]).
  *  - `gliner2_decide`: GLiNER2's schema sequence with one routing row per label; the graph returns one
  *    logit per label slot ([GlinerDecideContract]).
+ *  - `gliclass`: GLiClass's label-then-text string with one routing row per `<<LABEL>>`; one logit per
+ *    label slot ([GliclassContract]).
+ *  - `deberta_decision`: the Open-Decision Collator's typed sequence with two routing inputs (the question's
+ *    and the option's text spans); one logit per option slot ([DebertaDecisionContract]).
  */
 internal interface DecisionContract {
     /** The `handler_config.family` id. */
@@ -48,12 +52,19 @@ internal interface DecisionContract {
     fun decode(q: Question, scores: FloatArray, headLogits: FloatArray?): Answer
 }
 
-/** One question's graph inputs: the unpadded token ids, the family's routing input, and where its option scores are read. */
-internal class Forward(val ids: IntArray, val routing: FloatArray, val reads: IntArray, val stateTokens: Int, val stateTruncated: Boolean)
+/**
+ * One question's graph inputs: the unpadded token ids, the family's routing input, and where its option scores are read.
+ * `extraInputs`: the values of the family's further float inputs ([Signature.extraInputs], same order), written after
+ * the routing input (deberta_decision's option routing); empty for the other families.
+ */
+internal class Forward(val ids: IntArray, val routing: FloatArray, val reads: IntArray, val stateTokens: Int, val stateTruncated: Boolean, val extraInputs: List<FloatArray> = emptyList())
 
-/** Signature names of the main graph: the token input (ids, or embeddings on a host-lookup graph), the attention mask, the routing input, the outputs. */
-internal class Signature(val tokens: String, val attention: String, val routing: String, val outputs: List<String>) {
-    val inputs: List<String> get() = listOf(tokens, attention, routing)
+/**
+ * Signature names of the main graph: the token input (ids, or embeddings on a host-lookup graph), the attention mask, the routing input,
+ * the family's further float inputs in the order [Forward.extraInputs] fills them (deberta_decision: `o_routing`), the outputs.
+ */
+internal class Signature(val tokens: String, val attention: String, val routing: String, val outputs: List<String>, val extraInputs: List<String> = emptyList()) {
+    val inputs: List<String> get() = listOf(tokens, attention, routing) + extraInputs
 }
 
 /** A graph run on the CPU after the main one; `feed` builds its inputs from the main graph's outputs and the option scores. */

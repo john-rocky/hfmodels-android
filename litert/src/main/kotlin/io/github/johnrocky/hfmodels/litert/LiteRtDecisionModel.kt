@@ -126,6 +126,8 @@ internal class LiteRtDecisionModel private constructor(
             }
             main.inputs.getValue(signature.attention).writeFloat(attention)
             main.inputs.getValue(signature.routing).writeFloat(f.routing)
+            if (f.extraInputs.size != signature.extraInputs.size) throw IllegalStateException("the forward carries ${f.extraInputs.size} extra inputs; the graph takes ${signature.extraInputs}")
+            signature.extraInputs.forEachIndexed { i, name -> main.inputs.getValue(name).writeFloat(f.extraInputs[i]) }
             main.model.run(main.inputs, main.outputs, SIGNATURE)
             val read = HashMap<String, FloatArray>()
             val output: (String) -> FloatArray = { name -> read.getOrPut(name) { main.outputs.getValue(name).readFloat() } }
