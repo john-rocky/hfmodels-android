@@ -32,7 +32,7 @@ One line at a time. A leading `[...]` (a chat app's time stamp) is dropped. A li
 adb push gliner25_decide_s128_wfp16.tflite word_embeddings_fp16.bin tokenizer.json /sdcard/Android/data/io.github.johnrocky.hfmodels.samples.promises/files/   # hashed against the descriptor, then imported; delete the copies afterwards
 ```
 
-A load runs one sentence through the model before the first conversation (`warmup_ms` in the logs), so whatever the first forward after a compile costs is not timed as the first sentence on the screen.
+A load runs one sentence through the model before the first conversation (`warmup_ms` in the logs: 105 ms on the Galaxy S26 below, against 78 ms per sentence after it), so the first forward after a compile is not timed as the first sentence on the screen.
 
 ## Add
 
@@ -64,6 +64,19 @@ adb logcat -d -s hfmodels-check | grep RESULT
 ```
 
 `connectedDebugAndroidTest` runs it too, but uninstalls the app afterwards, and the imported model with it.
+
+## What it showed on the Galaxy S26 (2026-10-03)
+
+Galaxy S26 SM-S942Q (SM8850), Android 16 BP4A.251205.006.S942QOPS1AZH9, LiteRT 2.2.0, SDK 0.1.3-SNAPSHOT, the model at commit db801972 on the GPU (the descriptor's default profile, FP32), its three files pushed once and imported by the SDK.
+
+| run | answers as labelled | ms per sentence, median / p90 | the 16 sentences | sentences per second | thermal status, skin |
+|---|---|---|---|---|---|
+| device check (GPU, offline) | 16/16 | 77.80 / 78.92 | 1,238 ms | 12.92 | none to none, 30.8 to 31.2 °C |
+| recording mode, take 1 (airplane mode) | 16/16 | 75.63 / 76.85 | 1,241 ms | 12.89 | none to none, 31.8 to 31.9 °C |
+| recording mode, take 2 | 16/16 | 74.54 / 75.02 | 1,223 ms | 13.08 | none to none, 31.4 to 31.6 °C |
+| recording mode, take 3 | 16/16 | 74.18 / 75.32 | 1,221 ms | 13.11 | none to none, 31.6 to 31.8 °C |
+
+Milliseconds per sentence are the SDK's wall clock for one `decide` call: tokenizing the sentence, building the sequence, looking up the embeddings, the graph and the decoding. In the device check every answer was the Mac host's, with the probabilities within 1.73e-6 of its; the load compiled the graph in 3,881 ms and ran the warm-up sentence in 105 ms; the 95-word sentence, 163 tokens with the question, came back `too long`; release took 138 ms. In recording mode the sentences per second include the screen's work between sentences. Numbers from one phone on one evening, the model loaded and warm; not a benchmark, and not a claim about the model's accuracy beyond these 16 sentences. The device check's log and the three result files are in `results/2026-10-03-s26/`.
 
 ## Limits
 
