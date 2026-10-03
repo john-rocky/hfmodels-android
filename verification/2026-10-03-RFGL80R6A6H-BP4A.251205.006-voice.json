@@ -2,7 +2,7 @@
   {
     "model_id": "litert-community/Zipformer-medium-CR-CTC-LiteRT",
     "model_commit": "7732ad6c15ec43402968d5ae04acfa7a204027f5",
-    "level": "MAINTAINER_TESTED",
+    "level": "PUBLISHER_TESTED",
     "device": "SM-S942Q (Galaxy S26)",
     "os_build": "BP4A.251205.006.S942QOPS1AZH9",
     "runtime": "litert 2.2.0",
@@ -15,7 +15,7 @@
   {
     "model_id": "litert-community/Zipformer-medium-CR-CTC-LiteRT",
     "model_commit": "7732ad6c15ec43402968d5ae04acfa7a204027f5",
-    "level": "MAINTAINER_TESTED",
+    "level": "PUBLISHER_TESTED",
     "device": "SM-S942Q (Galaxy S26)",
     "os_build": "BP4A.251205.006.S942QOPS1AZH9",
     "runtime": "litert 2.2.0",
@@ -28,7 +28,7 @@
   {
     "model_id": "litert-community/Zipformer-medium-CR-CTC-LiteRT",
     "model_commit": "7732ad6c15ec43402968d5ae04acfa7a204027f5",
-    "level": "MAINTAINER_TESTED",
+    "level": "PUBLISHER_TESTED",
     "device": "SM-S942Q (Galaxy S26)",
     "os_build": "BP4A.251205.006.S942QOPS1AZH9",
     "runtime": "litert 2.2.0",
@@ -41,7 +41,7 @@
   {
     "model_id": "litert-community/Zipformer-medium-CR-CTC-LiteRT",
     "model_commit": "7732ad6c15ec43402968d5ae04acfa7a204027f5",
-    "level": "MAINTAINER_TESTED",
+    "level": "PUBLISHER_TESTED",
     "device": "SM-S942Q (Galaxy S26)",
     "os_build": "BP4A.251205.006.S942QOPS1AZH9",
     "runtime": "litert 2.2.0",
@@ -54,7 +54,7 @@
   {
     "model_id": "litert-community/kitten-tts-nano-0.8",
     "model_commit": "d4662d891f9bf54b3d93432610d0d296d229e026",
-    "level": "MAINTAINER_TESTED",
+    "level": "PUBLISHER_TESTED",
     "device": "SM-S942Q (Galaxy S26)",
     "os_build": "BP4A.251205.006.S942QOPS1AZH9",
     "runtime": "litert 2.2.0",
@@ -67,7 +67,7 @@
   {
     "model_id": "litert-community/kitten-tts-nano-0.8",
     "model_commit": "d4662d891f9bf54b3d93432610d0d296d229e026",
-    "level": "MAINTAINER_TESTED",
+    "level": "PUBLISHER_TESTED",
     "device": "SM-S942Q (Galaxy S26)",
     "os_build": "BP4A.251205.006.S942QOPS1AZH9",
     "runtime": "litert 2.2.0",
@@ -80,7 +80,7 @@
   {
     "model_id": "litert-community/kitten-tts-nano-0.8",
     "model_commit": "d4662d891f9bf54b3d93432610d0d296d229e026",
-    "level": "MAINTAINER_TESTED",
+    "level": "PUBLISHER_TESTED",
     "device": "SM-S942Q (Galaxy S26)",
     "os_build": "BP4A.251205.006.S942QOPS1AZH9",
     "runtime": "litert 2.2.0",
