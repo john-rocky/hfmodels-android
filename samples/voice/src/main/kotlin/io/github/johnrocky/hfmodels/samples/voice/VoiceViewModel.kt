@@ -33,10 +33,12 @@ import io.github.johnrocky.hfmodels.voice.VoiceLoop.Event
 import io.github.johnrocky.hfmodels.voice.VoiceLoopConfig
 import java.io.File
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.onEach
@@ -53,18 +55,27 @@ class VoiceViewModel(private val app: Application) : AndroidViewModel(app) {
     private val asrModels = HfModels(app)
     private val ttsModels = HfModels(app)
     private val llmModels = HfModels(app)
-    private var asr: Transcriber? = null
-    private var tts: Speaker? = null
-    private var chat: ChatModel? = null
-    private var player: SpeechPlayer? = null
-    private var loop: VoiceLoop? = null
+    // Written by the load on a background thread, read by the screen's calls on the main thread (and the reverse for
+    // tap, recorder and config).
+    @Volatile private var asr: Transcriber? = null
+    @Volatile private var tts: Speaker? = null
+    @Volatile private var chat: ChatModel? = null
+    @Volatile private var player: SpeechPlayer? = null
+    @Volatile private var loop: VoiceLoop? = null
     private var loadJob: Job? = null
     private var listenJob: Job? = null
     private var turnJob: Job? = null
     private val afterLoad = ArrayList<() -> Unit>()
-    private var tap: MicTap? = null
-    private var recorder: TurnRecorder? = null
-    private var config = VoiceLoopConfig()
+    @Volatile private var tap: MicTap? = null
+    @Volatile private var recorder: TurnRecorder? = null
+    @Volatile private var config = VoiceLoopConfig()
+    private val cleanupScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
+    /**
+     * Whether the screen is visible (the activity sets it in onStart / onStop): what was to start once the models are
+     * loaded starts only then, so a load that ends with the app in the background stays silent.
+     */
+    @Volatile var visible = true
 
     private val _ui = MutableStateFlow(VoiceUi())
     val ui: StateFlow<VoiceUi> = _ui
@@ -89,10 +100,36 @@ class VoiceViewModel(private val app: Application) : AndroidViewModel(app) {
                 _ui.update { it.copy(loading = false, ready = true, status = "Ready · loaded in ${ms(ms.toDouble())}") }
                 refreshPhoneState()
                 // afterLoad is touched on the main thread only.
-                withContext(Dispatchers.Main) { ArrayList(afterLoad).also { afterLoad.clear() }.forEach { it() } }
+                withContext(Dispatchers.Main) {
+                    val pending = ArrayList(afterLoad).also { afterLoad.clear() }
+                    if (visible) pending.forEach { it() }
+                }
+            } catch (e: CancellationException) {
+                releaseLoaded()
+                throw e
             } catch (e: ModelException) {
                 Log.e(TAG, "load failed ${e.code}: ${e.reason}")
-                _ui.update { it.copy(loading = false, status = "${e.code}: ${e.reason}") }
+                releaseLoaded()
+                _ui.update { it.copy(loading = false, ready = false, status = "${e.code}: ${e.reason}") }
+            } catch (e: Exception) {
+                Log.e(TAG, "load failed", e)
+                releaseLoaded()
+                _ui.update { it.copy(loading = false, ready = false, status = "${e.javaClass.simpleName}: ${e.message}") }
+            }
+        }
+    }
+
+    /**
+     * Closes what a failed or cancelled load opened, the last first, and forgets it, so the next load starts clean (each
+     * client holds one model: one left open would refuse the next load with MODEL_BUSY).
+     */
+    private suspend fun releaseLoaded() {
+        val p = player; val c = chat; val s = tts; val a = asr
+        loop = null; player = null; chat = null; tts = null; asr = null
+        withContext(NonCancellable) {
+            runCatching { p?.close() }.onFailure { Log.w(TAG, "player close: ${it.message}") }
+            for ((name, m) in listOf("chat model" to c, "speaker" to s, "transcriber" to a)) {
+                runCatching { m?.closeAndJoin() }.onFailure { Log.w(TAG, "$name close: ${it.message}") }
             }
         }
     }
@@ -115,7 +152,9 @@ class VoiceViewModel(private val app: Application) : AndroidViewModel(app) {
         val l = loop ?: return load { listen() }
         if (listenJob?.isActive == true) return
         val mic = MicSource()
-        val t = MicTap(mic.sampleRate).also { tap = it }
+        // The record mode writes each turn's utterance: only then is the microphone's last audio kept.
+        val t = if (recorder != null) MicTap(mic.sampleRate) else null
+        tap = t
         _ui.update { it.copy(listening = true, status = "Listening…", error = null) }
         // While recording: the loudest 20 ms of each second against the endpointer's start level, to tell a quiet
         // room from a microphone that hears nothing.
@@ -124,8 +163,8 @@ class VoiceViewModel(private val app: Application) : AndroidViewModel(app) {
         listenJob = viewModelScope.launch(Dispatchers.Default) {
             try {
                 l.listen(mic.chunks().onEach { c ->
-                    t.add(c)
-                    if (recorder != null) {
+                    if (t != null) {
+                        t.add(c)
                         peak = maxOf(peak, kotlin.math.sqrt(c.sumOf { (it * it).toDouble() } / c.size))
                         val now = SystemClock.elapsedRealtime()
                         if (now - since >= 1000) {
@@ -194,7 +233,9 @@ class VoiceViewModel(private val app: Application) : AndroidViewModel(app) {
         _ui.update { it.on(e, hangover) }
         recorder?.event(e, fromMic)
         Log.i(TAG, describe(e))
-        if (e is Event.Done) afterTurn(e.timing, fromMic, hangover)
+        // The turn is over: its TURN line and record are written whole even if the screen goes away now (stop() cancels
+        // the job this runs in, and a scripted take may bring the Clock app to the front right after Done).
+        if (e is Event.Done) withContext(NonCancellable) { afterTurn(e.timing, fromMic, hangover) }
     }
 
     private suspend fun afterTurn(t: VoiceLoop.TurnTiming, fromMic: Boolean, hangover: Int) {
@@ -228,17 +269,22 @@ class VoiceViewModel(private val app: Application) : AndroidViewModel(app) {
     }
 
     override fun onCleared() {
-        val l = loop; val p = player; val opened = listOfNotNull(asr, tts, chat)
-        loop = null; player = null; asr = null; tts = null; chat = null
-        @Suppress("OPT_IN_USAGE")
-        GlobalScope.launch {
-            withContext(NonCancellable) {
+        val l = loop
+        loop = null
+        // The models outlive viewModelScope: they close on a scope of their own, which ends with them.
+        cleanupScope.launch {
+            try {
                 l?.closeAndJoin()
-                p?.close()
-                for (m in opened.reversed()) m.closeAndJoin()
+                releaseLoaded()
                 asrModels.closeAndJoin(); ttsModels.closeAndJoin(); llmModels.closeAndJoin()
+            } catch (failure: Throwable) {
+                if (failure is CancellationException) throw failure
+                Log.e(TAG, "model cleanup failed", failure)
+            } finally {
+                cleanupScope.cancel()
             }
         }
+        super.onCleared()
     }
 
     /** A model of the loop: its id, variant, backend and (until its repo carries hfmodels.json) its descriptor asset. */

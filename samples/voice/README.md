@@ -30,14 +30,18 @@ Each load is pinned to a commit, so a phone without a network loads from the app
 Development shortcut: copies in the app's external files dir are hashed and imported instead of downloaded. The side-load looks at file names only, so the speaker's `g2p/` files go there flat. The copies must belong to the app: on the Galaxy S26 a copy made by `adb shell` (owner `shell`) was unreadable to the app (`EACCES`) and the load went to the network; a copy made as the app (`run-as`, debug build) was imported.
 
 ```sh
+P=io.github.johnrocky.hfmodels.samples.voice
+adb shell mkdir -p /data/local/tmp/voice
 adb push zipformer_ctc_fp16.tflite tokens.txt kitten_predictor.tflite kitten_prosody.tflite kitten_vocoder.tflite voices.npz \
   dp_g2p_matcha_fp16.tflite g2p_dict.txt.gz g2p_meta.json symbols.json gemma-4-E2B-it.litertlm /data/local/tmp/voice/
 adb shell "run-as $P sh -c 'mkdir -p /sdcard/Android/data/$P/files && cp /data/local/tmp/voice/* /sdcard/Android/data/$P/files/'"
 ```
 
-The next load logs `side-loaded <file> … (sha256 verified)` under `adb logcat -s hfmodels`; the copies can go after it.
+The next load logs `side-loaded <file> … (sha256 verified)` (`adb logcat -d -s hfmodels`); the copies can go after it.
 
 ## Launch extras
+
+Debug builds only: a release build ignores them.
 
 | extra | what it does |
 |---|---|
@@ -47,7 +51,7 @@ The next load logs `side-loaded <file> … (sha256 verified)` under `adb logcat 
 | `--ef start_rms 0.01` | the endpointer's start level (default 0.02) |
 | `--es record <name>` | each turn under `<external files>/record/<name>/<turn>/`: `utterance.wav` (16 kHz, microphone turns), `reply.wav` (24 kHz, the sentences said, synthesized again after the turn), `events.json` (every event with `System.nanoTime`, `elapsedRealtime` and the wall clock, and the player's first write) |
 
-A running screen takes them again (`singleTop`). With any of these extras the screen shows over the keyguard and turns the display on (scripted mode); a normal launch does not. Without that, on a locked phone, Android dropped the Clock app's `SET_ALARM` start from the app (`Background activity launch blocked!`, `BAL_BLOCK`, result code 102) and the app's process ran in the background cpuset; the alarm tool now checks Android's next alarm clock and says when the Clock app did not take the alarm. `adb logcat -s hfmodels-voice-sample` prints one `TURN` line per turn: what was heard, the calls and their results, the milliseconds, what was said, the model's own reply, Android's next alarm, the network.
+A running screen takes them again (`singleTop`). With any of these extras the screen shows over the keyguard and turns the display on (scripted mode); a normal launch does not. While the screen is not visible, the microphone and any request in progress stop. Without that, on a locked phone, Android dropped the Clock app's `SET_ALARM` start from the app (`Background activity launch blocked!`, `BAL_BLOCK`, result code 102) and the app's process ran in the background cpuset; the alarm tool now checks Android's next alarm clock and says when the Clock app did not take the alarm. `adb logcat -d -s hfmodels-voice-sample` prints one `TURN` line per turn: what was heard, the calls and their results, the milliseconds, what was said, the model's own reply, Android's next alarm, the network.
 
 The endpointer starts an utterance at `start_rms` 0.02, a voice spoken toward the phone. Quieter sound through a speaker needs a lower threshold: `--ef start_rms 0.01` here, `VoiceLoopConfig(endpointer = Endpointer(startRms = 0.01f))` in code.
 
@@ -65,7 +69,7 @@ The alarm is real: delete it in the Clock app afterwards (on the Samsung Clock a
 
 ## Device check
 
-`src/androidTest/kotlin/io/github/johnrocky/hfmodels/check/VoiceDeviceCheck.kt` is drop-in (its KDoc has the install steps): the three loads from the store, one command's WAV through the endpointer and `turn(pcm)` with the real `PhoneTools`, the alarm against `AlarmManager.nextAlarmClock`, the network state, the release. Keep the APKs installed: uninstalling the app deletes its model store.
+`src/androidTest/kotlin/io/github/johnrocky/hfmodels/check/VoiceDeviceCheck.kt` is drop-in (its KDoc has the install steps): the three loads from the store, one command's WAV through the endpointer and `turn(pcm)` with the real `PhoneTools`, the alarm against `AlarmManager.nextAlarmClock`, the network state, the release. Keep the APKs installed: uninstalling the app deletes its model store. Android reports one next alarm, so no alarm may be set at or before 07:30 when the check starts (the 07:30 alarm of the block above included: delete it first); otherwise the check stops with `RESULT step=precondition ok=false` and names the alarm Android reports. The network and the cleanup are `RESULT info` lines.
 
 ```sh
 ./gradlew :samples:voice:connectedDebugAndroidTest -Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true \

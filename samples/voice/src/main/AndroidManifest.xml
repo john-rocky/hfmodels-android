@@ -10,7 +10,6 @@
     <application
         android:label="@string/app_name"
         android:allowBackup="false"
-        android:largeHeap="true"
         android:theme="@android:style/Theme.Material.NoActionBar">
         <!-- singleTop: `adb shell am start` with new extras reaches the running screen (onNewIntent). -->
         <activity

@@ -47,7 +47,8 @@ import org.junit.runner.RunWith
  * Drop-in device check for an app with the voice loop. It proves, on the connected phone and in the app's own
  * process, what the loop promises: the three models load from the app's store, one spoken command goes from its
  * audio to the phone's real tools (the alarm lands in the Clock app and Android reports it as the next alarm) and
- * out of the loudspeaker, and everything is released. Run it in airplane mode to show that nothing needs the network.
+ * out of the loudspeaker, and everything is released. It reports the network state and does not switch it: run it in
+ * airplane mode to show that nothing needs the network.
  *
  * Install into an app:
  *   1. copy this file to app/src/androidTest/kotlin/VoiceDeviceCheck.kt (keep the package line);
@@ -69,12 +70,15 @@ import org.junit.runner.RunWith
  *   The last line is `RESULT ok=true ...` when every step passed; the gradle task fails otherwise.
  *   Arguments: wav (default /data/local/tmp/hfmodels-voice/commands/c01.wav, then <external files>/c01.wav),
  *   expect (default "Set an alarm for seven thirty tomorrow morning."; compared on letters and digits only).
- * The check sets a real alarm at 07:30 and then asks the Clock app to dismiss it by its label; a Clock that does not
- * honour that leaves it, and the RESULT line names the label to delete by hand.
+ * Android reports one next alarm, so no alarm may be set at or before the check's 07:30 (the sample README's 07:30
+ * included): the check stops first with `RESULT step=precondition ok=false` and the alarm Android reports. The check
+ * sets a real alarm at 07:30 and then asks the Clock app to dismiss it by its label; a Clock that does not honour that
+ * leaves it (the Samsung Clock did), and the cleanup line names the label to delete by hand. The network and the
+ * cleanup are `RESULT info` lines: reported, not passed or failed.
  * Run it with the screen on and unlocked, or with an app screen that shows over the keyguard: under the keyguard the
  * app has no visible activity and Android drops the Clock app's SET_ALARM activity start (BAL_BLOCK). The check brings
- * the app's launcher activity to the front with the extra `autoload=false`, which this sample takes as its scripted
- * mode (it shows over the keyguard and loads nothing); in another app, drop the extra and unlock the phone.
+ * the app's launcher activity to the front with the extra `autoload=false`, which a debug build of this sample takes as
+ * its scripted mode (it shows over the keyguard and loads nothing); in another app, drop the extra and unlock the phone.
  */
 @RunWith(AndroidJUnit4::class)
 class VoiceDeviceCheck {
@@ -102,6 +106,15 @@ class VoiceDeviceCheck {
         var player: SpeechPlayer? = null
         var label: String? = null
         try {
+            // 0. the precondition: Android reports one next alarm, so an alarm at or before the check's 07:30 would hide
+            // the one the check sets (or stand in for it).
+            val alarms = ctx.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val checkAt = nextSevenThirty(System.currentTimeMillis())
+            val already = alarms.nextAlarmClock?.triggerTime
+            if (already != null && already < checkAt + 60_000) {
+                throw PreconditionFailed("Android's next alarm is ${hhmm(already)}, at or before the check's ${hhmm(checkAt)}; delete it in the Clock app and run the check again")
+            }
+
             // 1. load, from the store (Offline when the phone has no network)
             val policy = if (net == "none") NetworkPolicy.Offline else NetworkPolicy.Any
             val (asr, asrMs) = load(asrModels, Transcribe, ASR_ID, "medium_fp16", BackendPolicy.Require(BackendKind.GPU), ASR_DESCRIPTOR, policy).also { open += it.first }
@@ -141,8 +154,8 @@ class VoiceDeviceCheck {
                     "ms_first_token=${f(t?.firstTokenMs)} speaking=$speaking errors=${errors.joinToString(" | ", "[", "]") { "${it.code}: ${it.message.take(160)}" }} " +
                     "spoken=${q(t?.spoken.orEmpty())} reply=${q(t?.reply.orEmpty())}")
 
-            // 3. the network: none in airplane mode (this check does not switch it)
-            step("network", true, "network=$net airplane_mode=$airplane")
+            // 3. the network, as reported (this check does not switch it)
+            Log.i(TAG, "RESULT info network=$net airplane_mode=$airplane")
 
             // 4. release: the loop, the player, the three models
             val t0 = SystemClock.elapsedRealtime()
@@ -153,6 +166,8 @@ class VoiceDeviceCheck {
             asrModels.closeAndJoin(); ttsModels.closeAndJoin(); llmModels.closeAndJoin()
             val closeMs = SystemClock.elapsedRealtime() - t0
             step("release", closeMs < 10_000, "close_ms=$closeMs")
+        } catch (e: PreconditionFailed) {
+            step("precondition", false, "reason=${q(e.message.orEmpty())}")
         } catch (e: ModelException) {
             step("exception", false, "error=${e.code} reason=${q(e.reason)}")
         } catch (e: Exception) {
@@ -168,7 +183,10 @@ class VoiceDeviceCheck {
         assertTrue("failed steps: $failures (adb logcat -d -s hfmodels-check)", failures.isEmpty())
     }
 
-    /** Asks the Clock app to dismiss the check's alarm by its label; says whether Android still reports 07:30 next. */
+    /**
+     * Asks the Clock app to dismiss the check's alarm by its label and reports whether Android still shows 07:30 next
+     * (an info line: no step passes or fails on it).
+     */
     private suspend fun dismiss(label: String?) {
         if (label == null) return
         val am = ctx.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -181,7 +199,7 @@ class VoiceDeviceCheck {
         val until = SystemClock.elapsedRealtime() + ALARM_WAIT_MS
         while (isSevenThirty(am.nextAlarmClock?.triggerTime) && SystemClock.elapsedRealtime() < until) delay(200)
         val left = isSevenThirty(am.nextAlarmClock?.triggerTime)
-        Log.i(TAG, "RESULT step=cleanup ok=true dismiss_asked=${asked.isSuccess} next_alarm=${hhmm(am.nextAlarmClock?.triggerTime)} " +
+        Log.i(TAG, "RESULT info cleanup dismiss_asked=${asked.isSuccess} next_alarm=${hhmm(am.nextAlarmClock?.triggerTime)} " +
             if (left) "left=true todo=${q("delete the 07:30 alarm labelled '$label' in the Clock app by hand")}" else "left=false")
     }
 
@@ -209,6 +227,13 @@ class VoiceDeviceCheck {
         return if (cm.activeNetwork == null) "none" else "up"
     }
 
+    /** The next 07:30 after [now], local time. */
+    private fun nextSevenThirty(now: Long): Long {
+        val c = Calendar.getInstance().apply { timeInMillis = now; set(Calendar.HOUR_OF_DAY, 7); set(Calendar.MINUTE, 30); set(Calendar.SECOND, 0); set(Calendar.MILLISECOND, 0) }
+        if (c.timeInMillis <= now) c.add(Calendar.DAY_OF_YEAR, 1)
+        return c.timeInMillis
+    }
+
     private fun isSevenThirty(at: Long?): Boolean = at != null && Calendar.getInstance().apply { timeInMillis = at }.let { it.get(Calendar.HOUR_OF_DAY) == 7 && it.get(Calendar.MINUTE) == 30 }
 
     private fun hhmm(at: Long?): String = at?.let { java.text.SimpleDateFormat("EEE-HH:mm", java.util.Locale.US).format(java.util.Date(it)) } ?: "none"
@@ -233,6 +258,8 @@ class VoiceDeviceCheck {
         }
         error("${f.name}: no data chunk")
     }
+
+    private class PreconditionFailed(message: String) : Exception(message)
 
     private companion object {
         const val TAG = "hfmodels-check"
