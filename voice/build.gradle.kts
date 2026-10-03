@@ -1,5 +1,5 @@
 // hfmodels-voice: the voice loop's pieces on top of the transcriber and the speaker (hfmodels-litert) and the chat
-// model (hfmodels-litertlm). It holds the Endpointer and the SentenceSplitter so far. Depending on hfmodels-litert,
+// model (hfmodels-litertlm). It holds the Endpointer, the SentenceSplitter and the tool loop (ToolRunner, PhoneTools) so far. Depending on hfmodels-litert,
 // an app needs android.uniquePackageNames=false on AGP 9 (gradle.properties).
 plugins {
     id("com.android.library")
@@ -35,6 +35,7 @@ dependencies {
     api("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
 
     testImplementation("junit:junit:4.13.2")
+    testImplementation("org.json:json:20250517")
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.junit)
