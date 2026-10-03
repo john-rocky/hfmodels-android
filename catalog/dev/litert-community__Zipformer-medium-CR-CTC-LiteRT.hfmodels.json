@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "model_id": "litert-community/Zipformer-medium-CR-CTC-LiteRT",
-  "$comment": "DEVELOPMENT descriptor for the transcribe task (handler litert.transcribe), not in the bundled catalog and not in the repo yet. Files listed at commit 7732ad6c15ec43402968d5ae04acfa7a204027f5; bytes and sha256 come from the Hub's LFS listing (tokens.txt, a plain git blob, is hashed from the blob). 'revision' is read by tools/hfmodels_descriptor.py only; the SDK ignores it. The device gate (TranscribeDeviceTest) passes this descriptor explicitly and side-loads the files. gpu_precision 'default' is what the LiteRT model zoo app runs. large_fp16 is published too and is not listed in this round.",
+  "$comment": "DEVELOPMENT descriptor for the transcribe task (handler litert.transcribe), not in the bundled catalog and not in the repo yet. Files listed at commit 7732ad6c15ec43402968d5ae04acfa7a204027f5; bytes and sha256 come from the Hub's LFS listing (tokens.txt, a plain git blob, is hashed from the blob). 'revision' is read by tools/hfmodels_descriptor.py only; the SDK ignores it. The device gate (TranscribeDeviceTest) passes this descriptor explicitly and side-loads the files. gpu_precision 'default' is what the LiteRT model zoo app runs. large_fp16 is published too and is not listed in this round. Verified on a Galaxy S26 SM-S942Q (Android 16 BP4A.251205.006), LiteRT 2.2.0, 2026-10-03: small_fp16 and medium_fp16 on gpu and on cpu passed the transcribe gate with this descriptor's files (see verification/2026-10-03-RFGL80R6A6H-BP4A.251205.006-voice.json and tested-runtime-matrix.json, transcribe).",
   "revision": "7732ad6c15ec43402968d5ae04acfa7a204027f5",
   "tasks": [
     "transcribe"
