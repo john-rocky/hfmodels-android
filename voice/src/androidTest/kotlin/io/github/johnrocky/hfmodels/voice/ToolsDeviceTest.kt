@@ -46,7 +46,8 @@ import org.junit.runner.RunWith
  *      with all three loaded;
  *   2. command: each command of commands.tsv through `turn`, one line each (the calls with the arguments as
  *      the model gave them, success against the expected calls below, extra calls, timing, the reply), then
- *      a summary;
+ *      a summary (ms_decode and the rates' denominator: per model turn, from sending its message to its last
+ *      chunk, as TurnTiming.decodeMs; the first-token median leaves out turns without a chunk);
  *   3. first_audio: the first command again; its first sentence, cut by [SentenceSplitter] as the text
  *      streams, through the speaker while the model goes on; ms from the turn's start to the PCM; and
  *      whether its calls and reply equal the first run's (a new conversation per turn on the same loaded
@@ -167,7 +168,7 @@ class ToolsDeviceTest {
             }
             val timings = runs.values.map { it.timing }
             val decodeMs = timings.sumOf { it.decodeMs }
-            result("summary", true, "success=$ok/${commands.size} ms_first_token_median=${"%.0f".format(median(timings.map { it.firstTokenMs }))} ms_reply_median=${"%.0f".format(median(timings.map { it.replyMs }))} " +
+            result("summary", true, "success=$ok/${commands.size} ms_first_token_median=${"%.0f".format(median(timings.map { it.firstTokenMs }.filter { it >= 0 }))} ms_reply_median=${"%.0f".format(median(timings.map { it.replyMs }))} " +
                 "turns_median=${median(timings.map { it.turns.toDouble() })} chars_per_s=${"%.1f".format(timings.sumOf { it.chars } * 1000.0 / decodeMs)} chunks_per_s=${"%.1f".format(timings.sumOf { it.chunks } * 1000.0 / decodeMs)} " +
                 "failed=${runs.count { it.value.failed != null }} extra_total=${runs.entries.sumOf { judge(expected.getValue(it.key), it.value.calls).second }} fresh_load_each=$fresh reload_ms_total=$reloadMs system=$system")
 

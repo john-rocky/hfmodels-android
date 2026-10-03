@@ -70,7 +70,11 @@ class ClockTool : VoiceTool {
     override suspend fun call(args: Map<String, Any?>): String = SimpleDateFormat("EEEE, yyyy-MM-dd HH:mm", Locale.US).format(Date())
 }
 
-/** `set_alarm(hour, minute, label)`: an alarm in the Clock app, without showing its UI. */
+/**
+ * `set_alarm(hour, minute, label)`: an alarm in the Clock app, without showing its UI. Call it from a process with a
+ * visible activity: Android 10 and later drop an activity start from the background without an exception, and the
+ * result text still says the alarm was set. [PhoneTools.phoneState]'s next alarm shows whether it was.
+ */
 class AlarmTool(private val context: Context) : VoiceTool {
     override val name = "set_alarm"
     override val description = "Sets an alarm on this phone."
@@ -100,7 +104,11 @@ class AlarmTool(private val context: Context) : VoiceTool {
     }
 }
 
-/** `set_timer(minutes, label)`: a countdown in the Clock app, without showing its UI. */
+/**
+ * `set_timer(minutes, label)`: a countdown in the Clock app, without showing its UI. Call it from a process with a
+ * visible activity: Android 10 and later drop an activity start from the background without an exception, and the
+ * result text still says the timer started ([PhoneTools.phoneState] reports alarms, not timers).
+ */
 class TimerTool(private val context: Context) : VoiceTool {
     override val name = "set_timer"
     override val description = "Starts a countdown timer on this phone."

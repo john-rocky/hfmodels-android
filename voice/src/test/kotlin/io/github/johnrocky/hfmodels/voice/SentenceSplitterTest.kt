@@ -47,6 +47,16 @@ class SentenceSplitterTest {
         assertEquals(text, chunks.joinToString(" ") { it.removeSuffix(",") })
     }
 
+    @Test fun aSentenceThatEndsInPunctuationMayUseTheWholeLimit() {
+        // No comma is added, so 400 characters fit Speaker.maxChars as they are (pip: the same one chunk).
+        val text = ("a".repeat(9) + " ").repeat(39) + "b".repeat(9) + ";"
+        assertEquals(400, text.length)
+        assertEquals(listOf(text), SentenceSplitter.split(text))
+        // One more character and it is cut at a space, each piece within the limit.
+        val longer = "c$text"
+        assertTrue(SentenceSplitter.split(longer).let { c -> c.size == 2 && c.all { it.length <= 400 } })
+    }
+
     @Test fun aRunWithoutSpacesIsCutAtTheLimit() {
         val chunks = SentenceSplitter.split("x".repeat(450), maxChars = 200)
         assertEquals(listOf(200, 200, 53), chunks.map { it.length })

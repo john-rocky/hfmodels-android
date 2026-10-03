@@ -41,8 +41,11 @@ object Speak : Task<Speaker> {
  *    first is the default) and `default_voice` (must be the first); `style_rows` (400) and `style_dim` (256);
  *  - `speed_priors` (voice -> factor): `speed` times the voice's factor goes to the graph, as the
  *    publisher's `say.py` does it (a voice without one: 1), so `speed = 1` is say.py's default pace;
- *  - `xnnpack` (graph -> bool, each default true): whether the predictor, prosody and vocoder graphs run
- *    with the XNNPACK delegate (false = the Interpreter's built-in kernels);
+ *  - `xnnpack` (graph -> bool): whether the predictor, prosody and vocoder graphs run with the XNNPACK
+ *    delegate (false = the Interpreter's built-in kernels); default predictor false, prosody and vocoder
+ *    true ([KittenSynthesizer.DEFAULT_XNNPACK]: on a Galaxy S26, 2026-10-03, fp32, the predictor without
+ *    XNNPACK took the peak RSS after the load from 624 MB to 334 MB and the median synthesis from 288 ms
+ *    to 301 ms, with the same frames);
  *  - `cpu_threads` (default 4); `tail_trim` (5000) and `min_samples` (1200): the pip package's trim of
  *    each chunk's end; `max_chars` (400): one chunk's limit; `languages` (informational list).
  */
@@ -84,12 +87,14 @@ internal object LiteRtSpeakHandler : Handler<Speaker> {
         val priors = hc.optJSONObject("speed_priors")?.let { o ->
             o.keys().asSequence().associateWith { k -> o.optDouble(k, Double.NaN).also { if (!it.isFinite() || it <= 0.0) invalid("handler_config.speed_priors.$k must be a number above 0") } }
         }.orEmpty()
-        val xnnpackOff = hc.optJSONObject("xnnpack")?.let { o ->
-            o.keys().asSequence().filter { k ->
+        val xnnpackOn = LinkedHashMap(KittenSynthesizer.DEFAULT_XNNPACK)
+        hc.optJSONObject("xnnpack")?.let { o ->
+            for (k in o.keys()) {
                 if (k !in KittenSynthesizer.GRAPHS) invalid("handler_config.xnnpack.$k: not one of the kitten graphs (${KittenSynthesizer.GRAPHS.joinToString()})")
-                !((o.get(k) as? Boolean) ?: invalid("handler_config.xnnpack.$k must be true or false"))
-            }.toSet()
-        }.orEmpty()
+                xnnpackOn[k] = (o.get(k) as? Boolean) ?: invalid("handler_config.xnnpack.$k must be true or false")
+            }
+        }
+        val xnnpackOff = xnnpackOn.filterValues { !it }.keys
 
         val backend = profile.components["inference"] ?: invalid("profile '${profile.id}' has no 'inference' component")
         if (backend != BackendKind.CPU) throw ModelException(
@@ -131,6 +136,7 @@ internal object LiteRtSpeakHandler : Handler<Speaker> {
         notes += "family=kitten load_ms " + ms.entries.joinToString(" ") { "${it.key}=${it.value}" } + " (dictionary ${dictionary.size} words)"
         val xnnpack = if (xnnpackOff.isEmpty()) "xnnpack" else "xnnpack off on ${KittenSynthesizer.GRAPHS.filter { it in xnnpackOff }.joinToString("+")}"
         notes += "interpreter api ($xnnpack, $cpuThreads threads): predictor ${file.getValue("predictor").name}, prosody ${file.getValue("prosody").name}, vocoder ${file.getValue("vocoder").name}; g2p graph on CompiledModel cpu ($cpuThreads threads)"
+        if (xnnpackOn == KittenSynthesizer.DEFAULT_XNNPACK) notes += "xnnpack default (predictor off): Galaxy S26, 2026-10-03, fp32: peak RSS after load 334 MB instead of 624 MB, median synthesis 301 ms instead of 288 ms, same frames"
         notes += "speed x speed_priors[voice] goes to the graph (say.py's pace at speed 1)" + if (priors.isEmpty()) "; no priors, so speed goes unchanged" else ": " + priors.entries.sortedBy { it.key }.joinToString(" ") { "${it.key}=${it.value}" }
         notes += "style row = min(chars, ${styleRows - 1}); tail_trim $tailTrim samples, min_samples $minSamples; max_chars $maxChars per call"
         notes += "observed backend is UNKNOWN: litert $runtimeVersion reports no per-op execution target; 'initialized' is the CPU the graphs were created for"

@@ -33,6 +33,9 @@ class ToolRunnerTest {
     @Test fun aMalformedQwenXmlCallFailsTheTurnAndRunsNothing() = scenario { aMalformedQwenXmlCallFailsTheTurnAndRunsNothing() }
     @Test fun anUnknownToolIsAnsweredWithAnErrorAndTheModelGoesOn() = scenario { anUnknownToolIsAnsweredWithAnErrorAndTheModelGoesOn() }
     @Test fun aModelThatKeepsCallingStopsAtTheRoundLimit() = scenario { aModelThatKeepsCallingStopsAtTheRoundLimit() }
+    @Test fun theTextAfterAnLfmCallBlockStreamsBeforeTheCallRuns() = scenario { theTextAfterAnLfmCallBlockStreamsBeforeTheCallRuns() }
+    @Test fun callsTheRuntimeParsedRunUnderATextFormatToo() = scenario { callsTheRuntimeParsedRunUnderATextFormatToo() }
+    @Test fun markupTheRuntimeLeftInTheTextFailsTheTurnUnshown() = scenario { markupTheRuntimeLeftInTheTextFailsTheTurnUnshown() }
 
     @Test fun theVisibleTextStopsBeforeMarkupOrAPieceOfIt() {
         assertEquals(6, beforeMarkup("Sure. <tool_call>x", "<tool_call"))
@@ -40,6 +43,17 @@ class ToolRunnerTest {
         assertEquals(5, beforeMarkup("Sure.", "<tool_call"))
         // A "<" that cannot start the opener any more is shown.
         assertEquals(5, beforeMarkup("a < b", "<tool_call"))
+    }
+
+    @Test fun theUnshownTextIsWhatTheTurnSaidBeyondTheStreamedPrefix() {
+        val lfm = "<|tool_call_start|>[set_alarm(hour=7)]<|tool_call_end|>I am setting an alarm."
+        assertEquals("I am setting an alarm.", unshownText(lfm, 0, "I am setting an alarm."))
+        assertEquals("Done.", unshownText("Sure. <|tool_call_start|>[f()]<|tool_call_end|>Done.", 6, "Sure. Done."))
+        // Everything was streamed already (the runtime's text), trailing space or not.
+        assertEquals("", unshownText("All set. ", 9, "All set."))
+        assertEquals("", unshownText("All set.", 8, "All set."))
+        // A held-back "<" that was not markup after all.
+        assertEquals("<", unshownText("a <", 2, "a <"))
     }
 
     private fun scenario(block: ToolRunnerScenarios.() -> Unit) {
@@ -153,6 +167,38 @@ internal class ToolRunnerScenarios {
         val events = run(model, ToolFormat.Runtime, "Open the door.")
         assertTrue(events.filterIsInstance<ToolEvent.ToolCalled>().single().result.startsWith("Error: unknown tool open_door"))
         assertEquals("I cannot do that.", (events.last() as ToolEvent.Done).reply)
+    }
+
+    /** LFM2.5-1.2B-Instruct's own text on a Galaxy S26 (tools gate, 2026-10-03), cut into chunks. */
+    fun theTextAfterAnLfmCallBlockStreamsBeforeTheCallRuns() {
+        val model = ScriptedModel(listOf(
+            listOf(text("<|tool_call_start|>[set_alarm(hour=7, minute="), text("30)]<|tool_call_end|>I am setting an alarm labeled 'Seven thirty' "), text("for 7:30 AM tomorrow.")),
+            listOf(text("Done.")),
+        ))
+        val events = run(model, ToolFormat.LfmPythonic, "Set an alarm for seven thirty tomorrow morning.")
+        assertEquals(listOf("set_alarm" to mapOf<String, Any?>("hour" to 7L, "minute" to 30L)), recorded)
+        // The sentence after the block comes out as Text before the call runs, without the markup.
+        assertEquals(listOf("Text:I am setting an alarm labeled 'Seven thirty' for 7:30 AM tomorrow.", "ToolCalled:set_alarm", "Text:Done.", "Done:Done."),
+            events.map { e -> when (e) { is ToolEvent.Text -> "Text:${e.delta}"; is ToolEvent.ToolCalled -> "ToolCalled:${e.name}"; is ToolEvent.Done -> "Done:${e.reply}"; else -> e.toString() } })
+    }
+
+    fun callsTheRuntimeParsedRunUnderATextFormatToo() {
+        val model = ScriptedModel(listOf(listOf(calls(ToolCall("set_timer", mapOf("minutes" to 10)))), listOf(text("Timer started."))))
+        val events = run(model, ToolFormat.LfmPythonic, "Start a timer for ten minutes.")
+        assertEquals(listOf("set_timer" to mapOf<String, Any?>("minutes" to 10)), recorded)
+        // Answered in the runtime's shape, {"result": text}.
+        assertEquals(mapOf("result" to "set_timer done"), (model.sent[1].contents.contents.single() as Content.ToolResponse).response)
+        assertEquals("Timer started.", (events.last() as ToolEvent.Done).reply)
+    }
+
+    fun markupTheRuntimeLeftInTheTextFailsTheTurnUnshown() {
+        // LFM2.5 under format runtime: LiteRT-LM 0.16.1 leaves its calls in the text of a generic_model bundle.
+        val model = ScriptedModel(listOf(listOf(text("<|tool_call_start|>[set_alarm(hour=7, minute=30)]"), text("<|tool_call_end|>I am setting an alarm."))))
+        val events = run(model, ToolFormat.Runtime, "Set an alarm for seven thirty.")
+        val failed = events.last() as ToolEvent.Failed
+        assertTrue(failed.reason, failed.reason.startsWith("tool call markup the runtime did not parse"))
+        assertEquals(emptyList<ToolEvent>(), events.filterIsInstance<ToolEvent.Text>())
+        assertEquals(emptyList<Any>(), recorded)
     }
 
     fun aModelThatKeepsCallingStopsAtTheRoundLimit() {

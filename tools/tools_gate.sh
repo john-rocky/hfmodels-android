@@ -4,7 +4,7 @@
 # through the speaker; release) for one chat model, variant, backend and tool-call format, with the device state in the
 # log header and the RESULT lines from logcat. Copied from tools/speak_gate.sh.
 #   export ANDROID_SERIAL=<serial>
-#   tools/tools_gate.sh <repo id> <variant> <gpu|cpu> <runtime|qwenxml> [extra -Pandroid.testInstrumentationRunnerArguments.* ...]
+#   tools/tools_gate.sh <repo id> <variant> <gpu|cpu> <runtime|qwenxml|lfm> [extra -Pandroid.testInstrumentationRunnerArguments.* ...]
 #   e.g. tools/tools_gate.sh litert-community/Qwen3-1.7B int4 gpu runtime
 #        tools/tools_gate.sh litert-community/functiongemma-270m-ft-mobile-actions q8_ekv1024 cpu runtime \
 #          -Pandroid.testInstrumentationRunnerArguments.descriptor=litert-community__functiongemma-270m-ft-mobile-actions.hfmodels.json

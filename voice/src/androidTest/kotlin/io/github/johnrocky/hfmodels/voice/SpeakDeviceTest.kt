@@ -51,11 +51,12 @@ import org.junit.runner.RunWith
  * RESULT lines under tag `hfmodels-speak`. Arguments: variant (fp32 | fp16), dir (default
  * /data/local/tmp/hfmodels/kitten), fixtures (default /data/local/tmp/hfmodels-voice/replies: replies.tsv,
  * id<TAB>text; tools/voice_fixtures.sh), voice (default expr-voice-2-m, the bench's), bench (default
- * <dir>/bench_inputs.npz), xnnpack_off (graphs to run without XNNPACK, comma-separated, e.g. `predictor`;
- * written into every variant's handler_config before the load; the WAVs go to `tts/<variant>-xnnpackoff-<graphs>/`).
+ * <dir>/bench_inputs.npz), xnnpack_off (graphs to run without XNNPACK, comma-separated, e.g. `predictor`, or `none`;
+ * the other graphs run with it; written as every variant's whole handler_config.xnnpack before the load; the WAVs go
+ * to `tts/<variant>-xnnpackoff-<graphs>/`; without it the descriptor's setting applies, predictor off).
  *
  *   tools/speak_gate.sh fp32
- *   GATE_TAG=speak-kitten-xnnpackoff-predictor tools/speak_gate.sh fp32 -Pandroid.testInstrumentationRunnerArguments.xnnpack_off=predictor
+ *   GATE_TAG=speak-kitten-xnnpack-all tools/speak_gate.sh fp32 -Pandroid.testInstrumentationRunnerArguments.xnnpack_off=none
  */
 @RunWith(AndroidJUnit4::class)
 class SpeakDeviceTest {
@@ -67,7 +68,7 @@ class SpeakDeviceTest {
     private val fixtures = File(args.getString("fixtures") ?: "/data/local/tmp/hfmodels-voice/replies")
     private val voice = args.getString("voice") ?: "expr-voice-2-m"
     private val bench = File(args.getString("bench") ?: File(base, "bench_inputs.npz").path)
-    private val xnnpackOff = args.getString("xnnpack_off")?.split(',')?.map { it.trim() }?.filter { it.isNotEmpty() }.orEmpty()
+    private val xnnpackOff = args.getString("xnnpack_off")?.split(',')?.map { it.trim() }?.filter { it.isNotEmpty() }
     private val failures = ArrayList<String>()
 
     private fun result(step: String, ok: Boolean, detail: String) {
@@ -80,16 +81,16 @@ class SpeakDeviceTest {
         val models = HfModels(ctx)
         val asset = testCtx.assets.open(DESCRIPTOR_ASSET).bufferedReader().use { it.readText() }
         val commit = JSONObject(asset).getString("revision")
-        val descriptor = if (xnnpackOff.isEmpty()) asset else JSONObject(asset).apply {
+        val descriptor = if (xnnpackOff == null) asset else JSONObject(asset).apply {
             val vs = getJSONArray("variants")
-            for (i in 0 until vs.length()) vs.getJSONObject(i).getJSONObject("handler_config").put("xnnpack", JSONObject().apply { for (g in xnnpackOff) put(g, false) })
+            for (i in 0 until vs.length()) vs.getJSONObject(i).getJSONObject("handler_config").put("xnnpack", JSONObject().apply { for (g in GRAPHS) put(g, g !in xnnpackOff) })
         }.toString()
         val prior = JSONObject(asset).getJSONArray("variants").getJSONObject(0).getJSONObject("handler_config").optJSONObject("speed_priors")?.optDouble(voice, 1.0) ?: 1.0
         // The speed that puts 1.0 into the graph, the bench's: 1.25 for a prior of 0.8 (1.25 x 0.8 is 1.0 in float32).
         val benchSpeed = (1.0 / prior).toFloat()
         val opts = LoadOptions(backendPolicy = BackendPolicy.Auto, networkPolicy = NetworkPolicy.Offline, descriptorJson = descriptor)
-        val out = File(ctx.getExternalFilesDir(null), "tts/$variant" + if (xnnpackOff.isEmpty()) "" else "-xnnpackoff-${xnnpackOff.joinToString("+")}").apply { mkdirs() }
-        Log.i(TAG, "device=${Build.MODEL} soc=${Build.SOC_MANUFACTURER}/${Build.SOC_MODEL} build=${Build.DISPLAY} android=${Build.VERSION.RELEASE} model=$REPO@${commit.take(8)} variant=$variant voice=$voice prior=$prior bench_speed=$benchSpeed xnnpack_off=${xnnpackOff.joinToString("+").ifEmpty { "none" }} wav_dir=${out.path}")
+        val out = File(ctx.getExternalFilesDir(null), "tts/$variant" + if (xnnpackOff == null) "" else "-xnnpackoff-${xnnpackOff.joinToString("+")}").apply { mkdirs() }
+        Log.i(TAG, "device=${Build.MODEL} soc=${Build.SOC_MANUFACTURER}/${Build.SOC_MODEL} build=${Build.DISPLAY} android=${Build.VERSION.RELEASE} model=$REPO@${commit.take(8)} variant=$variant voice=$voice prior=$prior bench_speed=$benchSpeed xnnpack_off=${xnnpackOff?.joinToString("+") ?: "descriptor"} wav_dir=${out.path}")
         var model: Speaker? = null
         try {
             // 1. load
@@ -213,6 +214,8 @@ class SpeakDeviceTest {
         const val REPO = "litert-community/kitten-tts-nano-0.8"
         /** The development descriptor (catalog/dev, an androidTest asset): its `revision` is the model commit the files were listed at. */
         const val DESCRIPTOR_ASSET = "litert-community__kitten-tts-nano-0.8.hfmodels.json"
+        /** The kitten graphs by their handler_config.xnnpack keys. */
+        val GRAPHS = listOf("predictor", "prosody", "vocoder")
 
         /** make_bench_inputs.py SENTENCES, the order of ids_i / ref_wav_i in bench_inputs.npz. */
         val BENCH = listOf(

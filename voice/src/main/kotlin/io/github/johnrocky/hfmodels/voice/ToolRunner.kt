@@ -4,6 +4,7 @@ import com.google.ai.edge.litertlm.Content
 import com.google.ai.edge.litertlm.Contents
 import com.google.ai.edge.litertlm.Message
 import com.google.ai.edge.litertlm.ToolCall
+import io.github.johnrocky.hfmodels.ErrorCode
 import io.github.johnrocky.hfmodels.ModelException
 import io.github.johnrocky.hfmodels.litertlm.ChatModel
 import io.github.johnrocky.hfmodels.litertlm.GenerationOptions
@@ -50,6 +51,9 @@ class ToolRunner(
     /**
      * Runs [text] as one request. The flow ends with exactly one [ToolEvent.Done] or [ToolEvent.Failed]; a
      * [ModelException] from the model ends it with Failed too. Cancelling the collector cancels the model.
+     * [ToolEvent.Text] carries every model turn's text without call markup, in order: a turn that calls tools
+     * streams the text before its first call as it comes and the rest of it (after or between the calls) once
+     * the turn has ended, before its calls run ([VoiceLoop] speaks all of it).
      */
     fun turn(text: String): Flow<ToolEvent> = flow {
         val t0 = System.nanoTime()
@@ -67,7 +71,7 @@ class ToolRunner(
         val session = try {
             chat.createConversation(format.conversationConfig(tools, systemInstruction(now), thinking))
         } catch (e: ModelException) {
-            emit(ToolEvent.Failed("${e.code}: ${e.reason}", timing()))
+            emit(ToolEvent.Failed("${e.code}: ${e.reason}", timing(), e.code))
             return@flow
         }
         val options = GenerationOptions(enableThinking = if (chat.thinking.channels.isEmpty()) null else thinking)
@@ -78,12 +82,11 @@ class ToolRunner(
                 val buf = StringBuilder()
                 var shown = 0
                 val runtimeCalls = ArrayList<ToolCall>()
-                var turnFirst = -1L
+                val sentAt = System.nanoTime()
                 var turnLast = -1L
                 try {
                     session.stream(message, options).collect { m ->
                         val at = System.nanoTime()
-                        if (turnFirst < 0) turnFirst = at
                         turnLast = at
                         if (firstTokenNs < 0) firstTokenNs = at
                         chunks++
@@ -98,19 +101,20 @@ class ToolRunner(
                         runtimeCalls += m.toolCalls
                     }
                 } catch (e: ModelException) {
-                    emit(ToolEvent.Failed("${e.code}: ${e.reason}" + if (buf.isEmpty()) "" else " (text so far: ${buf.take(300)})", timing()))
+                    emit(ToolEvent.Failed("${e.code}: ${e.reason}" + if (buf.isEmpty()) "" else " (text so far: ${buf.take(300)})", timing(), e.code))
                     return@flow
                 }
-                if (turnFirst >= 0) decodeNs += turnLast - turnFirst
+                if (turnLast >= 0) decodeNs += turnLast - sentAt
                 val all = buf.toString()
                 val parsed = format.parse(all, runtimeCalls)
                 if (parsed.error != null) {
                     emit(ToolEvent.Failed("${parsed.error}: ${all.take(300)}", timing()))
                     return@flow
                 }
+                // What the turn said that is not shown yet: an end held back while it might have been markup, and
+                // the text after or between the calls (LFM2.5 writes its sentence after the call block).
+                unshownText(all, shown, parsed.said).let { if (it.isNotEmpty()) emit(ToolEvent.Text(it)) }
                 if (parsed.calls.isEmpty()) {
-                    // A held-back end that turned out not to be markup.
-                    if (shown < all.length) emit(ToolEvent.Text(all.substring(shown)))
                     emit(ToolEvent.Done(parsed.said, timing()))
                     return@flow
                 }
@@ -124,7 +128,8 @@ class ToolRunner(
                     val tc = System.nanoTime()
                     val result = execute(c)
                     emit(ToolEvent.ToolCalled(c.name, c.args, result, (System.nanoTime() - tc) / 1e6))
-                    responses += format.response(c.name, result)
+                    // A call the runtime parsed is answered in the runtime's shape, whatever the text format.
+                    responses += (if (c.byRuntime) ToolFormat.Runtime else format).response(c.name, result)
                 }
                 message = Message.tool(Contents.of(responses))
             }
@@ -152,7 +157,7 @@ sealed interface ToolEvent {
     /** A piece of the model's reasoning (a declared channel), incremental. */
     data class Thinking(val delta: String) : ToolEvent
 
-    /** A piece of the model's visible text, incremental, without the call markup the format parses. */
+    /** A piece of the model's visible text, incremental, without the call markup the format parses (any model turn's, in order). */
     data class Text(val delta: String) : ToolEvent
 
     /** A call that ran: its arguments as the model gave them, the text sent back, and how long the tool took. */
@@ -161,15 +166,16 @@ sealed interface ToolEvent {
     /** The answer: the last model turn's text without call markup. */
     data class Done(val reply: String, val timing: TurnTiming) : ToolEvent
 
-    /** The request could not finish: a malformed call, too many rounds, or the model's error. */
-    data class Failed(val reason: String, val timing: TurnTiming) : ToolEvent
+    /** The request could not finish: a malformed call, too many rounds, or the model's error ([code] set for a [ModelException]). */
+    data class Failed(val reason: String, val timing: TurnTiming, val code: ErrorCode? = null) : ToolEvent
 }
 
 /**
  * One request's wall clock on the device, not a benchmark. [firstTokenMs]: from [ToolRunner.turn]'s start
  * (the conversation is created inside it) to the first chunk of the first model turn, -1 when none came;
- * [replyMs]: to the end; [decodeMs]: the sum over model turns of first to last chunk. [chunks] and [chars]
- * count what was streamed (text and reasoning; call markup the runtime parses itself is never streamed).
+ * [replyMs]: to the end; [decodeMs]: the sum over model turns of the time from sending the turn's message to
+ * its last chunk (prefill included; a turn without chunks adds nothing). [chunks] and [chars] count what was
+ * streamed (text and reasoning; call markup the runtime parses itself is never streamed).
  */
 data class TurnTiming(
     val firstTokenMs: Double,

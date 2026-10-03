@@ -12,8 +12,9 @@ package io.github.johnrocky.hfmodels.voice
  * of 2026-10 (`kittenml/preprocess.py`) no longer cuts at common abbreviations; this keeps the 0.8.1
  * form and is not smarter: "Dr. Smith" is cut after "Dr", "7.30" into "7" and "30", "p.m." into "p"
  * and "m". One difference: the added comma counts against `maxChars` (0.8.1 returns 401 characters
- * for a 400-character sentence), so every chunk fits `Speaker.maxChars`; a run without spaces longer
- * than that is cut where it reaches the limit.
+ * for a 400-character sentence), so every chunk fits `Speaker.maxChars`; a sentence that already ends
+ * in punctuation gets no comma and may use all of `maxChars`; a run without spaces longer than the
+ * limit is cut where it reaches it.
  */
 object SentenceSplitter {
     private val SENTENCE_END = Regex("[.!?。！？]+")
@@ -27,7 +28,7 @@ object SentenceSplitter {
         for (sentence in SENTENCE_END.split(text)) {
             val trimmed = sentence.trim()
             if (trimmed.isEmpty()) continue
-            if (trimmed.length <= budget) { chunks += punctuate(trimmed); continue }
+            if (trimmed.length <= (if (trimmed.last() in PUNCTUATION) maxChars else budget)) { chunks += punctuate(trimmed); continue }
             val b = StringBuilder()
             for (word in trimmed.split(SPACES)) {
                 var w = word

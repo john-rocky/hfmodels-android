@@ -67,13 +67,13 @@ internal class LiteRtSpeaker(
         return LiteRtDecisionModel.Runtime.call { symbols(text) }
     }
 
-    /** The G2P on the LiteRT thread; text with no symbol the model knows is INVALID_INPUT. */
+    /** The G2P on the LiteRT thread; text without a symbol to sound (punctuation alone, or nothing the model knows) is INVALID_INPUT. */
     private fun symbols(text: String): IntArray {
         checkNotClosed()
         val ids = try { g2p.ids(text) } catch (t: Throwable) {
             throw ModelException(ErrorCode.INFERENCE_FAILED, "g2p failed: ${t.javaClass.simpleName}: ${t.message}", details = mapOf("stage" to "g2p"), cause = t)
         }
-        if (ids.size <= 2) throw ModelException(ErrorCode.INVALID_INPUT, "the text has no symbol the model knows")
+        if (!g2p.sounds(ids)) throw ModelException(ErrorCode.INVALID_INPUT, "the text has nothing to say: no symbol the model knows other than punctuation and spaces")
         return ids
     }
 

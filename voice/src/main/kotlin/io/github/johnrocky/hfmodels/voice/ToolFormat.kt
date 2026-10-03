@@ -12,10 +12,15 @@ import org.json.JSONObject
 /**
  * How a model's tool calls travel. The bundle decides: LiteRT-LM parses the calls itself for the
  * model types it knows (`LlmMetadata.llm_model_type` function_gemma, gemma4, and qwen3 with JSON
- * inside `<tool_call>`) and leaves them in the text for the others.
+ * inside `<tool_call>`) and leaves them in the text for the others. Whatever the format, calls the
+ * runtime did parse ([com.google.ai.edge.litertlm.Message.toolCalls]) are run too.
  */
 sealed interface ToolFormat {
-    /** The runtime's parser: the tools go in `ConversationConfig.tools`, the calls come back in `Message.toolCalls`. */
+    /**
+     * The runtime's parser: the tools go in `ConversationConfig.tools`, the calls come back in `Message.toolCalls`.
+     * Call markup left in the text (`<tool_call`, `<|tool_call`, `<start_function_call>`: a bundle whose calls the
+     * runtime does not parse, such as LFM2.5's) is never shown and fails the turn instead of being said.
+     */
     object Runtime : ToolFormat {
         override fun toString() = "runtime"
     }
@@ -39,8 +44,8 @@ sealed interface ToolFormat {
     }
 }
 
-/** One call to run, whichever way it arrived. */
-internal data class ParsedCall(val name: String, val args: Map<String, Any?>)
+/** One call to run, whichever way it arrived ([byRuntime]: in `Message.toolCalls`, so it is answered in the runtime's shape). */
+internal data class ParsedCall(val name: String, val args: Map<String, Any?>, val byRuntime: Boolean = false)
 
 /** A finished model turn: the calls to run, the text without them, or why the turn cannot go on. */
 internal data class ParsedTurn(val calls: List<ParsedCall>, val said: String, val error: String?)
@@ -56,12 +61,17 @@ internal fun ToolFormat.conversationConfig(tools: List<VoiceTool>, system: Strin
     )
 }
 
-internal fun ToolFormat.parse(text: String, runtimeCalls: List<ToolCall>): ParsedTurn = when (this) {
-    ToolFormat.Runtime -> ParsedTurn(runtimeCalls.map { ParsedCall(it.name, it.arguments) }, text.trim(), null)
-    ToolFormat.QwenXml -> if (QwenXmlToolCalls.hasUnparsedMarkup(text)) ParsedTurn(emptyList(), text.trim(), "malformed or incomplete tool call in the text")
-        else ParsedTurn(QwenXmlToolCalls.parse(text).map { ParsedCall(it.name, it.args) }, QwenXmlToolCalls.withoutCalls(text), null)
-    ToolFormat.LfmPythonic -> if (LfmPythonicToolCalls.hasUnparsedMarkup(text)) ParsedTurn(emptyList(), text.trim(), "malformed or incomplete tool call in the text")
-        else ParsedTurn(LfmPythonicToolCalls.parse(text).map { ParsedCall(it.name, it.args) }, LfmPythonicToolCalls.withoutCalls(text), null)
+/** The turn's calls: the runtime's first (any format: a bundle the runtime parses may still be given a text format), then the text's. */
+internal fun ToolFormat.parse(text: String, runtimeCalls: List<ToolCall>): ParsedTurn {
+    val byRuntime = runtimeCalls.map { ParsedCall(it.name, it.arguments, byRuntime = true) }
+    return when (this) {
+        ToolFormat.Runtime -> if (RUNTIME_MARKUP.any { text.contains(it) }) ParsedTurn(emptyList(), text.trim(), "tool call markup the runtime did not parse is in the text (this bundle may need format lfm or qwenxml)")
+            else ParsedTurn(byRuntime, text.trim(), null)
+        ToolFormat.QwenXml -> if (QwenXmlToolCalls.hasUnparsedMarkup(text)) ParsedTurn(emptyList(), text.trim(), "malformed or incomplete tool call in the text")
+            else ParsedTurn(byRuntime + QwenXmlToolCalls.parse(text).map { ParsedCall(it.name, it.args) }, QwenXmlToolCalls.withoutCalls(text), null)
+        ToolFormat.LfmPythonic -> if (LfmPythonicToolCalls.hasUnparsedMarkup(text)) ParsedTurn(emptyList(), text.trim(), "malformed or incomplete tool call in the text")
+            else ParsedTurn(byRuntime + LfmPythonicToolCalls.parse(text).map { ParsedCall(it.name, it.args) }, LfmPythonicToolCalls.withoutCalls(text), null)
+    }
 }
 
 /**
@@ -80,7 +90,7 @@ internal fun ToolFormat.response(name: String, result: String): Content = when (
  * markup, holding back an end that may be the start of it. The runtime keeps its own calls out of the text.
  */
 internal fun ToolFormat.visibleLength(text: String): Int = when (this) {
-    ToolFormat.Runtime -> text.length
+    ToolFormat.Runtime -> RUNTIME_MARKUP.minOf { beforeMarkup(text, it) }
     ToolFormat.QwenXml -> beforeMarkup(text, "<tool_call")
     ToolFormat.LfmPythonic -> beforeMarkup(text, LfmPythonicToolCalls.OPEN)
 }

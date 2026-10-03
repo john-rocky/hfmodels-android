@@ -45,7 +45,11 @@ internal class KittenG2P(
         return out.toString()
     }
 
-    /** [ipa] as symbol ids, with the 0 the model expects at each end. */
+    /**
+     * [ipa] as symbol ids, with the 0 the model expects at each end. Nothing is added at the end of the chunk:
+     * the pip package 0.8.1's ONNX path appends symbol 10 (`…`) to every chunk, but the publisher's say.py, the
+     * LiteRT sample and the ids of the publisher's bench do not, and neither does this.
+     */
     fun ids(text: String): IntArray {
         val ipa = ipa(text)
         val ids = ArrayList<Int>(ipa.length + 2)
@@ -55,7 +59,18 @@ internal class KittenG2P(
         return ids.toIntArray()
     }
 
+    private val silent: Set<Int> = SILENT.mapNotNullTo(HashSet()) { symbolToId[it] }
+
+    /** Whether [ids] hold a symbol with a sound: one that is not the pad, punctuation or the space ([SILENT]). */
+    fun sounds(ids: IntArray): Boolean = ids.any { it !in silent }
+
     companion object {
+        /**
+         * The symbols without a sound: StyleTTS2's pad `_` and its punctuation with the space, the first 17
+         * entries of the kitten `symbols.json` (`_` ... `”` and ` `).
+         */
+        const val SILENT = "_;:,.!?¡¿—…\"«»“” "
+
         /** Case-aware tokens: ACRONYM (2+ caps) | NUMBER | word | punctuation. */
         private val TOKEN = Regex("[A-Z]{2,}|\\d[\\d,]*(?:\\.\\d+)?|[A-Za-z']+|[.,!?;:—…\"]")
         private val ACRONYM = Regex("[A-Z]{2,}")

@@ -89,6 +89,18 @@ class KittenHostTest {
         assertArrayEquals(intArrayOf(0, 3, 5, 6, 2, 1, 0), g2p.ids("ab,"))
     }
 
+    @Test fun punctuationAloneHasNoSoundToSynthesize() {
+        // The kitten table starts with the pad, the punctuation and the space (ids 0-16), then the letters.
+        val symbols = KittenG2P.readSymbols(org.json.JSONObject().put("symbols", org.json.JSONArray((KittenG2P.SILENT + "Aɐl").map { it.toString() })).toString())
+        assertEquals((0..16).toList(), KittenG2P.SILENT.map { symbols.getValue(it) })
+        val g2p = KittenG2P(mapOf("a" to "ɐ"), symbols) { "l" }
+        assertTrue(!g2p.sounds(g2p.ids(",")))
+        assertTrue(!g2p.sounds(g2p.ids("… — ; !")))
+        assertTrue(!g2p.sounds(g2p.ids("")))
+        assertTrue(g2p.sounds(g2p.ids("a,")))
+        assertTrue(g2p.sounds(g2p.ids("zz.")))
+    }
+
     @Test fun rowsRepeatByTheirDurations() {
         val x = floatArrayOf(1f, 2f, 3f, 4f, 5f, 6f) // [1, 3, 2]
         assertArrayEquals(floatArrayOf(1f, 2f, 1f, 2f, 5f, 6f), KittenSynthesizer.repeatRows(x, intArrayOf(2, 0, 1), 2), 0f)

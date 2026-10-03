@@ -70,10 +70,13 @@ internal class KittenSynthesizer private constructor(
         return Result(trim(wav, tailTrim, minSamples), frames, durations)
     }
 
+    /** Closes all three graphs even when one throws; the first failure is rethrown after the others closed. */
     override fun close() {
-        predictor.close()
-        prosody.close()
-        vocoder.close()
+        var failure: Throwable? = null
+        for (graph in listOf(predictor, prosody, vocoder)) {
+            runCatching { graph.close() }.onFailure { t -> failure?.addSuppressed(t) ?: run { failure = t } }
+        }
+        failure?.let { throw it }
     }
 
     private class Feed(val shape: IntArray, val data: ByteBuffer)
@@ -114,6 +117,9 @@ internal class KittenSynthesizer private constructor(
 
         /** The three graphs by the names `loadMs`, `afterEach` and `xnnpackOff` use. */
         val GRAPHS = listOf("predictor", "prosody", "vocoder")
+
+        /** The speak handler's default for `handler_config.xnnpack`: the predictor without XNNPACK (its peak memory), the other two with it. */
+        val DEFAULT_XNNPACK: Map<String, Boolean> = mapOf("predictor" to false, "prosody" to true, "vocoder" to true)
 
         /**
          * Opens the three graphs (Interpreter, [threads] threads, XNNPACK except on the graphs in [xnnpackOff])
