@@ -20,11 +20,14 @@ import kotlinx.coroutines.flow.Flow
  *
  * A turn's flow: [Event.Heard], [Event.Thinking], then [Event.ToolCalled] and [Event.Speaking] as they happen,
  * [Event.Error] when something failed, and [Event.Done] last. What is said: the model's text of every turn
- * (without call markup); when the last model turn says nothing after tools ran, the results of the last round
- * of calls (PhoneTools' results are sentences, "Alarm set for 07:30 (Morning Alarm)"); when nothing at all was
- * said and no tool ran, [VoiceLoopConfig.emptyReplyText]; when the request failed (the round limit, a malformed
- * call, the model's error, the transcriber's), [VoiceLoopConfig.failureText] after what was said, with an Error.
- * A transcript that is blank ends the turn without a reply (Heard with empty text, then Done).
+ * (without call markup and markdown) until a tool that changes something on the phone ([VoiceTool.isAction]) has
+ * run; from then on, with [VoiceLoopConfig.speakActionResults], each action's result instead of the model's words
+ * (PhoneTools' results are sentences, "Alarm set for 07:30 (Morning Alarm)"; "Sorry, " and the reason for an
+ * `Error:` result), so what is said is what the phone did. When the last model turn says nothing and no action's
+ * result was said, the results of the last round's actions (a read's result is data, not said); when nothing at
+ * all was said, [VoiceLoopConfig.emptyReplyText]; when the request failed (the round limit, a malformed call, the
+ * model's error, the transcriber's), [VoiceLoopConfig.failureText] after what was said, with an Error. A
+ * transcript that is blank ends the turn without a reply (Heard with empty text, then Done).
  *
  * Turns run one at a time (a second one waits for the first). Each opens its own conversation (ToolRunner); on a
  * model whose layers keep a running state a new conversation is not a fresh state under LiteRT-LM 0.16.1 to 0.17.1
@@ -47,9 +50,9 @@ class VoiceLoop(
         }
         config.player?.let { require(it.sampleRate == speaker.sampleRate) { "the player plays ${it.sampleRate} Hz; the speaker writes ${speaker.sampleRate} Hz" } }
         config.voice?.let { require(it in speaker.voices) { "voice '$it' is not one of the speaker's (${speaker.voices.joinToString()})" } }
-        val runner = ToolRunner(chat, tools, config.toolFormat, config.systemInstruction ?: { ToolRunner.defaultSystemInstruction(it) }, config.maxToolTurns, config.thinking)
+        val runner = ToolRunner(chat, tools, config.toolFormat, config.systemInstruction ?: { defaultSystemInstruction(it) }, config.maxToolTurns, config.thinking)
         val port = config.player?.let { p -> PlayerPort({ p.play(it) }, { p.drain() }, { p.stop() }, { p.firstWriteAtNanos }) }
-        engine = LoopEngine(transcriber, speaker, runner::turn, config, port)
+        engine = LoopEngine(transcriber, speaker, runner::turn, config, port, tools.filter { it.isAction }.mapTo(HashSet()) { it.name })
     }
 
     /** One turn from a finished utterance: mono samples in [-1, 1] at the transcriber's rate, at most its window. */
@@ -80,7 +83,10 @@ class VoiceLoop(
             override fun toString() = "Listening"
         }
 
-        /** The transcript (or the typed text), the utterance's length and the transcription's wall clock. */
+        /**
+         * The transcript as the model gets it ([VoiceLoopConfig.normalizeTranscript]) or the typed text, the
+         * utterance's length and the transcription's wall clock.
+         */
         data class Heard(val text: String, val audioMs: Double, val transcribeMs: Double) : Event()
 
         /** The model is answering; it stays so while tools run. */
@@ -111,7 +117,9 @@ class VoiceLoop(
      * [firstSentenceMs] the first sentence to say was complete; [firstAudioMs] the player's first write began (with
      * no player: the first sentence was synthesized); [replyMs] the model's answer was complete; [speakMs] the last
      * sentence was synthesized; [totalMs] the turn ended (with a player: the sound was played out). Null when it
-     * did not happen. [toolCalls] and [llmTurns] are the runner's; [heard] the transcript; [reply] what was said.
+     * did not happen. [toolCalls] and [llmTurns] are the runner's; [heard] the text the model got; [reply] the
+     * model's text (every model turn, without call markup), said or not; [spoken] what was said: the text handed
+     * to the speaker (the model's words, an action's result, the loop's own texts) without markdown.
      */
     data class TurnTiming(
         val transcribeMs: Double,
@@ -125,16 +133,26 @@ class VoiceLoop(
         val llmTurns: Int,
         val heard: String,
         val reply: String,
+        val spoken: String,
     )
+
+    companion object {
+        /** [ToolRunner.defaultSystemInstruction] and one line for speech: short spoken sentences, no markdown, no lists. */
+        fun defaultSystemInstruction(now: String): String =
+            ToolRunner.defaultSystemInstruction(now) + " Answer in one or two short spoken sentences, no markdown, no lists."
+    }
 }
 
 /**
- * [VoiceLoop]'s settings. [toolFormat], [systemInstruction] (null = [ToolRunner.defaultSystemInstruction]),
+ * [VoiceLoop]'s settings. [toolFormat], [systemInstruction] (null = [VoiceLoop.defaultSystemInstruction]),
  * [maxToolTurns] and [thinking] go to the [ToolRunner]; [voice] (null = the speaker's first) and [speed] to the
  * speaker; [endpointer] cuts [VoiceLoop.listen]'s audio (one listen at a time uses it); [player] plays the
  * sentences (null = synthesize only, no sound: a device test or a caller that plays the audio itself).
  * [emptyReplyText] and [failureText] are said when the model says nothing or the request fails (English
- * defaults; an app replaces them).
+ * defaults; an app replaces them). [speakActionResults]: once an action ([VoiceTool.isAction]) has run, say its
+ * result instead of the model's words (false: the model's words, whatever the tools did).
+ * [normalizeTranscript]: an all-capitals transcript without punctuation (Zipformer's) goes to the model as a
+ * sentence, "SET AN ALARM" as "Set an alarm."; a transcript with lower-case letters keeps its case.
  */
 data class VoiceLoopConfig(
     val toolFormat: ToolFormat = ToolFormat.Runtime,
@@ -147,4 +165,6 @@ data class VoiceLoopConfig(
     val player: SpeechPlayer? = null,
     val emptyReplyText: String = "Sorry, I did not get that.",
     val failureText: String = "Sorry, I could not finish that.",
+    val speakActionResults: Boolean = true,
+    val normalizeTranscript: Boolean = true,
 )

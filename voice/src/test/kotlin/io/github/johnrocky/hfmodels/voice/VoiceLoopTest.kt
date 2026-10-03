@@ -12,7 +12,9 @@ import io.github.johnrocky.hfmodels.speech.Transcript
 import io.github.johnrocky.hfmodels.speech.TranscriptTiming
 import io.github.johnrocky.hfmodels.voice.VoiceLoop.Event
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.toList
@@ -65,23 +67,25 @@ class VoiceLoopTest {
         assertTrue(t.toString(), t.firstTokenMs!! >= 5.0)
     }
 
-    @Test fun aToolCallEndsTheModelTurnsSentenceAndASilentLastTurnSaysTheLastRoundsResults() {
+    @Test fun aToolCallEndsTheModelTurnsSentenceAndASilentLastTurnSaysTheLastRoundsActions() {
         // The deltas a ToolRunner gives for LFM2.5's turn "<|tool_call_start|>[...]<|tool_call_end|>I am setting ...":
-        // the sentence after the call block, whole, before the call runs; markup never comes through.
+        // the sentence after the call block, whole, before the call runs; markup never comes through. The model's words
+        // are said here (speakActionResults off), so the silent last turn is what says what was done.
         val loop = Loop(listOf(
             ToolEvent.Text("I am setting an alarm labeled 'Seven thirty' for 7:30 AM tomorrow."),
             ToolEvent.ToolCalled("get_current_datetime", emptyMap(), "Saturday, 2026-10-03 16:45", 0.4, turn = 1),
             ToolEvent.Text("Checking"),
             ToolEvent.ToolCalled("set_alarm", mapOf("hour" to 7, "minute" to 30), "Alarm set for 07:30 (Morning Alarm)", 0.5, turn = 2),
             ToolEvent.Done("", runnerTiming.copy(toolCalls = 2, turns = 3)),
-        ))
+        ), config = VoiceLoopConfig(speakActionResults = false), actions = PHONE_ACTIONS)
         val events = loop.typed("Set an alarm for seven thirty tomorrow morning.")
         // A model turn's last sentence is final at its call ("Checking" has no mark); the empty last turn is followed by
-        // the results of the last round of calls only (Gemma 4 E2B's c01: get_current_datetime, then set_alarm, then nothing).
+        // the results of the last round's actions only (Gemma 4 E2B's c01: get_current_datetime, then set_alarm, then nothing).
         assertEquals(listOf("I am setting an alarm labeled 'Seven thirty' for 7:30 AM tomorrow,", "Checking,", "Alarm set for 07:30 (Morning Alarm),"), loop.synthesized)
         assertEquals(listOf("get_current_datetime", "set_alarm"), events.filterIsInstance<Event.ToolCalled>().map { it.name })
         val done = events.last() as Event.Done
-        assertEquals("I am setting an alarm labeled 'Seven thirty' for 7:30 AM tomorrow. Checking Alarm set for 07:30 (Morning Alarm)", done.timing.reply)
+        assertEquals("I am setting an alarm labeled 'Seven thirty' for 7:30 AM tomorrow. Checking", done.timing.reply)
+        assertEquals("I am setting an alarm labeled 'Seven thirty' for 7:30 AM tomorrow. Checking Alarm set for 07:30 (Morning Alarm)", done.timing.spoken)
         assertEquals(2, done.timing.toolCalls)
         assertEquals(3, done.timing.llmTurns)
         assertTrue(events.none { it is Event.Error })
@@ -90,6 +94,107 @@ class VoiceLoopTest {
         val silent = Loop(listOf(ToolEvent.Done("", runnerTiming)))
         silent.typed("Hmm.")
         assertEquals(listOf("Sorry, I did not get that,"), silent.synthesized)
+
+        // A read and then nothing: its result is data (a JSON array), not a sentence; the empty-reply text instead.
+        val read = Loop(listOf(
+            ToolEvent.ToolCalled("get_calendar_events", mapOf("date" to "2026-10-04"), "[{\"title\":\"Dentist\",\"start\":\"2026-10-04 17:00\"}]", 0.3, turn = 1),
+            ToolEvent.Done("", runnerTiming.copy(toolCalls = 1, turns = 2)),
+        ), actions = PHONE_ACTIONS)
+        read.typed("What is on my calendar tomorrow?")
+        assertEquals(listOf("Sorry, I did not get that,"), read.synthesized)
+    }
+
+    @Test fun anActionsResultIsSaidInsteadOfTheModelsWordsAboutIt() {
+        // Gemma 4 E2B's c02 from the WAV (r4): "OK." with the call, set_alarm at 16:15, then "I have set an alarm for 6:15."
+        val script = listOf(
+            ToolEvent.Text("OK."),
+            ToolEvent.ToolCalled("set_alarm", mapOf("hour" to 16, "minute" to 15, "label" to "Wake Up"), "Alarm set for 16:15 (Wake Up)", 0.5, turn = 1),
+            ToolEvent.Text("I have set an alarm for 6:15."),
+            ToolEvent.Done("I have set an alarm for 6:15.", runnerTiming.copy(toolCalls = 1, turns = 2)),
+        )
+        val loop = Loop(script, actions = PHONE_ACTIONS)
+        val events = loop.typed("Wake me up at six fifteen.")
+        // What came before the call is said as it streamed; after the call, what the phone did.
+        assertEquals(listOf("OK,", "Alarm set for 16:15 (Wake Up),"), loop.synthesized)
+        assertEquals(listOf("OK,", "Alarm set for 16:15 (Wake Up),"), events.filterIsInstance<Event.Speaking>().map { it.sentence })
+        val done = events.last() as Event.Done
+        assertEquals("OK. I have set an alarm for 6:15.", done.timing.reply)
+        assertEquals("OK. Alarm set for 16:15 (Wake Up)", done.timing.spoken)
+        // speakActionResults off: the model's words, as in r4.
+        val asR4 = Loop(script, config = VoiceLoopConfig(speakActionResults = false), actions = PHONE_ACTIONS)
+        asR4.typed("Wake me up at six fifteen.")
+        assertEquals(listOf("OK,", "I have set an alarm for 6:15,"), asR4.synthesized)
+
+        // A failed action is said as "Sorry, " and the reason; the next try's result after it; a read is never said.
+        val retry = Loop(listOf(
+            ToolEvent.ToolCalled("get_current_datetime", emptyMap(), "Saturday, 2026-10-03 16:35", 0.4, turn = 1),
+            ToolEvent.ToolCalled("set_alarm", mapOf("hour" to 73, "minute" to 0), "Error: hour must be 0-23 and minute 0-59", 0.2, turn = 2),
+            ToolEvent.ToolCalled("set_alarm", mapOf("hour" to 7, "minute" to 30), "Alarm set for 07:30 (Reminder)", 0.5, turn = 3),
+            ToolEvent.Text("I have set an alarm for 7:30 AM tomorrow morning."),
+            ToolEvent.Done("I have set an alarm for 7:30 AM tomorrow morning.", runnerTiming.copy(toolCalls = 3, turns = 4)),
+        ), actions = PHONE_ACTIONS)
+        retry.typed("Set an alarm for seven thirty tomorrow morning.")
+        assertEquals(listOf("Sorry, hour must be 0-23 and minute 0-59,", "Alarm set for 07:30 (Reminder),"), retry.synthesized)
+
+        // A turn with reads only: the model's words.
+        val time = Loop(listOf(
+            ToolEvent.ToolCalled("get_current_datetime", emptyMap(), "Saturday, 2026-10-03 16:45", 0.4, turn = 1),
+            ToolEvent.Text("It is 4:45 PM."),
+            ToolEvent.Done("It is 4:45 PM.", runnerTiming.copy(toolCalls = 1, turns = 2)),
+        ), actions = PHONE_ACTIONS)
+        time.typed("What time is it?")
+        assertEquals(listOf("It is 4:45 PM,"), time.synthesized)
+    }
+
+    @Test fun markdownIsNotSaidAndStaysInTheReply() {
+        assertEquals("Bold, italic and code.", stripMarkdown("**Bold**, _italic_ and `code`."))
+        assertEquals("Tomorrow\nTeam standup at 9:00\nDentist at 17:00", stripMarkdown("### Tomorrow\n- Team standup at 9:00\n  - Dentist at 17:00"))
+        // A hyphen inside a line is not a bullet.
+        assertEquals("Six - fifteen, 0-23 and a well-known word.", stripMarkdown("Six - fifteen, 0-23 and a well-known word."))
+        // Gemma 4 E2B's c06 shape (r4): a list in bold.
+        val deltas = listOf("You have two events tomorrow:\n\n* **Team", " standup** at 9:00 AM.\n* **Dentist**", " at 5:00 PM.")
+        val whole = deltas.joinToString("")
+        val loop = Loop(deltas.map { ToolEvent.Text(it) } + ToolEvent.Done(whole, runnerTiming))
+        val events = loop.typed("What is on my calendar tomorrow?")
+        assertEquals(listOf("You have two events tomorrow:\n\nTeam standup at 9:00 AM,", "Dentist at 5:00 PM,"), loop.synthesized)
+        val done = events.last() as Event.Done
+        assertEquals(whole, done.timing.reply)
+        assertEquals(stripMarkdown(whole).trim(), done.timing.spoken)
+    }
+
+    @Test fun anAllCapitalsTranscriptGoesToTheModelAsASentence() {
+        assertEquals("Set an alarm for seven thirty to morrow morning.", normalizeTranscript("SET AN ALARM FOR SEVEN THIRTY TO MORROW MORNING"))
+        assertEquals("I had a meeting I think I'm late.", normalizeTranscript(" I HAD A MEETING I THINK I'M LATE "))
+        // A transcript with lower-case letters keeps its case; a sentence mark at the end is kept.
+        assertEquals("What time is it?", normalizeTranscript("What time is it?"))
+        assertEquals("what time is it.", normalizeTranscript("what time is it"))
+        assertEquals("", normalizeTranscript("  "))
+        // Through the loop: the model gets the sentence, and Heard shows it; off, the transcript as it came.
+        val loop = Loop(listOf(ToolEvent.Done("OK.", runnerTiming)), transcript = { "WAKE ME UP AT SIX FIFTEEN" })
+        assertEquals("Wake me up at six fifteen.", (loop.heard(FloatArray(1600)).first { it is Event.Heard } as Event.Heard).text)
+        assertEquals(listOf("Wake me up at six fifteen."), loop.requestTexts)
+        val raw = Loop(listOf(ToolEvent.Done("OK.", runnerTiming)), transcript = { "WAKE ME UP AT SIX FIFTEEN" }, config = VoiceLoopConfig(normalizeTranscript = false))
+        raw.heard(FloatArray(1600))
+        assertEquals(listOf("WAKE ME UP AT SIX FIFTEEN"), raw.requestTexts)
+        // Typed text is never changed.
+        val typed = Loop(listOf(ToolEvent.Done("OK.", runnerTiming)))
+        typed.typed("WAKE ME UP")
+        assertEquals(listOf("WAKE ME UP"), typed.requestTexts)
+    }
+
+    @Test fun aTurnsClockStartsWhenItHasTheLoopNotWhileItWaitsForTheTurnBefore() {
+        // The first request takes 300 ms; the second turn is asked for meanwhile and waits for the loop.
+        val loop = Loop(listOf(ToolEvent.Text("Timer started."), ToolEvent.Done("Timer started.", runnerTiming)), firstReplyDelayMs = 300)
+        runBlocking {
+            val first = async { loop.engine.turn(null, "Start a timer.").toList() }
+            delay(20)
+            val second = async { loop.engine.turn(null, "Start a timer.").toList() }
+            val a = (first.await().last() as Event.Done).timing
+            val b = (second.await().last() as Event.Done).timing
+            assertTrue(a.toString(), a.totalMs >= 300)
+            // The second turn's own work takes a few ms; its first sound is its own write, not the first turn's.
+            assertTrue(b.toString(), b.totalMs < 150 && b.firstAudioMs!! < 150)
+        }
     }
 
     @Test fun aFailedRequestSaysWhatCameBeforeThenTheFailureTextWithAnError() {
@@ -106,7 +211,8 @@ class VoiceLoopTest {
         assertEquals("the model still calls tools after 4 rounds: set_timer", error.message)
         assertTrue(events.indexOf(error) < events.indexOfLast { it is Event.Speaking })
         assertTrue(events.last() is Event.Done)
-        assertEquals("Done. ,. Setting the alarm Sorry, I could not finish that.", (events.last() as Event.Done).timing.reply)
+        assertEquals("Done. ,. Setting the alarm", (events.last() as Event.Done).timing.reply)
+        assertEquals("Done. ,. Setting the alarm Sorry, I could not finish that.", (events.last() as Event.Done).timing.spoken)
 
         // The transcriber's error: the failure text, an Error with its code, and no request to the model.
         val asrFails = Loop(emptyList(), transcript = { throw ModelException(ErrorCode.INVALID_INPUT, "longer than the window") })
@@ -168,14 +274,21 @@ class VoiceLoopTest {
         private val slowTranscriber: Boolean = false,
         /** Set: after the script the reply hangs until cancelled, then completes this. */
         private val hangAfterScript: CompletableDeferred<Unit>? = null,
+        config: VoiceLoopConfig = VoiceLoopConfig(),
+        actions: Set<String> = emptySet(),
+        /** The first request waits this long before its script. */
+        private val firstReplyDelayMs: Long = 0,
     ) {
         val synthesized = ArrayList<String>()
         val played = ArrayList<FloatArray>()
         val heardLengths = ArrayList<Int>()
+        val requestTexts = ArrayList<String>()
         var drained = 0
         var stopped = 0
         var requests = 0
         private var firstWrite = 0L
+        // As SpeechPlayer: a run opens at the first play after a drain or a stop, and its first write is the time.
+        private var runOpen = false
 
         private val speaker = object : Speaker {
             override val info: PreparedModelInfo get() = throw UnsupportedOperationException()
@@ -209,18 +322,25 @@ class VoiceLoopTest {
 
         private fun reply(text: String): Flow<ToolEvent> = flow {
             requests++
+            requestTexts += text
+            if (requests == 1 && firstReplyDelayMs > 0) delay(firstReplyDelayMs)
             for (e in script) emit(e)
             hangAfterScript?.let { done -> try { awaitCancellation() } finally { done.complete(Unit) } }
         }
 
-        val engine = LoopEngine(transcriber, speaker, ::reply, VoiceLoopConfig(), PlayerPort(
-            play = { pcm -> if (firstWrite == 0L) firstWrite = System.nanoTime(); played += pcm },
-            drain = { drained++ },
-            stop = { stopped++ },
+        val engine = LoopEngine(transcriber, speaker, ::reply, config, PlayerPort(
+            play = { pcm -> if (!runOpen) { firstWrite = System.nanoTime(); runOpen = true }; played += pcm },
+            drain = { drained++; runOpen = false },
+            stop = { stopped++; runOpen = false },
             firstWriteAtNanos = { firstWrite },
-        ))
+        ), actions)
 
         fun typed(text: String): List<Event> = runBlocking { engine.turn(null, text).toList() }
         fun heard(pcm: FloatArray): List<Event> = runBlocking { engine.turn(pcm, null).toList() }
+    }
+
+    private companion object {
+        /** PhoneTools' actions ([VoiceTool.isAction]). */
+        val PHONE_ACTIONS = setOf("set_alarm", "set_timer", "add_calendar_event")
     }
 }

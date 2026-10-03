@@ -43,8 +43,9 @@ class SpeechPlayer(val sampleRate: Int = 24000) : AutoCloseable {
             throw IllegalStateException("AudioTrack did not initialize ($sampleRate Hz mono float)")
         }
         // A stream starts by default only once its whole buffer is full, so a reply shorter than a second would
-        // never sound; start as soon as 100 ms are queued.
-        track.setStartThresholdInFrames(minOf(sampleRate / 10, track.bufferCapacityInFrames))
+        // never sound; start as soon as 25 ms are queued. A kitten chunk can be as short as 1,200 samples (the speaker's
+        // min_samples after its tail trim); below a 100 ms threshold such a reply alone would wait out drain's 2 s slack.
+        track.setStartThresholdInFrames(minOf(sampleRate / 40, track.bufferCapacityInFrames))
     }
 
     /** Frames written since the track was last flushed: the target of [AudioTrack.getPlaybackHeadPosition]. */
@@ -58,7 +59,10 @@ class SpeechPlayer(val sampleRate: Int = 24000) : AutoCloseable {
     @Volatile var firstWriteAtNanos: Long = 0L
         private set
 
-    /** Writes [samples] in slices of 200 ms, blocking on a full queue (on an IO thread). A cancel stops the sound. */
+    /**
+     * Writes [samples] in slices of 200 ms, blocking on a full queue (on an IO thread). A cancel stops the sound; a
+     * failure ends the run, so the next [play] starts a new one (and sets [firstWriteAtNanos]).
+     */
     suspend fun play(samples: FloatArray) {
         check(!closed) { "SpeechPlayer is closed" }
         val gen = generation
@@ -79,6 +83,9 @@ class SpeechPlayer(val sampleRate: Int = 24000) : AutoCloseable {
                 }
             } catch (e: CancellationException) {
                 stop()
+                throw e
+            } catch (e: Exception) {
+                runOpen = false
                 throw e
             }
         }

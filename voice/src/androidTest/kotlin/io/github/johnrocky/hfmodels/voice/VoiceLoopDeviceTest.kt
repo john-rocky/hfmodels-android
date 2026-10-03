@@ -43,7 +43,8 @@ import org.junit.runner.RunWith
  *      (pre-roll 300 ms, hangover 800 ms) in 20 ms chunks, and the utterance it cuts (the hangover included) to
  *      `turn(pcm)`; input=text: the command's text to `turn(text)`. The line: what was heard, the calls and
  *      success against [FixedCommands], the loop's timing in ms from the end of the utterance (no player, so
- *      ms_first_audio is the end of the first sentence's synthesis), what was said. hangover_ms is the
+ *      ms_first_audio is the end of the first sentence's synthesis), the model's text (reply) and what was said
+ *      (spoken: an action's result instead of the model's words, VoiceLoopConfig.speakActionResults). hangover_ms is the
  *      endpointer's: a speaker hears the first sound hangover_ms + ms_first_audio after they stop talking. Then
  *      a summary: successes, the medians, VmHWM after the turns;
  *   3. play (play=true): the first command once more through a loop with a [SpeechPlayer] (it sounds): the loop's
@@ -53,7 +54,8 @@ import org.junit.runner.RunWith
  *   5. release.
  * Arguments: llm (repo id), variant, backend (gpu | cpu), format (runtime | qwenxml | lfm), input (wav | text,
  * default wav), play (default false), dir (default /data/local/tmp/hfmodels/llm), descriptor (asset name; default
- * the bundled catalog), fixtures (default /data/local/tmp/hfmodels-voice/commands).
+ * the bundled catalog), fixtures (default /data/local/tmp/hfmodels-voice/commands), normalize (the transcript as a
+ * sentence before the model, VoiceLoopConfig.normalizeTranscript; default true).
  *
  *   tools/voiceloop_gate.sh litert-community/gemma-4-E2B-it-litert-lm default gpu runtime wav
  */
@@ -71,10 +73,11 @@ class VoiceLoopDeviceTest {
     private val dir = File(args.getString("dir") ?: "/data/local/tmp/hfmodels/llm")
     private val descriptorAsset = args.getString("descriptor")
     private val fixtures = File(args.getString("fixtures") ?: "/data/local/tmp/hfmodels-voice/commands")
+    private val normalize = args.getString("normalize")?.toBoolean() ?: VoiceLoopConfig().normalizeTranscript
     private val failures = ArrayList<String>()
 
     private fun result(step: String, ok: Boolean, detail: String) {
-        Log.i(TAG, "RESULT step=$step ok=$ok input=$input llm=$llm variant=${variant ?: "default"} backend=$backend format=$formatName $detail")
+        Log.i(TAG, "RESULT step=$step ok=$ok input=$input llm=$llm variant=${variant ?: "default"} backend=$backend format=$formatName normalize=$normalize $detail")
         if (!ok) failures += "$step: $detail"
     }
 
@@ -87,7 +90,7 @@ class VoiceLoopDeviceTest {
         val llmModels = HfModels(ctx)
         val open = ArrayList<PreparedModel>()
         var player: SpeechPlayer? = null
-        Log.i(TAG, "device=${Build.MODEL} soc=${Build.SOC_MANUFACTURER}/${Build.SOC_MODEL} build=${Build.DISPLAY} android=${Build.VERSION.RELEASE} llm=$llm variant=${variant ?: "default"} backend=$backend format=$formatName input=$input play=$play tomorrow=$tomorrow store=${llmModels.root}")
+        Log.i(TAG, "device=${Build.MODEL} soc=${Build.SOC_MANUFACTURER}/${Build.SOC_MODEL} build=${Build.DISPLAY} android=${Build.VERSION.RELEASE} llm=$llm variant=${variant ?: "default"} backend=$backend format=$formatName input=$input play=$play normalize=$normalize tomorrow=$tomorrow store=${llmModels.root}")
         try {
             // 1. load
             val hwmStart = status("VmHWM")
@@ -105,7 +108,7 @@ class VoiceLoopDeviceTest {
             val commands = File(fixtures, "commands.tsv").readLines(Charsets.UTF_8).filter { it.isNotBlank() }.map { it.substringBefore('\t') to it.substringAfter('\t') }
             val expected = FixedCommands.expected(tomorrow)
             val recording = RecordingTools()
-            val loop = VoiceLoop(asr.model, chat.model, tts.model, recording.all, VoiceLoopConfig(toolFormat = format))
+            val loop = VoiceLoop(asr.model, chat.model, tts.model, recording.all, VoiceLoopConfig(toolFormat = format, normalizeTranscript = normalize))
             val timings = ArrayList<VoiceLoop.TurnTiming>()
             var ok = 0
             var errors = 0
@@ -122,7 +125,7 @@ class VoiceLoopDeviceTest {
                         "ms_reply=${f(t?.replyMs)} ms_speak=${f(t?.speakMs)} ms_total=${f(t?.totalMs)} hangover_ms=${if (input == "wav") HANGOVER_MS else 0} " +
                         "utterance_ms=${f(r.utteranceMs)} cut=${r.cut ?: "none"} sentences=${r.sentences.size} first_sentence=${q(r.sentences.firstOrNull() ?: "")} " +
                         "llm_turns=${t?.llmTurns ?: 0} tool_calls=${t?.toolCalls ?: 0} errors=${r.errors.joinToString(" | ", "[", "]") { "${it.code}: ${it.message.take(200)}" }} " +
-                        "reply=${q(t?.reply ?: "")} expect=${expected.getValue(id).joinToString("+") { it.label }}")
+                        "reply=${q(t?.reply ?: "")} spoken=${q(t?.spoken ?: "")} expect=${expected.getValue(id).joinToString("+") { it.label }}")
             }
             val hwmTurns = status("VmHWM")
             result("summary", true,
@@ -135,13 +138,13 @@ class VoiceLoopDeviceTest {
             val (firstId, firstText) = commands.first()
             if (play) {
                 val p = SpeechPlayer(tts.model.sampleRate).also { player = it }
-                val sounding = VoiceLoop(asr.model, chat.model, tts.model, recording.all, VoiceLoopConfig(toolFormat = format, player = p))
+                val sounding = VoiceLoop(asr.model, chat.model, tts.model, recording.all, VoiceLoopConfig(toolFormat = format, player = p, normalizeTranscript = normalize))
                 val r = turn(sounding, recording, firstId, firstText)
                 val t = r.timing
                 val fromTrack = r.startNanos?.let { s -> p.firstWriteAtNanos.takeIf { it >= s }?.let { (it - s) / 1e6 } }
                 result("play", t?.firstAudioMs != null && fromTrack != null,
                     "file=$firstId heard=${q(r.heard ?: "")} ms_first_audio=${f(t?.firstAudioMs)} ms_first_audio_track=${f(fromTrack)} ms_first_sentence=${f(t?.firstSentenceMs)} ms_speak=${f(t?.speakMs)} " +
-                        "ms_total=${f(t?.totalMs)} hangover_ms=${if (input == "wav") HANGOVER_MS else 0} sentences=${r.sentences.size} errors=${r.errors.size} reply=${q(t?.reply ?: "")}")
+                        "ms_total=${f(t?.totalMs)} hangover_ms=${if (input == "wav") HANGOVER_MS else 0} sentences=${r.sentences.size} errors=${r.errors.size} reply=${q(t?.reply ?: "")} spoken=${q(t?.spoken ?: "")}")
             }
 
             // 4. listen over the first command's audio
@@ -166,7 +169,7 @@ class VoiceLoopDeviceTest {
             for (m in open.reversed()) runCatching { m.closeAndJoin() }
             asrModels.closeAndJoin(); ttsModels.closeAndJoin(); llmModels.closeAndJoin()
         }
-        Log.i(TAG, "RESULT ok=${failures.isEmpty()} input=$input llm=$llm variant=${variant ?: "default"} backend=$backend format=$formatName device=${Build.MODEL} build=${Build.DISPLAY} failures=${failures.joinToString(" | ")}")
+        Log.i(TAG, "RESULT ok=${failures.isEmpty()} input=$input llm=$llm variant=${variant ?: "default"} backend=$backend format=$formatName normalize=$normalize device=${Build.MODEL} build=${Build.DISPLAY} failures=${failures.joinToString(" | ")}")
         assertTrue(failures.joinToString("\n"), failures.isEmpty())
     }
 
@@ -188,7 +191,7 @@ class VoiceLoopDeviceTest {
             cut = how
             loop.turn(pcm)
         } else loop.turn(text)
-        // The loop's clock starts when collection begins: right after this.
+        // The loop's clock starts when the turn has the loop: right after this (one turn at a time here).
         val start = System.nanoTime()
         val events = withTimeout(TURN_TIMEOUT_MS) { flow.toList() }
         val calls = synchronized(recording.calls) { recording.calls.subList(before, recording.calls.size).toList() }

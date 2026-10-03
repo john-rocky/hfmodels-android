@@ -12,6 +12,12 @@ interface VoiceTool {
     val description: String
     val parameters: List<ToolParam>
 
+    /**
+     * Whether the tool changes something on the phone (an alarm, a timer, an event) rather than reads it. [VoiceLoop]
+     * says an action's result instead of the model's words about it ([VoiceLoopConfig.speakActionResults]).
+     */
+    val isAction: Boolean get() = false
+
     /** [args]: the model's arguments by name. A number may arrive as a number or as a string; [ToolArgs] reads either. */
     suspend fun call(args: Map<String, Any?>): String
 }

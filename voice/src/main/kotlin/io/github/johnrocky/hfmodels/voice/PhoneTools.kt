@@ -78,6 +78,7 @@ class ClockTool : VoiceTool {
 class AlarmTool(private val context: Context) : VoiceTool {
     override val name = "set_alarm"
     override val description = "Sets an alarm on this phone."
+    override val isAction = true
     override val parameters = listOf(
         ToolParam("hour", "integer", "Hour in 24-hour time (0-23)."),
         ToolParam("minute", "integer", "Minute (0-59)."),
@@ -112,6 +113,7 @@ class AlarmTool(private val context: Context) : VoiceTool {
 class TimerTool(private val context: Context) : VoiceTool {
     override val name = "set_timer"
     override val description = "Starts a countdown timer on this phone."
+    override val isAction = true
     override val parameters = listOf(
         ToolParam("minutes", "integer", "Length of the timer in minutes."),
         ToolParam("label", "string", "Short label shown with the timer."),
@@ -153,6 +155,7 @@ class CalendarTool(private val context: Context) {
     val add: VoiceTool = object : VoiceTool {
         override val name = "add_calendar_event"
         override val description = "Adds an event to the phone calendar."
+        override val isAction = true
         override val parameters = listOf(
             ToolParam("title", "string", "Event title."),
             ToolParam("start", "string", "Start time as YYYY-MM-DD HH:MM."),

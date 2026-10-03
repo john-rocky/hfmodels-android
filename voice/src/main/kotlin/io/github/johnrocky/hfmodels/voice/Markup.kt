@@ -26,3 +26,13 @@ internal fun unshownText(text: String, shown: Int, said: String): String {
     val before = text.substring(0, shown).trimStart()
     return if (said.length > before.length && said.startsWith(before)) said.substring(before.length) else ""
 }
+
+private val LINE_MARK = Regex("(?m)^[ \\t]*(?:[-*] +|#+[ \\t]*)")
+private val MARKDOWN_MARKS = Regex("[*_#`]")
+
+/**
+ * [text] without the markdown a chat model may still write in a spoken reply: a `- ` or `* ` bullet or a `#` heading
+ * mark at the start of a line, and every `*`, `_`, `#` and `` ` `` (emphasis, code). What is left goes to the speaker;
+ * the model's text as it was written stays in [VoiceLoop.TurnTiming.reply].
+ */
+internal fun stripMarkdown(text: String): String = text.replace(LINE_MARK, "").replace(MARKDOWN_MARKS, "")

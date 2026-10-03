@@ -22,8 +22,9 @@ import kotlinx.coroutines.flow.callbackFlow
  *
  * Collecting [chunks] opens an [AudioRecord] and reads it on its own thread; cancelling the collector stops
  * and releases it before the collection ends. `RECORD_AUDIO` is the app's: requested and granted before
- * collecting (without it the platform's [SecurityException] ends the flow as it is). A chunk that cannot be
- * delivered at once waits on the reader thread, so a slow collector loses audio in the recorder's own buffer.
+ * collecting (without it the [AudioRecord] does not initialize and the flow ends with an [IllegalStateException]).
+ * A chunk that cannot be delivered at once waits on the reader thread, so a slow collector loses audio in the
+ * recorder's own buffer.
  */
 class MicSource(
     val sampleRate: Int = 16000,
@@ -72,8 +73,8 @@ class MicSource(
                             if (running.get()) close(IllegalStateException("AudioRecord.read returned $n"))
                             break
                         }
-                        // 0 or a transient error (ERROR, ERROR_BAD_VALUE): read again.
-                        else -> {}
+                        // 0 or a transient error (ERROR, ERROR_BAD_VALUE): read again, after a pause so the thread does not spin.
+                        else -> Thread.sleep(TRANSIENT_RETRY_MS)
                     }
                 }
             } catch (t: Throwable) {
@@ -94,5 +95,6 @@ class MicSource(
 
     private companion object {
         const val READER_JOIN_MS = 1_000L
+        const val TRANSIENT_RETRY_MS = 5L
     }
 }

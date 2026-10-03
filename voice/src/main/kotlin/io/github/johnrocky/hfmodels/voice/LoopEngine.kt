@@ -30,7 +30,8 @@ internal class PlayerPort(
 
 /**
  * [VoiceLoop]'s turns and listen without the chat model's wiring: [reply] is a ToolRunner's turn in the loop and a
- * script in the JVM tests (this class names no LiteRT-LM type, so the tests run on any JVM).
+ * script in the JVM tests (this class names no LiteRT-LM type, so the tests run on any JVM). [actions]: the names of
+ * the tools whose results are said instead of the model's words ([VoiceTool.isAction]).
  */
 internal class LoopEngine(
     private val transcriber: Transcriber?,
@@ -38,13 +39,16 @@ internal class LoopEngine(
     private val reply: (String) -> Flow<ToolEvent>,
     private val config: VoiceLoopConfig,
     private val player: PlayerPort?,
+    private val actions: Set<String> = emptySet(),
 ) {
     private val turnLock = Mutex()
     private val listening = AtomicBoolean(false)
     private val active: MutableSet<Job> = ConcurrentHashMap.newKeySet()
     @Volatile private var closed = false
 
-    fun turn(pcm: FloatArray?, text: String?): Flow<Event> = tracked { t0 -> turnLock.withLock { runTurn(t0, pcm, text) } }
+    // The turn's clock starts when it has the loop: the wait for an earlier turn is not its time, and that turn's
+    // first write to the player is not its first sound.
+    fun turn(pcm: FloatArray?, text: String?): Flow<Event> = tracked { turnLock.withLock { runTurn(System.nanoTime(), pcm, text) } }
 
     fun listen(audio: Flow<FloatArray>): Flow<Event> = tracked {
         check(listening.compareAndSet(false, true)) { "this VoiceLoop is already listening (one listen at a time)" }
@@ -93,14 +97,13 @@ internal class LoopEngine(
         player?.stop?.invoke()
     }
 
-    /** A flow whose producer [closeAndJoin] can stop; [block] gets the moment collection began (System.nanoTime). */
-    private fun tracked(block: suspend ProducerScope<Event>.(t0: Long) -> Unit): Flow<Event> = channelFlow {
-        val t0 = System.nanoTime()
+    /** A flow whose producer [closeAndJoin] can stop. */
+    private fun tracked(block: suspend ProducerScope<Event>.() -> Unit): Flow<Event> = channelFlow {
         check(!closed) { "this VoiceLoop is closed" }
         val job = coroutineContext[Job]!!
         active += job
         try {
-            block(t0)
+            block()
         } finally {
             active -= job
         }
@@ -109,13 +112,17 @@ internal class LoopEngine(
     private suspend fun ProducerScope<Event>.runTurn(t0: Long, pcm: FloatArray?, typed: String?) {
         fun since(at: Long) = (at - t0) / 1e6
         val speech = Speech(this, t0)
-        val said = StringBuilder()
-        fun say(text: String, chunks: List<String>) {
+        // The model's text (TurnTiming.reply) and the text handed to the speaker (TurnTiming.spoken).
+        val replyText = StringBuilder()
+        val spokenText = StringBuilder()
+        /** A text of the loop's own (an action's result, the empty-reply or the failure text), said whole. */
+        fun say(text: String) {
             if (text.isBlank()) return
-            if (said.isNotEmpty() && !said.last().isWhitespace()) said.append(' ')
-            said.append(text)
-            speech.say(chunks)
+            spokenText.join(text, newText = true)
+            speech.say(SentenceSplitter.split(text, speaker.maxChars))
         }
+        // An action has run: its result was said, and the model's words from here on are not.
+        var actionSaid = false
         var heard = ""
         var transcribeMs = 0.0
         var llmAt = 0L
@@ -133,9 +140,9 @@ internal class LoopEngine(
                 }
                 transcribeMs = since(System.nanoTime())
                 if (transcript == null) {
-                    say(config.failureText, SentenceSplitter.split(config.failureText, speaker.maxChars))
+                    say(config.failureText)
                 } else {
-                    heard = transcript.text.trim()
+                    heard = transcript.text.trim().let { if (config.normalizeTranscript) normalizeTranscript(it) else it }
                     send(Event.Heard(heard, pcm.size * 1000.0 / asr.limits.sampleRate, transcribeMs))
                 }
             } else {
@@ -152,10 +159,12 @@ internal class LoopEngine(
                         is ToolEvent.Thinking -> {}
                         is ToolEvent.Text -> if (e.delta.isNotEmpty()) {
                             // A model turn after a tool call starts a new sentence in the record too.
-                            if (afterCall && said.isNotEmpty() && !said.last().isWhitespace() && !e.delta.first().isWhitespace()) said.append(' ')
+                            replyText.join(e.delta, newText = afterCall)
+                            if (!actionSaid) {
+                                spokenText.join(e.delta, newText = afterCall)
+                                speech.say(stream.add(e.delta))
+                            }
                             afterCall = false
-                            said.append(e.delta)
-                            speech.say(stream.add(e.delta))
                         }
                         is ToolEvent.ToolCalled -> {
                             // The end of a model turn ends its sentence.
@@ -163,26 +172,30 @@ internal class LoopEngine(
                             afterCall = true
                             calls += e
                             send(Event.ToolCalled(e.name, e.args, e.result, e.ms))
+                            if (config.speakActionResults && e.name in actions) {
+                                // What the phone did, not what the model says it did (Gemma 4 E2B called 16:15 and said "6:15").
+                                actionSaid = true
+                                say(actionReceipt(e.result))
+                            }
                         }
                         is ToolEvent.Done -> {
                             replyAt = System.nanoTime()
                             runnerTiming = e.timing
                             speech.say(stream.flush())
-                            if (e.reply.isBlank()) {
-                                if (calls.isNotEmpty()) {
-                                    // The model said nothing after its calls: the last round's results say what was done.
-                                    for (c in calls.filter { it.turn == calls.last().turn }) say(c.result, SentenceSplitter.split(c.result, speaker.maxChars))
-                                } else if (said.isBlank()) {
-                                    say(config.emptyReplyText, SentenceSplitter.split(config.emptyReplyText, speaker.maxChars))
-                                }
+                            if (e.reply.isBlank() && !actionSaid) {
+                                // The model said nothing after its calls: the last round's actions say what was done (a read's
+                                // result is data, such as get_calendar_events' JSON, not a sentence to say).
+                                val last = calls.lastOrNull()?.turn
+                                for (c in calls) if (c.turn == last && c.name in actions) say(actionReceipt(c.result))
                             }
+                            if (spokenText.isBlank()) say(config.emptyReplyText)
                         }
                         is ToolEvent.Failed -> {
                             replyAt = System.nanoTime()
                             runnerTiming = e.timing
                             speech.say(stream.flush())
                             send(Event.Error(e.code, e.reason))
-                            say(config.failureText, SentenceSplitter.split(config.failureText, speaker.maxChars))
+                            say(config.failureText)
                         }
                     }
                 }
@@ -205,8 +218,15 @@ internal class LoopEngine(
             toolCalls = runnerTiming?.toolCalls ?: calls.size,
             llmTurns = runnerTiming?.turns ?: 0,
             heard = heard,
-            reply = said.toString().trim(),
+            reply = replyText.toString().trim(),
+            spoken = stripMarkdown(spokenText.toString()).trim(),
         )))
+    }
+
+    /** Appends [piece]; a [newText] (a result, the loop's own text, a model turn after a call) is set off by a space. */
+    private fun StringBuilder.join(piece: String, newText: Boolean) {
+        if (newText && isNotEmpty() && !last().isWhitespace() && !piece.first().isWhitespace()) append(' ')
+        append(piece)
     }
 
     /**
@@ -277,10 +297,13 @@ internal class LoopEngine(
             @Suppress("UNREACHABLE_CODE") null
         }
 
+        /** [chunks] without markdown ([stripMarkdown]); a chunk left blank is dropped. */
         fun say(chunks: List<String>) {
             for (c in chunks) {
+                val text = stripMarkdown(c).trim()
+                if (text.isEmpty()) continue
                 if (firstSentenceAt == 0L) firstSentenceAt = System.nanoTime()
-                sentences.trySend(c)
+                sentences.trySend(text)
             }
         }
 
@@ -296,4 +319,23 @@ internal class LoopEngine(
     private companion object {
         const val FIRST_WRITE_WAIT_MS = 2_000L
     }
+}
+
+/** An action's result as it is said: as it is, or for an `Error:` result "Sorry, " and the reason. */
+internal fun actionReceipt(result: String): String =
+    if (result.startsWith("Error:")) "Sorry, " + result.removePrefix("Error:").trim() else result
+
+private val PRONOUN_I = Regex("\\bi\\b")
+
+/**
+ * A transcript as the model gets it with [VoiceLoopConfig.normalizeTranscript]: an all-capitals transcript (Zipformer
+ * writes capitals without punctuation) in lower case with the first letter and the word I in capitals; then a full stop
+ * when it does not end in a sentence mark. A transcript with a lower-case letter keeps its case.
+ */
+internal fun normalizeTranscript(text: String): String {
+    var t = text.trim()
+    if (t.isEmpty()) return t
+    if (t.none { it.isLowerCase() }) t = t.lowercase().replace(PRONOUN_I, "I").replaceFirstChar { it.uppercaseChar() }
+    if (t.last() !in SentenceSplitter.MARKS) t += "."
+    return t
 }
