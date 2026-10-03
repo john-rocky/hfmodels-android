@@ -48,7 +48,7 @@ sealed class Answer {
 data class DecisionTiming(
     /** Serializing and tokenizing the state, once per `decide` / `prefill`. */
     val stateMs: Double,
-    /** Per question: building the sequence and running the model, in question order. Questions a model answers in one forward each carry that forward's time, so the list can add up to more than `totalMs`. */
+    /** Per question: building the sequence and running the model, in question order. Questions a model answers in one shared forward (`deberta_decision` packs a request's questions into one) all carry that forward's time, so the list can add up to more than `totalMs`. */
     val questionMs: List<Double>,
     /** From the call to the answers. */
     val totalMs: Double,
