@@ -13,6 +13,9 @@ import io.github.johnrocky.hfmodels.litertlm.ChatSession
 import io.github.johnrocky.hfmodels.litertlm.GenerationOptions
 import io.github.johnrocky.hfmodels.litertlm.SessionState
 import io.github.johnrocky.hfmodels.litertlm.ThinkingInfo
+import io.github.johnrocky.hfmodels.speech.Speaker
+import io.github.johnrocky.hfmodels.speech.SpeechAudio
+import io.github.johnrocky.hfmodels.speech.SpeechTiming
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.toList
@@ -36,6 +39,7 @@ class ToolRunnerTest {
     @Test fun theTextAfterAnLfmCallBlockStreamsBeforeTheCallRuns() = scenario { theTextAfterAnLfmCallBlockStreamsBeforeTheCallRuns() }
     @Test fun callsTheRuntimeParsedRunUnderATextFormatToo() = scenario { callsTheRuntimeParsedRunUnderATextFormatToo() }
     @Test fun markupTheRuntimeLeftInTheTextFailsTheTurnUnshown() = scenario { markupTheRuntimeLeftInTheTextFailsTheTurnUnshown() }
+    @Test fun theLoopSaysTheTextAroundLfmCallsAndNeverTheMarkup() = scenario { theLoopSaysTheTextAroundLfmCallsAndNeverTheMarkup() }
 
     @Test fun theVisibleTextStopsBeforeMarkupOrAPieceOfIt() {
         assertEquals(6, beforeMarkup("Sure. <tool_call>x", "<tool_call"))
@@ -197,8 +201,37 @@ internal class ToolRunnerScenarios {
         val events = run(model, ToolFormat.Runtime, "Set an alarm for seven thirty.")
         val failed = events.last() as ToolEvent.Failed
         assertTrue(failed.reason, failed.reason.startsWith("tool call markup the runtime did not parse"))
+        // The markup's first 80 characters are in the reason.
+        assertTrue(failed.reason, failed.reason.startsWith("tool call markup the runtime did not parse is in the text (this bundle may need format lfm or qwenxml): <|tool_call_start|>[set_alarm(hour=7, minute=30)]<|tool_call_end|>I am setting a: "))
         assertEquals(emptyList<ToolEvent>(), events.filterIsInstance<ToolEvent.Text>())
         assertEquals(emptyList<Any>(), recorded)
+    }
+
+    /** The loop over the real runner: chunks with LFM call markup in them, as the model streams them. */
+    fun theLoopSaysTheTextAroundLfmCallsAndNeverTheMarkup() {
+        val model = ScriptedModel(listOf(
+            listOf(text("Sure. <|tool_call_start|>[set_alarm(hour=7, minute="), text("30)]<|tool_call_end|>I am setting an alarm for 7:30 AM tomorrow.")),
+            listOf(text("Done.")),
+        ))
+        val said = ArrayList<String>()
+        val speaker = object : Speaker {
+            override val info: PreparedModelInfo get() = throw UnsupportedOperationException()
+            override val voices = listOf("v")
+            override val sampleRate = 24000
+            override val maxChars = 400
+            override fun close() {}
+            override suspend fun closeAndJoin() {}
+            override fun phonemeIds(text: String) = IntArray(0)
+            override suspend fun synthesize(text: String, voice: String?, speed: Float): SpeechAudio {
+                said += text
+                return SpeechAudio(FloatArray(1), 24000, SpeechTiming(0.0, 0.0, 0.0, 1))
+            }
+        }
+        val engine = LoopEngine(null, speaker, ToolRunner(model, tools, ToolFormat.LfmPythonic)::turn, VoiceLoopConfig(), null)
+        val events = runBlocking { engine.turn(null, "Set an alarm for seven thirty tomorrow.").toList() }
+        assertEquals(listOf("Sure,", "I am setting an alarm for 7:30 AM tomorrow,", "Done,"), said)
+        assertEquals(listOf("set_alarm" to mapOf<String, Any?>("hour" to 7L, "minute" to 30L)), recorded)
+        assertEquals("Sure. I am setting an alarm for 7:30 AM tomorrow. Done.", (events.last() as VoiceLoop.Event.Done).timing.reply)
     }
 
     fun aModelThatKeepsCallingStopsAtTheRoundLimit() {

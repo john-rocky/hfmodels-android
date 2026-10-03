@@ -136,7 +136,7 @@ class ToolsDeviceTest {
             // 2. the commands
             val commands = File(fixtures, "commands.tsv").readLines(Charsets.UTF_8).filter { it.isNotBlank() }
                 .map { it.substringBefore('\t') to it.substringAfter('\t') }.filter { only == null || it.first in only }
-            val expected = expected(tomorrow)
+            val expected = FixedCommands.expected(tomorrow)
             val recording = RecordingTools()
             val systemText: (String) -> String = when (system) {
                 "default" -> { now -> ToolRunner.defaultSystemInstruction(now) }
@@ -160,9 +160,9 @@ class ToolsDeviceTest {
                 }
                 val r = turn(runner, recording, text)
                 runs[id] = r
-                val (success, extra) = judge(expected.getValue(id), r.calls)
+                val (success, extra) = FixedCommands.judge(expected.getValue(id), r.calls)
                 if (success) ok++
-                result("command", true, "file=$id success=$success calls=${r.calls.joinToString(",", "[", "]") { describe(it) }} extra=$extra turns=${r.timing.turns} " +
+                result("command", true, "file=$id success=$success calls=${r.calls.joinToString(",", "[", "]") { FixedCommands.describe(it) }} extra=$extra turns=${r.timing.turns} " +
                     "ms_first_token=${"%.0f".format(r.timing.firstTokenMs)} ms_reply=${"%.0f".format(r.timing.replyMs)} ms_decode=${"%.0f".format(r.timing.decodeMs)} chunks=${r.timing.chunks} chars=${r.timing.chars} thought_chars=${r.thoughtChars} " +
                     "tool_ms=${"%.1f".format(r.toolMs)} ${r.failed?.let { "failed=${q(it)} " } ?: ""}reply=${q(r.reply)} expect=${expected.getValue(id).joinToString("+") { it.label }}")
             }
@@ -170,7 +170,7 @@ class ToolsDeviceTest {
             val decodeMs = timings.sumOf { it.decodeMs }
             result("summary", true, "success=$ok/${commands.size} ms_first_token_median=${"%.0f".format(median(timings.map { it.firstTokenMs }.filter { it >= 0 }))} ms_reply_median=${"%.0f".format(median(timings.map { it.replyMs }))} " +
                 "turns_median=${median(timings.map { it.turns.toDouble() })} chars_per_s=${"%.1f".format(timings.sumOf { it.chars } * 1000.0 / decodeMs)} chunks_per_s=${"%.1f".format(timings.sumOf { it.chunks } * 1000.0 / decodeMs)} " +
-                "failed=${runs.count { it.value.failed != null }} extra_total=${runs.entries.sumOf { judge(expected.getValue(it.key), it.value.calls).second }} fresh_load_each=$fresh reload_ms_total=$reloadMs system=$system")
+                "failed=${runs.count { it.value.failed != null }} extra_total=${runs.entries.sumOf { FixedCommands.judge(expected.getValue(it.key), it.value.calls).second }} fresh_load_each=$fresh reload_ms_total=$reloadMs system=$system")
 
             // 3. the first command again, with its first sentence through the speaker as the text streams
             val (firstId, firstText) = commands.first()
@@ -179,7 +179,7 @@ class ToolsDeviceTest {
             result("first_audio", again.firstAudioMs != null,
                 "file=$firstId ms_first_audio_from_text=${again.firstAudioMs?.let { "%.0f".format(it) } ?: "none"} first_sentence=${q(again.firstSentence ?: "")} ms_sentence_ready=${again.sentenceAtMs?.let { "%.0f".format(it) } ?: "none"} " +
                     "ms_synth=${again.synthMs?.let { "%.1f".format(it) } ?: "none"} audio_s=${again.audioS?.let { "%.2f".format(it) } ?: "none"} ms_reply=${"%.0f".format(again.timing.replyMs)} " +
-                    "same_calls_as_first=${again.calls.map { describe(it) } == first.calls.map { describe(it) }} same_reply_as_first=${again.reply == first.reply} reply=${q(again.reply)}")
+                    "same_calls_as_first=${again.calls.map { FixedCommands.describe(it) } == first.calls.map { FixedCommands.describe(it) }} same_reply_as_first=${again.reply == first.reply} reply=${q(again.reply)}")
             result("memory", true, "vmhwm_kb_after_all=${status("VmHWM")} vmrss_kb=${status("VmRSS")} before_llm=$hwmBeforeLlm after_llm=$hwmAfterLlm")
 
             // 4. release
@@ -272,52 +272,6 @@ class ToolsDeviceTest {
         val calls = synchronized(recording.calls) { recording.calls.subList(before, recording.calls.size).toList() }
         Run(calls, reply, failed, timing!!, thoughtChars, toolMs, sentence, sentenceAt, spoken?.atMs, spoken?.synthMs, spoken?.audioS)
     }
-
-    // ---- judging ----
-
-    private class Expect(val name: String, val label: String, val check: (Map<String, Any?>) -> Boolean)
-
-    private fun num(a: Map<String, Any?>, k: String): Double? = when (val v = a[k]) {
-        is Number -> v.toDouble()
-        null -> null
-        else -> v.toString().trim().toDoubleOrNull()
-    }
-
-    private fun minuteOf(a: Map<String, Any?>, k: String): String? = a[k]?.toString()?.trim()?.replace('T', ' ')?.take(16)
-
-    private fun alarm(h: Int, m: Int) = Expect("set_alarm", "set_alarm{hour=$h,minute=$m}") { a -> num(a, "hour") == h.toDouble() && num(a, "minute") == m.toDouble() }
-    private fun timer(min: Int) = Expect("set_timer", "set_timer{minutes=$min}") { a -> num(a, "minutes") == min.toDouble() }
-
-    private fun expected(tomorrow: String): Map<String, List<Expect>> = mapOf(
-        "c01" to listOf(alarm(7, 30)),
-        "c02" to listOf(alarm(6, 15)),
-        "c03" to listOf(timer(10)),
-        "c04" to listOf(timer(45)),
-        "c05" to listOf(Expect("get_current_datetime", "get_current_datetime") { true }),
-        "c06" to listOf(Expect("get_calendar_events", "get_calendar_events{date=$tomorrow}") { a -> a["date"]?.toString()?.trim()?.take(10) == tomorrow }),
-        "c07" to listOf(Expect("add_calendar_event", "add_calendar_event{title~dentist,start=$tomorrow 17:00}") { a ->
-            a["title"]?.toString()?.lowercase()?.contains("dentist") == true && minuteOf(a, "start") == "$tomorrow 17:00"
-        }),
-        "c08" to listOf(Expect("add_calendar_event", "add_calendar_event{title~standup,start=$tomorrow 09:00}") { a ->
-            a["title"]?.toString()?.lowercase()?.let { it.contains("standup") || it.contains("stand up") || it.contains("stand-up") } == true && minuteOf(a, "start") == "$tomorrow 09:00"
-        }),
-        "c09" to listOf(alarm(8, 0), timer(20)),
-        "c10" to listOf(alarm(21, 30)),
-    )
-
-    /** (every expected call found, each by its own call; the calls left over). */
-    private fun judge(expect: List<Expect>, calls: List<RecordingTools.Call>): Pair<Boolean, Int> {
-        val used = BooleanArray(calls.size)
-        var found = 0
-        for (e in expect) {
-            val i = calls.indices.firstOrNull { !used[it] && calls[it].name == e.name && runCatching { e.check(calls[it].args) }.getOrDefault(false) } ?: continue
-            used[i] = true
-            found++
-        }
-        return (found == expect.size) to (calls.size - found)
-    }
-
-    private fun describe(c: RecordingTools.Call) = c.name + c.args.entries.joinToString(",", "{", "}") { "${it.key}=${it.value}" }
 
     // ---- helpers ----
 

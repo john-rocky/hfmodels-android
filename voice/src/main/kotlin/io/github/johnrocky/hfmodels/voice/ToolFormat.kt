@@ -65,8 +65,11 @@ internal fun ToolFormat.conversationConfig(tools: List<VoiceTool>, system: Strin
 internal fun ToolFormat.parse(text: String, runtimeCalls: List<ToolCall>): ParsedTurn {
     val byRuntime = runtimeCalls.map { ParsedCall(it.name, it.arguments, byRuntime = true) }
     return when (this) {
-        ToolFormat.Runtime -> if (RUNTIME_MARKUP.any { text.contains(it) }) ParsedTurn(emptyList(), text.trim(), "tool call markup the runtime did not parse is in the text (this bundle may need format lfm or qwenxml)")
+        ToolFormat.Runtime -> {
+            val at = RUNTIME_MARKUP.map { text.indexOf(it) }.filter { it >= 0 }.minOrNull()
+            if (at != null) ParsedTurn(emptyList(), text.trim(), "tool call markup the runtime did not parse is in the text (this bundle may need format lfm or qwenxml): ${text.substring(at).take(80)}")
             else ParsedTurn(byRuntime, text.trim(), null)
+        }
         ToolFormat.QwenXml -> if (QwenXmlToolCalls.hasUnparsedMarkup(text)) ParsedTurn(emptyList(), text.trim(), "malformed or incomplete tool call in the text")
             else ParsedTurn(byRuntime + QwenXmlToolCalls.parse(text).map { ParsedCall(it.name, it.args) }, QwenXmlToolCalls.withoutCalls(text), null)
         ToolFormat.LfmPythonic -> if (LfmPythonicToolCalls.hasUnparsedMarkup(text)) ParsedTurn(emptyList(), text.trim(), "malformed or incomplete tool call in the text")

@@ -127,7 +127,7 @@ class ToolRunner(
                     calls++
                     val tc = System.nanoTime()
                     val result = execute(c)
-                    emit(ToolEvent.ToolCalled(c.name, c.args, result, (System.nanoTime() - tc) / 1e6))
+                    emit(ToolEvent.ToolCalled(c.name, c.args, result, (System.nanoTime() - tc) / 1e6, turns))
                     // A call the runtime parsed is answered in the runtime's shape, whatever the text format.
                     responses += (if (c.byRuntime) ToolFormat.Runtime else format).response(c.name, result)
                 }
@@ -160,8 +160,8 @@ sealed interface ToolEvent {
     /** A piece of the model's visible text, incremental, without the call markup the format parses (any model turn's, in order). */
     data class Text(val delta: String) : ToolEvent
 
-    /** A call that ran: its arguments as the model gave them, the text sent back, and how long the tool took. */
-    data class ToolCalled(val name: String, val args: Map<String, Any?>, val result: String, val ms: Double) : ToolEvent
+    /** A call that ran: its arguments as the model gave them, the text sent back, how long the tool took, and the model turn (from 1) that asked for it. */
+    data class ToolCalled(val name: String, val args: Map<String, Any?>, val result: String, val ms: Double, val turn: Int = 0) : ToolEvent
 
     /** The answer: the last model turn's text without call markup. */
     data class Done(val reply: String, val timing: TurnTiming) : ToolEvent

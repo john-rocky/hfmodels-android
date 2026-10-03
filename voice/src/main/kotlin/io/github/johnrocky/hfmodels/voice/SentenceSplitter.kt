@@ -17,7 +17,9 @@ package io.github.johnrocky.hfmodels.voice
  * limit is cut where it reaches it.
  */
 object SentenceSplitter {
-    private val SENTENCE_END = Regex("[.!?。！？]+")
+    /** The sentence marks: every run of them ends a sentence. */
+    internal const val MARKS = ".!?。！？"
+    private val SENTENCE_END = Regex("[$MARKS]+")
     private val SPACES = Regex("\\s+")
     private const val PUNCTUATION = ".!?,;:"
 
@@ -48,4 +50,32 @@ object SentenceSplitter {
     }
 
     private fun punctuate(chunk: String): String = if (chunk.last() in PUNCTUATION) chunk else "$chunk,"
+}
+
+/**
+ * [SentenceSplitter] over text that streams in: [add] returns the chunks that are final (everything up to the last
+ * run of sentence marks that another character has followed), [flush] the rest. The chunks of a whole stream equal
+ * `SentenceSplitter.split` of its whole text, except that a [flush] in the middle (the end of a model turn) also
+ * ends a sentence.
+ */
+internal class SentenceStream(private val maxChars: Int) {
+    private val pending = StringBuilder()
+
+    fun add(delta: String): List<String> {
+        pending.append(delta)
+        var cut = -1
+        for (i in pending.length - 1 downTo 1) {
+            if (pending[i] !in SentenceSplitter.MARKS && pending[i - 1] in SentenceSplitter.MARKS) { cut = i; break }
+        }
+        if (cut < 0) return emptyList()
+        val done = pending.substring(0, cut)
+        pending.delete(0, cut)
+        return SentenceSplitter.split(done, maxChars)
+    }
+
+    fun flush(): List<String> {
+        val rest = pending.toString()
+        pending.setLength(0)
+        return SentenceSplitter.split(rest, maxChars)
+    }
 }
