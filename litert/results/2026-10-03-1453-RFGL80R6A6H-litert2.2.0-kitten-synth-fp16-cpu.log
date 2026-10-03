@@ -1,0 +1,10 @@
+# hfmodels speak device gate  date=2026-10-03T05:53:58Z serial=RFGL80R6A6H device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZH9 android=16
+# git=fb40625 test=KittenSynthDeviceTest variant=fp16 backend=cpu thermal=Thermal Status: 0 battery_level= level: 80 battery_temp_x10C= temperature: 289 screen= mWakefulness=Dozing
+# gradle rc=0 end=2026-10-03T05:54:09Z thermal_end=Thermal Status: 0 battery_temp_end_x10C= temperature: 290
+--------- beginning of main
+10-03 14:54:06.421 22704 22719 I hfmodels-kitten: device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZH9 android=16 litert=2.2.0 variant=fp16 dir=/data/local/tmp/hfmodels/kitten out=/storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.litert.test/files/kitten/fp16
+10-03 14:54:07.466 22704 22719 I hfmodels-kitten: RESULT step=synth ok=true variant=fp16 i=0 n_ids=41 durations_equal=true durations_differing=0 frames=111/111 samples=61600 ref_samples=66600 maxabs_vs_ref=1.03 ms=227.0
+10-03 14:54:07.808 22704 22719 I hfmodels-kitten: RESULT step=synth ok=true variant=fp16 i=1 n_ids=63 durations_equal=true durations_differing=0 frames=163/163 samples=92800 ref_samples=97800 maxabs_vs_ref=1.28 ms=318.7
+10-03 14:54:08.393 22704 22719 I hfmodels-kitten: RESULT step=synth ok=true variant=fp16 i=2 n_ids=138 durations_equal=true durations_differing=0 frames=281/281 samples=163600 ref_samples=168600 maxabs_vs_ref=0.978 ms=578.9
+10-03 14:54:08.393 22704 22719 I hfmodels-kitten: RESULT step=memory ok=true variant=fp16 start=rss:108996,hwm:108996,heap:4256 dictionary=rss:158368,hwm:158368,heap:52184 g2p_graph=rss:242984,hwm:244496,heap:52388 predictor=rss:521988,hwm:527208,heap:52448 prosody=rss:528288,hwm:528288,heap:52468 vocoder=rss:573660,hwm:573660,heap:52520 bench0=rss:709640,hwm:709640,heap:59141 bench1=rss:766040,hwm:772480,heap:64695 bench2=rss:867272,hwm:906552,heap:74224 (kB) graph_load_ms={predictor=238, prosody=5, vocoder=38} dictionary_words=274927
+10-03 14:54:08.438 22704 22719 I hfmodels-kitten: RESULT ok=true variant=fp16 device=SM-S942Q failures=
