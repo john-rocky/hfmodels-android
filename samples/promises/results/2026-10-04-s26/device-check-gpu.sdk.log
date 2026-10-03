@@ -1,0 +1,4 @@
+--------- beginning of main
+10-04 02:08:28.802 21027 21049 I hfmodels: resolve litert-community/GLiNER2.5-Decide-LiteRT: commit=db801972 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=fbf3ac72
+10-04 02:08:29.439 21027 21049 I hfmodels: tokenizer tokenizer.json: 128011 tokens (Unigram), load_ms=626
+10-04 02:08:33.326 21027 21043 I hfmodels: ready litert-community/GLiNER2.5-Decide-LiteRT@db801972 variant=s128_wfp16 profile=gpu inference=GPU prepare_ms=4514

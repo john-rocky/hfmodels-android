@@ -26,13 +26,13 @@ One line at a time. A leading `[...]` (a chat app's time stamp) is dropped. A li
 
 ## Model and files
 
-[litert-community/GLiNER2.5-Decide-LiteRT](https://huggingface.co/litert-community/GLiNER2.5-Decide-LiteRT), variant `s128_wfp16` (a 128-token window, float16 weights; Apache-2.0), on the GPU when the phone has one (the descriptor's default profile) with the CPU as the fallback. The model repo carries no `hfmodels.json` yet, so the app ships the development descriptor (`catalog/dev/litert-community__GLiNER2.5-Decide-LiteRT.hfmodels.json`, added to the assets by `build.gradle.kts`) and passes it as `LoadOptions.descriptorJson` with its commit as the revision; once the bundled catalog carries the model (0.1.3) neither is needed. The first conversation downloads the three files (0.93 GB: the graph, the token table, the tokenizer) into the app's private storage and verifies their sha256; later loads are offline. A copy already on the computer can be pushed instead of downloaded:
+[litert-community/GLiNER2.5-Decide-LiteRT](https://huggingface.co/litert-community/GLiNER2.5-Decide-LiteRT), variant `s128_wfp16` (a 128-token window, float16 weights; Apache-2.0), on the GPU when the phone has one (the descriptor's default profile) with the CPU as the fallback. The app ships the development descriptor (`catalog/dev/litert-community__GLiNER2.5-Decide-LiteRT.hfmodels.json`, added to the assets by `build.gradle.kts`) and passes it as `LoadOptions.descriptorJson` with its commit as the revision; since 2026-10-04 the model repo carries the same descriptor as `hfmodels.json` and the bundled catalog on main pins it at db801972, so a later version of this sample can drop the asset and load by id. The first conversation downloads the three files (0.93 GB: the graph, the token table, the tokenizer) into the app's private storage and verifies their sha256; later loads are offline. A copy already on the computer can be pushed instead of downloaded:
 
 ```sh
 adb push gliner25_decide_s128_wfp16.tflite word_embeddings_fp16.bin tokenizer.json /sdcard/Android/data/io.github.johnrocky.hfmodels.samples.promises/files/   # hashed against the descriptor, then imported; delete the copies afterwards
 ```
 
-A load runs one sentence through the model before the first conversation (`warmup_ms` in the logs: 105 ms on the Galaxy S26 below, against 78 ms per sentence after it), so the first forward after a compile is not timed as the first sentence on the screen.
+A load runs one sentence through the model before the first conversation (`warmup_ms` in the logs: 110 ms on the Galaxy S26 below, against 73 ms per sentence after it), so the first forward after a compile is not timed as the first sentence on the screen.
 
 ## Add
 
@@ -65,18 +65,19 @@ adb logcat -d -s hfmodels-check | grep RESULT
 
 `connectedDebugAndroidTest` runs it too, but uninstalls the app afterwards, and the imported model with it.
 
-## What it showed on the Galaxy S26 (2026-10-03)
+## What it showed on the Galaxy S26 (2026-10-04)
 
-Galaxy S26 SM-S942Q (SM8850), Android 16 BP4A.251205.006.S942QOPS1AZH9, LiteRT 2.2.0, SDK 0.1.3-SNAPSHOT, the model at commit db801972 on the GPU (the descriptor's default profile, FP32), its three files pushed once and imported by the SDK.
+Galaxy S26 SM-S942Q (SM8850), Android 16 BP4A.251205.006.S942QOPS1AZH9, LiteRT 2.2.0, SDK 0.1.3-SNAPSHOT, the model at commit db801972 on the GPU (the descriptor's default profile, FP32), its three files pushed and imported by the SDK the day before. Every run in airplane mode.
 
 | run | answers as labelled | ms per sentence, median / p90 | the 16 sentences | sentences per second | thermal status, skin |
 |---|---|---|---|---|---|
-| device check (GPU, offline) | 16/16 | 77.80 / 78.92 | 1,238 ms | 12.92 | none to none, 30.8 to 31.2 °C |
-| recording mode, take 1 (airplane mode) | 16/16 | 75.63 / 76.85 | 1,241 ms | 12.89 | none to none, 31.8 to 31.9 °C |
-| recording mode, take 2 | 16/16 | 74.54 / 75.02 | 1,223 ms | 13.08 | none to none, 31.4 to 31.6 °C |
-| recording mode, take 3 | 16/16 | 74.18 / 75.32 | 1,221 ms | 13.11 | none to none, 31.6 to 31.8 °C |
+| device check (GPU, offline) | 16/16 | 72.80 / 81.37 | 1,187 ms | 13.48 | none to none, skin not read |
+| recording mode, take 1 (Add, ends on the app chooser) | 16/16 | 74.23 / 77.60 | 1,220 ms | 13.12 | none to none, 32.5 to 32.5 °C |
+| recording mode, take 2 (Add, ends on the new-event screen) | 16/16 | 73.23 / 74.40 | 1,202 ms | 13.31 | none to none, 31.6 to 32.0 °C |
+| recording mode, take 3 (Add, ends on the new-event screen) | 16/16 | 73.14 / 73.80 | 1,195 ms | 13.39 | none to none, 31.7 to 32.0 °C |
+| recording mode, take 4 (no Add) | 16/16 | 73.43 / 73.91 | 1,212 ms | 13.20 | none to none, 32.0 to 32.2 °C |
 
-Milliseconds per sentence are the SDK's wall clock for one `decide` call: tokenizing the sentence, building the sequence, looking up the embeddings, the graph and the decoding. In the device check every answer was the Mac host's, with the probabilities within 1.73e-6 of its; the load compiled the graph in 3,881 ms and ran the warm-up sentence in 105 ms; the 95-word sentence, 163 tokens with the question, came back `too long`; release took 138 ms. In recording mode the sentences per second include the screen's work between sentences. Numbers from one phone on one evening, the model loaded and warm; not a benchmark, and not a claim about the model's accuracy beyond these 16 sentences. The device check's log and the three result files are in `results/2026-10-03-s26/`.
+Milliseconds per sentence are the SDK's wall clock for one `decide` call: tokenizing the sentence, building the sequence, looking up the embeddings, the graph and the decoding. In the device check every answer was the Mac host's, with the probabilities within 1.73e-6 of its; the load compiled the graph in 3,885 ms and ran the warm-up sentence in 110 ms; the 95-word sentence, 163 tokens with the question, came back `too long`; release took 85 ms. In recording mode the sentences per second include the screen's work between sentences. On this phone two apps take a new event (Calendar and Outlook), so Add first shows the system's app chooser; takes 2 and 3 pick Calendar for this one time and end on its new-event screen, the sentence as the title, 12 October 7 to 8 pm. Nothing was saved. Numbers from one phone on one night, the model loaded and warm; not a benchmark, and not a claim about the model's accuracy beyond these 16 sentences. The device check's log and the four result files are in `results/2026-10-04-s26/`; the first run, on 2026-10-03 with an earlier build of this sample, is in `results/2026-10-03-s26/`.
 
 ## Limits
 
