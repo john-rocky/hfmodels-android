@@ -66,5 +66,8 @@ class VoiceUiTest {
         assertEquals("1.2 s", ms(1234.0))
         assertEquals("No sound", replyIn(timing("Hello.", 300.0, null, 0.0, "Hi.", "Hi."), 0))
         assertEquals("get_current_datetime()", ToolLine("get_current_datetime", emptyMap(), "Saturday, 2026-10-03 17:05").call)
+        // The runtime's numbers are a Number type of its own (they printed as 7.0 on the S26): whole ones as whole.
+        assertEquals("set_timer(minutes=10, label=\"Tea\")", ToolLine("set_timer", mapOf("minutes" to java.math.BigDecimal("10.0"), "label" to "Tea"), "Timer started: 10 min (Tea)").call)
+        assertEquals(7.5, wholeOrNot(java.math.BigDecimal("7.5")))
     }
 }

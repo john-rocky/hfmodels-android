@@ -76,7 +76,7 @@ class TurnRecorder(val root: File) {
                 row.put("text", e.text).put("audio_ms", e.audioMs).put("transcribe_ms", e.transcribeMs)
             }
             Event.Thinking -> {}
-            is Event.ToolCalled -> row.put("name", e.name).put("args", JSONObject(e.args.mapValues { it.value ?: JSONObject.NULL })).put("result", e.result).put("ms", e.ms)
+            is Event.ToolCalled -> row.put("name", e.name).put("args", JSONObject().apply { for ((k, v) in e.args) put(k, json(v)) }).put("result", e.result).put("ms", e.ms)
             is Event.Speaking -> {
                 turn?.sentences?.add(e.sentence)
                 row.put("sentence", e.sentence).put("synth_ms", e.synthMs).put("first_audio_ms", e.firstAudioMs ?: JSONObject.NULL)
@@ -137,6 +137,14 @@ class TurnRecorder(val root: File) {
         out.put("turn_start_elapsed_nanos_est", cutNanos).put("phone_state", phoneState).put("events", t.events)
         File(t.dir, "events.json").writeText(out.toString(2))
         return t.dir
+    }
+
+    /** A tool argument for org.json, which writes a Number type it does not know (the runtime's) as null. */
+    private fun json(v: Any?): Any = when (v) {
+        null -> JSONObject.NULL
+        is Number -> wholeOrNot(v)
+        is Boolean, is String -> v
+        else -> v.toString()
     }
 
     private fun stamp(o: JSONObject): JSONObject =

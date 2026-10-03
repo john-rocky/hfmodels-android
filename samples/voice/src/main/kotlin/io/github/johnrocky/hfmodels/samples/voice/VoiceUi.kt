@@ -19,12 +19,17 @@ data class ToolLine(val name: String, val args: Map<String, Any?>, val result: S
     val call: String get() = name + args.entries.joinToString(", ", "(", ")") { "${it.key}=${plain(it.value)}" }
 
     private fun plain(v: Any?): String = when (v) {
-        is Double -> if (v == Math.floor(v) && !v.isInfinite()) v.toLong().toString() else v.toString()
-        is Float -> if (v == Math.floor(v.toDouble()).toFloat()) v.toLong().toString() else v.toString()
+        is Number -> wholeOrNot(v).toString()
         is String -> "\"$v\""
         else -> v.toString()
     }
 }
+
+/**
+ * A tool argument's number as a Long when it is whole, else a Double: the runtime hands numbers over in its own Number
+ * type (7.0 for "7"), which org.json would also write as null.
+ */
+fun wholeOrNot(v: Number): Number = v.toDouble().let { d -> if (d == Math.floor(d) && !d.isInfinite() && Math.abs(d) < 1e15) d.toLong() else d }
 
 /**
  * What the screen shows. [on] folds the loop's events into it, one turn at a time: [heard] the text the model got,

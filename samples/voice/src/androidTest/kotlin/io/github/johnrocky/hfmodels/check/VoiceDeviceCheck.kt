@@ -71,6 +71,10 @@ import org.junit.runner.RunWith
  *   expect (default "Set an alarm for seven thirty tomorrow morning."; compared on letters and digits only).
  * The check sets a real alarm at 07:30 and then asks the Clock app to dismiss it by its label; a Clock that does not
  * honour that leaves it, and the RESULT line names the label to delete by hand.
+ * Run it with the screen on and unlocked, or with an app screen that shows over the keyguard: under the keyguard the
+ * app has no visible activity and Android drops the Clock app's SET_ALARM activity start (BAL_BLOCK). The check brings
+ * the app's launcher activity to the front with the extra `autoload=false`, which this sample takes as its scripted
+ * mode (it shows over the keyguard and loads nothing); in another app, drop the extra and unlock the phone.
  */
 @RunWith(AndroidJUnit4::class)
 class VoiceDeviceCheck {
@@ -90,7 +94,7 @@ class VoiceDeviceCheck {
         Log.i(TAG, "device=${Build.MODEL} build=${Build.DISPLAY} package=${ctx.packageName} network=$net airplane_mode=$airplane")
         // The app in front, as a user has it: the alarm intent is an activity start, and a visible app may start one.
         ctx.packageManager.getLaunchIntentForPackage(ctx.packageName)?.let { launch ->
-            runCatching { InstrumentationRegistry.getInstrumentation().startActivitySync(launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
+            runCatching { InstrumentationRegistry.getInstrumentation().startActivitySync(launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("autoload", false)) }
                 .onFailure { Log.w(TAG, "could not bring the app to the front: $it") }
         }
         val asrModels = HfModels(ctx); val ttsModels = HfModels(ctx); val llmModels = HfModels(ctx)

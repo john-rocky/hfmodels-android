@@ -20,12 +20,18 @@ import androidx.compose.runtime.getValue
  *   --es say "<text>"      one turn from this text once they are loaded (no microphone)
  *   --es record <name>     write each turn's sound and events under <external files>/record/<name>/<turn>/
  * e.g. adb shell am start -n io.github.johnrocky.hfmodels.samples.voice/.MainActivity --ez autoload true --ez autolisten true
+ *
+ * Scripted mode (any of these extras present, whatever its value) shows the screen over the keyguard and turns the
+ * display on; a normal launch does not. Under the keyguard the activity is not visible: Android drops the Clock app's
+ * SET_ALARM activity start from the app (BAL_BLOCK, result code 102; Galaxy S26, 2026-10-03) while the alarm tool
+ * still reports the alarm set, and the hidden activity's process runs in the background cpuset.
  */
 class MainActivity : ComponentActivity() {
     private val vm: VoiceViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (scripted(intent)) overKeyguard()
         enableEdgeToEdge()
         // Keep the screen on through a turn: a locked phone moves a hidden activity's process to the background cpuset
         // (little cores), where phone-agent's model produced one token a second.
@@ -42,7 +48,15 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
+        if (scripted(intent)) overKeyguard()
         handle(intent)
+    }
+
+    private fun scripted(i: Intent) = SCRIPT_EXTRAS.any { i.hasExtra(it) }
+
+    private fun overKeyguard() {
+        setShowWhenLocked(true)
+        setTurnScreenOn(true)
     }
 
     private fun handle(i: Intent) {
@@ -59,5 +73,6 @@ class MainActivity : ComponentActivity() {
 
     private companion object {
         val PERMISSIONS = listOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR)
+        val SCRIPT_EXTRAS = listOf("autoload", "autolisten", "say", "record")
     }
 }
