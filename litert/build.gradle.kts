@@ -36,6 +36,7 @@ android {
             // Parity tests need the publisher's tokenizer files and fixtures; point at a local copy.
             it.systemProperty("hfmodels.layaRoot", System.getProperty("hfmodels.layaRoot") ?: (System.getenv("HFMODELS_LAYA_ROOT") ?: ""))
             it.systemProperty("hfmodels.julia1Root", System.getProperty("hfmodels.julia1Root") ?: (System.getenv("HFMODELS_JULIA1_ROOT") ?: ""))
+            it.systemProperty("hfmodels.glinerDecideRoot", System.getProperty("hfmodels.glinerDecideRoot") ?: (System.getenv("HFMODELS_GLINER_DECIDE_ROOT") ?: ""))
             it.maxHeapSize = "3g"
         }
     }

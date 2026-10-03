@@ -1,10 +1,11 @@
 #!/bin/bash
 # Typed-decisions device gate on ONE named device: the litert module's EncoderDecisionsDeviceTest (laya) or,
-# with GATE_TEST=JuliaDecisionsDeviceTest GATE_TAG=decide-julia1, the Julia-1 test, for one variant and backend,
-# with the device state in the log header and the RESULT lines from logcat.
+# with GATE_TEST=JuliaDecisionsDeviceTest GATE_TAG=decide-julia1, the Julia-1 test (GATE_TEST=GlinerDecideDeviceTest
+# GATE_TAG=decide-gliner: GLiNER2.5-Decide), for one variant and backend, with the device state in the log header
+# and the RESULT lines from logcat.
 #   export ANDROID_SERIAL=<serial>
 #   tools/decide_gate.sh <variant> <gpu|cpu|auto> [extra -Pandroid.testInstrumentationRunnerArguments.* ...]
-# The graphs and fixtures must be under /data/local/tmp/hfmodels/laya (or /julia1) on the device (see the test's KDoc).
+# The graphs and fixtures must be under /data/local/tmp/hfmodels/laya (or /julia1, /gliner-decide) on the device (see the test's KDoc).
 set -uo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; ROOT="$(cd "$HERE/.." && pwd)"
 : "${ANDROID_SERIAL:?export ANDROID_SERIAL=<serial> first}"

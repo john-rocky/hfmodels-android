@@ -87,6 +87,7 @@ class JuliaDecisionsDeviceTest {
             result("load", events.last() is LoadEvent.Ready && events.none { it is LoadEvent.DownloadStarted },
                 "import_ms=$importMs load_ms=$loadMs profile=${m.info.profileId} window=${m.limits.windowTokens} head=${m.limits.headTokens} max_options=${m.limits.maxOptions} notes=${m.info.notes.joinToString(" | ")}")
             val impl = m as LiteRtDecisionModel
+            val builder = (impl.contract as MarkerContract).builder
             val window = m.limits.windowTokens
 
             // 2. the publisher's sequences
@@ -95,8 +96,8 @@ class JuliaDecisionsDeviceTest {
             var seqChecked = 0; var seqFail = 0; var truncatedRows = 0
             for (r in all) {
                 val q = question(r)
-                impl.builder.validate(q)
-                val built = impl.builder.build(q, impl.builder.stateIds(impl.builder.serializeState(r["state"]!!)))
+                builder.validate(q)
+                val built = builder.build(q, builder.stateIds(builder.serializeState(r["state"]!!)))
                 if (r !in rows) { if (built.stateTruncated) truncatedRows++ else { seqFail++; Log.w(TAG, "${r["id"]}: longer than $window but not reported as truncated") }; continue }
                 seqChecked++
                 val ids = (r["ids"] as List<*>).map { (it as Number).toInt() }
