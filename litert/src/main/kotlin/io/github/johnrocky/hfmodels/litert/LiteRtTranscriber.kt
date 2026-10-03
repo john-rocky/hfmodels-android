@@ -39,7 +39,6 @@ internal class LiteRtTranscriber private constructor(
     private val host: PrepareHost,
 ) : Transcriber {
     private val fbank = ZipformerFbank()
-    private val maxSamples = (limits.sampleRate * limits.windowSeconds).toInt()
     private val features = FloatArray(contract.frames * ZipformerFbank.NMEL)
     private val busy = AtomicBoolean(false)
     private val closing = AtomicBoolean(false)
@@ -47,11 +46,7 @@ internal class LiteRtTranscriber private constructor(
 
     override suspend fun transcribe(pcm: FloatArray): Transcript {
         checkUsable()
-        if (pcm.size > maxSamples) throw ModelException(
-            ErrorCode.INVALID_INPUT, "${pcm.size} samples (${"%.2f".format(pcm.size.toDouble() / limits.sampleRate)} s) is longer than the ${limits.windowSeconds} s window; split the audio (consecutive windows are not handled by this model)",
-            details = mapOf("samples" to pcm.size.toString(), "max_samples" to maxSamples.toString()),
-        )
-        if (pcm.size < ZipformerFbank.WIN) throw ModelException(ErrorCode.INVALID_INPUT, "${pcm.size} samples is shorter than one ${ZipformerFbank.WIN}-sample analysis frame", details = mapOf("samples" to pcm.size.toString()))
+        checkLength(pcm.size, limits)
         if (!busy.compareAndSet(false, true)) throw ModelException(ErrorCode.MODEL_BUSY, "a transcription is already running on ${info.repoId} (one at a time per model)")
         try {
             val t0 = System.nanoTime()
@@ -106,6 +101,16 @@ internal class LiteRtTranscriber private constructor(
     }
 
     companion object {
+        /** Longer than the window, or shorter than one analysis frame (the reflect padding needs it): INVALID_INPUT. */
+        fun checkLength(samples: Int, limits: TranscriberLimits) {
+            val max = (limits.sampleRate * limits.windowSeconds).toInt()
+            if (samples > max) throw ModelException(
+                ErrorCode.INVALID_INPUT, "$samples samples (${"%.2f".format(samples.toDouble() / limits.sampleRate)} s) is longer than the ${limits.windowSeconds} s window; split the audio (consecutive windows are not handled by this model)",
+                details = mapOf("samples" to samples.toString(), "max_samples" to max.toString()),
+            )
+            if (samples < ZipformerFbank.WIN) throw ModelException(ErrorCode.INVALID_INPUT, "$samples samples is shorter than one ${ZipformerFbank.WIN}-sample analysis frame", details = mapOf("samples" to samples.toString()))
+        }
+
         /** Compiles the graph on the LiteRT thread and checks it against [contract]. Throws the runtime's exception unchanged; the handler maps it. */
         fun open(file: File, accelerator: Accelerator, gpuFp32: Boolean, cpuThreads: Int, contract: ZipformerCtc, pieces: Map<Int, String>, info: PreparedModelInfo, limits: TranscriberLimits, host: PrepareHost): LiteRtTranscriber = LiteRtDecisionModel.Runtime.call {
             // As in LiteRtDecisionModel.open: in an app that packages the NPU libraries every graph carries BURST, so a

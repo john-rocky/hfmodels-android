@@ -1,5 +1,8 @@
 package io.github.johnrocky.hfmodels.litert
 
+import io.github.johnrocky.hfmodels.ErrorCode
+import io.github.johnrocky.hfmodels.ModelException
+import io.github.johnrocky.hfmodels.speech.TranscriberLimits
 import java.io.File
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -8,6 +11,7 @@ import kotlin.math.abs
 import kotlin.math.sin
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
+import org.junit.Assert.fail
 import org.junit.Test
 
 /**
@@ -90,6 +94,17 @@ class ZipformerFrontEndTest {
         for ((t, c) in path.withIndex()) logits[t * classes + c] = 3f
         assertEquals("SET AN ALARMLARM", ZipformerCtc.decode(logits, path.size, classes, blank = 0, pieces = pieces))
         assertEquals("SET", ZipformerCtc.decode(logits, 3, classes, blank = 0, pieces = pieces))
+    }
+
+    @Test fun audioLongerThanTheWindowIsInvalidInput() {
+        val limits = TranscriberLimits(sampleRate = 16000, windowSeconds = 16.0, languages = listOf("en"))
+        LiteRtTranscriber.checkLength(256_000, limits)   // exactly 16 s
+        LiteRtTranscriber.checkLength(ZipformerFbank.WIN, limits)
+        for (n in intArrayOf(256_001, ZipformerFbank.WIN - 1, 0)) {
+            try { LiteRtTranscriber.checkLength(n, limits); fail("$n samples accepted") } catch (e: ModelException) { assertEquals(ErrorCode.INVALID_INPUT, e.code) }
+        }
+        // The longest accepted audio fills the 1600-frame input exactly; it never writes past it.
+        assertEquals(1600, ZipformerFbank().frames(256_000))
     }
 
     @Test fun tokensAreReadLikeTheZooApp() {
