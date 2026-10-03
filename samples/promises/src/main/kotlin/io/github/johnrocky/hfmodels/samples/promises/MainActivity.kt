@@ -343,9 +343,9 @@ class MainActivity : ComponentActivity() {
         }
         val totalMs = (SystemClock.elapsedRealtimeNanos() - t0) / 1e6
         val thermalAfter = thermal()
-        setPill("DONE $n", PromisesStyle.PILL_DONE)
+        // More sentences than MAX: the pill says how many were sorted out of how many (the latency line has no room left).
+        setPill(if (all.size > n) "DONE $n OF ${all.size}" else "DONE $n", PromisesStyle.PILL_DONE)
         sayLatency(verdicts, totalMs / 1000)
-        if (all.size > n) latency.append("  ·  first $n of ${all.size}")
         val record = record(m, source, verdicts, all.size, totalMs, thermalBefore, thermalAfter)
         val file = if (scripted) writeRecord(record) else null
         Log.i(TAG, "DONE source=$source n=$n " + record.getValue("counts").let { c -> (c as Map<*, *>).entries.joinToString(" ") { "${it.key.toString().replace(' ', '_')}=${it.value}" } } +

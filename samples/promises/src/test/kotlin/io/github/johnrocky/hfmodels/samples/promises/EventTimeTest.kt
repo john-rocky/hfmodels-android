@@ -28,9 +28,9 @@ class EventTimeTest {
     @Test fun theOtherFixtureSentences() {
         assertEquals("2026-10-04T09:00", start("I'll call the plumber first thing tomorrow."))
         assertEquals("2026-10-04T12:00", start("Lunch at noon tomorrow works for me, see you at the usual place."))
-        assertEquals("2026-10-03T08:00", start("Done, the movers are booked for 8 am on the 3rd."))
-        // "to 10" is not read as a time (only "at 10", "10:00", "10 am"): the morning's default.
-        assertEquals("2026-10-04T09:00", start("Okay, the team call is moved to 10 tomorrow morning."))
+        // Today is the 3rd and 8 am has passed: the 3rd of next month.
+        assertEquals("2026-11-03T08:00", start("Done, the movers are booked for 8 am on the 3rd."))
+        assertEquals("2026-10-04T10:00", start("Okay, the team call is moved to 10 tomorrow morning."))
         assertEquals("2026-10-03T18:00", start("Please send me the contract before you leave today."))
     }
 
@@ -44,5 +44,16 @@ class EventTimeTest {
         assertEquals("2026-10-04T19:00", start("Call me at 7", now.withHour(20)))
         assertEquals("2026-10-03T21:15", start("The movie starts at 9:15 tonight"))
         assertEquals("2026-10-04T09:00", start("We are 10 people at 10 percent"))
+        assertEquals("2026-10-04T15:00", start("The shop is open from 3 to 5"))
+    }
+
+    @Test fun aStartThatHasPassedMovesOn() {
+        val evening = now.withHour(19)
+        val late = now.withHour(21)
+        assertEquals("2026-10-04T18:30", start("Let's meet at the station at 6:30 tonight.", evening))
+        assertEquals("2026-10-04T20:00", start("I'll send you the photos tonight.", late))
+        assertEquals("2026-10-31T09:00", start("I promise I'll pay you back at the end of the month.", late))
+        assertEquals("2026-11-30T09:00", start("I promise I'll pay you back at the end of the month.", ZonedDateTime.of(2026, 10, 31, 12, 0, 0, 0, zone)))
+        assertEquals("2026-10-03T22:00", start("Please send me the contract before you leave today.", late))
     }
 }

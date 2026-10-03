@@ -70,7 +70,7 @@ object PromisesStyle {
 /**
  * One sentence large, so a viewer can read what goes in and what comes out: the sender, up to two lines of
  * the sentence, the question, then the answer as a chip with its probability. Before a conversation is
- * sorted it shows the question and its four options as the model reads them. The height never changes, so
+ * sorted it shows the question and its four options as the model reads them, in the model's order. The height never changes, so
  * the bundles below do not move when the sentence does. `u` is the screen width / 402.
  */
 class SpotlightView(context: Context, private val u: Float) : View(context) {
@@ -163,8 +163,9 @@ class SpotlightView(context: Context, private val u: Float) : View(context) {
     private fun optionLayouts(inner: Float): List<Pair<String, StaticLayout>> {
         val textWidth = (inner - keyWidth - 8f * u).toInt().coerceAtLeast(1)
         options?.let { if (it.first().second.width == textWidth) return it }
-        return DISPLAY_ORDER.map { key ->
-            val d = Promises.QUESTION.criteria.getValue(key) ?: key
+        // The options in the order the model gets them (the question's own order).
+        return Promises.QUESTION.criteria.map { (key, description) ->
+            val d = description ?: key
             key to StaticLayout.Builder.obtain(d, 0, d.length, optionPaint, textWidth).setMaxLines(2).setEllipsize(TextUtils.TruncateAt.END)
                 .setAlignment(Layout.Alignment.ALIGN_NORMAL).setIncludePad(false).build()
         }.also { options = it }
@@ -181,11 +182,6 @@ class SpotlightView(context: Context, private val u: Float) : View(context) {
         val fm = paint.fontMetrics
         canvas.drawText(label, x + padX, top + (h - fm.ascent - fm.descent) / 2, paint)
         return x + w
-    }
-
-    private companion object {
-        /** The bundles' order, "nothing" last; the question itself keeps the sieve's order. */
-        val DISPLAY_ORDER = listOf("promise", "request", "plan", "nothing")
     }
 }
 

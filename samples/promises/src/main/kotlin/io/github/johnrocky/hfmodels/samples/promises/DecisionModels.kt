@@ -10,6 +10,7 @@ import io.github.johnrocky.hfmodels.NetworkPolicy
 import io.github.johnrocky.hfmodels.decide.TypedDecisions
 import io.github.johnrocky.hfmodels.litert.EncoderDecisions
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
@@ -44,10 +45,16 @@ class DecisionModels(context: Context) {
         model?.let { return it }
         val m = models.fromPretrained(ref, EncoderDecisions, LoadOptions(backendPolicy = policy, networkPolicy = network, descriptorJson = descriptor), onEvent)
         // One sentence through the graph before the first conversation, so whatever the first forward after a
-        // compile costs is not timed as the first sentence on the screen.
-        val t0 = System.nanoTime()
-        withContext(Dispatchers.Default) { m.decide(WARMUP, Promises.QUESTION) }
-        warmupMs = (System.nanoTime() - t0) / 1e6
+        // compile costs is not timed as the first sentence on the screen. If it fails or is cancelled, the model
+        // is closed before the error goes on: left open it would hold the client's one model slot (MODEL_BUSY).
+        try {
+            val t0 = System.nanoTime()
+            withContext(Dispatchers.Default) { m.decide(WARMUP, Promises.QUESTION) }
+            warmupMs = (System.nanoTime() - t0) / 1e6
+        } catch (t: Throwable) {
+            withContext(NonCancellable) { m.closeAndJoin() }
+            throw t
+        }
         model = m
         return m
     }

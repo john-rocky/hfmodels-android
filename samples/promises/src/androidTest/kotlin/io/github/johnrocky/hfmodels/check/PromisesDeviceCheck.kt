@@ -65,13 +65,15 @@ class PromisesDeviceCheck {
                 step("load", true, "profile=${m.info.profileId} compile_ms=$compileMs load_ms=${SystemClock.elapsedRealtime() - t0} warmup_ms=${d.warmupMs} " +
                     "downloaded=${events.any { it is LoadEvent.DownloadStarted }} network=$network fallback=${m.info.fallbackHistory} commit=${m.info.commit.take(8)}")
             }
-        } catch (e: ModelException) {
-            step("load", false, "error=${e.code} reason=${q(e.reason)} load_ms=${SystemClock.elapsedRealtime() - t0}")
+        } catch (t: Throwable) {
+            step("load", false, "error=${what(t)} load_ms=${SystemClock.elapsedRealtime() - t0}")
             Log.i(TAG, "RESULT ok=false failed=$failures device=${Build.MODEL} build=${Build.DISPLAY}")
             d.models.closeAndJoin()
-            assertTrue("load failed: ${e.code}: ${e.reason}", false)
+            assertTrue("load failed: ${what(t)}", false)
             return@runBlocking
         }
+        // Any error is recorded as a failure of the step it happened in, so a RESULT ok=true line never follows it.
+        var current = "sort"
         try {
             // The Sample conversation, cut and asked exactly as the screen does it.
             val sentences = Sentences.split(SampleChat.TEXT)
@@ -93,17 +95,17 @@ class PromisesDeviceCheck {
                     "question_ms_median=${Promises.median(questionMs)} question_ms_p90=${Promises.p90(questionMs)} total_ms=$totalMs disagree=$disagree")
 
             // A sentence that does not fit the window with the question: shown as "too long", never an error.
+            current = "too_long"
             val long = Promises.judge(model, Sentence("Them", LONG))
             step("too_long", long.key == Promises.TOO_LONG, "answer=${long.key} tokens=${long.tokens} words=${LONG.split(' ').size}")
-        } catch (e: ModelException) {
-            step("sort", false, "error=${e.code} reason=${q(e.reason)}")
+        } catch (t: Throwable) {
+            step(current, false, "error=${what(t)}")
         } finally {
             // Release: closeAndJoin must return (10 s cap inside the SDK).
             val t2 = SystemClock.elapsedRealtime()
-            d.release()
-            d.models.closeAndJoin()
+            val released = runCatching { d.release(); d.models.closeAndJoin() }
             val closeMs = SystemClock.elapsedRealtime() - t2
-            step("release", closeMs < 10_000, "close_ms=$closeMs")
+            step("release", released.isSuccess && closeMs < 10_000, "close_ms=$closeMs" + (released.exceptionOrNull()?.let { " error=${what(it)}" } ?: ""))
             Log.i(TAG, "RESULT ok=${failures.isEmpty()} model=${DecisionModels.REPO}@${model.info.commit.take(8)} failed=$failures sdk=${model.info.sdkVersion} runtime=${model.info.runtime} ${model.info.runtimeVersion} " +
                 "device=${Build.MODEL} soc=${Build.SOC_MODEL} build=${Build.DISPLAY} thermal=$thermalBefore->${power.currentThermalStatus}")
         }
@@ -111,6 +113,9 @@ class PromisesDeviceCheck {
     }
 
     private fun q(s: String) = "\"" + s.take(160).replace("\n", " ").replace("\"", "'") + "\""
+
+    /** An error as one RESULT field: the SDK's code and reason, or the exception's class and message. */
+    private fun what(t: Throwable) = if (t is ModelException) "${t.code} reason=${q(t.reason)}" else "${t.javaClass.simpleName} reason=${q(t.message ?: "")}"
 
     private companion object {
         const val TAG = "hfmodels-check"

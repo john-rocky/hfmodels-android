@@ -1,4 +1,4 @@
-# samples/promises: who promised what, sorted on the phone
+# samples/promises: what was promised, asked and planned, sorted on the phone
 
 One screen. A conversation comes in from the share sheet (any app's Share, then **hfmodels promises**), from the clipboard (**Paste**) or from the built-in **Sample**; every sentence is asked one question by a decision model on the phone, one sentence at a time, and lands in a bundle: **You promised**, **They asked you**, **Plans**. Every row has an **Add** that opens the phone's new-event screen with the sentence as the title; the person saves it. The sentences that need nothing are counted and folded. Sorting starts as soon as the text arrives.
 
@@ -18,11 +18,11 @@ Question.Choice("What is this sentence?", linkedMapOf(
 model.decide(sentence, mapOf("q" to question))   // one forward per sentence
 ```
 
-This is question B of the sieve that picked the model: on its 30 labelled chat sentences GLiNER2.5-Decide answered 27 as labelled, more than any other decision model tried. The `gliner2_decide` family turns the question into one gliner2 task with the instructions as its prompt and the descriptions as its labels, so the descriptions are what the model reads. The model gets the sentence alone; the sender is only shown.
+This is question B of the sieve that picked the model: on its 30 labelled chat sentences GLiNER2.5-Decide answered 27 as labelled, more than any other decision model tried (the card's Python host on a Mac, 2026-10-03; the Galaxy S26 gave the same 27, `correct_device=27/30` in `litert/results/2026-10-03-1653-RFGL80R6A6H-litert2.2.0-decide-gliner-s128_wfp16-gpu.log`). The `gliner2_decide` family turns the question into one gliner2 task with the instructions as its prompt and the descriptions as its labels, so the descriptions are what the model reads. The model gets the sentence alone; the sender is only shown.
 
 ## How a conversation is cut
 
-One line at a time. A leading `[...]` (a chat app's time stamp) is dropped. A line that starts with a name of up to three words and a colon followed by a space (`Them: ...`) has the name split off as the sender. The rest is cut after every `.`, `?` or `!` that a space follows. At most 200 sentences are sorted; the latency line says when more were left out.
+One line at a time. A leading `[...]` (a chat app's time stamp) is dropped. A line that starts with a name of up to three words and a colon followed by a space (`Them: ...`) has the name split off as the sender. The rest is cut after every `.`, `?` or `!` that a space follows. At most 200 sentences are sorted; the pill says `DONE 200 OF <n>` when more were left out.
 
 ## Model and files
 
@@ -36,7 +36,7 @@ A load runs one sentence through the model before the first conversation (`warmu
 
 ## Add
 
-The start of the new event comes from fixed rules on the sentence's words, not from the model: `on the 12th`, a weekday, `next <weekday>`, `this weekend`, `next weekend`, `the end of the month`, `tomorrow`, `today`, `tonight`, and a time (`6:30 pm`, `8 am`, `at 6:30`, `at 7`, `noon`; without am / pm, 1 to 7 o'clock reads as the evening). Without any of them the event starts tomorrow at 9:00. Every event is one hour long. The full rules are in `EventTime.kt`; the new-event screen is where they get corrected.
+The start of the new event comes from fixed rules on the sentence's words, not from the model: `on the 12th`, a weekday, `next <weekday>`, `this weekend`, `next weekend`, `the end of the month`, `tomorrow`, `today`, `tonight`, and a time (`6:30 pm`, `8 am`, `at 6:30`, `at 7`, `to 10`, `from 3`, `noon`; without am / pm, 1 to 7 o'clock reads as the evening). A start that has already passed moves on: tonight to tomorrow night, the 3rd to the 3rd of next month. Without any of them the event starts tomorrow at 9:00. Every event is one hour long. The full rules are in `EventTime.kt`; the new-event screen is where they get corrected.
 
 ## Recording mode
 
@@ -84,3 +84,4 @@ Milliseconds per sentence are the SDK's wall clock for one `decide` call: tokeni
 - One sentence and the question share the 128-token window: the question takes 57 of them (the sieve's sentences took 64 to 75 with it). A longer sentence is shown with a `too long` chip and stays out of the bundles; it is never cut.
 - No speaker separation. The bundle titles are written for the common case, the owner's promises and the other side's requests, but the model only sees the sentence: a promise from the other side lands under You promised, and a request the owner made lands under They asked you.
 - Dates and times come from the rules above, not from the model.
+- The sender rule is a pattern, not a parser: a name of four words or more stays in the sentence, so does a time stamp without brackets (a WhatsApp export's `10/3/26, 5:01 PM - Name: ...`), and a `Note:` or `Re:` at the start of a line is taken for a sender.
