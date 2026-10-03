@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.provider.AlarmClock
 import android.provider.CalendarContract
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -76,9 +77,10 @@ class ClockTool : VoiceTool {
  * intent the tool waits up to 1.5 s for [AlarmManager.getNextAlarmClock] to report the requested time (its next
  * occurrence, today or tomorrow). Android 10 and later drop an activity start from an app without a visible activity
  * without an exception (a locked Galaxy S26: BAL_BLOCK, result code 102); the result is then an `Error:` that says so.
- * When an earlier alarm already comes first, Android cannot show this one, and the result says it was requested and
- * not confirmed. On a phone: the voice sample's scripted turn, then `adb shell dumpsys alarm | grep -A1 "Next alarm
- * clock information"`.
+ * Android reports one next alarm: when an alarm at the same minute or an earlier one is already next, it cannot show
+ * this one, and the result says that it was requested and what Android reports instead ([AlarmCheck.unconfirmed]),
+ * neither success nor an error. On a phone: the voice sample's scripted turn, then `adb shell dumpsys alarm | grep -A1
+ * "Next alarm clock information"`.
  */
 class AlarmTool(private val context: Context) : VoiceTool {
     override val name = "set_alarm"
@@ -109,10 +111,10 @@ class AlarmTool(private val context: Context) : VoiceTool {
         } catch (e: ActivityNotFoundException) {
             return "Error: no clock app can set alarms on this phone"
         }
-        if (AlarmCheck.hidden(before, expected)) return "Alarm requested for %02d:%02d (%s); not confirmed: an earlier alarm comes first".format(hour, minute, label)
+        AlarmCheck.unconfirmed(before, expected, hour, minute, label)?.let { return it }
         val deadline = System.nanoTime() + AlarmCheck.CONFIRM_MS * 1_000_000
         while (true) {
-            if (AlarmCheck.matches(am.nextAlarmClock?.triggerTime, expected)) return "Alarm set for %02d:%02d (%s)".format(hour, minute, label)
+            if (AlarmCheck.matches(am.nextAlarmClock?.triggerTime, expected)) return "Alarm set for ${AlarmCheck.requested(hour, minute, label)}"
             if (System.nanoTime() >= deadline) return "Error: the Clock app did not take the alarm (the screen must be on and this app visible)"
             delay(AlarmCheck.POLL_MS)
         }
@@ -138,13 +140,28 @@ internal object AlarmCheck {
 
     /** An alarm before the requested one was already next: Android keeps reporting that one. */
     fun hidden(before: Long?, expected: Long): Boolean = before != null && before < expected
+
+    /** "07:30 (Wake Up)", in ASCII digits whatever the phone's locale: the sentence is said in English. */
+    fun requested(hour: Int, minute: Int, label: String): String = String.format(Locale.US, "%02d:%02d (%s)", hour, minute, label)
+
+    /**
+     * The result when Android's next alarm before the request ([before]) already hides it: one at the same minute
+     * ([matches]) or an earlier one ([hidden]). Android keeps reporting that alarm, so the request cannot be confirmed;
+     * the text says what Android reports. Null when nothing hides the request.
+     */
+    fun unconfirmed(before: Long?, expected: Long, hour: Int, minute: Int, label: String, zone: TimeZone = TimeZone.getDefault()): String? {
+        if (before == null || !(matches(before, expected) || hidden(before, expected))) return null
+        val next = SimpleDateFormat("EEE HH:mm", Locale.US).apply { timeZone = zone }.format(Date(before))
+        val already = if (matches(before, expected)) "was already" else "is"
+        return "Alarm requested for ${requested(hour, minute, label)}. Android's next alarm $already $next, so this one could not be confirmed."
+    }
 }
 
 /**
- * `set_timer(minutes, label)`: a countdown in the Clock app, without showing its UI. Not confirmed: Android has no public
- * way to read the Clock app's timers. Call it with the screen on and the app visible: Android 10 and later drop an
- * activity start from an app without a visible activity without an exception, and the result still says the timer
- * started.
+ * `set_timer(minutes, label)`: a countdown in the Clock app, without showing its UI. Android has no public API to read
+ * the Clock app's timers, so the tool cannot confirm one and its result says the timer was requested. Call it with the
+ * screen on and the app visible: Android 10 and later drop an activity start from an app without a visible activity
+ * without an exception.
  */
 class TimerTool(private val context: Context) : VoiceTool {
     override val name = "set_timer"
@@ -166,7 +183,7 @@ class TimerTool(private val context: Context) : VoiceTool {
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         return try {
             context.startActivity(i)
-            "Timer started: $minutes min ($label)"
+            "Timer requested: $minutes min ($label)"
         } catch (e: ActivityNotFoundException) {
             "Error: no clock app can start timers on this phone"
         }
@@ -204,7 +221,7 @@ class CalendarTool(private val context: Context) {
     }
 
     internal fun events(date: String): String {
-        val day = SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(date.trim().take(10)) ?: throw IllegalArgumentException("bad date '$date' (use YYYY-MM-DD)")
+        val day = parseOrNull { SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(date.trim().take(10)) } ?: throw IllegalArgumentException("bad date '$date' (use YYYY-MM-DD)")
         val begin = day.time
         val end = begin + 24L * 3600 * 1000
         val uri = CalendarContract.Instances.CONTENT_URI.buildUpon().appendPath(begin.toString()).appendPath(end.toString()).build()
@@ -220,8 +237,11 @@ class CalendarTool(private val context: Context) {
 
     private fun parseMinute(s: String): Long {
         val t = s.trim().replace('T', ' ').take(16)
-        return fmtMin.parse(t)?.time ?: throw IllegalArgumentException("bad time '$s' (use YYYY-MM-DD HH:MM)")
+        return parseOrNull { fmtMin.parse(t) }?.time ?: throw IllegalArgumentException("bad time '$s' (use YYYY-MM-DD HH:MM)")
     }
+
+    /** `DateFormat.parse` throws on text it cannot read instead of returning null: null here, so the caller's hint reaches the model. */
+    private inline fun parseOrNull(parse: () -> Date?): Date? = try { parse() } catch (e: ParseException) { null }
 
     private fun addEvent(title: String, start: String, end: String, location: String): String {
         val s = parseMinute(start)

@@ -118,7 +118,7 @@ internal class ToolRunnerScenarios {
     fun runtimeCallsRunAndTheirResultsGoBackAsOneToolMessage() {
         val model = ScriptedModel(listOf(
             listOf(calls(ToolCall("set_alarm", mapOf("hour" to 8, "minute" to 0)), ToolCall("set_timer", mapOf("minutes" to 20)))),
-            listOf(text("Alarm set for 8:00. "), text("Timer started.")),
+            listOf(text("Alarm set for 8:00. "), text("The timer is running.")),
         ))
         val events = run(model, ToolFormat.Runtime, "Set an alarm for eight and a timer for twenty minutes.")
         assertEquals(listOf("set_alarm" to mapOf<String, Any?>("hour" to 8, "minute" to 0), "set_timer" to mapOf<String, Any?>("minutes" to 20)), recorded)
@@ -131,11 +131,11 @@ internal class ToolRunnerScenarios {
         // The tools are declared to the runtime, which is not asked to run them (the SDK forces that off).
         assertEquals(2, model.configs.single().tools.size)
         val done = events.last() as ToolEvent.Done
-        assertEquals("Alarm set for 8:00. Timer started.", done.reply)
+        assertEquals("Alarm set for 8:00. The timer is running.", done.reply)
         assertEquals(2, done.timing.turns)
         assertEquals(2, done.timing.toolCalls)
         assertEquals(3, done.timing.chunks)
-        assertEquals(listOf("Alarm set for 8:00. ", "Timer started."), events.filterIsInstance<ToolEvent.Text>().map { it.delta })
+        assertEquals(listOf("Alarm set for 8:00. ", "The timer is running."), events.filterIsInstance<ToolEvent.Text>().map { it.delta })
         assertEquals(listOf("set_alarm done", "set_timer done"), events.filterIsInstance<ToolEvent.ToolCalled>().map { it.result })
         assertTrue(done.timing.firstTokenMs >= 0 && done.timing.replyMs >= done.timing.firstTokenMs)
         assertEquals(1, model.closedSessions)
@@ -187,12 +187,12 @@ internal class ToolRunnerScenarios {
     }
 
     fun callsTheRuntimeParsedRunUnderATextFormatToo() {
-        val model = ScriptedModel(listOf(listOf(calls(ToolCall("set_timer", mapOf("minutes" to 10)))), listOf(text("Timer started."))))
+        val model = ScriptedModel(listOf(listOf(calls(ToolCall("set_timer", mapOf("minutes" to 10)))), listOf(text("The timer is running."))))
         val events = run(model, ToolFormat.LfmPythonic, "Start a timer for ten minutes.")
         assertEquals(listOf("set_timer" to mapOf<String, Any?>("minutes" to 10)), recorded)
         // Answered in the runtime's shape, {"result": text}.
         assertEquals(mapOf("result" to "set_timer done"), (model.sent[1].contents.contents.single() as Content.ToolResponse).response)
-        assertEquals("Timer started.", (events.last() as ToolEvent.Done).reply)
+        assertEquals("The timer is running.", (events.last() as ToolEvent.Done).reply)
     }
 
     fun markupTheRuntimeLeftInTheTextFailsTheTurnUnshown() {

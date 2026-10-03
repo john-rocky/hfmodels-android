@@ -184,7 +184,7 @@ class VoiceLoopTest {
 
     @Test fun aTurnsClockStartsWhenItHasTheLoopNotWhileItWaitsForTheTurnBefore() {
         // The first request takes 300 ms; the second turn is asked for meanwhile and waits for the loop.
-        val loop = Loop(listOf(ToolEvent.Text("Timer started."), ToolEvent.Done("Timer started.", runnerTiming)), firstReplyDelayMs = 300)
+        val loop = Loop(listOf(ToolEvent.Text("The timer is running."), ToolEvent.Done("The timer is running.", runnerTiming)), firstReplyDelayMs = 300)
         runBlocking {
             val first = async { loop.engine.turn(null, "Start a timer.").toList() }
             delay(20)
@@ -231,7 +231,7 @@ class VoiceLoopTest {
         // voice that arrives while the turn runs (dropped), then 2 s of silence.
         fun chunks(ms: Int, level: Float) = List(ms / 20) { FloatArray(320) { i -> if (i % 2 == 0) level else -level } }
         val audio = chunks(400, 0f) + chunks(500, 0.1f) + chunks(1000, 0f) + chunks(300, 0.1f) + chunks(2000, 0f)
-        val loop = Loop(listOf(ToolEvent.Text("Timer started."), ToolEvent.Done("Timer started.", runnerTiming)), transcript = { "START A TIMER" }, slowTranscriber = true)
+        val loop = Loop(listOf(ToolEvent.Text("The timer is running."), ToolEvent.Done("The timer is running.", runnerTiming)), transcript = { "START A TIMER" }, slowTranscriber = true)
         val events = runBlocking { loop.engine.listen(flow { for (c in audio) emit(c) }).toList() }
         assertEquals(listOf("Listening", "Heard", "Thinking", "Speaking", "Done", "Listening"), events.map { it.javaClass.simpleName })
         // The utterance: 300 ms of pre-roll, the voice, the 800 ms hangover.

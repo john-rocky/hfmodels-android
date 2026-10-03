@@ -48,6 +48,6 @@ class RecordingTools {
         tool("set_timer", "Starts a countdown timer on this phone.", listOf(
             ToolParam("minutes", "integer", "Length of the timer in minutes."),
             ToolParam("label", "string", "Short label shown with the timer."),
-        ), isAction = true) { a -> "Timer started: ${ToolArgs.int(a, "minutes")} min (${ToolArgs.stringOrNull(a, "label") ?: ""})" },
+        ), isAction = true) { a -> "Timer requested: ${ToolArgs.int(a, "minutes")} min (${ToolArgs.stringOrNull(a, "label") ?: ""})" },
     )
 }
