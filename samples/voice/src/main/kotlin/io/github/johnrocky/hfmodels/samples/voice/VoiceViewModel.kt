@@ -116,9 +116,23 @@ class VoiceViewModel(private val app: Application) : AndroidViewModel(app) {
         val mic = MicSource()
         val t = MicTap(mic.sampleRate).also { tap = it }
         _ui.update { it.copy(listening = true, status = "Listening…", error = null) }
+        // While recording: the loudest 20 ms of each second against the endpointer's start level, to tell a quiet
+        // room from a microphone that hears nothing.
+        var peak = 0.0
+        var since = SystemClock.elapsedRealtime()
         listenJob = viewModelScope.launch(Dispatchers.Default) {
             try {
-                l.listen(mic.chunks().onEach { t.add(it) }).collect { e -> onEvent(e, fromMic = true) }
+                l.listen(mic.chunks().onEach { c ->
+                    t.add(c)
+                    if (recorder != null) {
+                        peak = maxOf(peak, kotlin.math.sqrt(c.sumOf { (it * it).toDouble() } / c.size))
+                        val now = SystemClock.elapsedRealtime()
+                        if (now - since >= 1000) {
+                            Log.i(TAG, "mic_level max_rms=${String.format(java.util.Locale.US, "%.4f", peak)} start_rms=${config.endpointer.startRms}")
+                            peak = 0.0; since = now
+                        }
+                    }
+                }).collect { e -> onEvent(e, fromMic = true) }
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {

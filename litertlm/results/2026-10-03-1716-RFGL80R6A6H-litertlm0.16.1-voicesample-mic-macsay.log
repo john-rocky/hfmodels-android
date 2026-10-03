@@ -1,0 +1,56 @@
+# samples/voice app, microphone: adb shell am start -n io.github.johnrocky.hfmodels.samples.voice/.MainActivity --ez autoload true --ez autolisten true --es record mic; then on the Mac (speaker 'Mac Studio', output volume 50 %): say -v Samantha 'Set an alarm for seven thirty tomorrow morning.'
+# airplane_mode_on=0; try 1 at 17:16:58-17:17:02 (git=1f4ab93, no level log); try 2 at 17:18:45-17:18:48 (the mic_level line added, not committed at the run); neither cut an utterance (no Heard). The app's AudioRecord was live: dumpsys audio 'rec start riid:471 uid:10426 session:521 src:VOICE_RECOGNITION not silenced'
+10-03 17:16:47.290 18717 18717 I hfmodels-voice-sample: record to /storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.voice/files/record/mic
+10-03 17:16:47.290 18717 18717 I hfmodels-voice-sample: extras autoload=true autolisten=true say=false record=mic
+10-03 17:16:53.123 18717 18752 I hfmodels-voice-sample: ready asr=litert-community/Zipformer-medium-CR-CTC-LiteRT/medium_fp16/gpu tts=litert-community/kitten-tts-nano-0.8/fp32/cpu llm=litert-community/gemma-4-E2B-it-litert-lm/default/gpu load_ms=5831 network=cellular
+10-03 17:16:53.159 18717 18751 I hfmodels-voice-sample: event=Listening
+10-03 17:18:29.742 19446 19446 I hfmodels-voice-sample: record to /storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.voice/files/record/mic
+10-03 17:18:29.743 19446 19446 I hfmodels-voice-sample: extras autoload=true autolisten=true say=false record=mic
+10-03 17:18:34.150 19446 19479 I hfmodels-voice-sample: ready asr=litert-community/Zipformer-medium-CR-CTC-LiteRT/medium_fp16/gpu tts=litert-community/kitten-tts-nano-0.8/fp32/cpu llm=litert-community/gemma-4-E2B-it-litert-lm/default/gpu load_ms=4406 network=cellular
+10-03 17:18:34.164 19446 19478 I hfmodels-voice-sample: event=Listening
+10-03 17:18:35.167 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0019 start_rms=0.02
+10-03 17:18:36.166 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0017 start_rms=0.02
+10-03 17:18:37.167 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0019 start_rms=0.02
+10-03 17:18:38.186 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0019 start_rms=0.02
+10-03 17:18:39.186 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0018 start_rms=0.02
+10-03 17:18:40.186 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0022 start_rms=0.02
+10-03 17:18:41.186 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0029 start_rms=0.02
+10-03 17:18:42.190 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0025 start_rms=0.02
+10-03 17:18:43.206 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0032 start_rms=0.02
+10-03 17:18:44.206 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0020 start_rms=0.02
+10-03 17:18:45.206 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0056 start_rms=0.02
+10-03 17:18:46.211 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0152 start_rms=0.02
+10-03 17:18:47.226 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0138 start_rms=0.02
+10-03 17:18:48.226 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0110 start_rms=0.02
+10-03 17:18:49.230 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0081 start_rms=0.02
+10-03 17:18:50.230 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0051 start_rms=0.02
+10-03 17:18:51.246 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0022 start_rms=0.02
+10-03 17:18:52.246 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0024 start_rms=0.02
+10-03 17:18:53.265 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0030 start_rms=0.02
+10-03 17:18:54.270 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0023 start_rms=0.02
+10-03 17:18:55.286 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0039 start_rms=0.02
+10-03 17:18:56.286 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0041 start_rms=0.02
+10-03 17:18:57.305 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0027 start_rms=0.02
+10-03 17:18:58.310 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0053 start_rms=0.02
+10-03 17:18:59.311 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0052 start_rms=0.02
+10-03 17:19:00.326 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0051 start_rms=0.02
+10-03 17:19:01.345 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0025 start_rms=0.02
+10-03 17:19:02.346 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0021 start_rms=0.02
+10-03 17:19:03.346 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0053 start_rms=0.02
+10-03 17:19:04.348 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0069 start_rms=0.02
+10-03 17:19:05.365 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0064 start_rms=0.02
+10-03 17:19:06.368 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0051 start_rms=0.02
+10-03 17:19:07.386 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0031 start_rms=0.02
+10-03 17:19:08.405 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0019 start_rms=0.02
+10-03 17:19:09.409 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0037 start_rms=0.02
+10-03 17:19:10.409 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0029 start_rms=0.02
+10-03 17:19:11.409 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0021 start_rms=0.02
+10-03 17:19:12.409 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0031 start_rms=0.02
+10-03 17:19:13.409 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0025 start_rms=0.02
+10-03 17:19:14.426 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0058 start_rms=0.02
+10-03 17:19:15.426 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0066 start_rms=0.02
+10-03 17:19:16.445 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0071 start_rms=0.02
+10-03 17:19:17.446 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0060 start_rms=0.02
+10-03 17:19:18.446 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0076 start_rms=0.02
+10-03 17:19:19.446 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0058 start_rms=0.02
+10-03 17:19:20.446 19446 19479 I hfmodels-voice-sample: mic_level max_rms=0.0073 start_rms=0.02
