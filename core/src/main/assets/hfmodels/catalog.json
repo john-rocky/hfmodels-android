@@ -250,6 +250,654 @@
       }
     },
     {
+      "model_id": "litert-community/GLiClass-Edge-v3.0-LiteRT",
+      "model_commit": "88c90950587eb951974c094eef91afa0fe3552c0",
+      "path": "catalog/entries/litert-community__GLiClass-Edge-v3.0-LiteRT.json",
+      "provenance": "knowledgator/gliclass-edge-v3.0@df03993a2ed98e5e4a0d2dd7efbbd105abe874cf (Apache-2.0; a ModernBERT encoder from jhu-clsp/ettin-encoder-32m, MIT, with gliclass's projectors and scorer) converted with litert-torch 0.9.3 to classic LiteRT graphs, one static window per graph (128 and 256 tokens), float32 weights. The graph takes the looked-up token embeddings (the [50370, 384] float16 table ships beside it), the attention mask and a [25, window] label routing matrix, and returns one logit per label slot; the tokenizer is the source repository's tokenizer.json, and a request longer than the window is refused, never cut. GPU FP32 or CPU: the card measured that the GPU's default precision and the NPU change answers near the boundary, so neither is declared.",
+      "descriptor": {
+        "schema_version": 1,
+        "model_id": "litert-community/GLiClass-Edge-v3.0-LiteRT",
+        "tasks": [
+          "decide"
+        ],
+        "default_variant": "s128_fp32",
+        "license": {
+          "id": "apache-2.0",
+          "url": "https://huggingface.co/litert-community/GLiClass-Edge-v3.0-LiteRT/blob/88c90950587eb951974c094eef91afa0fe3552c0/LICENSE"
+        },
+        "variants": [
+          {
+            "id": "s128_fp32",
+            "runtime": "litert",
+            "handler": {
+              "id": "litert.typed_decisions",
+              "abi": 1
+            },
+            "runtime_range": {
+              "min_inclusive": "2.2.0",
+              "max_exclusive": "3.0.0"
+            },
+            "inputs": [
+              "text"
+            ],
+            "files": [
+              {
+                "id": "main",
+                "role": "model",
+                "path": "gliclass_edge_v3_s128_fp32.tflite",
+                "bytes": 53703480,
+                "sha256": "79036f538289fd406e6f33b6a1dda51758c77d5383c7704369248c491dd6dd59"
+              },
+              {
+                "id": "table",
+                "role": "model",
+                "path": "host_assets/tok_embeddings_fp16.bin",
+                "bytes": 38684160,
+                "sha256": "b22f9bd2aedb1768089da8126dc6cd69572b61f21e39d6254119773b5e147a27"
+              },
+              {
+                "id": "tokenizer",
+                "role": "tokenizer",
+                "path": "host_assets/tokenizer.json",
+                "bytes": 3583595,
+                "sha256": "7c1979be5ac04a6681dbfbb98a2b01b176883a298f2a7240c93048b244118a01"
+              }
+            ],
+            "default_profile": "gpu",
+            "profiles": [
+              {
+                "id": "gpu",
+                "priority": 100,
+                "files": [
+                  "main",
+                  "table",
+                  "tokenizer"
+                ],
+                "enabled_inputs": [
+                  "text"
+                ],
+                "components": {
+                  "inference": "gpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [
+                  "cpu"
+                ],
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "PUBLISHER_TESTED",
+                    "device": "SM-S942Q (Galaxy S26)",
+                    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+                    "runtime": "litert 2.2.0",
+                    "result": "PASS",
+                    "date": "2026-10-03",
+                    "evidence": "litert/results/2026-10-03-1937-RFGL80R6A6H-litert2.2.0-decide-gliclass-s128_fp32-gpu.log"
+                  }
+                ]
+              },
+              {
+                "id": "cpu",
+                "priority": 50,
+                "files": [
+                  "main",
+                  "table",
+                  "tokenizer"
+                ],
+                "enabled_inputs": [
+                  "text"
+                ],
+                "components": {
+                  "inference": "cpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [],
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "PUBLISHER_TESTED",
+                    "device": "SM-S942Q (Galaxy S26)",
+                    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+                    "runtime": "litert 2.2.0",
+                    "result": "PASS",
+                    "date": "2026-10-03",
+                    "evidence": "litert/results/2026-10-03-1938-RFGL80R6A6H-litert2.2.0-decide-gliclass-s128_fp32-cpu.log"
+                  }
+                ]
+              }
+            ],
+            "handler_config": {
+              "family": "gliclass",
+              "window": 128,
+              "hidden": 384,
+              "label_slots": 25,
+              "files": {
+                "main": "main",
+                "table": "table",
+                "tokenizer": "tokenizer"
+              },
+              "special_tokens": {
+                "cls": "[CLS]",
+                "sep": "[SEP]",
+                "mask": "[MASK]",
+                "pad": "[PAD]"
+              },
+              "table_dtype": "float16",
+              "gpu_precision": "fp32",
+              "cpu_threads": 4,
+              "languages": [
+                "en"
+              ]
+            }
+          },
+          {
+            "id": "s256_fp32",
+            "runtime": "litert",
+            "handler": {
+              "id": "litert.typed_decisions",
+              "abi": 1
+            },
+            "runtime_range": {
+              "min_inclusive": "2.2.0",
+              "max_exclusive": "3.0.0"
+            },
+            "inputs": [
+              "text"
+            ],
+            "files": [
+              {
+                "id": "main",
+                "role": "model",
+                "path": "gliclass_edge_v3_s256_fp32.tflite",
+                "bytes": 53965476,
+                "sha256": "aff0ee9795a2ffc2d4d32385e8f804b30bac4282d96d19c1e53cac88dcc97708"
+              },
+              {
+                "id": "table",
+                "role": "model",
+                "path": "host_assets/tok_embeddings_fp16.bin",
+                "bytes": 38684160,
+                "sha256": "b22f9bd2aedb1768089da8126dc6cd69572b61f21e39d6254119773b5e147a27"
+              },
+              {
+                "id": "tokenizer",
+                "role": "tokenizer",
+                "path": "host_assets/tokenizer.json",
+                "bytes": 3583595,
+                "sha256": "7c1979be5ac04a6681dbfbb98a2b01b176883a298f2a7240c93048b244118a01"
+              }
+            ],
+            "default_profile": "gpu",
+            "profiles": [
+              {
+                "id": "gpu",
+                "priority": 100,
+                "files": [
+                  "main",
+                  "table",
+                  "tokenizer"
+                ],
+                "enabled_inputs": [
+                  "text"
+                ],
+                "components": {
+                  "inference": "gpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [
+                  "cpu"
+                ],
+                "default_selectable": true
+              },
+              {
+                "id": "cpu",
+                "priority": 50,
+                "files": [
+                  "main",
+                  "table",
+                  "tokenizer"
+                ],
+                "enabled_inputs": [
+                  "text"
+                ],
+                "components": {
+                  "inference": "cpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [],
+                "default_selectable": true
+              }
+            ],
+            "handler_config": {
+              "family": "gliclass",
+              "window": 256,
+              "hidden": 384,
+              "label_slots": 25,
+              "files": {
+                "main": "main",
+                "table": "table",
+                "tokenizer": "tokenizer"
+              },
+              "special_tokens": {
+                "cls": "[CLS]",
+                "sep": "[SEP]",
+                "mask": "[MASK]",
+                "pad": "[PAD]"
+              },
+              "table_dtype": "float16",
+              "gpu_precision": "fp32",
+              "cpu_threads": 4,
+              "languages": [
+                "en"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "litert-community/GLiNER2.5-Decide-LiteRT",
+      "model_commit": "db80197282d11373df084c0ceed67a54544cfa84",
+      "path": "catalog/entries/litert-community__GLiNER2.5-Decide-LiteRT.json",
+      "provenance": "fastino/GLiNER2.5-Decide@7ee5da4c2415e32259bcdc0b1a7367c32ce8d6f6 (Apache-2.0; a DeBERTa-v3-large encoder, MIT, with gliner2's classification head) converted with litert-torch 0.9.3 to classic LiteRT graphs of the classification path, one static window per graph (128, 256 and 512 tokens), the FULLY_CONNECTED weights stored as float16 and the activations in float32. The graph takes the looked-up token embeddings (the [128011, 1024] float16 table ships beside it), the attention mask and a [32, window] label routing matrix, and returns one logit per label slot; the tokenizer is the checkpoint's tokenizer.json, and a request longer than the window is refused, never cut. GPU FP32 or CPU: the card measured that the GPU's default precision changes decisions, and the NPU was not evaluated.",
+      "descriptor": {
+        "schema_version": 1,
+        "model_id": "litert-community/GLiNER2.5-Decide-LiteRT",
+        "tasks": [
+          "decide"
+        ],
+        "default_variant": "s128_wfp16",
+        "license": {
+          "id": "apache-2.0",
+          "url": "https://huggingface.co/litert-community/GLiNER2.5-Decide-LiteRT/blob/db80197282d11373df084c0ceed67a54544cfa84/LICENSE"
+        },
+        "variants": [
+          {
+            "id": "s128_wfp16",
+            "runtime": "litert",
+            "handler": {
+              "id": "litert.typed_decisions",
+              "abi": 1
+            },
+            "runtime_range": {
+              "min_inclusive": "2.2.0",
+              "max_exclusive": "3.0.0"
+            },
+            "inputs": [
+              "text"
+            ],
+            "files": [
+              {
+                "id": "main",
+                "role": "model",
+                "path": "gliner25_decide_s128_wfp16.tflite",
+                "bytes": 660383872,
+                "sha256": "026a4b5eb62bb8f0110e9542fd4f788cf247bb5f6d3743a6056cad44b45fb39b"
+              },
+              {
+                "id": "table",
+                "role": "model",
+                "path": "host_assets/word_embeddings_fp16.bin",
+                "bytes": 262166528,
+                "sha256": "f90f5d837721b3d4df7194a89ea18bbea5c449e6944fb6078664f1a8d20484fd"
+              },
+              {
+                "id": "tokenizer",
+                "role": "tokenizer",
+                "path": "host_assets/tokenizer.json",
+                "bytes": 8333952,
+                "sha256": "3ad87d9ffe669147063e70850927dd2da90249e2acc5c8527f1eb65df467bcc8"
+              }
+            ],
+            "default_profile": "gpu",
+            "profiles": [
+              {
+                "id": "gpu",
+                "priority": 100,
+                "files": [
+                  "main",
+                  "table",
+                  "tokenizer"
+                ],
+                "enabled_inputs": [
+                  "text"
+                ],
+                "components": {
+                  "inference": "gpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [
+                  "cpu"
+                ],
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "PUBLISHER_TESTED",
+                    "device": "SM-S942Q (Galaxy S26)",
+                    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+                    "runtime": "litert 2.2.0",
+                    "result": "PASS",
+                    "date": "2026-10-03",
+                    "evidence": "litert/results/2026-10-03-1653-RFGL80R6A6H-litert2.2.0-decide-gliner-s128_wfp16-gpu.log"
+                  }
+                ]
+              },
+              {
+                "id": "cpu",
+                "priority": 50,
+                "files": [
+                  "main",
+                  "table",
+                  "tokenizer"
+                ],
+                "enabled_inputs": [
+                  "text"
+                ],
+                "components": {
+                  "inference": "cpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [],
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "PUBLISHER_TESTED",
+                    "device": "SM-S942Q (Galaxy S26)",
+                    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+                    "runtime": "litert 2.2.0",
+                    "result": "PASS",
+                    "date": "2026-10-03",
+                    "evidence": "litert/results/2026-10-03-1654-RFGL80R6A6H-litert2.2.0-decide-gliner-s128_wfp16-cpu.log"
+                  }
+                ]
+              }
+            ],
+            "handler_config": {
+              "family": "gliner2_decide",
+              "window": 128,
+              "hidden": 1024,
+              "label_slots": 32,
+              "files": {
+                "main": "main",
+                "table": "table",
+                "tokenizer": "tokenizer"
+              },
+              "table_dtype": "float16",
+              "gpu_precision": "fp32",
+              "cpu_threads": 4,
+              "languages": [
+                "en"
+              ]
+            }
+          },
+          {
+            "id": "s256_wfp16",
+            "runtime": "litert",
+            "handler": {
+              "id": "litert.typed_decisions",
+              "abi": 1
+            },
+            "runtime_range": {
+              "min_inclusive": "2.2.0",
+              "max_exclusive": "3.0.0"
+            },
+            "inputs": [
+              "text"
+            ],
+            "files": [
+              {
+                "id": "main",
+                "role": "model",
+                "path": "gliner25_decide_s256_wfp16.tflite",
+                "bytes": 710715520,
+                "sha256": "00922aba054287379e290347396339f3e278e739aab355c8b35779ac74bc98bd"
+              },
+              {
+                "id": "table",
+                "role": "model",
+                "path": "host_assets/word_embeddings_fp16.bin",
+                "bytes": 262166528,
+                "sha256": "f90f5d837721b3d4df7194a89ea18bbea5c449e6944fb6078664f1a8d20484fd"
+              },
+              {
+                "id": "tokenizer",
+                "role": "tokenizer",
+                "path": "host_assets/tokenizer.json",
+                "bytes": 8333952,
+                "sha256": "3ad87d9ffe669147063e70850927dd2da90249e2acc5c8527f1eb65df467bcc8"
+              }
+            ],
+            "default_profile": "gpu",
+            "profiles": [
+              {
+                "id": "gpu",
+                "priority": 100,
+                "files": [
+                  "main",
+                  "table",
+                  "tokenizer"
+                ],
+                "enabled_inputs": [
+                  "text"
+                ],
+                "components": {
+                  "inference": "gpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [
+                  "cpu"
+                ],
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "PUBLISHER_TESTED",
+                    "device": "SM-S942Q (Galaxy S26)",
+                    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+                    "runtime": "litert 2.2.0",
+                    "result": "PASS",
+                    "date": "2026-10-03",
+                    "evidence": "litert/results/2026-10-03-1655-RFGL80R6A6H-litert2.2.0-decide-gliner-s256_wfp16-gpu.log"
+                  }
+                ]
+              },
+              {
+                "id": "cpu",
+                "priority": 50,
+                "files": [
+                  "main",
+                  "table",
+                  "tokenizer"
+                ],
+                "enabled_inputs": [
+                  "text"
+                ],
+                "components": {
+                  "inference": "cpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [],
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "PUBLISHER_TESTED",
+                    "device": "SM-S942Q (Galaxy S26)",
+                    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+                    "runtime": "litert 2.2.0",
+                    "result": "PASS",
+                    "date": "2026-10-03",
+                    "evidence": "litert/results/2026-10-03-1656-RFGL80R6A6H-litert2.2.0-decide-gliner-s256_wfp16-cpu.log"
+                  }
+                ]
+              }
+            ],
+            "handler_config": {
+              "family": "gliner2_decide",
+              "window": 256,
+              "hidden": 1024,
+              "label_slots": 32,
+              "files": {
+                "main": "main",
+                "table": "table",
+                "tokenizer": "tokenizer"
+              },
+              "table_dtype": "float16",
+              "gpu_precision": "fp32",
+              "cpu_threads": 4,
+              "languages": [
+                "en"
+              ]
+            }
+          },
+          {
+            "id": "s512_wfp16",
+            "runtime": "litert",
+            "handler": {
+              "id": "litert.typed_decisions",
+              "abi": 1
+            },
+            "runtime_range": {
+              "min_inclusive": "2.2.0",
+              "max_exclusive": "3.0.0"
+            },
+            "inputs": [
+              "text"
+            ],
+            "files": [
+              {
+                "id": "main",
+                "role": "model",
+                "path": "gliner25_decide_s512_wfp16.tflite",
+                "bytes": 811378816,
+                "sha256": "bbe150fa6f7bf29cf4b12a6eff630b3a8fb59f41b41ea14a68b1b693fea6fc71"
+              },
+              {
+                "id": "table",
+                "role": "model",
+                "path": "host_assets/word_embeddings_fp16.bin",
+                "bytes": 262166528,
+                "sha256": "f90f5d837721b3d4df7194a89ea18bbea5c449e6944fb6078664f1a8d20484fd"
+              },
+              {
+                "id": "tokenizer",
+                "role": "tokenizer",
+                "path": "host_assets/tokenizer.json",
+                "bytes": 8333952,
+                "sha256": "3ad87d9ffe669147063e70850927dd2da90249e2acc5c8527f1eb65df467bcc8"
+              }
+            ],
+            "default_profile": "gpu",
+            "profiles": [
+              {
+                "id": "gpu",
+                "priority": 100,
+                "files": [
+                  "main",
+                  "table",
+                  "tokenizer"
+                ],
+                "enabled_inputs": [
+                  "text"
+                ],
+                "components": {
+                  "inference": "gpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [
+                  "cpu"
+                ],
+                "default_selectable": true
+              },
+              {
+                "id": "cpu",
+                "priority": 50,
+                "files": [
+                  "main",
+                  "table",
+                  "tokenizer"
+                ],
+                "enabled_inputs": [
+                  "text"
+                ],
+                "components": {
+                  "inference": "cpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [],
+                "default_selectable": true
+              }
+            ],
+            "handler_config": {
+              "family": "gliner2_decide",
+              "window": 512,
+              "hidden": 1024,
+              "label_slots": 32,
+              "files": {
+                "main": "main",
+                "table": "table",
+                "tokenizer": "tokenizer"
+              },
+              "table_dtype": "float16",
+              "gpu_precision": "fp32",
+              "cpu_threads": 4,
+              "languages": [
+                "en"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
       "model_id": "litert-community/Julia-1-LiteRT",
       "model_commit": "b92a0d21eb1aedad6afdc815e027a47896d16eb3",
       "path": "catalog/entries/litert-community__Julia-1-LiteRT.json",
@@ -1902,6 +2550,264 @@
               "metadata_source": "litertlm_manifest",
               "context_tokens": 4096,
               "manifest_min_runtime_version": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "litert-community/Open-Decision-DeBERTa-v3-Large-LiteRT",
+      "model_commit": "7a276235b795e8ad3ae7ac6a9f237daa2098863a",
+      "path": "catalog/entries/litert-community__Open-Decision-DeBERTa-v3-Large-LiteRT.json",
+      "provenance": "The DeBERTa-v3-large decision checkpoint named as the card's base_model, published by Mithril (formerly Kotoba Cloud) at revision 188ee67a5c93122b916e5acd5bdb0cb3623e380a (Apache-2.0; DeBERTa-v3-large is MIT), converted with litert-torch 0.9.3 to classic LiteRT graphs, one static window per graph (256 and 512 tokens), the FULLY_CONNECTED weights stored as float16 and the activations in float32. The graph takes the looked-up token embeddings (the [128100, 1024] float16 word table ships beside it), the attention mask and two routing matrices for the question and option spans, and returns one logit per option slot (128); the tokenizer is the source repository's tokenizer.json, the state is cut to its first 256 tokens as the author's Collator does, and the softmax runs at the author's temperature 1.05. GPU FP32 or CPU: the card measured that fp16 computation (the GPU's default precision, the NPU) changes or breaks the answers, so no NPU profile is declared.",
+      "descriptor": {
+        "schema_version": 1,
+        "model_id": "litert-community/Open-Decision-DeBERTa-v3-Large-LiteRT",
+        "tasks": [
+          "decide"
+        ],
+        "default_variant": "s256_wfp16",
+        "license": {
+          "id": "apache-2.0",
+          "url": "https://huggingface.co/litert-community/Open-Decision-DeBERTa-v3-Large-LiteRT/blob/7a276235b795e8ad3ae7ac6a9f237daa2098863a/LICENSE"
+        },
+        "variants": [
+          {
+            "id": "s256_wfp16",
+            "runtime": "litert",
+            "handler": {
+              "id": "litert.typed_decisions",
+              "abi": 1
+            },
+            "runtime_range": {
+              "min_inclusive": "2.2.0",
+              "max_exclusive": "3.0.0"
+            },
+            "inputs": [
+              "text"
+            ],
+            "files": [
+              {
+                "id": "main",
+                "role": "model",
+                "path": "deberta_v3_large_decision_s256_wfp16.tflite",
+                "bytes": 712780432,
+                "sha256": "4514cd45d4ee6bf1025818bbecd140d4f744fa78d8309e22a17b89448c176e45"
+              },
+              {
+                "id": "table",
+                "role": "model",
+                "path": "word_embeddings_fp16.bin",
+                "bytes": 262348800,
+                "sha256": "d1b86bce8ffa0aae67e7d99db5824e67b5241337d0b5132bf25f22bf9dd72b45"
+              },
+              {
+                "id": "tokenizer",
+                "role": "tokenizer",
+                "path": "tokenizer.json",
+                "bytes": 8657170,
+                "sha256": "cd119378b0160677b7a1e561ba29ada83918c1d420b326516a585382e83d9d39"
+              }
+            ],
+            "default_profile": "gpu",
+            "profiles": [
+              {
+                "id": "gpu",
+                "priority": 100,
+                "files": [
+                  "main",
+                  "table",
+                  "tokenizer"
+                ],
+                "enabled_inputs": [
+                  "text"
+                ],
+                "components": {
+                  "inference": "gpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [
+                  "cpu"
+                ],
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "PUBLISHER_TESTED",
+                    "device": "SM-S942Q (Galaxy S26)",
+                    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+                    "runtime": "litert 2.2.0",
+                    "result": "PASS",
+                    "date": "2026-10-03",
+                    "evidence": "litert/results/2026-10-03-1938-RFGL80R6A6H-litert2.2.0-decide-opendecision-s256_wfp16-gpu.log"
+                  }
+                ]
+              },
+              {
+                "id": "cpu",
+                "priority": 50,
+                "files": [
+                  "main",
+                  "table",
+                  "tokenizer"
+                ],
+                "enabled_inputs": [
+                  "text"
+                ],
+                "components": {
+                  "inference": "cpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [],
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "PUBLISHER_TESTED",
+                    "device": "SM-S942Q (Galaxy S26)",
+                    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+                    "runtime": "litert 2.2.0",
+                    "result": "PASS",
+                    "date": "2026-10-03",
+                    "evidence": "litert/results/2026-10-03-1939-RFGL80R6A6H-litert2.2.0-decide-opendecision-s256_wfp16-cpu.log"
+                  }
+                ]
+              }
+            ],
+            "handler_config": {
+              "family": "deberta_decision",
+              "window": 256,
+              "hidden": 1024,
+              "option_slots": 128,
+              "state_tokens": 256,
+              "temperature": 1.05,
+              "files": {
+                "main": "main",
+                "table": "table",
+                "tokenizer": "tokenizer"
+              },
+              "table_dtype": "float16",
+              "gpu_precision": "fp32",
+              "cpu_threads": 4,
+              "languages": [
+                "en"
+              ]
+            }
+          },
+          {
+            "id": "s512_wfp16",
+            "runtime": "litert",
+            "handler": {
+              "id": "litert.typed_decisions",
+              "abi": 1
+            },
+            "runtime_range": {
+              "min_inclusive": "2.2.0",
+              "max_exclusive": "3.0.0"
+            },
+            "inputs": [
+              "text"
+            ],
+            "files": [
+              {
+                "id": "main",
+                "role": "model",
+                "path": "deberta_v3_large_decision_s512_wfp16.tflite",
+                "bytes": 813443728,
+                "sha256": "238f0cc4dca7b6f18677950e9261d07401a3de9857d76f2a7450fada7f97a5d9"
+              },
+              {
+                "id": "table",
+                "role": "model",
+                "path": "word_embeddings_fp16.bin",
+                "bytes": 262348800,
+                "sha256": "d1b86bce8ffa0aae67e7d99db5824e67b5241337d0b5132bf25f22bf9dd72b45"
+              },
+              {
+                "id": "tokenizer",
+                "role": "tokenizer",
+                "path": "tokenizer.json",
+                "bytes": 8657170,
+                "sha256": "cd119378b0160677b7a1e561ba29ada83918c1d420b326516a585382e83d9d39"
+              }
+            ],
+            "default_profile": "gpu",
+            "profiles": [
+              {
+                "id": "gpu",
+                "priority": 100,
+                "files": [
+                  "main",
+                  "table",
+                  "tokenizer"
+                ],
+                "enabled_inputs": [
+                  "text"
+                ],
+                "components": {
+                  "inference": "gpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [
+                  "cpu"
+                ],
+                "default_selectable": true
+              },
+              {
+                "id": "cpu",
+                "priority": 50,
+                "files": [
+                  "main",
+                  "table",
+                  "tokenizer"
+                ],
+                "enabled_inputs": [
+                  "text"
+                ],
+                "components": {
+                  "inference": "cpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [],
+                "default_selectable": true
+              }
+            ],
+            "handler_config": {
+              "family": "deberta_decision",
+              "window": 512,
+              "hidden": 1024,
+              "option_slots": 128,
+              "state_tokens": 256,
+              "temperature": 1.05,
+              "files": {
+                "main": "main",
+                "table": "table",
+                "tokenizer": "tokenizer"
+              },
+              "table_dtype": "float16",
+              "gpu_precision": "fp32",
+              "cpu_threads": 4,
+              "languages": [
+                "en"
+              ]
             }
           }
         ]

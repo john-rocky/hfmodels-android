@@ -9,9 +9,11 @@ import io.github.johnrocky.hfmodels.PreparedModel
  * `/v1/systemone` ones, so the same JSON drives a server and this model.
  *
  * `state` is a `String` (used as it is) or a structured value (`Map<String, Any?>` / `List<Any?>`),
- * which the model serializes the way its publisher's code does ([Json.dumps]). A state longer
- * than the model's window is cut at the end and reported (`Decisions.truncated`); the questions
- * always fit first.
+ * which the model serializes the way its publisher's code does ([Json.dumps]). What happens to a
+ * state longer than the model's window is the family's: `laya` and `julia` cut it at the end and
+ * report it (`Decisions.truncated`), the questions always fitting first; `gliner2_decide` and
+ * `gliclass` cut nothing and refuse the request (`CONTEXT_LIMIT_EXCEEDED`); `deberta_decision` keeps
+ * the state's first 256 tokens (reported as truncated) and refuses what still does not fit.
  *
  * `prefill(state)` processes the state once for several rounds of questions; what a backend can
  * share between questions is its own (an encoder shares the serialized, tokenized state; a
@@ -43,9 +45,9 @@ interface PreparedState : AutoCloseable {
 data class DecisionLimits(
     /** The model's sequence window in tokens: instructions, options and state together. */
     val windowTokens: Int,
-    /** Tokens reserved for the question head (instructions + options) before the state gets the rest. */
+    /** Tokens reserved for the question head (instructions + options) before the state gets the rest; the whole window on a family without a head budget. */
     val headTokens: Int,
-    /** Most options a choice / score question may carry (the reference implementation's sequence builder caps each option's text; this is the count). */
+    /** Most options a choice / score question may carry (the reference implementation's sequence builder caps each option's text; this is the count); on a family that scores label or option slots, what one forward holds. */
     val maxOptions: Int,
     /** Languages the publisher declares for this variant (BCP-47 or "multilingual"); informational. */
     val languages: List<String>,

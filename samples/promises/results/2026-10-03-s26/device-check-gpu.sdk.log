@@ -1,0 +1,10 @@
+--------- beginning of main
+10-03 19:04:57.603 29520 29539 I hfmodels: resolve litert-community/GLiNER2.5-Decide-LiteRT: commit=db801972 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=fbf3ac72
+10-03 19:04:58.385 29520 29539 I hfmodels: imported gliner25_decide_s128_wfp16.tflite: 660383872 bytes, sha256 ok, from /storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.promises/files/gliner25_decide_s128_wfp16.tflite
+10-03 19:04:58.385 29520 29534 I hfmodels: side-loaded gliner25_decide_s128_wfp16.tflite from /storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.promises/files/gliner25_decide_s128_wfp16.tflite (sha256 verified)
+10-03 19:04:58.643 29520 29539 I hfmodels: imported word_embeddings_fp16.bin: 262166528 bytes, sha256 ok, from /storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.promises/files/word_embeddings_fp16.bin
+10-03 19:04:58.644 29520 29534 I hfmodels: side-loaded word_embeddings_fp16.bin from /storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.promises/files/word_embeddings_fp16.bin (sha256 verified)
+10-03 19:04:58.653 29520 29539 I hfmodels: imported tokenizer.json: 8333952 bytes, sha256 ok, from /storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.promises/files/tokenizer.json
+10-03 19:04:58.653 29520 29534 I hfmodels: side-loaded tokenizer.json from /storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.promises/files/tokenizer.json (sha256 verified)
+10-03 19:04:59.163 29520 29539 I hfmodels: tokenizer tokenizer.json: 128011 tokens (Unigram), load_ms=500
+10-03 19:05:03.046 29520 29534 I hfmodels: ready litert-community/GLiNER2.5-Decide-LiteRT@db801972 variant=s128_wfp16 profile=gpu inference=GPU prepare_ms=4384

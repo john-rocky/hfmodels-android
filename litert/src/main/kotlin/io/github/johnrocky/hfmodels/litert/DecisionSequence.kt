@@ -7,9 +7,9 @@ import io.github.johnrocky.hfmodels.decide.Question
 import kotlin.math.max
 
 /**
- * The decision-encoder families this module runs. They share one sequence layout (below) and
- * differ in how a question's options are rendered, which tokens frame the sequence, and how the
- * marker scores become an answer:
+ * The marker-sequence families ([MarkerContract]; `gliner2_decide` is [GlinerDecideContract]). They
+ * share one sequence layout (below) and differ in how a question's options are rendered, which tokens
+ * frame the sequence, and how the marker scores become an answer:
  *  - `laya` (convaiinnovations/laya): options carry their key or level (`key: description`,
  *    `level i: text`, `false: …` / `true: …`), a temperature per question type, a separate act head.
  *  - `julia` (SupersonicLabs/Julia-1): the option text is the criteria description itself (a choice

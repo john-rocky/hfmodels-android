@@ -1,0 +1,28 @@
+[
+  {
+    "model_id": "litert-community/GLiClass-Edge-v3.0-LiteRT",
+    "model_commit": "88c90950587eb951974c094eef91afa0fe3552c0",
+    "level": "PUBLISHER_TESTED",
+    "device": "SM-S942Q (Galaxy S26)",
+    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+    "runtime": "litert 2.2.0",
+    "result": "PASS",
+    "date": "2026-10-03",
+    "variant": "s128_fp32",
+    "profile": "gpu",
+    "evidence": "litert/results/2026-10-03-1937-RFGL80R6A6H-litert2.2.0-decide-gliclass-s128_fp32-gpu.log"
+  },
+  {
+    "model_id": "litert-community/GLiClass-Edge-v3.0-LiteRT",
+    "model_commit": "88c90950587eb951974c094eef91afa0fe3552c0",
+    "level": "PUBLISHER_TESTED",
+    "device": "SM-S942Q (Galaxy S26)",
+    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+    "runtime": "litert 2.2.0",
+    "result": "PASS",
+    "date": "2026-10-03",
+    "variant": "s128_fp32",
+    "profile": "cpu",
+    "evidence": "litert/results/2026-10-03-1938-RFGL80R6A6H-litert2.2.0-decide-gliclass-s128_fp32-cpu.log"
+  }
+]
