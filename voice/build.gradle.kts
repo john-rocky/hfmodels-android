@@ -1,5 +1,5 @@
 // hfmodels-voice: the voice loop's pieces on top of the transcriber and the speaker (hfmodels-litert) and the chat
-// model (hfmodels-litertlm). It holds the Endpointer, the SentenceSplitter and the tool loop (ToolRunner, PhoneTools) so far. Depending on hfmodels-litert,
+// model (hfmodels-litertlm): VoiceLoop over the Endpointer, the SentenceSplitter and the tool loop (ToolRunner, PhoneTools), with MicSource and SpeechPlayer. Depending on hfmodels-litert,
 // an app needs android.uniquePackageNames=false on AGP 9 (gradle.properties).
 plugins {
     id("com.android.library")

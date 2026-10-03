@@ -11,9 +11,12 @@ import io.github.johnrocky.hfmodels.speech.TranscriberLimits
 import io.github.johnrocky.hfmodels.speech.Transcript
 import io.github.johnrocky.hfmodels.speech.TranscriptTiming
 import io.github.johnrocky.hfmodels.voice.VoiceLoop.Event
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -130,16 +133,47 @@ class VoiceLoopTest {
         assertEquals(1, loop.requests)
     }
 
+    @Test fun cancellingATurnStopsTheReplyAndTheSoundAndCloseAndJoinEndsAListen() {
+        // The reply says one sentence and then hangs, as a model still generating.
+        val replyCancelled = CompletableDeferred<Unit>()
+        val loop = Loop(listOf(ToolEvent.Text("Setting the alarm now. ")), hangAfterScript = replyCancelled)
+        runBlocking {
+            val events = ArrayList<Event>()
+            val job = launch { loop.engine.turn(null, "Set an alarm.").collect { e -> events += e } }
+            while (events.none { it is Event.Speaking }) kotlinx.coroutines.delay(1)
+            job.cancel()
+            job.join()
+            assertTrue(replyCancelled.isCompleted)
+            assertTrue(loop.stopped >= 1)
+            assertTrue(events.none { it is Event.Done })
+            assertEquals(listOf("Setting the alarm now,"), loop.synthesized)
+        }
+        // closeAndJoin ends a listen in progress and stops the sound; the loop then refuses new work.
+        val idle = Loop(emptyList())
+        runBlocking {
+            val ended = CompletableDeferred<Unit>()
+            launch { runCatching { idle.engine.listen(flow { awaitCancellation() }).collect {} }; ended.complete(Unit) }
+            kotlinx.coroutines.delay(10)
+            idle.engine.closeAndJoin()
+            ended.await()
+            assertTrue(idle.stopped >= 1)
+            assertTrue(runCatching { idle.engine.turn(null, "Hello.").toList() }.exceptionOrNull() is IllegalStateException)
+        }
+    }
+
     /** The engine with a scripted reply, a speaker and a player that record, and an optional transcriber. */
     private class Loop(
         private val script: List<ToolEvent>,
         private val transcript: ((FloatArray) -> String)? = null,
         private val slowTranscriber: Boolean = false,
+        /** Set: after the script the reply hangs until cancelled, then completes this. */
+        private val hangAfterScript: CompletableDeferred<Unit>? = null,
     ) {
         val synthesized = ArrayList<String>()
         val played = ArrayList<FloatArray>()
         val heardLengths = ArrayList<Int>()
         var drained = 0
+        var stopped = 0
         var requests = 0
         private var firstWrite = 0L
 
@@ -176,12 +210,13 @@ class VoiceLoopTest {
         private fun reply(text: String): Flow<ToolEvent> = flow {
             requests++
             for (e in script) emit(e)
+            hangAfterScript?.let { done -> try { awaitCancellation() } finally { done.complete(Unit) } }
         }
 
         val engine = LoopEngine(transcriber, speaker, ::reply, VoiceLoopConfig(), PlayerPort(
             play = { pcm -> if (firstWrite == 0L) firstWrite = System.nanoTime(); played += pcm },
             drain = { drained++ },
-            stop = {},
+            stop = { stopped++ },
             firstWriteAtNanos = { firstWrite },
         ))
 
