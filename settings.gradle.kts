@@ -19,6 +19,7 @@ rootProject.name = "hfmodels-android"
 include(":core")
 include(":litertlm")
 include(":litert")
+include(":voice")
 include(":probes:coexist")
 include(":probes:scoring")
 include(":samples:ask")
