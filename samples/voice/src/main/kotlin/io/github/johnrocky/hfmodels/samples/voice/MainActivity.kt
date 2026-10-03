@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
  *   --ez autolisten true   open the microphone once they are loaded
  *   --es say "<text>"      one turn from this text once they are loaded (no microphone)
  *   --es record <name>     write each turn's sound and events under <external files>/record/<name>/<turn>/
+ *   --ef start_rms 0.01    the endpointer's start level (default 0.02, a voice toward the phone; less for a speaker)
  * e.g. adb shell am start -n io.github.johnrocky.hfmodels.samples.voice/.MainActivity --ez autoload true --ez autolisten true
  *
  * Scripted mode (any of these extras present, whatever its value) shows the screen over the keyguard and turns the
@@ -63,6 +64,7 @@ class MainActivity : ComponentActivity() {
         val say = i.getStringExtra("say")
         val listen = i.getBooleanExtra("autolisten", false)
         i.getStringExtra("record")?.let { vm.record(it) }
+        if (i.hasExtra("start_rms")) vm.startRms(i.getFloatExtra("start_rms", 0.02f))
         Log.i(VoiceViewModel.TAG, "extras autoload=${i.getBooleanExtra("autoload", false)} autolisten=$listen say=${say != null} record=${i.getStringExtra("record")}")
         when {
             say != null -> vm.load { vm.say(say) }
@@ -73,6 +75,6 @@ class MainActivity : ComponentActivity() {
 
     private companion object {
         val PERMISSIONS = listOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR)
-        val SCRIPT_EXTRAS = listOf("autoload", "autolisten", "say", "record")
+        val SCRIPT_EXTRAS = listOf("autoload", "autolisten", "say", "record", "start_rms")
     }
 }

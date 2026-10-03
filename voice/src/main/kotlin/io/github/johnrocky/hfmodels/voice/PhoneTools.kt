@@ -15,6 +15,7 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
@@ -71,9 +72,13 @@ class ClockTool : VoiceTool {
 }
 
 /**
- * `set_alarm(hour, minute, label)`: an alarm in the Clock app, without showing its UI. Call it from a process with a
- * visible activity: Android 10 and later drop an activity start from the background without an exception, and the
- * result text still says the alarm was set. [PhoneTools.phoneState]'s next alarm shows whether it was.
+ * `set_alarm(hour, minute, label)`: an alarm in the Clock app, without showing its UI, confirmed by Android: after the
+ * intent the tool waits up to 1.5 s for [AlarmManager.getNextAlarmClock] to report the requested time (its next
+ * occurrence, today or tomorrow). Android 10 and later drop an activity start from an app without a visible activity
+ * without an exception (a locked Galaxy S26: BAL_BLOCK, result code 102); the result is then an `Error:` that says so.
+ * When an earlier alarm already comes first, Android cannot show this one, and the result says it was requested and
+ * not confirmed. On a phone: the voice sample's scripted turn, then `adb shell dumpsys alarm | grep -A1 "Next alarm
+ * clock information"`.
  */
 class AlarmTool(private val context: Context) : VoiceTool {
     override val name = "set_alarm"
@@ -96,19 +101,50 @@ class AlarmTool(private val context: Context) : VoiceTool {
             .putExtra(AlarmClock.EXTRA_MESSAGE, label)
             .putExtra(AlarmClock.EXTRA_SKIP_UI, true)
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        return try {
+        val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val expected = AlarmCheck.nextOccurrence(System.currentTimeMillis(), hour, minute)
+        val before = am.nextAlarmClock?.triggerTime
+        try {
             context.startActivity(i)
-            "Alarm set for %02d:%02d (%s)".format(hour, minute, label)
         } catch (e: ActivityNotFoundException) {
-            "Error: no clock app can set alarms on this phone"
+            return "Error: no clock app can set alarms on this phone"
+        }
+        if (AlarmCheck.hidden(before, expected)) return "Alarm requested for %02d:%02d (%s); not confirmed: an earlier alarm comes first".format(hour, minute, label)
+        val deadline = System.nanoTime() + AlarmCheck.CONFIRM_MS * 1_000_000
+        while (true) {
+            if (AlarmCheck.matches(am.nextAlarmClock?.triggerTime, expected)) return "Alarm set for %02d:%02d (%s)".format(hour, minute, label)
+            if (System.nanoTime() >= deadline) return "Error: the Clock app did not take the alarm (the screen must be on and this app visible)"
+            delay(AlarmCheck.POLL_MS)
         }
     }
 }
 
+/** [AlarmTool]'s reading of Android's next alarm clock (local time). */
+internal object AlarmCheck {
+    const val CONFIRM_MS = 1_500L
+    const val POLL_MS = 100L
+
+    /** The next moment after [now] at which the clock reads [hour]:[minute]: today, or tomorrow when it has passed. */
+    fun nextOccurrence(now: Long, hour: Int, minute: Int, zone: TimeZone = TimeZone.getDefault()): Long {
+        val c = Calendar.getInstance(zone).apply {
+            timeInMillis = now; set(Calendar.HOUR_OF_DAY, hour); set(Calendar.MINUTE, minute); set(Calendar.SECOND, 0); set(Calendar.MILLISECOND, 0)
+        }
+        if (c.timeInMillis <= now) c.add(Calendar.DAY_OF_YEAR, 1)
+        return c.timeInMillis
+    }
+
+    /** Android's next alarm clock is the requested alarm (within its minute). */
+    fun matches(next: Long?, expected: Long): Boolean = next != null && next >= expected && next < expected + 60_000
+
+    /** An alarm before the requested one was already next: Android keeps reporting that one. */
+    fun hidden(before: Long?, expected: Long): Boolean = before != null && before < expected
+}
+
 /**
- * `set_timer(minutes, label)`: a countdown in the Clock app, without showing its UI. Call it from a process with a
- * visible activity: Android 10 and later drop an activity start from the background without an exception, and the
- * result text still says the timer started ([PhoneTools.phoneState] reports alarms, not timers).
+ * `set_timer(minutes, label)`: a countdown in the Clock app, without showing its UI. Not confirmed: Android has no public
+ * way to read the Clock app's timers. Call it with the screen on and the app visible: Android 10 and later drop an
+ * activity start from an app without a visible activity without an exception, and the result still says the timer
+ * started.
  */
 class TimerTool(private val context: Context) : VoiceTool {
     override val name = "set_timer"

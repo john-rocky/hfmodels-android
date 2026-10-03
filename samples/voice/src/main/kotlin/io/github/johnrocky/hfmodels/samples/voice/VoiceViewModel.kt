@@ -24,6 +24,7 @@ import io.github.johnrocky.hfmodels.litert.Transcribe
 import io.github.johnrocky.hfmodels.litertlm.ChatModel
 import io.github.johnrocky.hfmodels.speech.Speaker
 import io.github.johnrocky.hfmodels.speech.Transcriber
+import io.github.johnrocky.hfmodels.voice.Endpointer
 import io.github.johnrocky.hfmodels.voice.MicSource
 import io.github.johnrocky.hfmodels.voice.PhoneTools
 import io.github.johnrocky.hfmodels.voice.SpeechPlayer
@@ -63,7 +64,7 @@ class VoiceViewModel(private val app: Application) : AndroidViewModel(app) {
     private val afterLoad = ArrayList<() -> Unit>()
     private var tap: MicTap? = null
     private var recorder: TurnRecorder? = null
-    private val config = VoiceLoopConfig()
+    private var config = VoiceLoopConfig()
 
     private val _ui = MutableStateFlow(VoiceUi())
     val ui: StateFlow<VoiceUi> = _ui
@@ -163,6 +164,20 @@ class VoiceViewModel(private val app: Application) : AndroidViewModel(app) {
     fun stop() {
         listenJob?.cancel()
         turnJob?.cancel()
+    }
+
+    /**
+     * The endpointer's start level ([Endpointer.startRms]; 0.02 is a voice toward the phone, sound through a speaker
+     * needs less). A loaded loop is built again with it; a listen in progress stops.
+     */
+    fun startRms(v: Float) {
+        val e = config.endpointer
+        config = config.copy(endpointer = Endpointer(e.sampleRate, v, e.startMs, e.hangoverMs, e.maxUtteranceMs, e.frameMs, e.preRollMs))
+        Log.i(TAG, "start_rms=$v")
+        val old = loop ?: return
+        stop()
+        old.close()
+        loop = VoiceLoop(asr ?: return, chat ?: return, tts ?: return, PhoneTools.all(app), config.copy(player = player))
     }
 
     /** Each turn's sound and events go under `<external files>/record/<name>/<turn>/`; null stops recording. */

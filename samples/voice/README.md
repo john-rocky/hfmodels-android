@@ -44,11 +44,12 @@ The next load logs `side-loaded <file> … (sha256 verified)` under `adb logcat 
 | `--ez autoload true` | load the three models now |
 | `--ez autolisten true` | open the microphone once they are loaded |
 | `--es say "<text>"` | one turn from this text once they are loaded (no microphone) |
+| `--ef start_rms 0.01` | the endpointer's start level (default 0.02) |
 | `--es record <name>` | each turn under `<external files>/record/<name>/<turn>/`: `utterance.wav` (16 kHz, microphone turns), `reply.wav` (24 kHz, the sentences said, synthesized again after the turn), `events.json` (every event with `System.nanoTime`, `elapsedRealtime` and the wall clock, and the player's first write) |
 
-A running screen takes them again (`singleTop`). With any of these extras the screen shows over the keyguard and turns the display on (scripted mode); a normal launch does not. Without that, on a locked phone, Android dropped the Clock app's `SET_ALARM` start from the app (`Background activity launch blocked!`, `BAL_BLOCK`, result code 102) while the tool reported the alarm set, and the app's process ran in the background cpuset. `adb logcat -s hfmodels-voice-sample` prints one `TURN` line per turn: what was heard, the calls and their results, the milliseconds, what was said, the model's own reply, Android's next alarm, the network.
+A running screen takes them again (`singleTop`). With any of these extras the screen shows over the keyguard and turns the display on (scripted mode); a normal launch does not. Without that, on a locked phone, Android dropped the Clock app's `SET_ALARM` start from the app (`Background activity launch blocked!`, `BAL_BLOCK`, result code 102) and the app's process ran in the background cpuset; the alarm tool now checks Android's next alarm clock and says when the Clock app did not take the alarm. `adb logcat -s hfmodels-voice-sample` prints one `TURN` line per turn: what was heard, the calls and their results, the milliseconds, what was said, the model's own reply, Android's next alarm, the network.
 
-The endpointer starts an utterance at `start_rms` 0.02, a voice spoken toward the phone. Quieter sound through a speaker needs a lower threshold: `VoiceLoopConfig(endpointer = Endpointer(startRms = 0.01f))`.
+The endpointer starts an utterance at `start_rms` 0.02, a voice spoken toward the phone. Quieter sound through a speaker needs a lower threshold: `--ef start_rms 0.01` here, `VoiceLoopConfig(endpointer = Endpointer(startRms = 0.01f))` in code.
 
 ## Airplane mode
 
