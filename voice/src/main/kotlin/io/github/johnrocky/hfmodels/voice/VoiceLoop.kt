@@ -70,7 +70,10 @@ class VoiceLoop(
      * [VoiceLoopConfig.endpointer]; each utterance it cuts becomes a [turn]. Chunks that arrive while a turn runs
      * are dropped (no barge-in), and the endpointer starts over after the turn. [Event.Listening] comes first and
      * after every turn, when the loop takes audio again. When [audio] ends, an utterance still open is the last
-     * turn. One listen at a time per loop.
+     * turn. One listen at a time per loop. A stopped listen is not over until its collector's job completes: the turn
+     * in progress unwinds first (the model's stop, the conversation's close, the sentence in synthesis), and the loop
+     * already takes a new listen meanwhile, a second microphone; start the next listen after that job has completed
+     * (samples/voice's microphone button counts a listen by `isCompleted`, not `isActive`).
      */
     fun listen(audio: Flow<FloatArray>): Flow<Event> = engine.listen(audio)
 
