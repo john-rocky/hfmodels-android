@@ -6,8 +6,6 @@ import android.os.SystemClock
 import android.util.Log
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import io.github.johnrocky.hfmodels.BackendKind
-import io.github.johnrocky.hfmodels.BackendPolicy
 import io.github.johnrocky.hfmodels.LoadEvent
 import io.github.johnrocky.hfmodels.ModelException
 import io.github.johnrocky.hfmodels.NetworkPolicy
@@ -38,36 +36,45 @@ import org.junit.runner.RunWith
  *   adb logcat -d -s hfmodels-check | grep RESULT
  *
  * `connectedDebugAndroidTest` runs it as well, but uninstalls the app afterwards, and the imported model with it.
- * The last line is `RESULT ok=true ...` when every step passed. Arguments: backend=gpu|cpu (default: the
- * descriptor's default profile, GPU with a CPU fallback), network=offline|any (default any).
+ * The last line is `RESULT ok=true ...` when every step passed; every line names the variant and the profile.
+ * Arguments: backend=npu|gpu|cpu (npu: variant s128_npu_wfp16 on the NPU, which needs Qualcomm's runtime in the app
+ * and the variant's graph pushed, README.md "NPU"; gpu, cpu: variant s128_wfp16 on that backend; default: the app's
+ * own choice, DecisionModels.choose), network=offline|any (default any).
  */
 @RunWith(AndroidJUnit4::class)
 class PromisesDeviceCheck {
     private val ctx = InstrumentationRegistry.getInstrumentation().targetContext
     private val args = InstrumentationRegistry.getArguments()
-    private val policy = when (args.getString("backend")) { "cpu" -> BackendPolicy.Require(BackendKind.CPU); "gpu" -> BackendPolicy.Require(BackendKind.GPU); else -> BackendPolicy.Auto }
+    private val backend: String? = args.getString("backend")
     private val network = if (args.getString("network") == "offline") NetworkPolicy.Offline else NetworkPolicy.Any
 
     @Test fun loadSortRelease(): Unit = runBlocking {
         val failures = ArrayList<String>()
+        val d = DecisionModels(ctx)
+        val choice = DecisionModels.choose(d.npuRuntime, backend)
+        // The variant and profile every line names: the requested ones until the load says which it opened.
+        var variant = choice.variant
+        var profile = "none"
         fun step(name: String, ok: Boolean, values: String) {
             if (!ok) failures += name
-            Log.i(TAG, "RESULT step=$name ok=$ok model=${DecisionModels.REPO} variant=${DecisionModels.VARIANT} $values")
+            Log.i(TAG, "RESULT step=$name ok=$ok model=${DecisionModels.REPO} variant=$variant profile=$profile $values")
         }
         val power = ctx.getSystemService(PowerManager::class.java)
         val thermalBefore = power.currentThermalStatus
-        val d = DecisionModels(ctx)
         val events = ArrayList<LoadEvent>()
         val t0 = SystemClock.elapsedRealtime()
         val model = try {
-            d.load(policy, network) { events += it }.also { m ->
+            d.load(choice, network) { events += it }.also { m ->
+                variant = m.info.variantId
+                profile = m.info.profileId
                 val compileMs = m.info.notes.firstNotNullOfOrNull { Regex("compile_ms=(\\d+)").find(it)?.groupValues?.get(1) } ?: "?"
-                step("load", true, "profile=${m.info.profileId} compile_ms=$compileMs load_ms=${SystemClock.elapsedRealtime() - t0} warmup_ms=${d.warmupMs} " +
+                step("load", true, "backend=${backend ?: "default"} policy=${choice.policy} npu_runtime=${d.npuRuntime} npu_failure=${d.npuFailure?.let { q(it) }} " +
+                    "compile_ms=$compileMs load_ms=${SystemClock.elapsedRealtime() - t0} warmup_ms=${d.warmupMs} " +
                     "downloaded=${events.any { it is LoadEvent.DownloadStarted }} network=$network fallback=${m.info.fallbackHistory} commit=${m.info.commit.take(8)}")
             }
         } catch (t: Throwable) {
-            step("load", false, "error=${what(t)} load_ms=${SystemClock.elapsedRealtime() - t0}")
-            Log.i(TAG, "RESULT ok=false failed=$failures device=${Build.MODEL} build=${Build.DISPLAY}")
+            step("load", false, "backend=${backend ?: "default"} policy=${choice.policy} npu_runtime=${d.npuRuntime} error=${what(t)} load_ms=${SystemClock.elapsedRealtime() - t0}")
+            Log.i(TAG, "RESULT ok=false variant=$variant profile=$profile failed=$failures device=${Build.MODEL} build=${Build.DISPLAY}")
             d.models.closeAndJoin()
             assertTrue("load failed: ${what(t)}", false)
             return@runBlocking
@@ -106,7 +113,7 @@ class PromisesDeviceCheck {
             val released = runCatching { d.release(); d.models.closeAndJoin() }
             val closeMs = SystemClock.elapsedRealtime() - t2
             step("release", released.isSuccess && closeMs < 10_000, "close_ms=$closeMs" + (released.exceptionOrNull()?.let { " error=${what(it)}" } ?: ""))
-            Log.i(TAG, "RESULT ok=${failures.isEmpty()} model=${DecisionModels.REPO}@${model.info.commit.take(8)} failed=$failures sdk=${model.info.sdkVersion} runtime=${model.info.runtime} ${model.info.runtimeVersion} " +
+            Log.i(TAG, "RESULT ok=${failures.isEmpty()} model=${DecisionModels.REPO}@${model.info.commit.take(8)} variant=$variant profile=$profile failed=$failures sdk=${model.info.sdkVersion} runtime=${model.info.runtime} ${model.info.runtimeVersion} " +
                 "device=${Build.MODEL} soc=${Build.SOC_MODEL} build=${Build.DISPLAY} thermal=$thermalBefore->${power.currentThermalStatus}")
         }
         assertTrue("failed steps: $failures (adb logcat -d -s hfmodels-check)", failures.isEmpty())

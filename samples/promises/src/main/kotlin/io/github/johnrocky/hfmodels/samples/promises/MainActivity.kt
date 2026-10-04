@@ -23,7 +23,6 @@ import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
 import androidx.activity.ComponentActivity
-import io.github.johnrocky.hfmodels.BackendPolicy
 import io.github.johnrocky.hfmodels.ErrorCode
 import io.github.johnrocky.hfmodels.LoadEvent
 import io.github.johnrocky.hfmodels.ModelException
@@ -61,6 +60,9 @@ import kotlinx.coroutines.withContext
  * seconds, sorts the Sample conversation, and at DONE writes `promises-result-<epoch s>.json` to the app's
  * external files dir, the same numbers to logcat under tag `promises`, and a `TAP x= y=` line: the screen
  * position of the first Plans row's Add, for `adb shell input tap`. A normal start does none of that.
+ *
+ * `--es backend npu|gpu|cpu` on the start that creates the screen fixes the backend ([DecisionModels.choose]);
+ * a running screen keeps the model it loaded.
  */
 class MainActivity : ComponentActivity() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
@@ -69,6 +71,8 @@ class MainActivity : ComponentActivity() {
     private var sortJob: Job? = null
     private var sorting = false
     private var recording = false
+    /** The `backend` extra of the start that created the screen; null = chosen by the runtime the app packages. */
+    private var backend: String? = null
     private var u = 1f
     private var modelLine = MODEL_NAME
 
@@ -87,6 +91,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         decisions = DecisionModels.shared(this)
+        backend = intent.getStringExtra(EXTRA_BACKEND)
         if (intent.getBooleanExtra(EXTRA_AUTOSTART, false)) enterRecording()
         u = resources.displayMetrics.widthPixels / 402f
         setContentView(screen())
@@ -240,11 +245,13 @@ class MainActivity : ComponentActivity() {
         say("$MODEL_NAME · loading")
         val t0 = SystemClock.elapsedRealtime()
         try {
-            val m = decisions.load(BackendPolicy.Auto, network) { onLoadEvent(it) }
+            val choice = DecisionModels.choose(decisions.npuRuntime, backend)
+            Log.i(TAG, "load variant=${choice.variant} policy=${choice.policy} fallback=${choice.fallback?.let { "${it.variant} on ${it.policy}" }} backend_extra=$backend npu_runtime=${decisions.npuRuntime} network=$network")
+            val m = decisions.load(choice, network) { onLoadEvent(it) }
             val loadMs = SystemClock.elapsedRealtime() - t0
             modelLine = "$MODEL_NAME · ${m.info.profileId.uppercase(Locale.ROOT)}"
             say(String.format(Locale.US, "%s · loaded in %.1f s", modelLine, loadMs / 1000.0))
-            Log.i(TAG, "ready model=${m.info.repoId}@${m.info.commit.take(8)} variant=${m.info.variantId} profile=${m.info.profileId} load_ms=$loadMs warmup_ms=${decisions.warmupMs} fallback=${m.info.fallbackHistory} notes=${m.info.notes.joinToString(" | ")}")
+            Log.i(TAG, "ready model=${m.info.repoId}@${m.info.commit.take(8)} variant=${m.info.variantId} profile=${m.info.profileId} load_ms=$loadMs warmup_ms=${decisions.warmupMs} fallback=${m.info.fallbackHistory} npu_failure=${decisions.npuFailure} notes=${m.info.notes.joinToString(" | ")}")
             if (!sorting) setPill("READY", PromisesStyle.PILL_IDLE)
             m
         } catch (e: ModelException) {
@@ -277,7 +284,11 @@ class MainActivity : ComponentActivity() {
                 if (p != lastPercent) { lastPercent = p; setPill("DOWNLOADING $p%", PromisesStyle.PILL_IDLE) }
             }
             is LoadEvent.Verifying -> setPill("VERIFYING", PromisesStyle.PILL_IDLE)
-            is LoadEvent.Initializing -> { setPill("LOADING", PromisesStyle.PILL_IDLE); say("$MODEL_NAME · compiling for the ${e.profileId.uppercase(Locale.ROOT)}") }
+            is LoadEvent.Initializing -> {
+                setPill("LOADING", PromisesStyle.PILL_IDLE)
+                // LiteRT compiles the graph for the NPU on the phone (32 s on the Galaxy S26) and reads its cache on later loads.
+                say(if (e.profileId == "npu") NPU_COMPILE_LINE else "$MODEL_NAME · compiling for the ${e.profileId.uppercase(Locale.ROOT)}")
+            }
             is LoadEvent.Fallback -> say("$MODEL_NAME · ${e.reason}; trying the next profile")
             else -> Unit
         }
@@ -454,8 +465,10 @@ class MainActivity : ComponentActivity() {
         const val TAG = "promises"
         const val EXTRA_AUTOSTART = "autostart"
         const val EXTRA_DELAY = "delay"
+        const val EXTRA_BACKEND = "backend"
         private const val HANDLED = "io.github.johnrocky.hfmodels.samples.promises.HANDLED"
         private const val MODEL_NAME = "GLiNER2.5-Decide s128"
+        private const val NPU_COMPILE_LINE = "Compiling for the NPU: about 30 s the first time"
         private const val SPOTLIGHT_MS = 1200L
     }
 }
