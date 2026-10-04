@@ -1,0 +1,27 @@
+# samples/voice VoiceDeviceCheck (README block, c01.wav, 07:30)  date=2026-10-04T11:49:50Z serial=RFGL80R6A6H device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZH9 android=16
+# git=7ff59fc dirty=0 (samples/voice debug build of r10 stage 0) airplane_mode_on=1 keyguard=isKeyguardShowing=false screen=mWakefulness=Awake next_alarm_before=none thermal=Thermal Status: 0
+# gradle rc=0 next_alarm_after=2026-10-05 07:30:00 thermal_end=Thermal Status: 0; the Samsung Clock turned on its existing 07:30 'Morning Alarm' row (off before) instead of adding one; it was switched off again in the Clock app
+#   next alarm: user:0 pendingSend:false time:1791153000000 = 2026-10-05 07:30:00.000 = +10h39m41s580ms
+#   thermal: Thermal Status: 0
+#   next alarm: none (after the Clock row was put back)
+10-04 20:49:57.118 31741 31755 I hfmodels-check: device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZH9 package=io.github.johnrocky.hfmodels.samples.voice network=none airplane_mode=true
+10-04 20:49:57.569 31741 31794 I hfmodels: resolve litert-community/Zipformer-medium-CR-CTC-LiteRT: commit=7732ad6c via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=5e7d0d0f
+10-04 20:49:57.583 31741 31794 I hfmodels: tokens tokens.txt: 502 pieces
+10-04 20:49:59.307 31741 31755 I hfmodels: ready litert-community/Zipformer-medium-CR-CTC-LiteRT@7732ad6c variant=medium_fp16 profile=gpu inference=GPU prepare_ms=1730
+10-04 20:49:59.309 31741 31794 I hfmodels: resolve litert-community/kitten-tts-nano-0.8: commit=d4662d89 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=e3fc2c77
+10-04 20:49:59.570 31741 31794 I hfmodels: kitten lexicon: 177 symbols, 274927 dictionary words, 8 voices
+10-04 20:49:59.726 31741 31755 I hfmodels: ready litert-community/kitten-tts-nano-0.8@d4662d89 variant=fp32 profile=cpu inference=CPU prepare_ms=396
+10-04 20:49:59.745 31741 31794 I hfmodels: resolve litert-community/gemma-4-E2B-it-litert-lm: commit=b3ca0d2f via EXPLICIT_REVISION, descriptor=john-rocky/hfmodels-android@b7c26a28/catalog/entries/litert-community__gemma-4-E2B-it-litert-lm.json sha=81300c30
+10-04 20:50:05.923 31741 31755 I hfmodels: ready litert-community/gemma-4-E2B-it-litert-lm@b3ca0d2f variant=default profile=gpu language=GPU vision=GPU prepare_ms=6175
+10-04 20:50:05.923 31741 31755 I hfmodels-check: RESULT step=load ok=true asr=litert-community/Zipformer-medium-CR-CTC-LiteRT/medium_fp16/gpu asr_ms=1741 tts=litert-community/kitten-tts-nano-0.8/fp32/cpu tts_ms=418 llm=litert-community/gemma-4-E2B-it-litert-lm/default/gpu llm_ms=6179 network_policy=Offline
+10-04 20:50:07.707  3448  4929 I ActivityTaskManager: START u0 {act=android.intent.action.SET_ALARM flg=0x10000000 xflg=0x4 cmp=com.sec.android.app.clockpackage/.alarm.ui.activity.AlarmCTSHandleActivity (has extras)} with LAUNCH_SINGLE_INSTANCE from uid 10426 (io.github.johnrocky.hfmodels.samples.voice) (BAL_ALLOW_VISIBLE_WINDOW) result code=0
+10-04 20:50:07.776 27118 27118 I AlarmProvider: sendAlarmInformation uri = content://com.samsung.sec.android.clockpackage/alarm
+10-04 20:50:07.776 27118 27118 I AlarmProvider: sendChangeToAlarmWidget
+10-04 20:50:07.783 27118 27118 I AlarmProviderHelper: SetNextAT: 1791153000000
+10-04 20:50:11.772 31741 31755 I hfmodels-check: RESULT step=turn ok=true wav=/data/local/tmp/hfmodels-voice/commands/c01.wav heard="Set an alarm for seven thirty to morrow morning." expect="Set an alarm for seven thirty tomorrow morning." heard_ok=true calls=[get_current_datetime{},set_alarm{hour=7.0, label=Morning Alarm, minute=30.0}] tool_ok=true alarm_set=true next_alarm_before=none next_alarm_after=Mon-07:30 phone="Next alarm (Android): Mon 07:30" ms_first_audio=2191 hangover_ms=800 ms_total=5812 ms_transcribe=92 ms_first_token=1137 speaking=1 errors=[] spoken="Alarm set for 07:30 (Morning Alarm)" reply="I have set an alarm for seven thirty tomorrow morning."
+10-04 20:50:11.772 31741 31755 I hfmodels-check: RESULT info network=none airplane_mode=true
+10-04 20:50:11.981 31741 31755 I hfmodels-check: RESULT step=release ok=true close_ms=208
+10-04 20:50:11.988  3448  6207 I ActivityTaskManager: START u0 {act=android.intent.action.DISMISS_ALARM flg=0x10000000 xflg=0x4 cmp=com.sec.android.app.clockpackage/.alarm.ui.activity.AlarmCTSHandleActivity (has extras)} with LAUNCH_SINGLE_INSTANCE from uid 10426 (io.github.johnrocky.hfmodels.samples.voice) (BAL_ALLOW_VISIBLE_WINDOW) result code=0
+10-04 20:50:12.021 27118 31906 I AlarmProviderHelper: SetNextAT: 1791153000000
+10-04 20:50:17.013 31741 31755 I hfmodels-check: RESULT info cleanup dismiss_asked=true next_alarm=Mon-07:30 left=true todo="delete the 07:30 alarm labelled 'Morning Alarm' in the Clock app by hand"
+10-04 20:50:17.014 31741 31755 I hfmodels-check: RESULT ok=true failed=[] network=none device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZH9
