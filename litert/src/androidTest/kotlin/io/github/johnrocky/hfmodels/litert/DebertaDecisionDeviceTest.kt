@@ -45,7 +45,8 @@ import org.junit.runner.RunWith
  * One RESULT line per step under tag `hfmodels-decide`, numbers unrounded. Arguments: variant (s256_wfp16 |
  * s512_wfp16 | s256_npu_wfp16), backend (gpu | cpu | npu | auto), dir, fixtures (default `<dir>/fixtures`: `app_gate_fixtures.json`, the
  * sieve's `b_chat.jsonl`, `open-decision_b_chat_policy.jsonl` and `open-decision_b_chat_keys.jsonl`, and round 4's
- * `decide_form.json`), repeats (timing, default 5), dp_tol (default 0.01). An npu run needs the Qualcomm libraries in
+ * `decide_form.json`), repeats (timing, default 5), dp_tol (default 0.01), parity (default 1; 0 skips step 3, so the
+ * demo is the graph's first work after the warm-up: its speed before the parity forwards warm the phone). An npu run needs the Qualcomm libraries in
  * the test APK (tools/fetch_npu_libs.sh litert/src/androidTest/jniLibs/arm64-v8a v81) and counts only with LiteRT's
  * `Replacing 1 out of 1 node(s) with delegate (DispatchDelegate)` in the gate log.
  *
@@ -60,6 +61,7 @@ class DebertaDecisionDeviceTest {
     private val backend = args.getString("backend") ?: "gpu"
     private val repeats = args.getString("repeats")?.toInt() ?: 5
     private val dpTol = args.getString("dp_tol")?.toDouble() ?: 0.01
+    private val parity = args.getString("parity") != "0"
     private val base = File(args.getString("dir") ?: "/data/local/tmp/hfmodels/open-decision")
     private val fixturesDir = File(args.getString("fixtures") ?: File(base, "fixtures").path)
     private val failures = ArrayList<String>()
@@ -112,42 +114,45 @@ class DebertaDecisionDeviceTest {
             result("sequence", rows.isNotEmpty() && seqFail == 0, "rows=${rows.size} of ${all.size} mismatches=$seqFail window=$window")
 
             // 3. parity: each request through the loaded graph, all its questions in one forward
-            var argmaxQs = 0; var answerQs = 0; var questionsSeen = 0; var maxDp = 0.0; var maxDl = 0.0; var worst = ""
-            val forwardMs = ArrayList<Double>()
-            impl.scores(c.forward(questions(rows[0]), c.stateIds(rows[0]["state"] as String)))   // warm
-            for (f in rows) {
-                val qs = questions(f)
-                val fw = c.forward(qs, c.stateIds(f["state"] as String))
-                val tf = SystemClock.elapsedRealtimeNanos()
-                val logits = impl.scores(fw)
-                forwardMs += (SystemClock.elapsedRealtimeNanos() - tf) / 1e6
-                var offset = 0
-                for ((i, q) in qs.withIndex()) {
-                    val oracle = floats((f["logits"] as List<*>)[i])
-                    val got = logits.copyOfRange(offset, offset + oracle.size)
-                    offset += oracle.size
-                    questionsSeen++
-                    if (GlinerDecode.argmax(got) == GlinerDecode.argmax(oracle)) argmaxQs++ else Log.w(TAG, "${f["id"]} q$i: argmax differs; device ${got.toList()} oracle ${oracle.toList()}")
-                    val api = (f["api"] as List<*>)[i] as Map<*, *>
-                    val a = c.decode(q, got, null)
-                    val (same, dp) = when (a) {
-                        is Answer.Choice -> (a.choice == api["choice"]) to (api["probabilities"] as Map<*, *>).entries.maxOf { (k, v) -> abs(a.probabilities.getValue(k as String) - (v as Number).toDouble()) }
-                        is Answer.Score -> {
-                            val ref = (api["probabilities"] as Map<*, *>).values.map { (it as Number).toDouble() }
-                            val p = a.probabilities.values.toList()
-                            (p.indices.maxBy { p[it] } == ref.indices.maxBy { ref[it] }) to ref.indices.maxOf { abs(p[it] - ref[it]) }
+            if (!parity) result("parity", true, "skipped=true rows=${rows.size} (run argument parity=0: the demo is the graph's first work after the warm-up)")
+            else {
+                var argmaxQs = 0; var answerQs = 0; var questionsSeen = 0; var maxDp = 0.0; var maxDl = 0.0; var worst = ""
+                val forwardMs = ArrayList<Double>()
+                impl.scores(c.forward(questions(rows[0]), c.stateIds(rows[0]["state"] as String)))   // warm
+                for (f in rows) {
+                    val qs = questions(f)
+                    val fw = c.forward(qs, c.stateIds(f["state"] as String))
+                    val tf = SystemClock.elapsedRealtimeNanos()
+                    val logits = impl.scores(fw)
+                    forwardMs += (SystemClock.elapsedRealtimeNanos() - tf) / 1e6
+                    var offset = 0
+                    for ((i, q) in qs.withIndex()) {
+                        val oracle = floats((f["logits"] as List<*>)[i])
+                        val got = logits.copyOfRange(offset, offset + oracle.size)
+                        offset += oracle.size
+                        questionsSeen++
+                        if (GlinerDecode.argmax(got) == GlinerDecode.argmax(oracle)) argmaxQs++ else Log.w(TAG, "${f["id"]} q$i: argmax differs; device ${got.toList()} oracle ${oracle.toList()}")
+                        val api = (f["api"] as List<*>)[i] as Map<*, *>
+                        val a = c.decode(q, got, null)
+                        val (same, dp) = when (a) {
+                            is Answer.Choice -> (a.choice == api["choice"]) to (api["probabilities"] as Map<*, *>).entries.maxOf { (k, v) -> abs(a.probabilities.getValue(k as String) - (v as Number).toDouble()) }
+                            is Answer.Score -> {
+                                val ref = (api["probabilities"] as Map<*, *>).values.map { (it as Number).toDouble() }
+                                val p = a.probabilities.values.toList()
+                                (p.indices.maxBy { p[it] } == ref.indices.maxBy { ref[it] }) to ref.indices.maxOf { abs(p[it] - ref[it]) }
+                            }
+                            is Answer.Noul -> ((a.noul >= 0.5) == ((api["noul"] as Number).toDouble() >= 0.5)) to abs(a.noul - (api["noul"] as Number).toDouble())
                         }
-                        is Answer.Noul -> ((a.noul >= 0.5) == ((api["noul"] as Number).toDouble() >= 0.5)) to abs(a.noul - (api["noul"] as Number).toDouble())
+                        if (same) answerQs++ else Log.w(TAG, "${f["id"]} q$i: $a vs the author's $api")
+                        if (dp > maxDp) { maxDp = dp; worst = "${f["id"]} q$i" }
+                        maxDl = maxOf(maxDl, got.indices.maxOf { abs(got[it] - oracle[it]).toDouble() })
                     }
-                    if (same) answerQs++ else Log.w(TAG, "${f["id"]} q$i: $a vs the author's $api")
-                    if (dp > maxDp) { maxDp = dp; worst = "${f["id"]} q$i" }
-                    maxDl = maxOf(maxDl, got.indices.maxOf { abs(got[it] - oracle[it]).toDouble() })
                 }
+                val fs = forwardMs.sorted()
+                result("parity", argmaxQs == questionsSeen && answerQs == questionsSeen && maxDp <= dpTol,
+                    "rows=${rows.size} questions=$questionsSeen argmax_match=$argmaxQs/$questionsSeen answers_equal_author=$answerQs/$questionsSeen max_prob_abs_err=$maxDp (worst $worst) max_logit_abs_err_vs_author=$maxDl dp_tol=$dpTol " +
+                        "forward_ms_median=${fs[fs.size / 2]} p90=${fs[(fs.size * 9) / 10]} min=${fs.first()} max=${fs.last()}")
             }
-            val fs = forwardMs.sorted()
-            result("parity", argmaxQs == questionsSeen && answerQs == questionsSeen && maxDp <= dpTol,
-                "rows=${rows.size} questions=$questionsSeen argmax_match=$argmaxQs/$questionsSeen answers_equal_author=$answerQs/$questionsSeen max_prob_abs_err=$maxDp (worst $worst) max_logit_abs_err_vs_author=$maxDl dp_tol=$dpTol " +
-                    "forward_ms_median=${fs[fs.size / 2]} p90=${fs[(fs.size * 9) / 10]} min=${fs.first()} max=${fs.last()}")
 
             // 4. the sieve's chat sentences through decide(), vs the Mac answers and request lengths of the card's host
             val chat = File(fixturesDir, "b_chat.jsonl").readLines().filter { it.isNotBlank() }.map { Json.parseObject(it) }
