@@ -73,8 +73,8 @@ import org.junit.runner.RunWith
  * Android reports one next alarm, so no alarm may be set at or before the check's 07:30 (the sample README's 07:30
  * included): the check stops first with `RESULT step=precondition ok=false` and the alarm Android reports. The check
  * sets a real alarm at 07:30 and then asks the Clock app to dismiss it by its label; a Clock that does not honour that
- * leaves it (the Samsung Clock did), and the cleanup line names the label to delete by hand. The network and the
- * cleanup are `RESULT info` lines: reported, not passed or failed.
+ * leaves it (the Samsung Clock did), and the cleanup line names the label to turn off or delete by hand. The network
+ * and the cleanup are `RESULT info` lines: reported, not passed or failed.
  * Run it with the screen on and unlocked, or with an app screen that shows over the keyguard: under the keyguard the
  * app has no visible activity and Android drops the Clock app's SET_ALARM activity start (BAL_BLOCK). The check brings
  * the app's launcher activity to the front with the extra `autoload=false`, which a debug build of this sample takes as
@@ -200,7 +200,7 @@ class VoiceDeviceCheck {
         while (isSevenThirty(am.nextAlarmClock?.triggerTime) && SystemClock.elapsedRealtime() < until) delay(200)
         val left = isSevenThirty(am.nextAlarmClock?.triggerTime)
         Log.i(TAG, "RESULT info cleanup dismiss_asked=${asked.isSuccess} next_alarm=${hhmm(am.nextAlarmClock?.triggerTime)} " +
-            if (left) "left=true todo=${q("delete the 07:30 alarm labelled '$label' in the Clock app by hand")}" else "left=false")
+            if (left) "left=true todo=${q("turn off or delete the 07:30 alarm labelled '$label' in the Clock app by hand")}" else "left=false")
     }
 
     private suspend fun <M : PreparedModel> load(models: HfModels, task: Task<M>, id: String, variant: String?, backend: BackendPolicy, descriptorAsset: String?, policy: NetworkPolicy): Pair<M, Long> {
