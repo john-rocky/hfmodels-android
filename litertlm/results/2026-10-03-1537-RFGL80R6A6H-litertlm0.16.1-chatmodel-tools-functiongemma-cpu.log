@@ -1,0 +1,10 @@
+# ChatModelDeviceTest#i_toolCallsComeBackInToolCallsAndTheAppAnswersThem toolModel=functiongemma toolBackend=cpu date=2026-10-03T06:37:34Z serial=RFGL80R6A6H device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZH9 git=d0130aa+worktree
+# gradle rc=1 end=2026-10-03T06:37:45Z
+Execute io.github.johnrocky.hfmodels.litertlm.ChatModelDeviceTest.i_toolCallsComeBackInToolCallsAndTheAppAnswersThem: FAILED
+java.lang.AssertionError: java.lang.AssertionError: expected a set_alarm call, got calls=[] text='I am sorry, but I do not have a tool available that can set an alarm.'
+java.lang.AssertionError: expected a set_alarm call, got calls=[] text='I am sorry, but I do not have a tool available that can set an alarm.'
+--------- beginning of main
+10-03 15:37:44.151 25984 26072 I hfmodels: resolve litert-community/functiongemma-270m-ft-mobile-actions: commit=f752a740 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=05292472
+10-03 15:37:44.153 25984 26072 I hfmodels: resolve litert-community/functiongemma-270m-ft-mobile-actions: commit=f752a740 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=05292472
+10-03 15:37:44.246 25984 26069 I hfmodels: ready litert-community/functiongemma-270m-ft-mobile-actions@f752a740 variant=q8_ekv1024 profile=cpu language=CPU prepare_ms=88
+10-03 15:37:44.529 25984 26069 I hfmodels-a2: RESULT check=tool_call_turn device=SM-S942Q sdk=36 litertlm=0.16.1 model=litert-community/functiongemma-270m-ft-mobile-actions profile=cpu prompt="Set an alarm for 7:30 in the morning." calls=[] chunks=18 ms=276 text="I am sorry, but I do not have a tool available that can set an alarm." executed_by_runtime=0

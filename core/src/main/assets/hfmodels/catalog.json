@@ -3,7 +3,7 @@
   "catalog_id": "hfmodels-bundled",
   "origin": {
     "repo": "john-rocky/hfmodels-android",
-    "commit": "34def6827dc81e786b51e174ce1e4f3ec04f5470"
+    "commit": "b7c26a28ce60263519283684d09c1ed1ca093b37"
   },
   "entries": [
     {
@@ -4066,8 +4066,8 @@
         ],
         "default_variant": "default",
         "license": {
-          "id": "gemma",
-          "url": "https://ai.google.dev/gemma/terms"
+          "id": "apache-2.0",
+          "url": "https://huggingface.co/google/gemma-4-E2B-it"
         },
         "variants": [
           {
@@ -4258,8 +4258,8 @@
         ],
         "default_variant": "default",
         "license": {
-          "id": "gemma",
-          "url": "https://ai.google.dev/gemma/terms"
+          "id": "apache-2.0",
+          "url": "https://huggingface.co/google/gemma-4-E4B-it"
         },
         "variants": [
           {

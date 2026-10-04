@@ -1,0 +1,9 @@
+# ChatModelDeviceTest#i_toolCallsComeBackInToolCallsAndTheAppAnswersThem toolModel=gemma4 toolBackend=cpu date=2026-10-03T06:37:45Z serial=RFGL80R6A6H device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZH9 git=d0130aa+worktree
+# gradle rc=0 end=2026-10-03T06:38:05Z
+--------- beginning of main
+10-03 15:37:54.047 26289 26311 I hfmodels: resolve litert-community/gemma-4-E2B-it-litert-lm: commit=b3ca0d2f via EXPLICIT_REVISION, descriptor=john-rocky/hfmodels-android@e05c40b1/catalog/entries/litert-community__gemma-4-E2B-it-litert-lm.json sha=b3449689
+10-03 15:37:58.053 26289 26311 I hfmodels: imported gemma-4-E2B-it.litertlm: 2588147712 bytes, sha256 ok, from /data/local/tmp/gemma-4-E2B-it.litertlm
+10-03 15:37:58.054 26289 26311 I hfmodels: resolve litert-community/gemma-4-E2B-it-litert-lm: commit=b3ca0d2f via EXPLICIT_REVISION, descriptor=john-rocky/hfmodels-android@e05c40b1/catalog/entries/litert-community__gemma-4-E2B-it-litert-lm.json sha=b3449689
+10-03 15:38:02.285 26289 26306 I hfmodels: ready litert-community/gemma-4-E2B-it-litert-lm@b3ca0d2f variant=default profile=cpu language=CPU vision=CPU prepare_ms=4226
+10-03 15:38:03.785 26289 26306 I hfmodels-a2: RESULT check=tool_call_turn device=SM-S942Q sdk=36 litertlm=0.16.1 model=litert-community/gemma-4-E2B-it-litert-lm profile=cpu prompt="Set an alarm for 7:30 in the morning." calls=[set_alarm{hour=7.0, minute=30.0}] chunks=1 ms=1494 text="" executed_by_runtime=0
+10-03 15:38:04.824 26289 26306 I hfmodels-a2: RESULT check=tool_calls device=SM-S942Q sdk=36 litertlm=0.16.1 model=litert-community/gemma-4-E2B-it-litert-lm profile=cpu prompt="Set an alarm for 7:30 in the morning." calls=[set_alarm{hour=7.0, minute=30.0}] chunks=1 call_turn_ms=1494 text_beside_calls="" executed_by_runtime=0 reply_chunks=15 reply_ms=1038 reply="OK, I have set an alarm for 7:30 AM."

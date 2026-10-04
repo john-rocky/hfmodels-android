@@ -1,0 +1,13 @@
+# samples/voice app, scripted turn in airplane mode: --es say 'Start a timer for ten minutes.'  date=2026-10-04T11:56:56Z serial=RFGL80R6A6H device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZH9 android=16
+# git=7ff59fc dirty=0 (samples/voice debug build of r10 stage 0) airplane_mode_on=1 keyguard=isKeyguardShowing=false screen=mWakefulness=Awake
+# the Clock app's 10-minute timer was cancelled in the Clock app before it rang (its alarm then only in dumpsys alarm's removal history)
+# 10-04 20:56:56.000 (device) am start … --es say 'Start a timer for ten minutes.'
+#   next alarm: none
+10-04 20:56:57.265   735   735 I hfmodels-voice-sample: extras autoload=true autolisten=false say=true record=null
+10-04 20:56:57.271   735   779 I hfmodels-voice-sample: event=Heard text="Start a timer for ten minutes." audio_ms=0 transcribe_ms=0
+10-04 20:56:57.272   735   779 I hfmodels-voice-sample: event=Thinking
+10-04 20:56:58.139  3448 13096 I ActivityTaskManager: START u0 {act=android.intent.action.SET_TIMER flg=0x10000000 xflg=0x4 cmp=com.sec.android.app.clockpackage/.timer.ui.activity.TimerCTSHandleActivity (has extras)} with LAUNCH_SINGLE_INSTANCE from uid 10426 (io.github.johnrocky.hfmodels.samples.voice) (BAL_ALLOW_VISIBLE_WINDOW) result code=0
+10-04 20:56:58.142   735   779 I hfmodels-voice-sample: event=ToolCalled name=set_timer args={label=Ten Minute Timer, minutes=10.0} result="Timer requested: 10 min (Ten Minute Timer)" ms=10
+10-04 20:56:58.528   735   766 I hfmodels-voice-sample: event=Speaking sentence="Timer requested: 10 min (Ten Minute Timer)," synth_ms=383 first_audio_ms=1257
+10-04 20:57:02.012   735   766 I hfmodels-voice-sample: event=Done total_ms=4740
+10-04 20:57:02.023   735   766 I hfmodels-voice-sample: TURN input=text heard="Start a timer for ten minutes." tools=[set_timer(label="Ten Minute Timer", minutes=10)->"Timer requested: 10 min (Ten Minute Timer)"] ms_first_audio=1257 hangover_ms=0 ms_end_of_speech_to_sound=1257 ms_transcribe=0 ms_first_token=839 ms_first_sentence=871 ms_reply=1179 ms_total=4740 spoken="Timer requested: 10 min (Ten Minute Timer)" reply="I have started a timer for ten minutes." phone="Next alarm (Android): none" network=none

@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "model_id": "litert-community/functiongemma-270m-ft-mobile-actions",
+  "$comment": "DEVELOPMENT descriptor for the chat task with tools (handler litertlm.conversation), not in the bundled catalog and not in the repo. The repo is gated (Gemma terms), so bytes and sha256 of mobile_actions_q8_ekv1024.litertlm come from the local copy of commit f752a74080682b379823794defdbbdf8c2663609 (the Hub stores it as LFS blob 33e295cb..., the same sha256). The bundle declares llm_model_type function_gemma (LiteRT-LM 0.16.1 parses its <start_function_call> blocks into Message.toolCalls) and no channels; its LlmMetadata says max_num_tokens 4096, and context_tokens is the file's 1024-entry KV cache (ekv1024). The model card lists CPU only; the gpu profile is here to be measured. 'revision' is read by tools/hfmodels_descriptor.py only; the SDK ignores it. The tools gate (ToolsDeviceTest) and ChatModelDeviceTest pass this descriptor explicitly and side-load the file.",
+  "revision": "f752a74080682b379823794defdbbdf8c2663609",
+  "tasks": [
+    "chat"
+  ],
+  "default_variant": "q8_ekv1024",
+  "license": {
+    "id": "gemma",
+    "url": "https://ai.google.dev/gemma/terms"
+  },
+  "variants": [
+    {
+      "id": "q8_ekv1024",
+      "runtime": "litert_lm",
+      "handler": {
+        "id": "litertlm.conversation",
+        "abi": 1
+      },
+      "runtime_range": {
+        "min_inclusive": "0.16.0",
+        "max_exclusive": "0.18.0"
+      },
+      "inputs": [
+        "text"
+      ],
+      "files": [
+        {
+          "id": "weights",
+          "role": "model",
+          "path": "mobile_actions_q8_ekv1024.litertlm",
+          "bytes": 288964608,
+          "sha256": "33e295cbd996b419bb1de8f3f85c5b6b01ee058a2c89bdb2173cf3e6ff4ce9d0"
+        }
+      ],
+      "default_profile": "cpu",
+      "profiles": [
+        {
+          "id": "cpu",
+          "priority": 100,
+          "files": [
+            "weights"
+          ],
+          "enabled_inputs": [
+            "text"
+          ],
+          "components": {
+            "language": "cpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "fallback_profiles": [],
+          "default_selectable": true
+        },
+        {
+          "id": "gpu",
+          "priority": 50,
+          "files": [
+            "weights"
+          ],
+          "enabled_inputs": [
+            "text"
+          ],
+          "components": {
+            "language": "gpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "fallback_profiles": [
+            "cpu"
+          ],
+          "default_selectable": true
+        }
+      ],
+      "handler_config": {
+        "metadata_source": "publisher_declared",
+        "context_tokens": 1024
+      }
+    }
+  ]
+}
