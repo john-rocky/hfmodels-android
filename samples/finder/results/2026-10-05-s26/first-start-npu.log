@@ -1,0 +1,143 @@
+--------- beginning of main
+10-05 01:05:19.010  5262  5262 I finder  : load variant=s128_npu_wfp16 policy=Require(backend=NPU) fallback=null backend_extra=npu npu_runtime=true network=Offline
+10-05 01:05:19.079  5262  5262 I finder  : not cached: litert-community/GLiNER2.5-Decide-LiteRT has no saved binding and the network policy is Offline
+10-05 01:05:19.082  5262  5262 I finder  : load variant=s128_npu_wfp16 policy=Require(backend=NPU) fallback=null backend_extra=npu npu_runtime=true network=Any
+10-05 01:05:20.146  5262  5523 I hfmodels: resolve litert-community/GLiNER2.5-Decide-LiteRT: commit=f6f6e9c9 via RESOLVED_BRANCH, descriptor=litert-community/GLiNER2.5-Decide-LiteRT@f6f6e9c9/hfmodels.json sha=869ad502
+10-05 01:05:20.766  5262  5523 I hfmodels: imported gliner25_decide_s128_npu_wfp16.tflite: 660302784 bytes, sha256 ok, from /storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.finder/files/gliner25_decide_s128_npu_wfp16.tflite
+10-05 01:05:20.766  5262  5262 I hfmodels: side-loaded gliner25_decide_s128_npu_wfp16.tflite from /storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.finder/files/gliner25_decide_s128_npu_wfp16.tflite (sha256 verified)
+10-05 01:05:21.031  5262  5523 I hfmodels: imported word_embeddings_fp16.bin: 262166528 bytes, sha256 ok, from /storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.finder/files/word_embeddings_fp16.bin
+10-05 01:05:21.031  5262  5262 I hfmodels: side-loaded word_embeddings_fp16.bin from /storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.finder/files/word_embeddings_fp16.bin (sha256 verified)
+10-05 01:05:21.047  5262  5523 I hfmodels: imported tokenizer.json: 8333952 bytes, sha256 ok, from /storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.finder/files/tokenizer.json
+10-05 01:05:21.047  5262  5262 I hfmodels: side-loaded tokenizer.json from /storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.finder/files/tokenizer.json (sha256 verified)
+10-05 01:05:21.302  5262  5523 I hfmodels: tokenizer tokenizer.json: 128011 tokens (Unigram), load_ms=247
+10-05 01:05:21.308  5262  5618 I litert  : [litert_runtime_builtin.cc:63] Loaded runtime library and found kLiteRtRuntimeBuiltin.
+10-05 01:05:21.308  5262  5618 I litert  : [environment.cc:36] Creating LiteRT environment with options
+10-05 01:05:21.308  5262  5618 I litert  : [accelerator_registry.cc:54] RegisterAccelerator: ptr=0xb40000702283b390, name=NpuAccelerator
+10-05 01:05:21.308  5262  5618 I litert  : [npu_registry.cc:30] NPU accelerator registered.
+10-05 01:05:21.308  5262  5618 I litert  : [gpu_registry.cc:101] Attempting to load GPU accelerator(libLiteRtGpuAccelerator.so).
+10-05 01:05:21.308  5262  5618 I litert  : [gpu_registry.cc:101] Attempting to load GPU accelerator(libLiteRtClGlAccelerator.so).
+10-05 01:05:21.314  5262  5618 I litert  : [accelerator_registry.cc:54] RegisterAccelerator: ptr=0xb40000702283b630, name=LiteRT GPU
+10-05 01:05:21.314  5262  5618 I litert  : [gpu_registry.cc:109] Dynamically loaded GPU accelerator(libLiteRtClGlAccelerator.so) registered.
+10-05 01:05:21.314  5262  5618 I litert  : [accelerator_registry.cc:54] RegisterAccelerator: ptr=0xb40000702283ab50, name=CpuAccelerator
+10-05 01:05:21.314  5262  5618 I litert  : [cpu_registry.cc:75] XNNPACK CPU accelerator registered.
+10-05 01:05:21.333  5262  5618 I litert  : [compiled_model.cc:754] NPU JIT compilation caching enabled with cache dir: /data/user/0/io.github.johnrocky.hfmodels.samples.finder/cache
+10-05 01:05:21.333  5262  5618 I litert  : [compiler_plugin.cc:308] Attempting to load plugin at: /data/app/~~5v4pob5hGqOm8YKLZHSRJA==/io.github.johnrocky.hfmodels.samples.finder-Omw7PiUhvJA9VnClSoL1zQ==/lib/arm64/libLiteRtCompilerPlugin_Qualcomm.so
+10-05 01:05:21.333  5262  5618 I litert  : [compiler_plugin.cc:250] Loading plugin at: /data/app/~~5v4pob5hGqOm8YKLZHSRJA==/io.github.johnrocky.hfmodels.samples.finder-Omw7PiUhvJA9VnClSoL1zQ==/lib/arm64/libLiteRtCompilerPlugin_Qualcomm.so
+10-05 01:05:21.351  5262  5618 I litert  : [compiler_plugin.cc:260] Loaded plugin at: /data/app/~~5v4pob5hGqOm8YKLZHSRJA==/io.github.johnrocky.hfmodels.samples.finder-Omw7PiUhvJA9VnClSoL1zQ==/lib/arm64/libLiteRtCompilerPlugin_Qualcomm.so
+10-05 01:05:21.351  5262  5618 I litert  : [compiler_plugin.cc:263] Resolved plugin api at: /data/app/~~5v4pob5hGqOm8YKLZHSRJA==/io.github.johnrocky.hfmodels.samples.finder-Omw7PiUhvJA9VnClSoL1zQ==/lib/arm64/libLiteRtCompilerPlugin_Qualcomm.so
+10-05 01:05:21.351  5262  5618 I litert  : [common.h:160] 
+10-05 01:05:21.351  5262  5618 I litert  : 
+10-05 01:05:21.351  5262  5618 I litert  : +------------------------------------------+
+10-05 01:05:21.351  5262  5618 I litert  : |              ::qnn::Options              |
+10-05 01:05:21.351  5262  5618 I litert  : +------------------------------------------+
+10-05 01:05:21.351  5262  5618 I litert  : [GENERAL]
+10-05 01:05:21.351  5262  5618 I litert  :   LogLevel                 : Info(3)
+10-05 01:05:21.351  5262  5618 I litert  :   BackendType              : Htp(2)
+10-05 01:05:21.351  5262  5618 I litert  :   Profiling                : Off(0)
+10-05 01:05:21.351  5262  5618 I litert  :   UseInt64BiasAsInt32      : true
+10-05 01:05:21.351  5262  5618 I litert  :   EnableWeightSharing      : false
+10-05 01:05:21.351  5262  5618 I litert  :   EnableJustInTime         : false
+10-05 01:05:21.351  5262  5618 I litert  :   GraphPriority            : Default(0)
+10-05 01:05:21.351  5262  5618 I litert  :   GraphIOTensorMemType     : MemHandle(1)
+10-05 01:05:21.351  5262  5618 I litert  :   CustomOpPackage          :
+10-05 01:05:21.351  5262  5618 I litert  :     name                   :
+10-05 01:05:21.351  5262  5618 I litert  :     interface_provider     :
+10-05 01:05:21.351  5262  5618 I litert  :     compile_package_path   :
+10-05 01:05:21.351  5262  5618 I litert  :     dispatch_package_path  :
+10-05 01:05:21.351  5262  5618 I litert  :     target                 :
+10-05 01:05:21.351  5262  5618 I litert  : [HTP]
+10-05 01:05:21.351  5262  5618 I litert  :   UseConvHMX               : true
+10-05 01:05:21.351  5262  5618 I litert  :   UseFoldReLU              : true
+10-05 01:05:21.351  5262  5618 I litert  :   HtpDlbc                  : false
+10-05 01:05:21.351  5262  5618 I litert  :   HtpDlbcWeights           : false
+10-05 01:05:21.351  5262  5618 I litert  :   HtpPPoint                : 0
+10-05 01:05:21.351  5262  5618 I litert  :   HtpPerformanceMode       : Burst(2)
+10-05 01:05:21.351  5262  5618 I litert  :   HtpPerfCtrlMode          : Manual(0)
+10-05 01:05:21.351  5262  5618 I litert  :   VtcmSize                 : 0
+10-05 01:05:21.351  5262  5618 I litert  :   NumHvxThreads            : 0
+10-05 01:05:21.351  5262  5618 I litert  :   OptimizationLevel        : HtpOptimizeForInferenceO3(2)
+10-05 01:05:21.351  5262  5618 I litert  : [IR]
+10-05 01:05:21.351  5262  5618 I litert  :   IrJsonDir    
+10-05 01:05:21.351  5262  5618 I litert  : [qnn_manager.cc:488] Adding shared library dir to path: /data/app/~~5v4pob5hGqOm8YKLZHSRJA==/io.github.johnrocky.hfmodels.samples.finder-Omw7PiUhvJA9VnClSoL1zQ==/lib/arm64
+10-05 01:05:21.351  5262  5618 I litert  : [dynamic_loading.cc:143] Adding /data/app/~~5v4pob5hGqOm8YKLZHSRJA==/io.github.johnrocky.hfmodels.samples.finder-Omw7PiUhvJA9VnClSoL1zQ==/lib/arm64 to LD_LIBRARY_PATH
+10-05 01:05:21.351  5262  5618 I litert  : [qnn_manager.cc:175] Loading qnn system shared library from "/data/app/~~5v4pob5hGqOm8YKLZHSRJA==/io.github.johnrocky.hfmodels.samples.finder-Omw7PiUhvJA9VnClSoL1zQ==/lib/arm64/libQnnSystem.so"
+10-05 01:05:21.352  5262  5618 I litert  : [qnn_manager.cc:142] Loading qnn shared library from "libQnnHtp.so"
+10-05 01:05:21.352  5262  5618 I litert  : [qnn_manager.cc:165] Loaded qnn shared library
+10-05 01:05:21.352  5262  5618 I litert  : [compiler_plugin.cc:268] Initialize plugin at: /data/app/~~5v4pob5hGqOm8YKLZHSRJA==/io.github.johnrocky.hfmodels.samples.finder-Omw7PiUhvJA9VnClSoL1zQ==/lib/arm64/libLiteRtCompilerPlugin_Qualcomm.so
+10-05 01:05:21.420  5262  5618 I litert  : [compiler_plugin.cc:947] Applying plugin with SDK version: v2.47.0.260601114230
+10-05 01:05:21.420  5262  5618 I litert  : [compiler_plugin.cc:928] Registered 0 transformations.
+10-05 01:05:21.420  5262  5618 I litert  : [compiler_plugin.cc:935] Applied transformations.
+10-05 01:05:21.641  5262  5618 I litert  : [compiler_plugin.cc:523] Partition strategy: 0
+10-05 01:05:21.647  5262  5618 I litert  : [compiler_plugin.cc:741] Partitioned subgraph<0>, selected 1874 ops, from a total of 1874 ops. resulted in 1 partitions.
+10-05 01:05:21.648  5262  5618 I litert  : [qnn_compiler_plugin.cc:530] Starting QNN Compilation for 1 subgraphs, soc_model=(null)
+10-05 01:05:21.648  5262  5618 I litert  : [qnn_compiler_plugin.cc:626] Creating context handle
+10-05 01:05:21.648  5262  5618 I litert  : [qnn_compiler_plugin.cc:659] Context handle created
+10-05 01:05:21.648  5262  5618 I litert  : [qnn_compiler_plugin.cc:674] Composing graph
+10-05 01:05:21.648  5262  5618 I litert  : [qnn_compiler_plugin.cc:678] Entry point name: qnn_partition_0
+10-05 01:05:40.035  5262  5618 I litert  : [qnn_compiler_plugin.cc:688] Graph composed
+10-05 01:05:40.035  5262  5618 I litert  : [qnn_compiler_plugin.cc:729] Generating context binary
+10-05 01:05:40.513  5262  5618 I litert  : [qnn_manager.cc:398] Serialized a context bin of size (bytes): 641011712
+10-05 01:05:40.513  5262  5618 I litert  : [qnn_compiler_plugin.cc:732] Context binary 0 generated
+10-05 01:05:40.862  5262  5618 I litert  : [compiled_model.cc:1250] 1 compiler plugins were applied successfully: Qualcomm compiler plugin (ver 0.1.0)
+10-05 01:05:40.862  5262  5618 I litert  : [compiled_model.cc:1264] JIT compilation changed model, reserializing...
+10-05 01:05:41.467  5262  5618 I tflite  : Initialized TensorFlow Lite runtime.
+10-05 01:05:41.467  5262  5618 I litert  : [litert_dispatch.cc:159] Loading shared library: /data/app/~~5v4pob5hGqOm8YKLZHSRJA==/io.github.johnrocky.hfmodels.samples.finder-Omw7PiUhvJA9VnClSoL1zQ==/lib/arm64/libLiteRtDispatch_Qualcomm.so
+10-05 01:05:41.468  5262  5618 I litert  : [common.h:160] 
+10-05 01:05:41.468  5262  5618 I litert  : 
+10-05 01:05:41.468  5262  5618 I litert  : +------------------------------------------+
+10-05 01:05:41.468  5262  5618 I litert  : |              ::qnn::Options              |
+10-05 01:05:41.468  5262  5618 I litert  : +------------------------------------------+
+10-05 01:05:41.468  5262  5618 I litert  : [GENERAL]
+10-05 01:05:41.468  5262  5618 I litert  :   LogLevel                 : Info(3)
+10-05 01:05:41.468  5262  5618 I litert  :   BackendType              : Htp(2)
+10-05 01:05:41.468  5262  5618 I litert  :   Profiling                : Off(0)
+10-05 01:05:41.468  5262  5618 I litert  :   UseInt64BiasAsInt32      : true
+10-05 01:05:41.468  5262  5618 I litert  :   EnableWeightSharing      : false
+10-05 01:05:41.468  5262  5618 I litert  :   EnableJustInTime         : false
+10-05 01:05:41.468  5262  5618 I litert  :   GraphPriority            : Default(0)
+10-05 01:05:41.468  5262  5618 I litert  :   GraphIOTensorMemType     : MemHandle(1)
+10-05 01:05:41.468  5262  5618 I litert  :   CustomOpPackage          :
+10-05 01:05:41.468  5262  5618 I litert  :     name                   :
+10-05 01:05:41.468  5262  5618 I litert  :     interface_provider     :
+10-05 01:05:41.468  5262  5618 I litert  :     compile_package_path   :
+10-05 01:05:41.468  5262  5618 I litert  :     dispatch_package_path  :
+10-05 01:05:41.468  5262  5618 I litert  :     target                 :
+10-05 01:05:41.468  5262  5618 I litert  : [HTP]
+10-05 01:05:41.468  5262  5618 I litert  :   UseConvHMX               : true
+10-05 01:05:41.468  5262  5618 I litert  :   UseFoldReLU              : true
+10-05 01:05:41.468  5262  5618 I litert  :   HtpDlbc                  : false
+10-05 01:05:41.468  5262  5618 I litert  :   HtpDlbcWeights           : false
+10-05 01:05:41.468  5262  5618 I litert  :   HtpPPoint                : 0
+10-05 01:05:41.468  5262  5618 I litert  :   HtpPerformanceMode       : Burst(2)
+10-05 01:05:41.468  5262  5618 I litert  :   HtpPerfCtrlMode          : Manual(0)
+10-05 01:05:41.468  5262  5618 I litert  :   VtcmSize                 : 0
+10-05 01:05:41.468  5262  5618 I litert  :   NumHvxThreads            : 0
+10-05 01:05:41.468  5262  5618 I litert  :   OptimizationLevel        : HtpOptimizeForInferenceO3(2)
+10-05 01:05:41.468  5262  5618 I litert  : [IR]
+10-05 01:05:41.468  5262  5618 I litert  :   IrJsonDir    
+10-05 01:05:41.468  5262  5618 I litert  : [qnn_manager.cc:488] Adding shared library dir to path: /data/app/~~5v4pob5hGqOm8YKLZHSRJA==/io.github.johnrocky.hfmodels.samples.finder-Omw7PiUhvJA9VnClSoL1zQ==/lib/arm64
+10-05 01:05:41.468  5262  5618 I litert  : [dynamic_loading.cc:132] dir already in LD_LIBRARY_PATH
+10-05 01:05:41.468  5262  5618 I litert  : [qnn_manager.cc:175] Loading qnn system shared library from "/data/app/~~5v4pob5hGqOm8YKLZHSRJA==/io.github.johnrocky.hfmodels.samples.finder-Omw7PiUhvJA9VnClSoL1zQ==/lib/arm64/libQnnSystem.so"
+10-05 01:05:41.468  5262  5618 I litert  : [qnn_manager.cc:142] Loading qnn shared library from "libQnnHtp.so"
+10-05 01:05:41.468  5262  5618 I litert  : [qnn_manager.cc:165] Loaded qnn shared library
+10-05 01:05:41.471  5262  5618 I tflite  : Replacing 1 out of 1 node(s) with delegate (DispatchDelegate) node, yielding 1 partitions for subgraph 0 (main).
+10-05 01:05:41.472  5262  5618 I litert  : [context_binary_info.cc:231] Context binary SDK version matches current SDK: 2.47.0
+10-05 01:05:41.472  5262  5618 I litert  : [context_binary_info.cc:112] Found qnn graph: qnn_partition_0
+10-05 01:05:41.472  5262  5618 I litert  : [litert_dispatch_device_context.cc:248] Creating new QNN context for bytecode 0xb400006c63941000 (size 641011712)
+10-05 01:05:41.601  5262  5618 I tflite  : Created TensorFlow Lite XNNPACK delegate for CPU.
+10-05 01:05:41.603  5262  5262 I hfmodels: ready litert-community/GLiNER2.5-Decide-LiteRT@f6f6e9c9 variant=s128_npu_wfp16 profile=npu inference=NPU prepare_ms=20549
+10-05 01:05:41.677  5262  5618 I litert  : [environment.cc:36] Creating LiteRT environment with options
+10-05 01:05:41.677  5262  5618 W litert  : [npu_registry.cc:34] NPU accelerator could not be loaded and registered: kLiteRtStatusErrorInvalidArgument.
+10-05 01:05:41.677  5262  5618 I litert  : [gpu_registry.cc:101] Attempting to load GPU accelerator(libLiteRtGpuAccelerator.so).
+10-05 01:05:41.677  5262  5618 I litert  : [gpu_registry.cc:101] Attempting to load GPU accelerator(libLiteRtClGlAccelerator.so).
+10-05 01:05:41.677  5262  5618 I litert  : [accelerator_registry.cc:54] RegisterAccelerator: ptr=0xb400007022873010, name=LiteRT GPU
+10-05 01:05:41.677  5262  5618 I litert  : [gpu_registry.cc:109] Dynamically loaded GPU accelerator(libLiteRtClGlAccelerator.so) registered.
+10-05 01:05:41.677  5262  5618 I litert  : [accelerator_registry.cc:54] RegisterAccelerator: ptr=0xb400007022872dd0, name=CpuAccelerator
+10-05 01:05:41.677  5262  5618 I litert  : [cpu_registry.cc:75] XNNPACK CPU accelerator registered.
+10-05 01:05:41.833  5262  5262 I finder  : ready model=litert-community/GLiNER2.5-Decide-LiteRT@f6f6e9c9 variant=s128_npu_wfp16 profile=npu load_ms=22750 warmup_ms=228.678385 bound=f6f6e9c9 fallback=[] npu_failure=null notes=family=gliner2_decide compile_ms=20299 on npu (Qualcomm HTP V81, JIT, burst; the first compile on a phone takes tens of seconds, later loads read the cache) | observed backend is UNKNOWN: litert 2.2.0 reports no per-op execution target; 'initialized' is the accelerator the CompiledModel was created with | host token lookup: word_embeddings_fp16.bin (float16, 128011 rows x 1024) feeds inputs_embeds | one gliner2 task per question (task 'answer', the instructions as its prompt, the options as labels); a request longer than the 128-token window or with more than 32 labels is refused, never cut; probabilities are gliner2's single-label float32 softmax of the label logits (T=1)
+10-05 01:05:41.845  5262  5262 I finder  : SCRIPT ready delay_ms=2000
+10-05 01:05:46.541  5262  5262 I finder  : QUERY source=script id=f1_33 text="Medium spicy vegan dinner without nuts, ready within an hour." meal=dinner diet=vegan time=under_60 exclude=nuts spice=medium expected_agree=5/5 kept=3 ids=r29,r30,r31 total_ms=164.239531 question_ms=meal:35.569791,diet:30.03625,time:31.518438,exclude:30.248958000000002,spice:30.684323 tokens=12 profile=npu line="5 decisions · 164 ms · GLiNER2.5-Decide s128 · NPU"
+10-05 01:05:46.542  5262  5262 I finder  : PROBS id=f1_33 meal={any:0.003763926448300481,breakfast:5.369753926061094E-4,lunch:0.001280611497350037,dinner:0.9938979744911194,dessert:5.204544286243618E-4} diet={any:0.0068753184750676155,vegetarian:0.0021974837873131037,vegan:0.9909272193908691} time={any:0.003486903151497245,under_15:3.112989361397922E-4,under_30:6.362536805681884E-4,under_60:0.9955654740333557} exclude={nothing:0.0013689312618225813,nuts:0.9980738162994385,dairy:2.547149488236755E-4,gluten:3.024814650416374E-4} spice={any:5.204062472330406E-5,mild:1.9675386283779517E-5,medium:0.9997953772544861,hot:1.3289038906805217E-4}
+10-05 01:05:50.586  5262  5262 I finder  : QUERY source=script id=f1_14 text="A vegan dessert without nuts." meal=dessert diet=vegan time=any exclude=nuts spice=any expected_agree=5/5 kept=3 ids=r49,r50,r51 total_ms=161.697552 question_ms=meal:33.883698,diet:32.335937,time:31.780208,exclude:30.852761,spice:30.753802 tokens=6 profile=npu line="5 decisions · 162 ms · GLiNER2.5-Decide s128 · NPU"
+10-05 01:05:50.587  5262  5262 I finder  : PROBS id=f1_14 meal={any:2.0066980141564272E-5,breakfast:1.5353574553955696E-6,lunch:2.3966588287294144E-6,dinner:4.619681021722499E-6,dessert:0.9999713897705078} diet={any:0.0038648745976388454,vegetarian:0.0011672652326524258,vegan:0.9949678778648376} time={any:0.7181868553161621,under_15:0.08615295588970184,under_30:0.09611056745052338,under_60:0.0995495542883873} exclude={nothing:5.130950012244284E-4,nuts:0.9991695880889893,dairy:1.5709761646576226E-4,gluten:1.6019608301576227E-4} spice={any:0.5981028079986572,mild:0.17818549275398254,medium:0.13189998269081116,hot:0.0918116569519043}
+10-05 01:05:53.098  5262  5262 I finder  : DONE n=2 f1_33_kept=3 f1_33_agree=5/5 f1_33_ms=164.239531 f1_14_kept=3 f1_14_agree=5/5 f1_14_ms=161.697552 thermal=2->2 headroom=0.9199999570846558->0.903333306312561 variant=s128_npu_wfp16 profile=npu file=/storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.finder/files/finder-result-1791129953.json
