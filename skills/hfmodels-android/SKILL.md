@@ -166,7 +166,7 @@ Screen: a Load button + status text, a scrolling transcript, an input row with S
 | Voice: `MODEL_NOT_REGISTERED` for the Zipformer or Kitten id | their repos carry no `hfmodels.json` yet: pass the `catalog/dev` descriptor as `LoadOptions(descriptorJson = …)` |
 | Voice: `METADATA_MISMATCH` "does not contain 'g2p/…'" | the Kitten load was not pinned: put the descriptor's `revision` in `ModelRef` and side-load the G2P files |
 | Voice: "Error: the Clock app did not take the alarm" | the app was not visible (keyguard, background): keep its screen on during the turn |
-| Voice: "Alarm requested for … could not be confirmed" | another alarm at that minute or earlier is Android's next alarm, which hides the new one: delete it, or check the Clock app's list |
+| Voice: "Alarm requested for … could not be confirmed" | another alarm at that minute or earlier is Android's next alarm, which hides the new one: turn it off or delete it, or check the Clock app's list |
 | Voice: `listen` ends with `IllegalStateException` "AudioRecord.read returned …" | the microphone stopped delivering (another app took the input, or 400 reads in a row returned nothing): start `listen` again |
 | Voice: `listen` never hears an utterance | the input stays below the endpointer's start level (RMS 0.02): speak toward the phone, or `VoiceLoopConfig(endpointer = Endpointer(startRms = 0.01f))` |
 | a thinking model answers with an empty string, or `<think>` shows in the text | 0.1.0 has no channel handling (upgrade to 0.1.1); on 0.1.1 an empty answer is the output cap hit inside the reasoning: raise `GenerationOptions(maxOutputTokens = …)`, never lower it |
