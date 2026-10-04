@@ -43,9 +43,11 @@ import org.junit.runner.RunWith
  *   7. lookup: the host embedding lookup of one request the Model Zoo's way and this module's way ([HostLookupBench]);
  *   8. release.
  * One RESULT line per step under tag `hfmodels-decide`, numbers unrounded. Arguments: variant (s256_wfp16 |
- * s512_wfp16), backend (gpu | cpu | auto), dir, fixtures (default `<dir>/fixtures`: `app_gate_fixtures.json`, the
+ * s512_wfp16 | s256_npu_wfp16), backend (gpu | cpu | npu | auto), dir, fixtures (default `<dir>/fixtures`: `app_gate_fixtures.json`, the
  * sieve's `b_chat.jsonl`, `open-decision_b_chat_policy.jsonl` and `open-decision_b_chat_keys.jsonl`, and round 4's
- * `decide_form.json`), repeats (timing, default 5), dp_tol (default 0.01).
+ * `decide_form.json`), repeats (timing, default 5), dp_tol (default 0.01). An npu run needs the Qualcomm libraries in
+ * the test APK (tools/fetch_npu_libs.sh litert/src/androidTest/jniLibs/arm64-v8a v81) and counts only with LiteRT's
+ * `Replacing 1 out of 1 node(s) with delegate (DispatchDelegate)` in the gate log.
  *
  *   GATE_TEST=DebertaDecisionDeviceTest GATE_TAG=decide-opendecision tools/decide_gate.sh s256_wfp16 gpu
  */
@@ -69,7 +71,7 @@ class DebertaDecisionDeviceTest {
 
     @Test fun loadSequenceParityDemoTimingRelease(): Unit = runBlocking {
         val models = HfModels(ctx)
-        val policy = when (backend) { "cpu" -> BackendPolicy.Require(BackendKind.CPU); "gpu" -> BackendPolicy.Require(BackendKind.GPU); else -> BackendPolicy.Auto }
+        val policy = when (backend) { "cpu" -> BackendPolicy.Require(BackendKind.CPU); "gpu" -> BackendPolicy.Require(BackendKind.GPU); "npu" -> BackendPolicy.Require(BackendKind.NPU); else -> BackendPolicy.Auto }
         val descriptor = testCtx.assets.open(DESCRIPTOR_ASSET).bufferedReader().use { it.readText() }
         val commit = JSONObject(descriptor).getString("revision")
         val opts = LoadOptions(backendPolicy = policy, networkPolicy = NetworkPolicy.Offline, descriptorJson = descriptor)
@@ -89,7 +91,8 @@ class DebertaDecisionDeviceTest {
             val loadMs = SystemClock.elapsedRealtime() - t1
             val compileMs = m.info.notes.firstNotNullOfOrNull { Regex("compile_ms=(\\d+)").find(it)?.groupValues?.get(1) } ?: "?"
             result("load", events.last() is LoadEvent.Ready && events.none { it is LoadEvent.DownloadStarted },
-                "import_ms=$importMs load_ms=$loadMs compile_ms=$compileMs profile=${m.info.profileId} window=${m.limits.windowTokens} head=${m.limits.headTokens} max_options=${m.limits.maxOptions} notes=${m.info.notes.joinToString(" | ")}")
+                "import_ms=$importMs load_ms=$loadMs compile_ms=$compileMs profile=${m.info.profileId} window=${m.limits.windowTokens} head=${m.limits.headTokens} max_options=${m.limits.maxOptions} " +
+                    "npu_libs_ready=${LiteRtNpu.ready(ctx)} notes=${m.info.notes.joinToString(" | ")}")
             val impl = m as LiteRtDecisionModel
             val c = impl.contract as DebertaDecisionContract
             val window = m.limits.windowTokens

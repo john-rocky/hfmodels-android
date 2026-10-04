@@ -401,13 +401,13 @@ class DebertaDecisionParityTest {
         val f = generateSequence(File("").absoluteFile) { it.parentFile }.map { File(it, "catalog/dev/litert-community__Open-Decision-DeBERTa-v3-Large-LiteRT.hfmodels.json") }.first { it.isFile }
         val d = io.github.johnrocky.hfmodels.descriptor.Descriptor.parse(f.readText(), "litert-community/Open-Decision-DeBERTa-v3-Large-LiteRT")
         assertEquals("s256_wfp16", d.defaultVariant)
-        assertEquals(mapOf("s256_wfp16" to 256, "s512_wfp16" to 512, "s256_fp32" to 256), d.variants.associate { it.id to it.handlerConfig.getInt("window") })
+        assertEquals(mapOf("s256_wfp16" to 256, "s512_wfp16" to 512, "s256_fp32" to 256, "s256_npu_wfp16" to 256), d.variants.associate { it.id to it.handlerConfig.getInt("window") })
         for (v in d.variants) {
             val hc = v.handlerConfig
             assertEquals(DebertaDecisionContract.FAMILY, hc.getString("family"))
             assertEquals(listOf(1024, 128, 256), listOf(hc.getInt("hidden"), hc.getInt("option_slots"), hc.getInt("state_tokens")))
             assertEquals(1.05, hc.getDouble("temperature"), 0.0)
-            assertEquals(listOf("gpu", "cpu"), v.profiles.map { it.id })
+            assertEquals(if (v.id == "s256_npu_wfp16") listOf("npu", "gpu", "cpu") else listOf("gpu", "cpu"), v.profiles.map { it.id })
             assertEquals(listOf("cpu"), v.profile("gpu")!!.fallbackProfiles)
         }
     }
