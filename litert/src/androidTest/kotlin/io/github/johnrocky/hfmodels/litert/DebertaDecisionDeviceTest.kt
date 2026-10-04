@@ -39,7 +39,8 @@ import org.junit.runner.RunWith
  *      "key: description" (r1's policy form) and with keys only, vs the Mac answers of the card's Python host (same
  *      answer n/30, max |dp| <= dp_tol, the encoded length equal to the host's, warm ms per question);
  *   5. timing: `decide(state, 4 questions)` (packed into one forward, as the author's decide()) vs 4 x `decide(state, 1 question)`, warm;
- *   6. release.
+ *   6. lookup: the host embedding lookup of one request the Model Zoo's way and this module's way ([HostLookupBench]);
+ *   7. release.
  * One RESULT line per step under tag `hfmodels-decide`, numbers unrounded. Arguments: variant (s256_wfp16 |
  * s512_wfp16), backend (gpu | cpu | auto), dir, fixtures (default `<dir>/fixtures`: `app_gate_fixtures.json`, the
  * sieve's `b_chat.jsonl`, `open-decision_b_chat_policy.jsonl` and `open-decision_b_chat_keys.jsonl`, and round 4's
@@ -198,7 +199,12 @@ class DebertaDecisionDeviceTest {
             result("timing", true, "repeats=$repeats forwards_for_4q=${c.plan(qs, c.stateIds(state)).size} decide_4q_total_ms_median=${batched.sorted()[batched.size / 2]} four_decide_1q_total_ms_median=${single.sorted()[single.size / 2]} state_tokens=${last.stateTokens} per_question_ms=${last.timing.questionMs.joinToString(",")} " +
                 "answers=${last.answers.mapValues { (_, a) -> when (a) { is Answer.Choice -> a.choice + " " + a.probabilities.getValue(a.choice); is Answer.Score -> a.score.toString(); is Answer.Noul -> a.noul.toString() } }}")
 
-            // 6. release
+            // 6. the host lookup of one request, the Model Zoo's way and this module's way, over the Zoo row's window (S256)
+            val fw0 = c.forward("q", B_POLICY, c.stateIds(chat[0]["text"] as String))
+            val padded = IntArray(ZOO_WINDOW) { if (it < fw0.ids.size) fw0.ids[it] else c.padId }
+            result("lookup", true, HostLookupBench.run(File(m.info.files.getValue("table")), DebertaDecisionContract.HIDDEN, padded, "arith"))
+
+            // 7. release
             val t2 = SystemClock.elapsedRealtime()
             m.closeAndJoin()
             result("release", true, "close_ms=${SystemClock.elapsedRealtime() - t2}")
@@ -233,6 +239,8 @@ class DebertaDecisionDeviceTest {
     }
 
     companion object {
+        /** The window of the litert-samples Model Zoo's Open-Decision row (S256), for the lookup comparison. */
+        const val ZOO_WINDOW = 256
         const val TAG = "hfmodels-decide"
         const val REPO = "litert-community/Open-Decision-DeBERTa-v3-Large-LiteRT"
         /** The development descriptor (catalog/dev, an androidTest asset): its revision and files drive the load. */

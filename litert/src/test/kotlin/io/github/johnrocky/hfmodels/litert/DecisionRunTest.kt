@@ -11,7 +11,8 @@ import org.junit.Test
 
 /**
  * decide()'s loop without a model ([DecisionRun]): the default plan (one forward per question, what laya, julia,
- * gliner2_decide and gliclass keep) and a packed plan (one forward for several questions, what deberta_decision does):
+ * gliner2_decide and gliclass keep) and a packed plan (one forward for several questions, what deberta_decision does,
+ * and gliner2_decide with `pack_questions`):
  * which scores each question decodes, the answer order, the per-question time and the state report.
  */
 class DecisionRunTest {
