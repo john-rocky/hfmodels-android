@@ -52,7 +52,10 @@ data class VoiceUi(
     val phoneState: String = "",
     val network: String = "",
     val error: String? = null,
-)
+) {
+    /** While the models load, the microphone is open or a request runs (MainActivity). */
+    val keepsScreenOn: Boolean get() = loading || listening || busy
+}
 
 /**
  * The state after [e]. [hangoverMs]: the silence the endpointer waited for before it cut the utterance (the
@@ -60,14 +63,13 @@ data class VoiceUi(
  */
 fun VoiceUi.on(e: Event, hangoverMs: Int): VoiceUi = when (e) {
     Event.Listening -> copy(busy = false, status = "Listening…")
-    is Event.Heard -> copy(
-        busy = true, heard = e.text, tools = emptyList(), reply = "", modelReply = null, replyIn = "", breakdown = "",
-        totalMs = null, error = null, status = if (e.text.isBlank()) "Heard nothing" else "Thinking…",
-    )
+    is Event.Heard -> newTurn().copy(heard = e.text, status = if (e.text.isBlank()) "Heard nothing" else "Thinking…")
     Event.Thinking -> copy(status = "Thinking…")
     is Event.ToolCalled -> copy(tools = tools + ToolLine(e.name, e.args, e.result))
     is Event.Speaking -> copy(status = "Speaking…", reply = (reply + " " + e.sentence.removeSuffix(",")).trim())
-    is Event.Error -> copy(error = (e.code?.let { "$it: " } ?: "") + e.message)
+    // An Error outside a turn opens one: the transcriber failed, so no Heard comes, and the previous request's lines go
+    // (an Error inside a turn keeps that turn's lines).
+    is Event.Error -> (if (busy) this else newTurn()).copy(error = (e.code?.let { "$it: " } ?: "") + e.message)
     is Event.Done -> {
         val t = e.timing
         copy(
@@ -81,6 +83,10 @@ fun VoiceUi.on(e: Event, hangoverMs: Int): VoiceUi = when (e) {
         )
     }
 }
+
+/** A turn has started: the previous request's lines cleared. */
+private fun VoiceUi.newTurn(): VoiceUi =
+    copy(busy = true, heard = "", tools = emptyList(), reply = "", modelReply = null, replyIn = "", breakdown = "", totalMs = null, error = null)
 
 /** "Reply in 2.6 s": from the end of speech (the hangover before the cut, then the turn) to the first sound. */
 fun replyIn(t: TurnTiming, hangoverMs: Int): String =

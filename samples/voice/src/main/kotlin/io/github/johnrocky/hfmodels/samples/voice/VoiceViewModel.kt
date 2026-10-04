@@ -184,10 +184,14 @@ class VoiceViewModel(private val app: Application) : AndroidViewModel(app) {
         }
     }
 
-    /** One turn from typed text (no microphone). */
+    /** One turn from typed text (no microphone); a typed turn still running stops first. */
     fun say(text: String) {
         val l = loop ?: return load { say(text) }
+        val previous = turnJob?.also { it.cancel() }
         turnJob = viewModelScope.launch(Dispatchers.Default) {
+            // The loop already runs one turn at a time; this wait keeps the earlier turn's last writes (the screen state
+            // its TURN line reads, its record) apart from this turn's events.
+            previous?.join()
             try {
                 l.turn(text).collect { e -> onEvent(e, fromMic = false) }
             } catch (e: CancellationException) {
@@ -254,7 +258,7 @@ class VoiceViewModel(private val app: Application) : AndroidViewModel(app) {
     }
 
     private suspend fun refreshPhoneState(): String {
-        val s = try { PhoneTools.phoneState(app) } catch (e: Exception) { "?" }
+        val s = try { PhoneTools.phoneState(app) } catch (e: CancellationException) { throw e } catch (e: Exception) { "?" }
         val net = network()
         _ui.update { it.copy(phoneState = s, network = net) }
         return s

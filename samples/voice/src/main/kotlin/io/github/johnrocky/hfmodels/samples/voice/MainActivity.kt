@@ -11,8 +11,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import io.github.johnrocky.hfmodels.voice.Endpointer
 
 /**
@@ -27,25 +30,35 @@ import io.github.johnrocky.hfmodels.voice.Endpointer
  * e.g. adb shell am start -n io.github.johnrocky.hfmodels.samples.voice/.MainActivity --ez autoload true --ez autolisten true
  *
  * Scripted mode (any of these extras present, whatever its value, in a debuggable build) shows the screen over the
- * keyguard and turns the display on; a normal launch does not. Under the keyguard the activity is not visible: Android
- * drops the Clock app's SET_ALARM activity start from the app (BAL_BLOCK, result code 102; Galaxy S26, 2026-10-03), so
- * the alarm tool says the Clock app did not take the alarm, and the hidden activity's process runs in the background
- * cpuset. While the screen is not visible, the microphone and any request in progress stop.
+ * keyguard, turns the display on and keeps it on; a normal launch keeps it on only while the models load, the microphone
+ * is open or a request runs. Under the keyguard the activity is not visible: Android drops the Clock app's SET_ALARM
+ * activity start from the app (BAL_BLOCK, result code 102; Galaxy S26, 2026-10-03), so the alarm tool says the Clock app
+ * did not take the alarm, and the hidden activity's process runs in the background cpuset. While the screen is not
+ * visible, the microphone and any request in progress stop.
  */
 class MainActivity : ComponentActivity() {
     private val vm: VoiceViewModel by viewModels()
+
+    /** Set by a scripted launch for the rest of the activity's life, as the keyguard flags are. */
+    private var scriptedMode by mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (scripted(intent)) overKeyguard()
         enableEdgeToEdge()
-        // Keep the screen on through a turn: a locked phone moves a hidden activity's process to the background cpuset
-        // (little cores), where phone-agent's model produced one token a second.
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         val missing = PERMISSIONS.filter { checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED }
         if (missing.isNotEmpty()) requestPermissions(missing.toTypedArray(), 1)
         setContent {
             val ui by vm.ui.collectAsState()
+            // The screen stays on while the models load, the microphone is open or a request runs: a locked phone moves
+            // a hidden activity's process to the background cpuset (little cores), where phone-agent's model produced
+            // one token a second. Scripted mode keeps it on throughout: VoiceDeviceCheck brings this screen up idle
+            // (autoload=false) while it runs its own models, and its alarm needs the app visible.
+            val keepOn = scriptedMode || ui.keepsScreenOn
+            LaunchedEffect(keepOn) {
+                val flag = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                if (keepOn) window.addFlags(flag) else window.clearFlags(flag)
+            }
             VoiceScreen(ui, onMic = { vm.toggleListen() }, onLoad = { vm.load() })
         }
         if (savedInstanceState == null) handle(intent)
@@ -77,6 +90,7 @@ class MainActivity : ComponentActivity() {
     private fun overKeyguard() {
         setShowWhenLocked(true)
         setTurnScreenOn(true)
+        scriptedMode = true
     }
 
     private fun handle(i: Intent) {

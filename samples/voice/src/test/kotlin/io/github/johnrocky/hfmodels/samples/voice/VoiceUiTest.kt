@@ -1,9 +1,12 @@
 package io.github.johnrocky.hfmodels.samples.voice
 
+import io.github.johnrocky.hfmodels.ErrorCode
 import io.github.johnrocky.hfmodels.voice.VoiceLoop.Event
 import io.github.johnrocky.hfmodels.voice.VoiceLoop.TurnTiming
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /** The screen's state from the loop's events, and the milliseconds as the screen writes them. */
@@ -59,6 +62,41 @@ class VoiceUiTest {
         assertEquals("Heard nothing", VoiceUi().on(Event.Heard("", 900.0, 40.0), 800).status)
         assertEquals("", ui.replyIn)
         assertEquals("", ui.breakdown)
+    }
+
+    @Test fun aTurnWhoseTranscriberFailedShowsNothingOfThePreviousRequest() {
+        var ui = VoiceUi(ready = true, listening = true)
+        val clock = Event.ToolCalled("get_current_datetime", emptyMap(), "Sunday, 2026-10-04 21:30", 0.3)
+        val previous = listOf(
+            Event.Listening, Event.Heard("What time is it.", 1500.0, 50.0), Event.Thinking, clock, Event.Speaking("It is 21:30,", 200.0, 900.0),
+            Event.Done(timing("What time is it.", 700.0, 900.0, 50.0, "It is 21:30.", "It is 21:30.")), Event.Listening,
+        )
+        for (e in previous) ui = ui.on(e, 800)
+        // The finished request stays on the screen while the microphone waits.
+        assertEquals("What time is it.", ui.heard)
+        assertEquals(1, ui.tools.size)
+        assertTrue(ui.keepsScreenOn)
+        // The next utterance: the transcriber fails, so no Heard comes; the loop says its failure text.
+        ui = ui.on(Event.Error(ErrorCode.INFERENCE_FAILED, "transcriber: the graph failed"), 800)
+        assertEquals("", ui.heard)
+        assertEquals(emptyList<ToolLine>(), ui.tools)
+        assertEquals("", ui.reply)
+        assertEquals("", ui.replyIn)
+        assertEquals("INFERENCE_FAILED: transcriber: the graph failed", ui.error)
+        ui = ui.on(Event.Speaking("Sorry, I could not finish that,", 150.0, 400.0), 800)
+        ui = ui.on(Event.Done(timing("", 10.0, 400.0, 80.0, "", "Sorry, I could not finish that.")), 800)
+        // The TURN line reads its tools from here: none.
+        assertEquals(emptyList<ToolLine>(), ui.tools)
+        assertEquals("Sorry, I could not finish that.", ui.reply)
+        assertEquals("INFERENCE_FAILED: transcriber: the graph failed", ui.error)
+        // An Error inside a turn, after its Heard, keeps that turn's lines.
+        ui = ui.on(Event.Heard("What time is it.", 1500.0, 50.0), 800)
+        ui = ui.on(clock, 800)
+        ui = ui.on(Event.Error(null, "player: IllegalStateException: closed"), 800)
+        assertEquals("What time is it.", ui.heard)
+        assertEquals(listOf(ToolLine(clock.name, clock.args, clock.result)), ui.tools)
+        // Idle (loaded, not listening, no request) lets the screen sleep.
+        assertFalse(VoiceUi(ready = true).keepsScreenOn)
     }
 
     @Test fun millisecondsUnderASecondAreMillisecondsAndAbove() {
