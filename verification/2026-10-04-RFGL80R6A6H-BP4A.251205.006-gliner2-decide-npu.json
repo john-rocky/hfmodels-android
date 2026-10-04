@@ -1,0 +1,28 @@
+[
+  {
+    "model_id": "litert-community/GLiNER2.5-Decide-LiteRT",
+    "model_commit": "310090c3adbba13843f84b03a10f1321d8be5997",
+    "level": "PUBLISHER_TESTED",
+    "device": "SM-S942Q (Galaxy S26)",
+    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+    "runtime": "litert 2.2.0",
+    "result": "PASS",
+    "date": "2026-10-04",
+    "variant": "s128_npu_wfp16",
+    "profile": "npu",
+    "evidence": "litert/results/2026-10-04-1015-RFGL80R6A6H-litert2.2.0-decide-gliner-s128_npu_wfp16-npu.log"
+  },
+  {
+    "model_id": "litert-community/GLiNER2.5-Decide-LiteRT",
+    "model_commit": "310090c3adbba13843f84b03a10f1321d8be5997",
+    "level": "PUBLISHER_TESTED",
+    "device": "SM-S942Q (Galaxy S26)",
+    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+    "runtime": "litert 2.2.0",
+    "result": "PASS",
+    "date": "2026-10-04",
+    "variant": "s128_npu_wfp16",
+    "profile": "gpu",
+    "evidence": "litert/results/2026-10-04-1021-RFGL80R6A6H-litert2.2.0-decide-gliner-fp16acc32-s128_npu_wfp16-gpu.log"
+  }
+]
