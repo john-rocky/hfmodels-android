@@ -68,6 +68,8 @@ class DecisionModelsTest {
         @Suppress("UNCHECKED_CAST")
         val pinned = ((Json.parseObject(entry.readText())["descriptor"] as Map<String, Any?>)["variants"] as List<Map<String, Any?>>).single { it["id"] == DecisionModels.NPU_VARIANT }
         assertEquals(files(pinned).getValue("main"), files(npu).getValue("main"))
+        // ... and its handler_config (gpu_precision fp16_with_fp32_accum): the NPU -> GPU fallback computes as the published descriptor does.
+        assertEquals(pinned["handler_config"], npu["handler_config"])
         // Every profile of the NPU variant reads the same three files: the fallback downloads nothing more.
         for (p in profiles(npu).values) assertEquals(listOf("main", "table", "tokenizer"), p["files"])
         // Its token table and tokenizer are the published variant's files (same sha256: the store keeps one copy).
