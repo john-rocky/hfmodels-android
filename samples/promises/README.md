@@ -26,7 +26,7 @@ One line at a time. A leading `[...]` (a chat app's time stamp) is dropped. A li
 
 ## Model and files
 
-[litert-community/GLiNER2.5-Decide-LiteRT](https://huggingface.co/litert-community/GLiNER2.5-Decide-LiteRT), variant `s128_wfp16` (a 128-token window, float16 weights; Apache-2.0), on the GPU when the phone has one (the descriptor's default profile) with the CPU as the fallback; an app built with Qualcomm's runtime loads another variant on the NPU first (NPU, below). The app ships the development descriptor (`catalog/dev/litert-community__GLiNER2.5-Decide-LiteRT.hfmodels.json`, added to the assets by `build.gradle.kts`) and passes it as `LoadOptions.descriptorJson` with its commit as the revision. Since 2026-10-04 the model repo carries the three published variants as `hfmodels.json`, and the bundled catalog on main pins them at db801972; the NPU variant is only in the asset. The first conversation downloads the three files (0.93 GB: the graph, the token table, the tokenizer) into the app's private storage and verifies their sha256; later loads are offline. A copy already on the computer can be pushed instead of downloaded:
+[litert-community/GLiNER2.5-Decide-LiteRT](https://huggingface.co/litert-community/GLiNER2.5-Decide-LiteRT), variant `s128_wfp16` (a 128-token window, float16 weights; Apache-2.0), on the GPU when the phone has one (the descriptor's default profile) with the CPU as the fallback; an app built with Qualcomm's runtime loads another variant on the NPU first (NPU, below). The app ships the development descriptor (`catalog/dev/litert-community__GLiNER2.5-Decide-LiteRT.hfmodels.json`, added to the assets by `build.gradle.kts`) and passes it as `LoadOptions.descriptorJson` with its commit as the revision. Since 2026-10-04 the model repo carries `hfmodels.json` (the three variants published first), and the bundled catalog pins all four variants at 310090c3, the commit that added the NPU variant's graph. The first conversation downloads the three files (0.93 GB: the graph, the token table, the tokenizer) into the app's private storage and verifies their sha256; later loads are offline. A copy already on the computer can be pushed instead of downloaded:
 
 ```sh
 adb push gliner25_decide_s128_wfp16.tflite word_embeddings_fp16.bin tokenizer.json /sdcard/Android/data/io.github.johnrocky.hfmodels.samples.promises/files/   # hashed against the descriptor, then imported; delete the copies afterwards
@@ -93,10 +93,10 @@ If the NPU load fails with one of the codes in `DecisionModels.BACKEND_ERRORS`, 
 
 `--es backend npu`, `gpu` or `cpu` on the start that creates the screen fixes the backend, with no fallback; `gpu` and `cpu` load `s128_wfp16`. A running screen keeps its model, so force-stop the app first.
 
-The graph of `s128_npu_wfp16` is not on the Hub at the commit the descriptor pins. Push it, and the SDK imports it after checking its sha256 against the descriptor:
+The graph of `s128_npu_wfp16` is on the Hub at the commit the descriptor pins (310090c3, `gliner25_decide_s128_npu_wfp16.tflite`, 660 MB). When the app has no copy, the first NPU load downloads it; a pushed copy is imported instead, after the SDK checks its sha256 against the descriptor:
 
 ```sh
-adb push gliner25_decide_s128_npu_split_fc1_wfp16.tflite /sdcard/Android/data/io.github.johnrocky.hfmodels.samples.promises/files/   # delete the copy afterwards
+adb push gliner25_decide_s128_npu_wfp16.tflite /sdcard/Android/data/io.github.johnrocky.hfmodels.samples.promises/files/   # delete the copy afterwards
 ```
 
 ### What it showed on the Galaxy S26 (2026-10-04)

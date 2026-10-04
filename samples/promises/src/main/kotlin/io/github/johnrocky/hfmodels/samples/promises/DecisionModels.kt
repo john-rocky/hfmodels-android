@@ -28,7 +28,7 @@ import org.json.JSONObject
  * whose files are cached makes no network request. The first load downloads 0.93 GB into the app's private
  * storage and verifies every file's sha256; a copy pushed to the app's external files dir
  * (`adb push <file> /sdcard/Android/data/<applicationId>/files/`) is imported instead. The NPU variant's graph is
- * not on the Hub at the pinned commit: it loads only from a pushed copy.
+ * on the Hub at the pinned commit (310090c3) like the other files: downloaded when the app has no copy, or pushed.
  */
 class DecisionModels(context: Context) {
     private val app = context.applicationContext

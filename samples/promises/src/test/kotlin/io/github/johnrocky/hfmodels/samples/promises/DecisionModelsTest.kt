@@ -62,7 +62,12 @@ class DecisionModelsTest {
         assertEquals("gpu", npu["default_profile"])
         assertEquals(setOf("npu", "gpu", "cpu"), profiles(npu).keys)
         assertEquals(listOf("cpu"), profiles(npu).getValue("gpu")["fallback_profiles"])
-        assertEquals("gliner25_decide_s128_npu_split_fc1_wfp16.tflite", files(npu).getValue("main")["path"])
+        assertEquals("gliner25_decide_s128_npu_wfp16.tflite", files(npu).getValue("main")["path"])
+        // ... the file the bundled catalog pins for the same variant (path, bytes, sha256).
+        val entry = generateSequence(File("").absoluteFile) { it.parentFile }.map { File(it, "catalog/entries/litert-community__GLiNER2.5-Decide-LiteRT.json") }.first { it.isFile }
+        @Suppress("UNCHECKED_CAST")
+        val pinned = ((Json.parseObject(entry.readText())["descriptor"] as Map<String, Any?>)["variants"] as List<Map<String, Any?>>).single { it["id"] == DecisionModels.NPU_VARIANT }
+        assertEquals(files(pinned).getValue("main"), files(npu).getValue("main"))
         // Every profile of the NPU variant reads the same three files: the fallback downloads nothing more.
         for (p in profiles(npu).values) assertEquals(listOf("main", "table", "tokenizer"), p["files"])
         // Its token table and tokenizer are the published variant's files (same sha256: the store keeps one copy).

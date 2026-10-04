@@ -37,9 +37,9 @@ import org.junit.runner.RunWith
  *
  * `connectedDebugAndroidTest` runs it as well, but uninstalls the app afterwards, and the imported model with it.
  * The last line is `RESULT ok=true ...` when every step passed; every line names the variant and the profile.
- * Arguments: backend=npu|gpu|cpu (npu: variant s128_npu_wfp16 on the NPU, which needs Qualcomm's runtime in the app
- * and the variant's graph pushed, README.md "NPU"; gpu, cpu: variant s128_wfp16 on that backend; default: the app's
- * own choice, DecisionModels.choose), network=offline|any (default any).
+ * Arguments: backend=npu|gpu|cpu (npu: variant s128_npu_wfp16 on the NPU, which needs Qualcomm's runtime in the app,
+ * README.md "NPU"; its graph is downloaded or pushed like the others; gpu, cpu: variant s128_wfp16 on that backend;
+ * default: the app's own choice, DecisionModels.choose), network=offline|any (default any).
  */
 @RunWith(AndroidJUnit4::class)
 class PromisesDeviceCheck {
