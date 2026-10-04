@@ -286,7 +286,7 @@ class MainActivity : ComponentActivity() {
             is LoadEvent.Verifying -> setPill("VERIFYING", PromisesStyle.PILL_IDLE)
             is LoadEvent.Initializing -> {
                 setPill("LOADING", PromisesStyle.PILL_IDLE)
-                // LiteRT compiles the graph for the NPU on the phone (32 s on the Galaxy S26) and reads its cache on later loads.
+                // LiteRT compiles the graph for the NPU on the phone on the first load and reads its cache on later loads (README, NPU).
                 say(if (e.profileId == "npu") NPU_COMPILE_LINE else "$MODEL_NAME · compiling for the ${e.profileId.uppercase(Locale.ROOT)}")
             }
             is LoadEvent.Fallback -> say("$MODEL_NAME · ${e.reason}; trying the next profile")
@@ -468,7 +468,7 @@ class MainActivity : ComponentActivity() {
         const val EXTRA_BACKEND = "backend"
         private const val HANDLED = "io.github.johnrocky.hfmodels.samples.promises.HANDLED"
         private const val MODEL_NAME = "GLiNER2.5-Decide s128"
-        private const val NPU_COMPILE_LINE = "Compiling for the NPU: about 30 s the first time"
+        private const val NPU_COMPILE_LINE = "Compiling for the NPU (first load only)"
         private const val SPOTLIGHT_MS = 1200L
     }
 }
