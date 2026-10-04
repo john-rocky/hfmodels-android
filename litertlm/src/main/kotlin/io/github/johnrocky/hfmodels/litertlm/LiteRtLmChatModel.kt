@@ -2,12 +2,12 @@ package io.github.johnrocky.hfmodels.litertlm
 
 import android.graphics.BitmapFactory
 import com.google.ai.edge.litertlm.Content
-import com.google.ai.edge.litertlm.Contents
 import com.google.ai.edge.litertlm.Conversation
 import com.google.ai.edge.litertlm.ConversationConfig
 import com.google.ai.edge.litertlm.Engine
 import com.google.ai.edge.litertlm.Message
 import com.google.ai.edge.litertlm.MessageCallback
+import com.google.ai.edge.litertlm.Role
 import com.google.ai.edge.litertlm.ThinkingConfig
 import io.github.johnrocky.hfmodels.ErrorCode
 import io.github.johnrocky.hfmodels.InputKind
@@ -71,14 +71,17 @@ internal class LiteRtLmChatModel(
         checkUsable()
         validate(config)
         // The load's channels apply unless the caller decided (null = ours; an empty list disables them).
-        val effective = if (config.channels == null && thinking.channels.isNotEmpty()) config.copy(channels = thinking.channels) else config
-        val conv = withContext(nativeDispatcher) {
+        // The app runs the tools: the runtime hands the calls over in Message.toolCalls and never runs one itself.
+        val effective = (if (config.channels == null && thinking.channels.isNotEmpty()) config.copy(channels = thinking.channels) else config).copy(automaticToolCalling = false)
+        // A caller cancelled during the native call gets nothing, and the conversation it would have had is closed
+        // instead of left open outside [sessions], where the model's close would never reach it.
+        return handOver(nativeDispatcher, {
             checkUsable()
-            try { engine.createConversation(effective) } catch (t: Throwable) {
+            val conv = try { engine.createConversation(effective) } catch (t: Throwable) {
                 throw ModelException(ErrorCode.INITIALIZATION_FAILED, "createConversation failed: ${t.javaClass.simpleName}: ${t.message}", details = mapOf("stage" to "createConversation"), cause = t)
             }
-        }
-        return Session(conv).also { sessions += it }
+            Session(conv).also { sessions += it }
+        }) { it.closeAndJoin() }
     }
 
     override fun close() {
@@ -113,20 +116,32 @@ internal class LiteRtLmChatModel(
         if (closing.get()) throw ModelException(ErrorCode.MODEL_CLOSED, "model ${info.repoId} is closing or closed")
     }
 
-    /** ConversationConfig surface of this release: system instruction, initial messages, sampling, output cap, channels, thinking. */
+    /**
+     * ConversationConfig surface of this release: system instruction, initial messages, sampling, output cap, channels,
+     * thinking, tools (run by the app: `automaticToolCalling` is passed as false whatever the caller set).
+     */
     private fun validate(config: ConversationConfig) {
         fun no(what: String): Nothing = throw ModelException(ErrorCode.UNSUPPORTED_CONFIGURATION, "$what is not supported in this release; it was rejected before any native call", details = mapOf("field" to what))
-        if (config.tools.isNotEmpty()) no("ConversationConfig.tools")
         if (config.enableResponseFormat) no("ConversationConfig.enableResponseFormat")
         if (config.loraConfig != null) no("ConversationConfig.loraConfig")
         config.channels?.forEachIndexed { i, c -> if (c.channelName.isEmpty() || c.start.isEmpty()) throw ModelException(ErrorCode.INVALID_INPUT, "ConversationConfig.channels[$i] needs a non-empty channelName and start") }
         config.maxOutputToken?.let { if (it <= 0) throw ModelException(ErrorCode.INVALID_INPUT, "ConversationConfig.maxOutputToken must be positive") }
     }
 
-    /** Input checks before any native call (spec §11.4): kinds, image count, bytes, pixels. Keeps the session READY on failure. */
-    private fun validateInputs(contents: Contents) {
+    /**
+     * Input checks before any native call (spec §11.4): a TOOL message carries tool responses only; any other
+     * role is checked as a user turn (kinds, image count, bytes, pixels). Keeps the session READY on failure.
+     */
+    private fun validateInputs(message: Message) {
+        if (message.role == Role.TOOL) {
+            val parts = message.contents.contents
+            if (parts.isEmpty() || parts.any { it !is Content.ToolResponse }) throw ModelException(
+                ErrorCode.INVALID_INPUT, "a TOOL message carries Content.ToolResponse parts only, one per call answered (got ${parts.map { it.javaClass.simpleName }})",
+            )
+            return
+        }
         var images = 0
-        for (c in contents.contents) {
+        for (c in message.contents.contents) {
             when (c) {
                 is Content.Text -> {}
                 is Content.ImageFile, is Content.ImageBytes -> {
@@ -172,7 +187,7 @@ internal class LiteRtLmChatModel(
         @Volatile private var nativeDone: CompletableDeferred<Unit>? = null
         @Volatile private var cancelRequested = false
 
-        override fun stream(contents: Contents, options: GenerationOptions): Flow<Message> {
+        override fun stream(message: Message, options: GenerationOptions): Flow<Message> {
             val collected = AtomicBoolean(false)   // one collection per returned Flow; stream() again for the next turn
             return flow {
             if (!collected.compareAndSet(false, true)) throw ModelException(ErrorCode.STREAM_ALREADY_COLLECTED, "this Flow was already collected; call stream() again for another generation")
@@ -183,7 +198,7 @@ internal class LiteRtLmChatModel(
                 SessionState.GENERATING -> throw ModelException(ErrorCode.MODEL_BUSY, "this session is already generating")
             }
             checkUsable()
-            validateInputs(contents)   // READY is kept on failure
+            validateInputs(message)   // READY is kept on failure
             if (!generating.compareAndSet(null, this@Session)) throw ModelException(ErrorCode.MODEL_BUSY, "another generation is running on ${info.repoId}; one at a time per model")
             state = SessionState.GENERATING
             cancelRequested = false
@@ -216,7 +231,7 @@ internal class LiteRtLmChatModel(
                 val cap = options.maxOutputTokens ?: if (thinking.reasonsByDefault) MAX_OUTPUT_TOKENS_THINKING else MAX_OUTPUT_TOKENS
                 val thinkingConfig = if (options.enableThinking != null || options.thinkingTokenBudget != null) ThinkingConfig(enableThinking = options.enableThinking ?: true, thinkingTokenBudget = options.thinkingTokenBudget ?: -1) else null
                 try {
-                    conv.sendMessageAsync(Message.user(contents), callback, maxOutputToken = cap, thinkingConfig = thinkingConfig)
+                    conv.sendMessageAsync(message, callback, maxOutputToken = cap, thinkingConfig = thinkingConfig)
                 } catch (t: Throwable) {
                     done.complete(Unit)
                     throw ModelException(ErrorCode.INFERENCE_FAILED, "sendMessageAsync failed: ${t.javaClass.simpleName}: ${t.message}", details = mapOf("stage" to "send"), cause = t)

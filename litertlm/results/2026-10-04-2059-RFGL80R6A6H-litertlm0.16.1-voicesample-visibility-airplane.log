@@ -1,0 +1,53 @@
+# samples/voice app, the screen not visible (HOME): (i) listen, HOME, back without extras; (ii) --es record + --es say, HOME on the Done line; (iii) listen with the recorder; (iv) force-stop, --ez autoload true --es say, HOME during the load, the extras again  date=2026-10-04T11:59:30Z serial=RFGL80R6A6H device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZH9 android=16
+# git=7ff59fc dirty=0 (samples/voice debug build of r10 stage 0) airplane_mode_on=1 keyguard=isKeyguardShowing=false screen=mWakefulness=Awake
+# (ii) record: events.json 2376 B and reply.wav 216844 B in record/r10-2d/001 (copied off the phone, then removed there)
+# (i) listen (no record extra), HOME, back without extras
+#   appops io.github.johnrocky.hfmodels.samples.voice: RECORD_AUDIO time=+3s77ms ago (running)
+# 20:59:33 (host) input keyevent KEYCODE_HOME
+#   appops io.github.johnrocky.hfmodels.samples.voice: RECORD_AUDIO time=+5s221ms ago; duration=+3s583ms
+#   appops io.github.johnrocky.hfmodels.samples.voice: RECORD_AUDIO time=+9s411ms ago; duration=+3s583ms
+# (ii) record + say, HOME on its Done line
+# 20:59:48.755 (host) input keyevent KEYCODE_HOME on the Done line
+# (iii) listen with the recorder of (ii): mic_level lines
+# (iv) cold start, the say scheduled after the load, HOME during the load
+# 21:01:27 (host) input keyevent KEYCODE_HOME
+10-04 20:59:30.453   735   735 I hfmodels-voice-sample: extras autoload=false autolisten=true say=false record=null
+10-04 20:59:30.545   735   765 I hfmodels-voice-sample: event=Listening
+10-04 20:59:35.834   735   735 I hfmodels-voice-sample: extras autoload=false autolisten=false say=false record=null
+10-04 20:59:42.459   735   735 I hfmodels-voice-sample: record to /storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.voice/files/record/r10-2d
+10-04 20:59:42.460   735   735 I hfmodels-voice-sample: extras autoload=false autolisten=false say=true record=r10-2d
+10-04 20:59:42.461   735   765 I hfmodels-voice-sample: event=Heard text="What time is it?" audio_ms=0 transcribe_ms=0
+10-04 20:59:42.461   735   765 I hfmodels-voice-sample: event=Thinking
+10-04 20:59:42.999   735   765 I hfmodels-voice-sample: event=ToolCalled name=get_current_datetime args={} result="Sunday, 2026-10-04 20:59" ms=0
+10-04 20:59:43.973   735   765 I hfmodels-voice-sample: event=Speaking sentence="It is 8:59 PM on Sunday, October 4th, 2026," synth_ms=411 first_audio_ms=1512
+10-04 20:59:48.597   735   779 I hfmodels-voice-sample: event=Done total_ms=6136
+10-04 20:59:48.606   735  1101 I hfmodels-voice-sample: TURN input=text heard="What time is it?" tools=[get_current_datetime()->"Sunday, 2026-10-04 20:59"] ms_first_audio=1512 hangover_ms=0 ms_end_of_speech_to_sound=1512 ms_transcribe=0 ms_first_token=515 ms_first_sentence=1097 ms_reply=1096 ms_total=6136 spoken="It is 8:59 PM on Sunday, October 4th, 2026." reply="It is 8:59 PM on Sunday, October 4th, 2026." phone="Next alarm (Android): none" network=none
+10-04 20:59:48.644   735   735 I wm_on_top_resumed_lost_called: [74324207,io.github.johnrocky.hfmodels.samples.voice.MainActivity,topStateChangedWhenResumed]
+10-04 20:59:48.646   735   735 I wm_on_paused_called: [74324207,io.github.johnrocky.hfmodels.samples.voice.MainActivity,performPause,0]
+10-04 20:59:49.068   735   735 I wm_on_stop_called: [74324207,io.github.johnrocky.hfmodels.samples.voice.MainActivity,STOP_ACTIVITY_ITEM,0]
+10-04 20:59:49.253   735  1101 I hfmodels-voice-sample: recorded /storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.voice/files/record/r10-2d/001
+10-04 21:01:17.862  3448  4927 I wm_set_resumed_activity: [0,io.github.johnrocky.hfmodels.samples.voice/.MainActivity,resumeTopActivity - onActivityStateChanged]
+10-04 21:01:18.060   735   735 I hfmodels-voice-sample: extras autoload=false autolisten=true say=false record=null
+10-04 21:01:18.062   735   779 I hfmodels-voice-sample: event=Listening
+10-04 21:01:19.064   735  1101 I hfmodels-voice-sample: mic_level max_rms=0.0013 start_rms=0.02
+10-04 21:01:20.065   735  1101 I hfmodels-voice-sample: mic_level max_rms=0.0015 start_rms=0.02
+10-04 21:01:21.084   735  1101 I hfmodels-voice-sample: mic_level max_rms=0.0016 start_rms=0.02
+10-04 21:01:22.087   735  1101 I hfmodels-voice-sample: mic_level max_rms=0.0019 start_rms=0.02
+10-04 21:01:23.088   735  1101 I hfmodels-voice-sample: mic_level max_rms=0.0018 start_rms=0.02
+10-04 21:01:26.698  5797  5797 I hfmodels-voice-sample: extras autoload=true autolisten=false say=true record=null
+10-04 21:01:26.785  5797  5821 I hfmodels: resolve litert-community/Zipformer-medium-CR-CTC-LiteRT: commit=7732ad6c via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=5e7d0d0f
+10-04 21:01:26.798  5797  5828 I hfmodels: tokens tokens.txt: 502 pieces
+10-04 21:01:31.934  5797  5828 I hfmodels: ready litert-community/Zipformer-medium-CR-CTC-LiteRT@7732ad6c variant=medium_fp16 profile=gpu inference=GPU prepare_ms=5141
+10-04 21:01:31.940  5797  5828 I hfmodels: resolve litert-community/kitten-tts-nano-0.8: commit=d4662d89 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=e3fc2c77
+10-04 21:01:33.085  5797  5822 I hfmodels: kitten lexicon: 177 symbols, 274927 dictionary words, 8 voices
+10-04 21:01:33.304  5797  5822 I hfmodels: ready litert-community/kitten-tts-nano-0.8@d4662d89 variant=fp32 profile=cpu inference=CPU prepare_ms=1333
+10-04 21:01:33.347  5797  5822 I hfmodels: resolve litert-community/gemma-4-E2B-it-litert-lm: commit=b3ca0d2f via EXPLICIT_REVISION, descriptor=john-rocky/hfmodels-android@b7c26a28/catalog/entries/litert-community__gemma-4-E2B-it-litert-lm.json sha=81300c30
+10-04 21:01:39.146  5797  5828 I hfmodels: ready litert-community/gemma-4-E2B-it-litert-lm@b3ca0d2f variant=default profile=gpu language=GPU vision=GPU prepare_ms=5794
+10-04 21:01:39.157  5797  5828 I hfmodels-voice-sample: ready asr=litert-community/Zipformer-medium-CR-CTC-LiteRT/medium_fp16/gpu tts=litert-community/kitten-tts-nano-0.8/fp32/cpu llm=litert-community/gemma-4-E2B-it-litert-lm/default/gpu load_ms=12381 network=none
+10-04 21:01:54.753  5797  5797 I hfmodels-voice-sample: extras autoload=true autolisten=false say=true record=null
+10-04 21:01:54.757  5797  5822 I hfmodels-voice-sample: event=Heard text="What time is it?" audio_ms=0 transcribe_ms=0
+10-04 21:01:54.757  5797  5822 I hfmodels-voice-sample: event=Thinking
+10-04 21:01:55.521  5797  5822 I hfmodels-voice-sample: event=ToolCalled name=get_current_datetime args={} result="Sunday, 2026-10-04 21:01" ms=1
+10-04 21:01:56.377  5797  5834 I hfmodels-voice-sample: event=Speaking sentence="It is 9:01 PM on Sunday, October 4th, 2026," synth_ms=305 first_audio_ms=1621
+10-04 21:02:00.632  5797  5834 I hfmodels-voice-sample: event=Done total_ms=5873
+10-04 21:02:00.638  5797  5834 I hfmodels-voice-sample: TURN input=text heard="What time is it?" tools=[get_current_datetime()->"Sunday, 2026-10-04 21:01"] ms_first_audio=1621 hangover_ms=0 ms_end_of_speech_to_sound=1621 ms_transcribe=0 ms_first_token=740 ms_first_sentence=1309 ms_reply=1309 ms_total=5873 spoken="It is 9:01 PM on Sunday, October 4th, 2026." reply="It is 9:01 PM on Sunday, October 4th, 2026." phone="Next alarm (Android): none" network=none

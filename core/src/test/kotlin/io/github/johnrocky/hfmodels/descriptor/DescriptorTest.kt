@@ -88,6 +88,19 @@ class DescriptorTest {
     }
     @Test fun otherLicenseNeedsUrl() = expect(ErrorCode.MANIFEST_INVALID, Fixtures.chat().replace("\"license\": {\"id\": \"apache-2.0\", \"url\": \"https://huggingface.co/org/model/blob/main/LICENSE\"}", "\"license\": {\"id\": \"other\"}"), "license")
 
+    @Test fun speechTasksAndRolesParse() {
+        val speech = Fixtures.chat().replace("\"tasks\": [\"chat\"]", "\"tasks\": [\"transcribe\", \"speak\"]")
+            .replace("\"files\": [{\"id\": \"weights\", \"role\": \"model\", \"path\": \"model.litertlm\", \"bytes\": 1048576, \"sha256\": \"${Fixtures.SHA}\"}]",
+                "\"files\": [{\"id\": \"weights\", \"role\": \"model\", \"path\": \"model.litertlm\", \"bytes\": 1048576, \"sha256\": \"${Fixtures.SHA}\"}, " +
+                    "{\"id\": \"voices\", \"role\": \"voices\", \"path\": \"voices.bin\", \"bytes\": 1, \"sha256\": \"${Fixtures.SHA}\"}, " +
+                    "{\"id\": \"lexicon\", \"role\": \"lexicon\", \"path\": \"lexicon.txt\", \"bytes\": 1, \"sha256\": \"${Fixtures.SHA}\"}]")
+        val d = Descriptor.parse(speech)
+        assertEquals(listOf("transcribe", "speak"), d.tasks)
+        assertEquals(listOf("model", "voices", "lexicon"), d.variant(null)!!.files.map { it.role })
+        expect(ErrorCode.MANIFEST_INVALID, speech.replace("\"tasks\": [\"transcribe\", \"speak\"]", "\"tasks\": [\"dictate\"]"), "unknown task")
+        expect(ErrorCode.MANIFEST_INVALID, speech.replace("\"role\": \"voices\"", "\"role\": \"speakers\""), "unknown file role")
+    }
+
     @Test fun versionCompare() {
         assertTrue(RuntimeRange.compareVersions("0.16.1", "0.16.0") > 0)
         assertTrue(RuntimeRange.compareVersions("0.17.0-alpha1", "0.17.0") < 0)

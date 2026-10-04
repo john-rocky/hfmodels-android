@@ -17,6 +17,8 @@ local.properties
 !samples/pong/src/test/resources/fixtures/*.png
 # And the ask sample's reference charts (three PNGs, 2.5 KB): its JVM tests compare the app's drawing against them
 !samples/ask/src/test/resources/fixtures/*.png
+# And the zipformer front-end references (three float32 files, 94 KB): the zoo app's mel bank and povey window, and a torchaudio fbank
+!litert/src/test/resources/zipformer/*.bin
 
 # Build outputs
 *.apk

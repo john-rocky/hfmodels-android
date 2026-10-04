@@ -18,6 +18,8 @@ android {
         buildConfigField("String", "LITERTLM_VERSION", "\"$litertlmVersion\"")
     }
     buildFeatures { buildConfig = true }
+    // ChatModelDeviceTest's tools check side-loads the FunctionGemma development descriptor as a test-APK asset.
+    sourceSets { named("androidTest") { assets.srcDir(rootProject.file("catalog/dev")) } }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17

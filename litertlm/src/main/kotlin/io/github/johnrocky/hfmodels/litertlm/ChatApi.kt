@@ -10,6 +10,13 @@ import kotlinx.coroutines.flow.Flow
 /**
  * A prepared LiteRT-LM model. Owns the Engine; each [createConversation] returns a session that
  * owns one Conversation. One generation at a time per model; sessions run in series.
+ *
+ * Tools: `ConversationConfig(tools = listOf(tool(openApiTool), ...))` declares them to the model, and
+ * the app runs them. The runtime never calls a tool itself here (`automaticToolCalling` is always
+ * false): the app receives the calls in [Message.toolCalls] of the streamed chunks and answers with
+ * `stream(Message.tool(Contents.of(Content.ToolResponse(name, result), ...)))` on the same session.
+ * Whether the runtime parses a model's calls into [Message.toolCalls] depends on the bundle's model
+ * type (its `LlmMetadata`); a bundle the runtime does not parse leaves the call markup in the text.
  */
 interface ChatModel : PreparedModel {
     /** The inputs this load enabled (the profile's `enabled_inputs`), not what the model could do. */
@@ -82,8 +89,17 @@ interface ChatSession {
      * none is dropped: a collector that falls more than 1,024 chunks / 8 MiB behind ends the stream
      * with SLOW_CONSUMER after the native side is cancelled. Cancelling the collector cancels the
      * native generation. After a cancel the session is INVALID; open a new one for the next turn.
+     * The same as `stream(Message.user(contents), options)`.
      */
-    fun stream(contents: Contents, options: GenerationOptions = GenerationOptions()): Flow<Message>
+    fun stream(contents: Contents, options: GenerationOptions = GenerationOptions()): Flow<Message> = stream(Message.user(contents), options)
+
+    /**
+     * [stream] for a message of any role: `Message.user(...)`, or `Message.tool(...)` with one
+     * `Content.ToolResponse` per call of the previous turn that is answered (a TOOL message with any
+     * other content is INVALID_INPUT, and the session stays READY). A chunk that carries calls has them
+     * in [Message.toolCalls]; answer them once the flow has completed.
+     */
+    fun stream(message: Message, options: GenerationOptions = GenerationOptions()): Flow<Message>
 
     /** Stop the generation in flight (no-op when idle). The flow completes with the chunks delivered so far. */
     fun cancel()

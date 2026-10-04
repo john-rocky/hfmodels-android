@@ -1,0 +1,8 @@
+# samples/voice VoiceDeviceCheck with the 07:30 alarm of the run before still on (the precondition)  date=2026-10-04T11:50:57Z serial=RFGL80R6A6H device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZH9 android=16
+# git=7ff59fc dirty=0 (samples/voice debug build of r10 stage 0) airplane_mode_on=1 keyguard=isKeyguardShowing=false screen=mWakefulness=Awake next_alarm_before=2026-10-05 07:30:00
+# gradle rc=1 (BUILD FAILED: failed steps: [precondition], expected); no model loaded, no alarm set
+#   next alarm: user:0 pendingSend:false time:1791153000000 = 2026-10-05 07:30:00.000 = +10h39m2s714ms
+#   next alarm: user:0 pendingSend:false time:1791153000000 = 2026-10-05 07:30:00.000 = +10h38m55s27ms
+10-04 20:51:03.004 32459 32473 I hfmodels-check: device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZH9 package=io.github.johnrocky.hfmodels.samples.voice network=none airplane_mode=true
+10-04 20:51:03.791 32459 32473 I hfmodels-check: RESULT step=precondition ok=false reason="Android's next alarm is Mon-07:30, at or before the check's Mon-07:30; delete it in the Clock app and run the check again"
+10-04 20:51:03.792 32459 32473 I hfmodels-check: RESULT ok=false failed=[precondition] network=none device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZH9

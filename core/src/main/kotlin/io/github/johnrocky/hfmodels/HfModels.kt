@@ -25,6 +25,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
@@ -137,14 +138,23 @@ class HfModels internal constructor(
                 override fun onModelClosed(model: PreparedModel) { releaseSlot(model) }
             }
             val t0 = System.nanoTime()
-            val model = onCallersDispatcher(onProgress) { emit -> withContext(Dispatchers.IO) { plan.task.handler.prepare(local, host, emit) } }
+            // The handler's native work is not interrupted: a caller cancelled meanwhile gets the CancellationException
+            // and the model is closed, not dropped with its native memory and no owner.
+            val model = handOver({ onCallersDispatcher(onProgress) { emit -> withContext(Dispatchers.IO) { plan.task.handler.prepare(local, host, emit) } } }) { it.closeAndJoin() }
             active = model
             log.i("ready ${plan.ref.repoId}@${plan.modelOrigin.commit.take(8)} variant=${plan.variant.id} profile=${model.info.profileId} " +
                 model.info.components.entries.joinToString(" ") { "${it.key}=${it.value.initialized}" } + " prepare_ms=${(System.nanoTime() - t0) / 1_000_000}")
             if (plan.bindingSource != BindingSource.EXPLICIT_REVISION && plan.descriptorOrigin.commit != "explicit") {
                 bindings.write(Bindings.Binding(plan.ref.repoId, plan.modelOrigin.commit, plan.descriptorSha256, plan.descriptorOrigin.repo, plan.descriptorOrigin.commit, plan.descriptorOrigin.path, java.time.Instant.now().toString()))
             }
-            onProgress(LoadEvent.Ready(model.info))
+            // As for the events before it: a callback that throws closes the model, which would otherwise stay open in
+            // the slot without reaching the caller, and the exception is rethrown.
+            try {
+                onProgress(LoadEvent.Ready(model.info))
+            } catch (t: Throwable) {
+                withContext(NonCancellable) { model.closeAndJoin() }
+                throw t
+            }
             return model
         }
     }
@@ -357,6 +367,25 @@ class HfModels internal constructor(
         const val PROGRESS_BYTES = 1L shl 20
         const val PROGRESS_NS = 100_000_000L
     }
+}
+
+/**
+ * Runs [create] (a load whose native work cannot be interrupted) and hands its result to the caller, or closes it with
+ * [close] when the caller was cancelled meanwhile. [create] runs inside NonCancellable, so its own switches of dispatcher
+ * return the result to it (a `withContext` on another dispatcher hands nothing back to a cancelled caller), and the
+ * caller's cancellation is checked after it, with the result in hand. hfmodels-litertlm's createConversation does the
+ * same (its `handOver`).
+ */
+private suspend fun <T> handOver(create: suspend () -> T, close: suspend (T) -> Unit): T {
+    currentCoroutineContext().ensureActive()
+    val made = withContext(NonCancellable) { create() }
+    try {
+        currentCoroutineContext().ensureActive()
+    } catch (e: CancellationException) {
+        withContext(NonCancellable) { close(made) }
+        throw e
+    }
+    return made
 }
 
 /** Construction-time knobs. [http] and [catalog] exist for tests and for apps that add a catalog. */

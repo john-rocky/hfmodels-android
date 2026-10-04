@@ -11,8 +11,12 @@ import com.google.ai.edge.litertlm.Content
 import com.google.ai.edge.litertlm.Contents
 import com.google.ai.edge.litertlm.ConversationConfig
 import com.google.ai.edge.litertlm.Message
+import com.google.ai.edge.litertlm.OpenApiTool
+import com.google.ai.edge.litertlm.ToolCall
+import com.google.ai.edge.litertlm.tool
 import io.github.johnrocky.hfmodels.BackendKind
 import io.github.johnrocky.hfmodels.BackendPolicy
+import io.github.johnrocky.hfmodels.BundledCatalog
 import io.github.johnrocky.hfmodels.ErrorCode
 import io.github.johnrocky.hfmodels.HfModels
 import io.github.johnrocky.hfmodels.LoadEvent
@@ -31,6 +35,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
+import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -47,6 +52,10 @@ import org.junit.runners.MethodSorters
  * cache through the public importFile (hashed once per install); every load is then Offline with
  * an explicit commit and an explicit descriptor, so no test touches the network.
  * One RESULT line per check under tag "hfmodels-a2"; times are one-shot, not a benchmark.
+ * Check i (tools) loads its own model: argument toolModel `functiongemma` (default; FunctionGemma 270M
+ * mobile-actions, catalog/dev descriptor as a test-APK asset, file /data/local/tmp/hfmodels/llm/mobile_actions_q8_ekv1024.litertlm)
+ * or `gemma4` (Gemma 4 E2B, the bundled catalog's entry, file /data/local/tmp/gemma-4-E2B-it.litertlm); toolPath and
+ * toolBackend (cpu | gpu) override the file and the backend.
  */
 @RunWith(AndroidJUnit4::class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -55,9 +64,13 @@ class ChatModelDeviceTest {
     private val source = File(InstrumentationRegistry.getArguments().getString("lmPath") ?: "/data/local/tmp/hfmodels/qwen25_1_5b_q8.litertlm")
     private lateinit var models: HfModels
 
-    @Before fun setUp(): Unit = runBlocking {
-        assertTrue("push the model to ${source.path} first", source.isFile)
+    @Before fun setUp() {
         models = HfModels(ctx)
+    }
+
+    /** The Qwen2.5 bundle into the cache (checks a to h; i loads its own model). */
+    private suspend fun importQwen() {
+        assertTrue("push the model to ${source.path} first", source.isFile)
         val plan = models.inspect(REF, Tasks.Chat, opts())
         val t0 = SystemClock.elapsedRealtime()
         val cached = models.importFile(plan, "weights", source)
@@ -68,6 +81,7 @@ class ChatModelDeviceTest {
         LoadOptions(backendPolicy = policy, networkPolicy = NetworkPolicy.Offline, descriptorJson = DESCRIPTOR)
 
     private suspend fun load(policy: BackendPolicy = BackendPolicy.Require(BackendKind.CPU)): ChatModel {
+        importQwen()
         val events = mutableListOf<LoadEvent>()
         val t0 = SystemClock.elapsedRealtime()
         val m = models.fromPretrained(REF, Tasks.Chat, opts(policy)) { events += it }
@@ -234,6 +248,50 @@ class ChatModelDeviceTest {
         } finally { model.closeAndJoin() }
     }
 
+    @Test fun i_toolCallsComeBackInToolCallsAndTheAppAnswersThem() = runBlocking {
+        val args = InstrumentationRegistry.getArguments()
+        val gemma4 = args.getString("toolModel") == "gemma4"
+        val file = File(args.getString("toolPath") ?: if (gemma4) "/data/local/tmp/gemma-4-E2B-it.litertlm" else "/data/local/tmp/hfmodels/llm/mobile_actions_q8_ekv1024.litertlm")
+        assertTrue("push the model to ${file.path} first", file.isFile)
+        val descriptor = if (gemma4) null else InstrumentationRegistry.getInstrumentation().context.assets.open(FG_DESCRIPTOR).bufferedReader().use { it.readText() }
+        val repo = if (gemma4) G4_REPO else FG_REPO
+        val commit = descriptor?.let { JSONObject(it).getString("revision") } ?: BundledCatalog.load(ctx).defaultBinding(repo)!!.modelCommit
+        val ref = ModelRef(repo, revision = commit)
+        val backend = if (args.getString("toolBackend") == "gpu") BackendKind.GPU else BackendKind.CPU
+        val toolOpts = LoadOptions(backendPolicy = BackendPolicy.Require(backend), networkPolicy = NetworkPolicy.Offline, descriptorJson = descriptor)
+        val plan = models.inspect(ref, Tasks.Chat, toolOpts)
+        for (f in plan.files) if (!f.cached) models.importFile(plan, f.id, file)
+        val model = models.fromPretrained(ref, Tasks.Chat, toolOpts)
+        try {
+            var executedByRuntime = 0
+            val alarm = object : OpenApiTool {
+                override fun getToolDescriptionJsonString() = ALARM_TOOL
+                override fun execute(paramsJsonString: String): String { executedByRuntime++; return "{}" }
+            }
+            // automaticToolCalling = true is asked for and overridden: the SDK hands the calls to the app.
+            val s = model.createConversation(ConversationConfig(systemInstruction = Contents.of("You are a phone assistant."), tools = listOf(tool(alarm)), automaticToolCalling = true))
+            try { collect(s.stream(Message.tool(Contents.of(Content.Text("not a tool response"))))); fail() } catch (e: ModelException) { assertEquals(ErrorCode.INVALID_INPUT, e.code) }
+            assertEquals("input failure keeps READY", SessionState.READY, s.state)
+            val calls = ArrayList<ToolCall>()
+            val said = StringBuilder()
+            var chunks = 0
+            val t0 = SystemClock.elapsedRealtime()
+            withTimeout(120_000) { s.stream(Contents.of(Content.Text(TOOL_PROMPT))).collect { m -> chunks++; calls += m.toolCalls; said.append(textOf(m)) } }
+            val callMs = SystemClock.elapsedRealtime() - t0
+            // On the record before the checks: a model that answers in text instead is a finding, not only a failure.
+            result("tool_call_turn", "model=$repo profile=${model.info.profileId} prompt=${q(TOOL_PROMPT)} calls=${calls.map { "${it.name}${it.arguments}" }} chunks=$chunks ms=$callMs text=${q(said.toString())} executed_by_runtime=$executedByRuntime")
+            assertTrue("expected a set_alarm call, got calls=$calls text='$said'", calls.any { it.name == "set_alarm" })
+            assertEquals("the runtime ran the tool itself", 0, executedByRuntime)
+            assertEquals(SessionState.READY, s.state)
+            val answer = Message.tool(Contents.of(calls.map { Content.ToolResponse(it.name, mapOf("result" to "Alarm set for 07:30")) }))
+            val reply = collect(s.stream(answer))
+            assertEquals(0, executedByRuntime)
+            s.closeAndJoin()
+            result("tool_calls", "model=$repo profile=${model.info.profileId} prompt=${q(TOOL_PROMPT)} calls=${calls.map { "${it.name}${it.arguments}" }} chunks=$chunks call_turn_ms=$callMs " +
+                "text_beside_calls=${q(said.toString())} executed_by_runtime=$executedByRuntime reply_chunks=${reply.chunks} reply_ms=${reply.totalMs} reply=${q(reply.text)}")
+        } finally { model.closeAndJoin() }
+    }
+
     // ---- helpers ----
     private class Collected(val text: String, val chunks: Int, val firstChunkMs: Long, val totalMs: Long)
     private suspend fun collect(flow: Flow<Message>): Collected {
@@ -260,6 +318,11 @@ class ChatModelDeviceTest {
         const val SYSTEM = "You are a helpful assistant."
         const val PROMPT = "What is 17 + 25? Answer briefly."
         const val LONG_PROMPT = "Count from 1 to 400, separated by commas, with no other text."
+        const val FG_REPO = "litert-community/functiongemma-270m-ft-mobile-actions"
+        const val G4_REPO = "litert-community/gemma-4-E2B-it-litert-lm"
+        const val FG_DESCRIPTOR = "litert-community__functiongemma-270m-ft-mobile-actions.hfmodels.json"
+        const val TOOL_PROMPT = "Set an alarm for 7:30 in the morning."
+        const val ALARM_TOOL = """{"name": "set_alarm", "description": "Sets an alarm on this phone.", "parameters": {"type": "object", "properties": {"hour": {"type": "integer", "description": "Hour in 24-hour time (0-23)."}, "minute": {"type": "integer", "description": "Minute (0-59)."}}, "required": ["hour", "minute"]}}"""
         val REF = ModelRef("litert-community/Qwen2.5-1.5B-Instruct", revision = "19edb84c0000000000000000000000000000000000".take(40).padEnd(40, '0'))
         // The q8 bundle as published (sha256 / bytes from the Hub's LFS metadata, 2026-09-05). The commit is a placeholder for
         // this offline test; A3 generates the real descriptor with the real commit.
