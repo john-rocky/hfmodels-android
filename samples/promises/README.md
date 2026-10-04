@@ -114,6 +114,8 @@ Galaxy S26 SM-S942Q (SM8850), Android 16 BP4A.251205.006.S942QOPS1AZH9, LiteRT 2
 
 Milliseconds per sentence are the SDK's wall clock for one `decide` call, as above. On the NPU every answer was the Mac host's, with the probabilities within 0.0048 of its; on the GPU within 1.73e-6. LiteRT logged the whole graph on the NPU (`Replacing 1 out of 1 node(s) with delegate (DispatchDelegate)`) and the GPU check's graph on the GPU (1780 of 1780 nodes). The first load compiled the graph in 19.3 s, outside the table; the device check's load read the cache in 1.1 s and ran the warm-up sentence in 58 ms. Takes 1 to 3 pick Calendar in the app chooser for this one time and end on its new-event screen; nothing was saved. The logs and the result files are in `results/2026-10-04-s26-npu/`.
 
+A device check at 18:19 the same day (the 519722c build, network allowed) loaded the NPU variant from the Hub instead of a pushed copy. The app had no copy of the graph and downloaded it from 310090c3: 660,302,784 bytes in 6 min 45 s, with one dropped connection at 338.6 MB that the SDK resumed with a range request, and a matching sha256. It compiled the graph in 33.1 s and put 16/16 where expected at 29.38 ms per sentence (median; p90 30.19), every probability equal to the device check in the table. The NPU check started at thermal status 1 (skin 38.2 °C). The same build's GPU check gave 16/16 at 77.29 ms. Logs: `device-check-npu-hub.log` and `device-check-gpu-hub.log`, each with its `.sdk.log` (the NPU one without the 28,106 lines of Qualcomm's compiler log).
+
 ## Limits
 
 - English: the descriptor declares `en`, and the sieve was English. Other languages were not measured.
