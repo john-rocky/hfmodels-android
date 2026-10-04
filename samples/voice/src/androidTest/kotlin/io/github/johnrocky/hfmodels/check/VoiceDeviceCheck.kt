@@ -112,7 +112,7 @@ class VoiceDeviceCheck {
             val checkAt = nextSevenThirty(System.currentTimeMillis())
             val already = alarms.nextAlarmClock?.triggerTime
             if (already != null && already < checkAt + 60_000) {
-                throw PreconditionFailed("Android's next alarm is ${hhmm(already)}, at or before the check's ${hhmm(checkAt)}; delete it in the Clock app and run the check again")
+                throw PreconditionFailed("Android's next alarm is ${hhmm(already)}, at or before the check's ${hhmm(checkAt)}; turn it off or delete it in the Clock app and run the check again")
             }
 
             // 1. load, from the store (Offline when the phone has no network)
