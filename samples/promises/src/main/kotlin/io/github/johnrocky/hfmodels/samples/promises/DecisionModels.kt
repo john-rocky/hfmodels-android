@@ -23,8 +23,8 @@ import org.json.JSONObject
  * The decision model behind the screen: `litert-community/GLiNER2.5-Decide-LiteRT`, loaded by id. Variant
  * `s128_wfp16` (a 128-token window, float16 weights) on the descriptor's default profile, the GPU with the CPU as
  * the fallback; in an app that packages Qualcomm's runtime, variant `s128_npu_wfp16` on the NPU first ([choose]).
- * The development descriptor (catalog/dev, an asset of this app) goes in as `LoadOptions.descriptorJson`: it
- * carries `s128_npu_wfp16`, which the repo's own hfmodels.json does not. The descriptor pins the commit, so a load
+ * The development descriptor (catalog/dev, an asset of this app) goes in as `LoadOptions.descriptorJson`; the
+ * repo's own hfmodels.json carries `s128_npu_wfp16` too since f6f6e9c9. The descriptor pins the commit, so a load
  * whose files are cached makes no network request. The first load downloads 0.93 GB into the app's private
  * storage and verifies every file's sha256; a copy pushed to the app's external files dir
  * (`adb push <file> /sdcard/Android/data/<applicationId>/files/`) is imported instead. The NPU variant's graph is
