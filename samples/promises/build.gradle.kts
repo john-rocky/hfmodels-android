@@ -19,9 +19,8 @@ android {
         // For the device check (src/androidTest/.../PromisesDeviceCheck.kt).
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-    // The model repo carries no hfmodels.json yet: the development descriptor (catalog/dev) is an asset and goes in as
-    // LoadOptions.descriptorJson (DecisionModels.kt reads the GLiNER2.5-Decide file only). Once the bundled catalog
-    // carries the entry (0.1.3) this line and the descriptorJson go away.
+    // The development descriptor (catalog/dev) is an asset and goes in as LoadOptions.descriptorJson (DecisionModels.kt
+    // reads the GLiNER2.5-Decide file only): it carries the NPU variant, which the model repo's hfmodels.json does not.
     sourceSets { named("main") { assets.srcDir(rootProject.file("catalog/dev")) } }
     buildTypes {
         release {
@@ -38,6 +37,9 @@ android {
     testOptions {
         unitTests.all { it.testLogging { events("passed", "failed"); showStandardStreams = true } }
     }
+    // The NPU loads the Qualcomm runtime from the app's native library dir: extract it at install (src/main/jniLibs,
+    // never committed: tools/fetch_npu_libs.sh, README.md "NPU"). Without those files the app loads on the GPU as before.
+    packaging { jniLibs { useLegacyPackaging = true } }
 }
 
 dependencies {

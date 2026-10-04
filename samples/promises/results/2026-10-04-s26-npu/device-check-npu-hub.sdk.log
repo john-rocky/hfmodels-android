@@ -1,0 +1,289 @@
+10-04 18:19:27.075 30937 30937 I Zygote  : Process 30937 created for io.github.johnrocky.hfmodels.samples.promises
+10-04 18:19:27.075 30937 30937 I amples.promises: Late-enabling -Xcheck:jni
+10-04 18:19:27.091 30937 30937 I amples.promises: Using generational CollectorTypeCMC GC.
+10-04 18:19:27.096 30937 30937 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+10-04 18:19:27.098 30937 30937 D ActivityThread: setConscryptValidator
+10-04 18:19:27.098 30937 30937 D ActivityThread: setConscryptValidator - put
+10-04 18:19:27.135 30937 30937 D nativeloader: Configuring clns-9 for other apk /data/app/~~3BF0PjXheLgy88J5ab5aWg==/io.github.johnrocky.hfmodels.samples.promises.test-aWk5wPukmgOqZZ6lY8J7sA==/base.apk:/data/app/~~cWz_9poUFYZLJU3ZgXUewA==/io.github.johnrocky.hfmodels.samples.promises-ttSSvNpcdYKc3m3GXliCaw==/base.apk. target_sdk_version=36, uses_libraries=libOpenCL.so:libcdsprpc.so, library_path=/data/app/~~3BF0PjXheLgy88J5ab5aWg==/io.github.johnrocky.hfmodels.samples.promises.test-aWk5wPukmgOqZZ6lY8J7sA==/lib/arm64:/data/app/~~cWz_9poUFYZLJU3ZgXUewA==/io.github.johnrocky.hfmodels.samples.promises-ttSSvNpcdYKc3m3GXliCaw==/lib/arm64:/data/app/~~3BF0PjXheLgy88J5ab5aWg==/io.github.johnrocky.hfmodels.samples.promises.test-aWk5wPukmgOqZZ6lY8J7sA==/base.apk!/lib/arm64-v8a:/data/app/~~cWz_9poUFYZLJU3ZgXUewA==/io.github.johnrocky.hfmodels.samples.promises-ttSSvNpcdYKc3m3GXliCaw==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/io.github.johnrocky.hfmodels.samples.promises
+10-04 18:19:27.138 30937 30937 V GraphicsEnvironment: Currently set values for:
+10-04 18:19:27.138 30937 30937 V GraphicsEnvironment:   angle_gl_driver_selection_pkgs=[]
+10-04 18:19:27.138 30937 30937 V GraphicsEnvironment:   angle_gl_driver_selection_values=[]
+10-04 18:19:27.138 30937 30937 V GraphicsEnvironment: io.github.johnrocky.hfmodels.samples.promises is not listed in per-application setting
+10-04 18:19:27.138 30937 30937 V GraphicsEnvironment: ANGLE allowlist from config: com.dreamgames.royalmatch com.dts.freefiremax com.dxx.firenow com.gramgames.mergedragons com.ludo.king com.mojang.minecraftpe com.my.defense com.nintendo.zaka com.os.airforce com.playrix.fishdomdd.gplay io.teslatech.callbreak jp.konami.prospia net.peakgames.toonblast
+10-04 18:19:27.138 30937 30937 V GraphicsEnvironment: No special selections for ANGLE, returning default driver choice
+10-04 18:19:27.138 30937 30937 V GraphicsEnvironment: App is not on the allowlist for updatable production driver.
+10-04 18:19:27.173 30937 30937 I AndroidJUnitRunner: newApplication android.app.Application
+10-04 18:19:27.174 30937 30937 D WM-WrkMgrInitializer: Initializing WorkManager with default configuration.
+10-04 18:19:27.179 30937 30937 D WM-PackageManagerHelper: Skipping component enablement for androidx.work.impl.background.systemjob.SystemJobService
+10-04 18:19:27.179 30937 30937 D WM-Schedulers: Created SystemJobScheduler and enabled SystemJobService
+10-04 18:19:27.181 30937 30937 I AndroidJUnitRunner: onCreate Bundle[mParcelledData.dataSize=212]
+10-04 18:19:27.181 30937 30937 D AndroidJUnitRunner: Use the raw file system for managing file I/O.
+10-04 18:19:27.183 30937 30937 V TestEventClient: No service name argument was given (testDiscoveryService, testRunEventService or orchestratorService)
+10-04 18:19:27.183 30937 30951 D AndroidJUnitRunner: onStart is called.
+10-04 18:19:27.185 30937 30950 E ashmem  : Pinning is deprecated since Android Q. Please use trim or other methods.
+10-04 18:19:27.189 30937 30951 I InstrConnection: Could not send broadcast or register receiver (isolatedProcess?)
+10-04 18:19:27.196 30937 30951 I TestRunner: run started: 1 tests
+10-04 18:19:27.197 30937 30951 I TestRunner: started: loadSortRelease(io.github.johnrocky.hfmodels.check.PromisesDeviceCheck)
+10-04 18:19:27.331 30937 30956 I hfmodels: resolve litert-community/GLiNER2.5-Decide-LiteRT: commit=310090c3 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=d4e0f310
+10-04 18:19:27.341 30937 30956 I hfmodels: download gliner25_decide_s128_npu_wfp16.tflite <- https://huggingface.co/litert-community/GLiNER2.5-Decide-LiteRT/resolve/310090c3adbba13843f84b03a10f1321d8be5997/gliner25_decide_s128_npu_wfp16.tflite
+10-04 18:19:32.938 30937 30986 D ProfileInstaller: Installing profile for io.github.johnrocky.hfmodels.samples.promises
+10-04 18:23:24.547 30937 30956 W hfmodels: download gliner25_decide_s128_npu_wfp16.tflite: attempt 1 failed (transfer of 'gliner25_decide_s128_npu_wfp16.tflite' interrupted after 338602003 bytes; cause ProtocolException: unexpected end of stream); retrying in 1000 ms
+10-04 18:23:25.814 30937 30956 I hfmodels: download gliner25_decide_s128_npu_wfp16.tflite resume from 338602003 <- https://huggingface.co/litert-community/GLiNER2.5-Decide-LiteRT/resolve/310090c3adbba13843f84b03a10f1321d8be5997/gliner25_decide_s128_npu_wfp16.tflite
+10-04 18:26:12.700 30937 30956 I hfmodels: downloaded gliner25_decide_s128_npu_wfp16.tflite: 660302784 bytes, sha256 ok (resumed from 338602003)
+10-04 18:26:13.231 30937 30956 I hfmodels: tokenizer tokenizer.json: 128011 tokens (Unigram), load_ms=522
+10-04 18:26:13.236 30937 32263 D nativeloader: Load /data/app/~~cWz_9poUFYZLJU3ZgXUewA==/io.github.johnrocky.hfmodels.samples.promises-ttSSvNpcdYKc3m3GXliCaw==/lib/arm64/liblitert_jni.so using class loader ns clns-9 (caller=/data/app/~~cWz_9poUFYZLJU3ZgXUewA==/io.github.johnrocky.hfmodels.samples.promises-ttSSvNpcdYKc3m3GXliCaw==/base.apk): ok
+10-04 18:26:13.239 30937 32263 I litert  : [litert_runtime_builtin.cc:63] Loaded runtime library and found kLiteRtRuntimeBuiltin.
+10-04 18:26:13.240 30937 32263 I litert  : [environment.cc:36] Creating LiteRT environment with options
+10-04 18:26:13.240 30937 32263 I litert  : [accelerator_registry.cc:54] RegisterAccelerator: ptr=0xb40000702281e7d0, name=NpuAccelerator
+10-04 18:26:13.240 30937 32263 I litert  : [npu_registry.cc:30] NPU accelerator registered.
+10-04 18:26:13.240 30937 32263 I litert  : [gpu_registry.cc:101] Attempting to load GPU accelerator(libLiteRtGpuAccelerator.so).
+10-04 18:26:13.240 30937 32263 I litert  : [gpu_registry.cc:101] Attempting to load GPU accelerator(libLiteRtClGlAccelerator.so).
+10-04 18:26:13.245 30937 32263 I litert  : [accelerator_registry.cc:54] RegisterAccelerator: ptr=0xb40000702281e290, name=LiteRT GPU
+10-04 18:26:13.245 30937 32263 I litert  : [gpu_registry.cc:109] Dynamically loaded GPU accelerator(libLiteRtClGlAccelerator.so) registered.
+10-04 18:26:13.245 30937 32263 I litert  : [accelerator_registry.cc:54] RegisterAccelerator: ptr=0xb400007022830290, name=CpuAccelerator
+10-04 18:26:13.245 30937 32263 I litert  : [cpu_registry.cc:75] XNNPACK CPU accelerator registered.
+10-04 18:26:13.282 30937 32263 I litert  : [compiled_model.cc:754] NPU JIT compilation caching enabled with cache dir: /data/user/0/io.github.johnrocky.hfmodels.samples.promises/cache
+10-04 18:26:13.282 30937 32263 I litert  : [compiler_plugin.cc:308] Attempting to load plugin at: /data/app/~~cWz_9poUFYZLJU3ZgXUewA==/io.github.johnrocky.hfmodels.samples.promises-ttSSvNpcdYKc3m3GXliCaw==/lib/arm64/libLiteRtCompilerPlugin_Qualcomm.so
+10-04 18:26:13.282 30937 32263 I litert  : [compiler_plugin.cc:250] Loading plugin at: /data/app/~~cWz_9poUFYZLJU3ZgXUewA==/io.github.johnrocky.hfmodels.samples.promises-ttSSvNpcdYKc3m3GXliCaw==/lib/arm64/libLiteRtCompilerPlugin_Qualcomm.so
+10-04 18:26:13.284 30937 32263 W linker  : Warning: "/data/app/~~cWz_9poUFYZLJU3ZgXUewA==/io.github.johnrocky.hfmodels.samples.promises-ttSSvNpcdYKc3m3GXliCaw==/lib/arm64/libLiteRtCompilerPlugin_Qualcomm.so" unused DT entry: DT_RPATH (type 0xf arg 0x80a) (ignoring)
+10-04 18:26:13.302 30937 32263 I litert  : [compiler_plugin.cc:260] Loaded plugin at: /data/app/~~cWz_9poUFYZLJU3ZgXUewA==/io.github.johnrocky.hfmodels.samples.promises-ttSSvNpcdYKc3m3GXliCaw==/lib/arm64/libLiteRtCompilerPlugin_Qualcomm.so
+10-04 18:26:13.302 30937 32263 I litert  : [compiler_plugin.cc:263] Resolved plugin api at: /data/app/~~cWz_9poUFYZLJU3ZgXUewA==/io.github.johnrocky.hfmodels.samples.promises-ttSSvNpcdYKc3m3GXliCaw==/lib/arm64/libLiteRtCompilerPlugin_Qualcomm.so
+10-04 18:26:13.303 30937 32263 I litert  : [common.h:160] 
+10-04 18:26:13.303 30937 32263 I litert  : 
+10-04 18:26:13.303 30937 32263 I litert  : +------------------------------------------+
+10-04 18:26:13.303 30937 32263 I litert  : |              ::qnn::Options              |
+10-04 18:26:13.303 30937 32263 I litert  : +------------------------------------------+
+10-04 18:26:13.303 30937 32263 I litert  : [GENERAL]
+10-04 18:26:13.303 30937 32263 I litert  :   LogLevel                 : Info(3)
+10-04 18:26:13.303 30937 32263 I litert  :   BackendType              : Htp(2)
+10-04 18:26:13.303 30937 32263 I litert  :   Profiling                : Off(0)
+10-04 18:26:13.303 30937 32263 I litert  :   UseInt64BiasAsInt32      : true
+10-04 18:26:13.303 30937 32263 I litert  :   EnableWeightSharing      : false
+10-04 18:26:13.303 30937 32263 I litert  :   EnableJustInTime         : false
+10-04 18:26:13.303 30937 32263 I litert  :   GraphPriority            : Default(0)
+10-04 18:26:13.303 30937 32263 I litert  :   GraphIOTensorMemType     : MemHandle(1)
+10-04 18:26:13.303 30937 32263 I litert  :   CustomOpPackage          :
+10-04 18:26:13.303 30937 32263 I litert  :     name                   :
+10-04 18:26:13.303 30937 32263 I litert  :     interface_provider     :
+10-04 18:26:13.303 30937 32263 I litert  :     compile_package_path   :
+10-04 18:26:13.303 30937 32263 I litert  :     dispatch_package_path  :
+10-04 18:26:13.303 30937 32263 I litert  :     target                 :
+10-04 18:26:13.303 30937 32263 I litert  : [HTP]
+10-04 18:26:13.303 30937 32263 I litert  :   UseConvHMX               : true
+10-04 18:26:13.303 30937 32263 I litert  :   UseFoldReLU              : true
+10-04 18:26:13.303 30937 32263 I litert  :   HtpDlbc                  : false
+10-04 18:26:13.303 30937 32263 I litert  :   HtpDlbcWeights           : false
+10-04 18:26:13.303 30937 32263 I litert  :   HtpPPoint                : 0
+10-04 18:26:13.303 30937 32263 I litert  :   HtpPerformanceMode       : Burst(2)
+10-04 18:26:13.303 30937 32263 I litert  :   HtpPerfCtrlMode          : Manual(0)
+10-04 18:26:13.303 30937 32263 I litert  :   VtcmSize                 : 0
+10-04 18:26:13.303 30937 32263 I litert  :   NumHvxThreads            : 0
+10-04 18:26:13.303 30937 32263 I litert  :   OptimizationLevel        : HtpOptimizeForInferenceO3(2)
+10-04 18:26:13.303 30937 32263 I litert  : [IR]
+10-04 18:26:13.303 30937 32263 I litert  :   IrJsonDir    
+10-04 18:26:13.303 30937 32263 I litert  : [qnn_manager.cc:488] Adding shared library dir to path: /data/app/~~cWz_9poUFYZLJU3ZgXUewA==/io.github.johnrocky.hfmodels.samples.promises-ttSSvNpcdYKc3m3GXliCaw==/lib/arm64
+10-04 18:26:13.303 30937 32263 I litert  : [dynamic_loading.cc:143] Adding /data/app/~~cWz_9poUFYZLJU3ZgXUewA==/io.github.johnrocky.hfmodels.samples.promises-ttSSvNpcdYKc3m3GXliCaw==/lib/arm64 to LD_LIBRARY_PATH
+10-04 18:26:13.303 30937 32263 I litert  : [qnn_manager.cc:175] Loading qnn system shared library from "/data/app/~~cWz_9poUFYZLJU3ZgXUewA==/io.github.johnrocky.hfmodels.samples.promises-ttSSvNpcdYKc3m3GXliCaw==/lib/arm64/libQnnSystem.so"
+10-04 18:26:13.303 30937 32263 I litert  : [qnn_manager.cc:142] Loading qnn shared library from "libQnnHtp.so"
+10-04 18:26:13.303 30937 32263 I litert  : [qnn_manager.cc:165] Loaded qnn shared library
+10-04 18:26:13.303 30937 32263 I litert  : [compiler_plugin.cc:268] Initialize plugin at: /data/app/~~cWz_9poUFYZLJU3ZgXUewA==/io.github.johnrocky.hfmodels.samples.promises-ttSSvNpcdYKc3m3GXliCaw==/lib/arm64/libLiteRtCompilerPlugin_Qualcomm.so
+10-04 18:26:13.412 30937 32263 I litert  : [compiler_plugin.cc:947] Applying plugin with SDK version: v2.47.0.260601114230
+10-04 18:26:13.413 30937 32263 I litert  : [compiler_plugin.cc:928] Registered 0 transformations.
+10-04 18:26:13.414 30937 32263 I litert  : [compiler_plugin.cc:935] Applied transformations.
+10-04 18:26:13.421 30937 32263 I lrt-qc  : INFO: [Qnn] Initializing QNN backend for SoC model: 87
+10-04 18:26:13.425 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_context.c:370: fastrpc_context_table_init done
+10-04 18:26:13.425 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:210: set up allocator 0xb400006fc2844cd0 for DMA buf heap system, ION heap system, heap mask 0x2000000, flags 0x1, legacy flags 0x1
+10-04 18:26:13.426 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_config.c:437: Reading configuration file: io.github.johnrocky.hfmodels.samples.promises.debugconfig
+10-04 18:26:13.426 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_config.c:468: fastrpc_config_init: Couldn't find file io.github.johnrocky.hfmodels.samples.promises.debugconfig, errno (No such file or directory) at /data/app/~~cWz_9poUFYZLJU3ZgXUewA==/io.github.johnrocky.hfmodels.samples.promises-ttSSvNpcdYKc3m3GXliCaw==/lib/arm64, 
+10-04 18:26:13.426 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:7554: fastrpc_apps_user_init done  with default domain:3 and &fastrpc_trace:0x6dc519a794
+10-04 18:26:13.426 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:7688: multidsplib_env_init: libcdsprpc.so loaded
+10-04 18:26:13.427 30937 32263 W io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:4373:Warning: remote_handle_control: Non-domain usage of FastRPC will be deprecated, use domains to offload to DSP using FastRPC
+10-04 18:26:13.427 30937 32263 E io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:4366: Error 0xe: remote_handle_control_domain failed for request ID 2 on domain 3 (errno Permission denied)
+10-04 18:26:13.427 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:5932: open_device_node: no access to default device of domain 3, open thru HAL, (sess_id 0)
+10-04 18:26:13.428 30937 32263 I dsp-client: DspClient.cpp (57): DspClient: AIDL HAL found, using AIDL interface
+10-04 18:26:13.429 30937 32263 I dsp-client: DspClient.cpp (179): openSession: dup-ing of device fd 121 success, Permission denied
+10-04 18:26:13.429 30937 32263 I dsp-client: DspClient.cpp (227): open_hal_session: opened device fd 121 for domain 3
+10-04 18:26:13.429 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:5996: close_device_node: close device 121 thru HAL on domain 3
+10-04 18:26:13.429 30937 32263 I dsp-client: DspClient.cpp (244): close_hal_session: closed device fd 121 on domain 3
+10-04 18:26:13.429 30937 32263 E io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:4390: Error 0xe: remote_handle_control failed for request ID 2 (errno Success) (user err 0xe)
+10-04 18:26:13.429 30937 32263 W io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:4373:Warning: remote_handle_control: Non-domain usage of FastRPC will be deprecated, use domains to offload to DSP using FastRPC
+10-04 18:26:13.429 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:5932: open_device_node: no access to default device of domain 3, open thru HAL, (sess_id 0)
+10-04 18:26:13.429 30937 32263 I dsp-client: DspClient.cpp (179): openSession: dup-ing of device fd 121 success, Permission denied
+10-04 18:26:13.429 30937 32263 I dsp-client: DspClient.cpp (227): open_hal_session: opened device fd 121 for domain 3
+10-04 18:26:13.429 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:5996: close_device_node: close device 121 thru HAL on domain 3
+10-04 18:26:13.429 30937 32263 I dsp-client: DspClient.cpp (244): close_hal_session: closed device fd 121 on domain 3
+10-04 18:26:13.429 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:4861: remote_session_control Unsigned PD enable 1 request for domain 3
+10-04 18:26:13.429 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:4836: remote_session_control DSP info request for domain 3, thread priority -1, stack size 17408
+10-04 18:26:13.429 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:5932: open_device_node: no access to default device of domain 3, open thru HAL, (sess_id 0)
+10-04 18:26:13.429 30937 32263 I dsp-client: DspClient.cpp (179): openSession: dup-ing of device fd 121 success, Permission denied
+10-04 18:26:13.429 30937 32263 I dsp-client: DspClient.cpp (227): open_hal_session: opened device fd 121 for domain 3
+10-04 18:26:13.429 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:5996: close_device_node: close device 121 thru HAL on domain 3
+10-04 18:26:13.429 30937 32263 I dsp-client: DspClient.cpp (244): close_hal_session: closed device fd 121 on domain 3
+10-04 18:26:13.429 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:3365: WARNING: get_handle_priority_from_uri: libQnnHtpV81Skel.so lib opened handle without priority token
+10-04 18:26:13.429 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:5932: open_device_node: no access to default device of domain 3, open thru HAL, (sess_id 0)
+10-04 18:26:13.429 30937 32263 I dsp-client: DspClient.cpp (179): openSession: dup-ing of device fd 121 success, Permission denied
+10-04 18:26:13.429 30937 32263 I dsp-client: DspClient.cpp (227): open_hal_session: opened device fd 121 for domain 3
+10-04 18:26:13.430 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:5996: close_device_node: close device 121 thru HAL on domain 3
+10-04 18:26:13.430 30937 32263 I dsp-client: DspClient.cpp (244): close_hal_session: closed device fd 121 on domain 3
+10-04 18:26:13.430 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:5932: open_device_node: no access to default device of domain 3, open thru HAL, (sess_id 0)
+10-04 18:26:13.430 30937 32263 I dsp-client: DspClient.cpp (179): openSession: dup-ing of device fd 121 success, Permission denied
+10-04 18:26:13.430 30937 32263 I dsp-client: DspClient.cpp (227): open_hal_session: opened device fd 121 for domain 3
+10-04 18:26:13.430 30937 32263 W libc    : Access denied finding property "persist.vendor.fastrpc.process.attrs"
+10-04 18:26:13.430 30937 32263 E io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:6192: Error 0xd: open_shell failed for domain 3 search paths used are /usr/lib/dsp/, /vendor/dsp/, /vendor/dsp/xdsp/ (errno Permission denied)
+10-04 18:26:13.430 30937 32263 W libc    : Access denied finding property "persist.vendor.fastrpc.process.clockvote"
+10-04 18:26:13.430 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 4096, flags 0x1, fd:123, time 22 us
+10-04 18:26:13.430 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 4096, flags 0x1, fd:124, time 9 us
+10-04 18:26:13.457 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:6284: Created user PD on domain 3, dbg_trace 0x0, enabled attr=> RPC timeout:10000, Dbg Mode:Y, CRC:N, Unsigned:Y, Signed:N, Adapt QOS:N, PD dump: (Config:N, Dbg:N), Perf: (Kernel:N, DSP:N), Iregion:N, QTF:N, UAF:N userPD initmem len:0x500000, Log pkt: N
+10-04 18:26:13.458 30937 32265 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:1931: Successfully set remote user thread priority to 192 and stack size to 17408 for domain 3
+10-04 18:26:13.458 30937 32265 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/listener_android.c:121: listener thread starting
+10-04 18:26:13.458 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:7196: open_dev : panic error codes sent successfully
+10-04 18:26:13.458 30937 32263 E io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/log_config.c:687:Error : Unable to add watcher for folder /data/app/~~cWz_9poUFYZLJU3ZgXUewA==/io.github.johnrocky.hfmodels.samples.promises-ttSSvNpcdYKc3m3GXliCaw==/lib/arm64 : errno is Permission denied
+10-04 18:26:13.458 30937 32263 E io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/log_config.c:687:Error : Unable to add watcher for folder /vendor/lib64/rfs/dsp : errno is Permission denied
+10-04 18:26:13.458 30937 32263 E io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/log_config.c:687:Error : Unable to add watcher for folder /vendor/lib/rfsa/adsp : errno is Permission denied
+10-04 18:26:13.458 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_perf.c:292: fastrpc_perf_init: enabled systrace 0x0 and RPC traces (kernel 0, dsp 0) with frequency 1000
+10-04 18:26:13.458 30937 32266 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/log_config.c:429: file_watcher_thread starting for domain 3
+10-04 18:26:13.459 30937 32265 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 4096, flags 0x0, fd:127, time 18 us
+10-04 18:26:13.459 30937 32265 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 4096, flags 0x0, fd:128, time 96 us
+10-04 18:26:13.461 30937 32265 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/mod_table.c:701: open_mod_table_open_from_static: reverse module apps_mem opened with handle 0xc519c078 (idx 0)
+10-04 18:26:13.462 30937 32265 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/mod_table.c:701: open_mod_table_open_from_static: reverse module apps_std opened with handle 0xc519c178 (idx 1)
+10-04 18:26:13.462 30937 32265 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 262144, flags 0x80000000, fd:129, time 18 us
+10-04 18:26:13.463 30937 32265 E io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/apps_std_imp.c:377: Error 0x2: apps_std_fopen_fd failed for /data/app/~~cWz_9poUFYZLJU3ZgXUewA==/io.github.johnrocky.hfmodels.samples.promises-ttSSvNpcdYKc3m3GXliCaw==/lib/arm64/cdsp/./libQnnHtpV81Skel.so (No such file or directory)
+10-04 18:26:13.463 30937 32265 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 12322384, flags 0x80000000, fd:131, time 59 us
+10-04 18:26:13.464 30937 32266 E io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/log_config.c:223:Enabled adspmsgd with mask 8
+10-04 18:26:13.464 30937 32266 W io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/log_config.c:449:file_watcher_thread: Couldn't find file io.github.johnrocky.hfmodels.samples.promises.farf, errno (No such file or directory) at ;/vendor/lib64/rfs/dsp;/vendor/lib/rfsa/adsp;/vendor/lib/rfsa/dsp;/vendor/dsp;
+10-04 18:26:13.472 30937 32265 D io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/apps_std_imp.c:369: apps_std_fopen_fd done for /data/app/~~cWz_9poUFYZLJU3ZgXUewA==/io.github.johnrocky.hfmodels.samples.promises-ttSSvNpcdYKc3m3GXliCaw==/lib/arm64/./libQnnHtpV81Skel.so with fsize:12322384       fopen:34us, fstat:2us, read:8602us,       rpc_alloc:134us, mma
+10-04 18:26:13.472 30937 32265 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/apps_std_imp.c:1236: Successfully opened file /data/app/~~cWz_9poUFYZLJU3ZgXUewA==/io.github.johnrocky.hfmodels.samples.promises-ttSSvNpcdYKc3m3GXliCaw==/lib/arm64/./libQnnHtpV81Skel.so
+10-04 18:26:13.473 30937 32265 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 12333056, flags 0xa0000000, fd:132, time 54 us
+10-04 18:26:13.505 30937 32265 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 1048576, flags 0xa0000000, fd:130, time 32 us
+10-04 18:26:13.511 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:3471: remote_handle64_open: opened handle 0xb400006fb28b4610 (remote 0x2ce9f0) for file:///libQnnHtpV81Skel.so?qnn_skel_handle_invoke&_modver=1.0&_dom=cdsp on domain 3 (spawn time 28883 us, load time 52752 us), refs 1
+10-04 18:26:13.512 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 8, flags 0x1, fd:131, time 63 us
+10-04 18:26:13.512 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 136, flags 0x1, fd:133, time 28 us
+10-04 18:26:13.520 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 8, flags 0x1, fd:131, time 18 us
+10-04 18:26:13.520 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 8, flags 0x1, fd:133, time 49 us
+10-04 18:26:13.521 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 56, flags 0x1, fd:131, time 17 us
+10-04 18:26:13.522 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:3365: WARNING: get_handle_priority_from_uri: libdspqueue_rpc_skel.so lib opened handle without priority token
+10-04 18:26:13.522 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:3471: remote_handle64_open: opened handle 0xb400006fb28b3ee0 (remote 0x2cf640) for file:///libdspqueue_rpc_skel.so?dspqueue_rpc_skel_handle_invoke&_modver=1.0&_dom=cdsp&_session=0 on domain 3 (spawn time 0 us, load time 290 us), refs 2
+10-04 18:26:13.522 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_notif.c:137: fastrpc_notif_domain_init: FastRPC notification worker thread launched
+10-04 18:26:13.523 30937 32269 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:3935: get_remote_notif_response: received status notification 0 for domain 3, session 0 (effec dom 3)
+10-04 18:26:13.523 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:5063: remote_session_control Register PD status notification request for domain 3
+10-04 18:26:13.523 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 1024, flags 0x40000001, fd:133, time 48 us
+10-04 18:26:13.523 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 1792, flags 0x40000001, fd:134, time 18 us
+10-04 18:26:13.524 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/dspqueue/dspqueue_cpu.c:683: dspqueue is using version: -988740368, flags: 2, driver signalling: 3, wait count: 1
+10-04 18:26:13.524 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/dspqueue/dspqueue_cpu.c:715: dspqueue_create: created Queue 0, 0xb400006f22839f10, DSP 0x00000000 for domain 3
+10-04 18:26:13.526 30937 32263 I lrt-qc  : INFO: [Qnn] Set HTP performance mode: 2
+10-04 18:26:13.527 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:3733: manage_poll_qos: poll mode updated to 3 for domain 3, handle 0xb400006fb28b4610 for timeout 9999
+10-04 18:26:13.527 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:4305: remote_handle_control_domain: requested QOS 3, latency 9999 for domain 3 handle 0xb400006fb28b4610
+10-04 18:26:13.527 30937 32271 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_latency.c:98: fastrpc_latency_thread_handler started for QoS with activity window 100 ms
+10-04 18:26:13.527 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:4305: remote_handle_control_domain: requested QOS 1, latency 0 for domain 3 handle 0xb400006fb28b4610
+10-04 18:26:13.658 30937 32263 I litert  : [compiler_plugin.cc:523] Partition strategy: 0
+10-04 18:26:13.686 30937 32263 I litert  : [compiler_plugin.cc:741] Partitioned subgraph<0>, selected 1874 ops, from a total of 1874 ops. resulted in 1 partitions.
+10-04 18:26:13.686 30937 32263 I litert  : [qnn_compiler_plugin.cc:530] Starting QNN Compilation for 1 subgraphs, soc_model=(null)
+10-04 18:26:13.687 30937 32263 I litert  : [qnn_compiler_plugin.cc:626] Creating context handle
+10-04 18:26:13.687 30937 32263 I litert  : [qnn_compiler_plugin.cc:659] Context handle created
+10-04 18:26:13.687 30937 32263 I litert  : [qnn_compiler_plugin.cc:674] Composing graph
+10-04 18:26:13.687 30937 32263 I litert  : [qnn_compiler_plugin.cc:678] Entry point name: qnn_partition_0
+10-04 18:26:13.932 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 8, flags 0x1, fd:135, time 26 us
+10-04 18:26:13.932 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 16, flags 0x1, fd:136, time 3 us
+10-04 18:26:43.546 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 368, flags 0x1, fd:135, time 65 us
+10-04 18:26:43.546 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 104, flags 0x1, fd:136, time 20 us
+10-04 18:26:43.546 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 33512, flags 0x1, fd:137, time 4 us
+10-04 18:26:43.551 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 72, flags 0x1, fd:138, time 12 us
+10-04 18:26:43.677 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 640725216, flags 0x1, fd:139, time 34239 us
+10-04 18:26:43.819 30937 32263 W io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:4373:Warning: remote_handle_control: Non-domain usage of FastRPC will be deprecated, use domains to offload to DSP using FastRPC
+10-04 18:26:43.908 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 637534208, flags 0x1, fd:140, time 89387 us
+10-04 18:26:43.968 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 5030112, flags 0x1, fd:141, time 271 us
+10-04 18:26:43.969 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 40, flags 0x1, fd:142, time 16 us
+10-04 18:26:43.972 30937 32265 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 33554432, flags 0xa0000000, fd:143, time 2243 us
+10-04 18:26:44.272 30937 32263 I litert  : [qnn_compiler_plugin.cc:688] Graph composed
+10-04 18:26:44.272 30937 32263 I litert  : [qnn_compiler_plugin.cc:729] Generating context binary
+10-04 18:26:44.927 30937 32263 I litert  : [qnn_manager.cc:398] Serialized a context bin of size (bytes): 641011712
+10-04 18:26:44.927 30937 32263 I litert  : [qnn_compiler_plugin.cc:732] Context binary 0 generated
+10-04 18:26:44.927 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 48, flags 0x1, fd:139, time 29 us
+10-04 18:26:44.927 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 40, flags 0x1, fd:141, time 3 us
+10-04 18:26:45.390 30937 32263 I litert  : [compiled_model.cc:1250] 1 compiler plugins were applied successfully: Qualcomm compiler plugin (ver 0.1.0)
+10-04 18:26:45.390 30937 32263 I litert  : [compiled_model.cc:1264] JIT compilation changed model, reserializing...
+10-04 18:26:46.157 30937 32263 I tflite  : Initialized TensorFlow Lite runtime.
+10-04 18:26:46.157 30937 32263 I litert  : [litert_dispatch.cc:159] Loading shared library: /data/app/~~cWz_9poUFYZLJU3ZgXUewA==/io.github.johnrocky.hfmodels.samples.promises-ttSSvNpcdYKc3m3GXliCaw==/lib/arm64/libLiteRtDispatch_Qualcomm.so
+10-04 18:26:46.159 30937 32263 I litert  : [common.h:160] 
+10-04 18:26:46.159 30937 32263 I litert  : 
+10-04 18:26:46.159 30937 32263 I litert  : +------------------------------------------+
+10-04 18:26:46.159 30937 32263 I litert  : |              ::qnn::Options              |
+10-04 18:26:46.159 30937 32263 I litert  : +------------------------------------------+
+10-04 18:26:46.159 30937 32263 I litert  : [GENERAL]
+10-04 18:26:46.159 30937 32263 I litert  :   LogLevel                 : Info(3)
+10-04 18:26:46.159 30937 32263 I litert  :   BackendType              : Htp(2)
+10-04 18:26:46.159 30937 32263 I litert  :   Profiling                : Off(0)
+10-04 18:26:46.159 30937 32263 I litert  :   UseInt64BiasAsInt32      : true
+10-04 18:26:46.159 30937 32263 I litert  :   EnableWeightSharing      : false
+10-04 18:26:46.159 30937 32263 I litert  :   EnableJustInTime         : false
+10-04 18:26:46.159 30937 32263 I litert  :   GraphPriority            : Default(0)
+10-04 18:26:46.159 30937 32263 I litert  :   GraphIOTensorMemType     : MemHandle(1)
+10-04 18:26:46.159 30937 32263 I litert  :   CustomOpPackage          :
+10-04 18:26:46.159 30937 32263 I litert  :     name                   :
+10-04 18:26:46.159 30937 32263 I litert  :     interface_provider     :
+10-04 18:26:46.159 30937 32263 I litert  :     compile_package_path   :
+10-04 18:26:46.159 30937 32263 I litert  :     dispatch_package_path  :
+10-04 18:26:46.159 30937 32263 I litert  :     target                 :
+10-04 18:26:46.159 30937 32263 I litert  : [HTP]
+10-04 18:26:46.159 30937 32263 I litert  :   UseConvHMX               : true
+10-04 18:26:46.159 30937 32263 I litert  :   UseFoldReLU              : true
+10-04 18:26:46.159 30937 32263 I litert  :   HtpDlbc                  : false
+10-04 18:26:46.159 30937 32263 I litert  :   HtpDlbcWeights           : false
+10-04 18:26:46.159 30937 32263 I litert  :   HtpPPoint                : 0
+10-04 18:26:46.159 30937 32263 I litert  :   HtpPerformanceMode       : Burst(2)
+10-04 18:26:46.159 30937 32263 I litert  :   HtpPerfCtrlMode          : Manual(0)
+10-04 18:26:46.159 30937 32263 I litert  :   VtcmSize                 : 0
+10-04 18:26:46.159 30937 32263 I litert  :   NumHvxThreads            : 0
+10-04 18:26:46.159 30937 32263 I litert  :   OptimizationLevel        : HtpOptimizeForInferenceO3(2)
+10-04 18:26:46.159 30937 32263 I litert  : [IR]
+10-04 18:26:46.159 30937 32263 I litert  :   IrJsonDir    
+10-04 18:26:46.159 30937 32263 I litert  : [qnn_manager.cc:488] Adding shared library dir to path: /data/app/~~cWz_9poUFYZLJU3ZgXUewA==/io.github.johnrocky.hfmodels.samples.promises-ttSSvNpcdYKc3m3GXliCaw==/lib/arm64
+10-04 18:26:46.159 30937 32263 I litert  : [dynamic_loading.cc:132] dir already in LD_LIBRARY_PATH
+10-04 18:26:46.159 30937 32263 I litert  : [qnn_manager.cc:175] Loading qnn system shared library from "/data/app/~~cWz_9poUFYZLJU3ZgXUewA==/io.github.johnrocky.hfmodels.samples.promises-ttSSvNpcdYKc3m3GXliCaw==/lib/arm64/libQnnSystem.so"
+10-04 18:26:46.160 30937 32263 I litert  : [qnn_manager.cc:142] Loading qnn shared library from "libQnnHtp.so"
+10-04 18:26:46.160 30937 32263 I litert  : [qnn_manager.cc:165] Loaded qnn shared library
+10-04 18:26:46.160 30937 32263 I lrt-qc  : INFO: [Qnn] Initializing QNN backend for SoC model: 87
+10-04 18:26:46.160 30937 32263 I lrt-qc  : INFO: [Qnn] Set HTP performance mode: 2
+10-04 18:26:46.161 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:3733: manage_poll_qos: poll mode updated to 3 for domain 3, handle 0xb400006fb28b4610 for timeout 9999
+10-04 18:26:46.161 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:4305: remote_handle_control_domain: requested QOS 3, latency 9999 for domain 3 handle 0xb400006fb28b4610
+10-04 18:26:46.163 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:4305: remote_handle_control_domain: requested QOS 1, latency 0 for domain 3 handle 0xb400006fb28b4610
+10-04 18:26:46.164 30937 32263 I tflite  : Replacing 1 out of 1 node(s) with delegate (DispatchDelegate) node, yielding 1 partitions for subgraph 0 (main).
+10-04 18:26:46.165 30937 32263 I litert  : [context_binary_info.cc:231] Context binary SDK version matches current SDK: 2.47.0
+10-04 18:26:46.165 30937 32263 I litert  : [context_binary_info.cc:112] Found qnn graph: qnn_partition_0
+10-04 18:26:46.165 30937 32263 I litert  : [litert_dispatch_device_context.cc:248] Creating new QNN context for bytecode 0xb400006c4b0f6000 (size 641011712)
+10-04 18:26:46.166 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 368, flags 0x1, fd:135, time 59 us
+10-04 18:26:46.166 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 104, flags 0x1, fd:136, time 11 us
+10-04 18:26:46.166 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 39976, flags 0x1, fd:137, time 20 us
+10-04 18:26:46.166 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 72, flags 0x1, fd:138, time 12 us
+10-04 18:26:46.167 30937 32263 W io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:4373:Warning: remote_handle_control: Non-domain usage of FastRPC will be deprecated, use domains to offload to DSP using FastRPC
+10-04 18:26:46.167 30937 32263 W io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:4373:Warning: remote_handle_control: Non-domain usage of FastRPC will be deprecated, use domains to offload to DSP using FastRPC
+10-04 18:26:46.180 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 637534208, flags 0x1, fd:139, time 13721 us
+10-04 18:26:46.233 30937 32263 W io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:4373:Warning: remote_handle_control: Non-domain usage of FastRPC will be deprecated, use domains to offload to DSP using FastRPC
+10-04 18:26:46.233 30937 32263 W io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:4373:Warning: remote_handle_control: Non-domain usage of FastRPC will be deprecated, use domains to offload to DSP using FastRPC
+10-04 18:26:46.233 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 5296568, flags 0x1, fd:140, time 186 us
+10-04 18:26:46.233 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 40, flags 0x1, fd:141, time 15 us
+10-04 18:26:46.234 30937 32263 W io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:4373:Warning: remote_handle_control: Non-domain usage of FastRPC will be deprecated, use domains to offload to DSP using FastRPC
+10-04 18:26:46.234 30937 32263 W io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/fastrpc_apps_user.c:4373:Warning: remote_handle_control: Non-domain usage of FastRPC will be deprecated, use domains to offload to DSP using FastRPC
+10-04 18:26:46.235 30937 32265 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 33554432, flags 0xa0000000, fd:142, time 656 us
+10-04 18:26:46.287 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 48, flags 0x1, fd:140, time 8 us
+10-04 18:26:46.292 30937 32263 W libc    : Access denied finding property "ro.mediatek.platform"
+10-04 18:26:46.293 30937 32263 I tflite  : Created TensorFlow Lite XNNPACK delegate for CPU.
+10-04 18:26:46.295 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 524288, flags 0x1, fd:140, time 33 us
+10-04 18:26:46.296 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 512, flags 0x1, fd:141, time 20 us
+10-04 18:26:46.296 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 16384, flags 0x1, fd:143, time 12 us
+10-04 18:26:46.296 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 128, flags 0x1, fd:144, time 18 us
+10-04 18:26:46.297 30937 30951 I hfmodels: ready litert-community/GLiNER2.5-Decide-LiteRT@310090c3 variant=s128_npu_wfp16 profile=npu inference=NPU prepare_ms=33591
+10-04 18:26:46.302 30937 30956 I amples.promises: Waiting for a blocking GC NativeAlloc
+10-04 18:26:46.341 30937 30956 I amples.promises: WaitForGcToComplete blocked NativeAlloc on NativeAlloc for 38.477ms
+10-04 18:26:46.375 30937 32263 I litert  : [environment.cc:36] Creating LiteRT environment with options
+10-04 18:26:46.376 30937 32263 W litert  : [npu_registry.cc:34] NPU accelerator could not be loaded and registered: kLiteRtStatusErrorInvalidArgument.
+10-04 18:26:46.376 30937 32263 I litert  : [gpu_registry.cc:101] Attempting to load GPU accelerator(libLiteRtGpuAccelerator.so).
+10-04 18:26:46.376 30937 32263 I litert  : [gpu_registry.cc:101] Attempting to load GPU accelerator(libLiteRtClGlAccelerator.so).
+10-04 18:26:46.376 30937 32263 I litert  : [accelerator_registry.cc:54] RegisterAccelerator: ptr=0xb4000070228b3a50, name=LiteRT GPU
+10-04 18:26:46.376 30937 32263 I litert  : [gpu_registry.cc:109] Dynamically loaded GPU accelerator(libLiteRtClGlAccelerator.so) registered.
+10-04 18:26:46.376 30937 32263 I litert  : [accelerator_registry.cc:54] RegisterAccelerator: ptr=0xb4000070228b56d0, name=CpuAccelerator
+10-04 18:26:46.376 30937 32263 I litert  : [cpu_registry.cc:75] XNNPACK CPU accelerator registered.
+10-04 18:26:46.995 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 48, flags 0x1, fd:115, time 21 us
+10-04 18:26:46.995 30937 32263 I io.github.johnrocky.hfmodels.samples.promises: vendor/qcom/proprietary/adsprpc/src/rpcmem_android.c:650: rpcmem_dma_alloc: DMA buffer allocation completed for heap system, size 40, flags 0x1, fd:140, time 12 us
+10-04 18:26:47.004 30937 30951 I TestRunner: finished: loadSortRelease(io.github.johnrocky.hfmodels.check.PromisesDeviceCheck)
+10-04 18:26:47.005 30937 30951 I TestRunner: run finished: 1 tests, 0 failed, 0 ignored

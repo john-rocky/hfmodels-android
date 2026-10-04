@@ -161,18 +161,83 @@ class GlinerDecideParityTest {
         println("(d) table: rows ${(rows["rows"] as List<*>).map { (it as Map<*, *>)["id"] }} bit-identical to numpy's float16 -> float32 upcast (1024 values each)")
     }
 
+    /**
+     * The packed plan (`pack_questions`) against gliner2: every captured multi-task request of the card's gate set whose
+     * tasks a Question can say (single-label, no label descriptions) becomes a decide() with one question per task
+     * (the task name as its id, the prompt as its instructions, the labels as its options), and the plan's one forward
+     * carries the captured ids and `[L]` routing at the request's smallest window, each question reading its own slots.
+     */
+    @Test fun packedPlanReplaysTheCapturedMultiTaskRequests() {
+        val contracts = listOf(128, 256, 512).associateWith { contract(it).packing(true) }
+        var replayed = 0; var failures = 0
+        for (f in fixtures()) {
+            val tasks = tasks(f)
+            if (tasks.size < 2 || (f["tasks"] as List<*>).any { t -> t as Map<*, *>; t["multi_label"] == true || t["label_descriptions"] != null }) continue
+            val questions = LinkedHashMap<String, Question>()
+            for (t in tasks) questions[t.name] = Question.Choice(t.prompt ?: "", *t.labels.toTypedArray())
+            val window = ints(f["windows"]).min()
+            val c = contracts.getValue(window)
+            val plan = c.plan(questions, c.stateIds(f["text"] as String))
+            val labels = ints(f["label_positions"])
+            val b = plan.single()
+            val routingOk = (0 until 32).all { row -> (0 until window).all { col -> b.forward.routing[row * window + col] == if (row < labels.size && labels[row] == col) 1f else 0f } }
+            var from = 0
+            val slotsOk = b.questions.map { it.id } == tasks.map { it.name } && b.questions.zip(tasks).all { (p, t) -> (p.scores == (from until from + t.labels.size)).also { from += t.labels.size } }
+            if (b.forward.ids.toList() != ints(f["input_ids"]) || !routingOk || !slotsOk) { failures++; println("${f["id"]}: packed plan differs (ids ${b.forward.ids.size} vs ${ints(f["input_ids"]).size}, routing $routingOk, slots $slotsOk)") }
+            replayed++
+        }
+        assertEquals(24, replayed)
+        assertEquals("packed-plan mismatches out of $replayed (see stdout)", 0, failures)
+        println("(e) packed plan: $replayed/$replayed captured multi-task requests rebuilt from Questions in one forward with identical ids, [L] routing and per-question slots")
+    }
+
+    /** The packed plan's limits: one question keeps the family form, a split at the window and at the label slots, gliner2's settings rule, refusals. */
+    @Test fun packedPlanSplitsWhereOneForwardCannotHoldTheQuestions() {
+        val c = contract(128).packing(true)
+        val text = c.stateIds("Duplicate charge. I was charged twice for order 4471 and would like the second charge refunded.")
+        val b = Question.Choice("Which department should handle this request?", linkedMapOf("billing" to "invoices, payments, refunds", "technical" to "bugs, outages", "other" to "everything else"))
+        // One question: the task 'answer', identical to the unpacked contract.
+        assertEquals(contract(128).forward("q", b, text).ids.toList(), c.plan(mapOf("dept" to b), text).single().forward.ids.toList())
+        // Two short questions: one forward, the tasks named by the question ids.
+        val two = linkedMapOf("dept" to b, "refund" to Question.Noul("Does the user explicitly request a refund?"))
+        val one = c.plan(two, text).single()
+        assertEquals(c.encode(listOf(GlinerTask("dept", GlinerDecideContract.labels(b), b.instructions), GlinerTask("refund", listOf("no", "yes"), "Does the user explicitly request a refund?")), text).ids.toList(), one.forward.ids.toList())
+        assertEquals(listOf(0 until 3, 3 until 5), one.questions.map { it.scores })
+        // Label slots: 12 + 12 + 12 labels -> two forwards (24, then 12).
+        val wide = linkedMapOf("x" to Question.Choice("a", *(0 until 12).map { "x$it" }.toTypedArray()), "y" to Question.Choice("b", *(0 until 12).map { "y$it" }.toTypedArray()), "z" to Question.Choice("c", *(0 until 12).map { "z$it" }.toTypedArray()))
+        assertEquals(listOf(listOf("x", "y"), listOf("z")), contract(512).packing(true).plan(wide, text).map { p -> p.questions.map { it.id } })
+        // Window: questions that fit alone but not together split, in question order.
+        val long = (0 until 12).associate { "q$it" to Question.Choice("Is this sentence about topic number $it of the list?", "yes it is about it", "no it is not") }
+        val split = c.plan(LinkedHashMap(long), text)
+        assertTrue(split.size > 1)
+        assertEquals(long.keys.toList(), split.flatMap { p -> p.questions.map { it.id } })
+        assertTrue(split.all { it.forward.ids.size <= 128 })
+        // gliner2 would decode task "a" (prompt string "a: b c") with the settings of task "a: b": they go to two forwards.
+        assertEquals(1, GlinerDecideContract.owner("a: b c", listOf("a", "a: b")))
+        assertEquals(0, GlinerDecideContract.owner("answer: q", listOf("answer", "ans")))
+        assertEquals(listOf(listOf("a"), listOf("a: b")), c.plan(linkedMapOf("a" to Question.Choice("b c", "p", "q"), "a: b" to Question.Choice("x", "p", "q")), text).map { p -> p.questions.map { it.id } })
+        // A question that does not fit alone is refused as the forward refuses it.
+        val tooLong = (0 until 200).joinToString(" ") { "word$it" }
+        try { c.plan(two, c.stateIds(tooLong)); fail("a long state was accepted") } catch (e: ModelException) { assertEquals(ErrorCode.CONTEXT_LIMIT_EXCEEDED, e.code) }
+        try { c.plan(linkedMapOf("dept" to b, "many" to Question.Choice("q", *(0 until 33).map { "k$it" }.toTypedArray())), text); fail("33 options accepted") } catch (e: ModelException) { assertEquals(ErrorCode.INVALID_INPUT, e.code) }
+    }
+
     /** No model files needed: the development descriptor the device gate side-loads parses and declares the family's handler_config. */
     @Test fun developmentDescriptorDeclaresTheFamily() {
         val f = generateSequence(File("").absoluteFile) { it.parentFile }.map { File(it, "catalog/dev/litert-community__GLiNER2.5-Decide-LiteRT.hfmodels.json") }.first { it.isFile }
         val d = io.github.johnrocky.hfmodels.descriptor.Descriptor.parse(f.readText(), "litert-community/GLiNER2.5-Decide-LiteRT")
         assertEquals("s128_wfp16", d.defaultVariant)
-        assertEquals(mapOf("s128_wfp16" to 128, "s256_wfp16" to 256, "s512_wfp16" to 512), d.variants.associate { it.id to it.handlerConfig.getInt("window") })
+        assertEquals(mapOf("s128_wfp16" to 128, "s256_wfp16" to 256, "s512_wfp16" to 512, "s128_npu_wfp16" to 128, "s128_fp32" to 128), d.variants.associate { it.id to it.handlerConfig.getInt("window") })
         for (v in d.variants) {
             assertEquals(GlinerDecideContract.FAMILY, v.handlerConfig.getString("family"))
             assertEquals(32, v.handlerConfig.getInt("label_slots"))
-            assertEquals(listOf("gpu", "cpu"), v.profiles.map { it.id })
+            assertEquals("gpu", v.defaultProfile)
             assertEquals(listOf("cpu"), v.profile("gpu")!!.fallbackProfiles)
+            assertEquals(if (v.id == "s128_npu_wfp16") listOf("npu", "gpu", "cpu") else listOf("gpu", "cpu"), v.profiles.map { it.id })
         }
+        // The NPU profile is asked for by name (BackendPolicy.Require) and never falls back.
+        assertEquals(emptyList<String>(), d.variants.single { it.id == "s128_npu_wfp16" }.profile("npu")!!.fallbackProfiles)
+        assertEquals(io.github.johnrocky.hfmodels.BackendKind.NPU, d.variants.single { it.id == "s128_npu_wfp16" }.profile("npu")!!.components["inference"])
     }
 
     @Test fun questionsBecomeOneTaskTheWayTheSieveAskedThem() {

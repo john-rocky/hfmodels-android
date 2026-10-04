@@ -1,6 +1,7 @@
 package io.github.johnrocky.hfmodels.litert
 
 import com.google.ai.edge.litert.Accelerator
+import com.google.ai.edge.litert.CompiledModel
 import io.github.johnrocky.hfmodels.BackendKind
 import io.github.johnrocky.hfmodels.BackendPolicy
 import io.github.johnrocky.hfmodels.ComponentReport
@@ -54,9 +55,12 @@ object EncoderDecisions : Task<TypedDecisions> {
  *    `tokenizer_config` may be replaced by `special_tokens`: `{cls, sep, mask, pad, unk}` by token text
  *    (laya / julia; gliclass checks the ones it declares against its tokenizer);
  *  - `label_slots`: gliner2_decide's (32) and gliclass's (25) label capacity per forward;
+ *  - `pack_questions` (gliner2_decide, default false): the questions of one decide() as the tasks of one gliner2
+ *    request instead of one forward each ([GlinerDecideContract.plan]);
  *  - `option_slots` (128), `state_tokens` (256), `temperature` (1.05): deberta_decision's option capacity per
  *    forward, state cut and softmax temperature;
- *  - `gpu_precision`: `fp32` (default; explicit FP32 arithmetic on the GPU) or `default`;
+ *  - `gpu_precision`: `fp32` (default; explicit FP32 arithmetic on the GPU), `fp16_with_fp32_accum` or `fp16`
+ *    (LiteRT's `GpuOptions.Precision` of the same names), or `default` (no GPU options: LiteRT's own choice);
  *  - `cpu_threads` (default 4); `languages` (informational list).
  */
 internal object LiteRtDecisionHandler : Handler<TypedDecisions> {
@@ -89,7 +93,8 @@ internal object LiteRtDecisionHandler : Handler<TypedDecisions> {
         val window = hc.optInt("window", 0).takeIf { it > 0 } ?: throw ModelException(ErrorCode.MANIFEST_INVALID, "handler_config.window is missing")
         val hidden = hc.optInt("hidden", 0).takeIf { it > 0 } ?: throw ModelException(ErrorCode.MANIFEST_INVALID, "handler_config.hidden is missing")
         val tableDtype = TokenTable.Dtype.parse(hc.optString("table_dtype", TokenTable.Dtype.FLOAT16.id))
-        val gpuFp32 = hc.optString("gpu_precision", "fp32") == "fp32"
+        val gpuPrecisionId = hc.optString("gpu_precision", "fp32")
+        val gpuPrecision = gpuPrecision(gpuPrecisionId)
         val cpuThreads = hc.optInt("cpu_threads", 4)
         val languages = hc.optJSONArray("languages")?.let { a -> List(a.length()) { a.getString(it) } } ?: emptyList()
         val contract = when (familyId) {
@@ -124,7 +129,7 @@ internal object LiteRtDecisionHandler : Handler<TypedDecisions> {
                     excludedProfiles = plan.excludedProfiles, fallbackHistory = fallbackHistory, verification = plan.verification,
                     notes = notes, files = local.files.mapValues { it.value.absolutePath },
                 )
-                LiteRtDecisionModel.open(LiteRtDecisionModel.Companion.Spec(mainFile, tableFile, tableDtype, hidden, accelerator, gpuFp32, cpuThreads), info, contract, host)
+                LiteRtDecisionModel.open(LiteRtDecisionModel.Companion.Spec(mainFile, tableFile, tableDtype, hidden, accelerator, gpuPrecision, cpuThreads), info, contract, host)
             } catch (t: Throwable) {
                 val reason = "${t.javaClass.simpleName}: ${t.message}"
                 host.log.w("compile on profile '${profile.id}' failed: $reason", t)
@@ -139,7 +144,7 @@ internal object LiteRtDecisionHandler : Handler<TypedDecisions> {
                 continue
             }
             notes += "family=${contract.family} compile_ms=${(System.nanoTime() - tc) / 1_000_000} on ${backend.name.lowercase()}" + when (backend) {
-                BackendKind.GPU -> " (precision ${if (gpuFp32) "fp32" else "default"})"
+                BackendKind.GPU -> " (precision $gpuPrecisionId)"
                 BackendKind.NPU -> " (Qualcomm HTP ${LiteRtNpu.hexagon()}, JIT, burst; the first compile on a phone takes tens of seconds, later loads read the cache)"
                 BackendKind.CPU -> " ($cpuThreads threads)"
             }
@@ -152,6 +157,15 @@ internal object LiteRtDecisionHandler : Handler<TypedDecisions> {
     }
 
     private val ENCODER_FAMILIES = listOf(GlinerDecideContract.FAMILY, GliclassContract.FAMILY, DebertaDecisionContract.FAMILY)
+
+    /** `gpu_precision` -> the precision the GPU computes in; null = `default`, no GPU options (LiteRT's own choice). */
+    internal fun gpuPrecision(id: String): CompiledModel.GpuOptions.Precision? = when (id) {
+        "fp32" -> CompiledModel.GpuOptions.Precision.FP32
+        "fp16_with_fp32_accum" -> CompiledModel.GpuOptions.Precision.FP16_WITH_FP32_ACCUM
+        "fp16" -> CompiledModel.GpuOptions.Precision.FP16
+        "default" -> null
+        else -> throw ModelException(ErrorCode.MANIFEST_INVALID, "handler_config.gpu_precision '$id' is not supported (fp32, fp16_with_fp32_accum, fp16, default)")
+    }
 
     /** laya / julia: the publisher's tokenizer, the head budget and (laya) the temperature settings around [DecisionSequenceBuilder]. */
     private fun markerContract(

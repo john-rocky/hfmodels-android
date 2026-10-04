@@ -31,7 +31,8 @@ internal class GlinerEncoded(val ids: IntArray, val special: List<IntArray>, val
  *
  * A question is one task (the family rule, the form the demo sieve measured): the task `answer` with the
  * instructions as its prompt; the labels are a choice's descriptions (the key when there is none), a
- * score's levels, a noul's `false` / `true` descriptions or `no` / `yes`. Decoding is gliner2's
+ * score's levels, a noul's `false` / `true` descriptions or `no` / `yes`. With `pack_questions` the
+ * questions of one decide() go into one gliner2 request instead ([plan]). Decoding is gliner2's
  * single-label rule at T=1 (float32 softmax, the first maximum). A request longer than the window, or
  * with more labels than the graph has slots, is refused, never cut.
  */
@@ -39,15 +40,22 @@ internal class GlinerDecideContract(
     private val tokenizer: UnigramTokenizer,
     override val limits: DecisionLimits,
     private val labelSlots: Int,
+    /** handler_config `pack_questions`: the questions of one decide() as the tasks of one gliner2 request ([plan]). */
+    val packQuestions: Boolean = false,
 ) : DecisionContract {
     override val family: String get() = FAMILY
     override val padId: Int get() = tokenizer.padId
     override val head: Head? get() = null
     override val notes: List<String> = listOf(
-        "one gliner2 task per question (task 'answer', the instructions as its prompt, the options as labels); a request longer than the ${limits.windowTokens}-token window or with more than $labelSlots labels is refused, never cut; " +
+        (if (packQuestions) "the questions of one decide() as the tasks of one gliner2 request (each task named by its question id, the instructions as its prompt, the options as labels), split in question order when they do not fit the window or the label slots; one question alone is the task 'answer'; "
+        else "one gliner2 task per question (task 'answer', the instructions as its prompt, the options as labels); ") +
+            "a request longer than the ${limits.windowTokens}-token window or with more than $labelSlots labels is refused, never cut; " +
             "probabilities are gliner2's single-label float32 softmax of the label logits (T=1)",
     )
     private val window = limits.windowTokens
+
+    /** Test hook: the same contract (tokenizer, window, slots) with packing switched on or off. */
+    fun packing(on: Boolean): GlinerDecideContract = if (on == packQuestions) this else GlinerDecideContract(tokenizer, limits, labelSlots, on)
 
     /** The text words' ids: "." appended unless the text ends a sentence, gliner2's words lower-cased, each tokenized on its own. */
     override fun stateIds(state: Any): IntArray {
@@ -63,9 +71,49 @@ internal class GlinerDecideContract(
     override fun forward(questionId: String, q: Question, stateIds: IntArray): Forward = forward(listOf(task(q)), stateIds, questionId)
 
     /**
+     * Without `pack_questions`, or for one question: one forward per question ([forward]). With it, gliner2's own
+     * multi-task request (the form of the card's multi-task gate requests): each question one task named by its id,
+     * the instructions as its prompt, in question order while the labels fit the slots and the sequence the window.
+     * A new forward starts at the first question that does not fit, or whose task gliner2 would decode with another
+     * task's settings ([owner]; the card's host refuses such a request); a question that does not fit alone is
+     * refused as [forward] refuses it.
+     */
+    override fun plan(questions: Map<String, Question>, stateIds: IntArray): List<Batch> {
+        if (!packQuestions || questions.size < 2) return super.plan(questions, stateIds)
+        class Group(val tasks: ArrayList<Pair<String, GlinerTask>>, var ms: Double)
+        val groups = ArrayList<Group>()
+        for ((id, q) in questions) {
+            val t0 = System.nanoTime()
+            val t = GlinerTask(id, labels(q), q.instructions)
+            val open = groups.lastOrNull()
+            val group = if (open != null && fits(open.tasks.map { it.second } + t, stateIds)) open else {
+                if (!fits(listOf(t), stateIds)) forward(listOf(t), stateIds, id)   // refuses with the forward's error
+                Group(ArrayList(), 0.0).also { groups += it }
+            }
+            group.tasks += id to t
+            group.ms += (System.nanoTime() - t0) / 1e6
+        }
+        return groups.map { g ->
+            val t0 = System.nanoTime()
+            val f = forward(g.tasks.map { it.second }, stateIds, g.tasks.first().first)
+            var from = 0
+            val planned = g.tasks.map { (id, t) -> Planned(id, questions.getValue(id), from until from + t.labels.size).also { from += t.labels.size } }
+            Batch(f, planned, g.ms + (System.nanoTime() - t0) / 1e6)
+        }
+    }
+
+    /** The tasks' labels fit the slots, their sequence the window, and gliner2 decodes every task with its own settings. */
+    private fun fits(tasks: List<GlinerTask>, textIds: IntArray): Boolean {
+        if (tasks.any { it.labels.isEmpty() } || tasks.sumOf { it.labels.size } > labelSlots) return false
+        val names = tasks.map { it.name }
+        if (tasks.indices.any { owner(promptString(tasks[it]), names) != it }) return false
+        return encode(tasks, textIds).ids.size <= window
+    }
+
+    /**
      * Several tasks in one sequence, the way gliner2 encodes a tasks dict: the parity checks replay the
-     * publisher's captured requests through it. decide() sends one task per forward, so gliner2's rule that
-     * resolves a head's settings from its prompt string (a task name that prefixes another's) never applies.
+     * publisher's captured requests through it, and [plan] packs a decide()'s questions with it (checking
+     * first that gliner2's rule resolving a head's settings from its prompt string gives each task its own).
      */
     fun forward(tasks: List<GlinerTask>, textIds: IntArray, questionId: String = "q"): Forward {
         if (tasks.isEmpty() || tasks.any { it.labels.isEmpty() }) throw ModelException(ErrorCode.INVALID_INPUT, "every task needs at least one label")
@@ -173,6 +221,20 @@ internal class GlinerDecideContract(
             return b.toString()
         }
 
+        /**
+         * gliner2 2.0.0 `_resolve_classification_config`: the index of the task whose settings decode the head with this
+         * prompt string: the longest name that prefixes it followed by nothing, ':' or ' ', else the first name that prefixes it.
+         */
+        fun owner(promptString: String, names: List<String>): Int {
+            var best = -1
+            for ((i, n) in names.withIndex()) {
+                if (n.isEmpty() || !promptString.startsWith(n)) continue
+                val rest = promptString.substring(n.length)
+                if ((rest.isEmpty() || rest[0] == ':' || rest[0] == ' ') && (best < 0 || n.length > names[best].length)) best = i
+            }
+            return if (best >= 0) best else names.indexOfFirst { promptString.startsWith(it) }
+        }
+
         /** `( [P] prompt_str ( [L] label1 [L] label2 … ) )`, one entry per gliner2 schema token. */
         fun schemaTokens(t: GlinerTask): List<String> {
             val tokens = arrayListOf("(", P_TOKEN, promptString(t), "(")
@@ -216,7 +278,7 @@ internal class GlinerDecideContract(
 
         private fun markerText() = ModelException(ErrorCode.INVALID_INPUT, "an option or the instructions equal a gliner2 structural token ($SEP_STRUCT / $SEP_TEXT)")
 
-        /** The family's handler_config: `window`, `hidden` 1024, `label_slots` 32, a token table; the publisher's tokenizer.json. */
+        /** The family's handler_config: `window`, `hidden` 1024, `label_slots` 32, `pack_questions` (default false), a token table; the publisher's tokenizer.json. */
         fun create(hc: JSONObject, tokenizerFile: File, window: Int, hidden: Int, languages: List<String>, host: PrepareHost): GlinerDecideContract {
             if (hidden != HIDDEN) throw ModelException(ErrorCode.MANIFEST_INVALID, "handler_config.hidden $hidden: a gliner2_decide graph takes $HIDDEN-wide embedding rows")
             val slots = hc.optInt("label_slots", 0).takeIf { it > 0 } ?: throw ModelException(ErrorCode.MANIFEST_INVALID, "handler_config.label_slots is missing")
@@ -226,7 +288,7 @@ internal class GlinerDecideContract(
             }
             host.log.i("tokenizer ${tokenizerFile.name}: ${tokenizer.vocabularySize} tokens (Unigram), load_ms=${(System.nanoTime() - t0) / 1_000_000}")
             // No head budget: the schema and the text share the window, and nothing is cut.
-            return GlinerDecideContract(tokenizer, DecisionLimits(windowTokens = window, headTokens = window, maxOptions = slots, languages = languages), slots)
+            return GlinerDecideContract(tokenizer, DecisionLimits(windowTokens = window, headTokens = window, maxOptions = slots, languages = languages), slots, hc.optBoolean("pack_questions", false))
         }
     }
 }

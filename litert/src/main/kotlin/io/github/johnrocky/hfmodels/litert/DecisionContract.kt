@@ -43,7 +43,8 @@ internal interface DecisionContract {
 
     /**
      * The forwards that answer [questions] against the state, in question order. By default one forward per question
-     * ([forward]); a family whose publisher packs a request's questions into one sequence overrides it (deberta_decision).
+     * ([forward]); a family whose publisher packs a request's questions into one sequence overrides it (deberta_decision,
+     * and gliner2_decide with `pack_questions`).
      */
     fun plan(questions: Map<String, Question>, stateIds: IntArray): List<Batch> = questions.map { (id, q) ->
         val t = System.nanoTime()

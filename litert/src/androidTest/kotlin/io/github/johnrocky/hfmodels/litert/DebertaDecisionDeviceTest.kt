@@ -39,11 +39,16 @@ import org.junit.runner.RunWith
  *      "key: description" (r1's policy form) and with keys only, vs the Mac answers of the card's Python host (same
  *      answer n/30, max |dp| <= dp_tol, the encoded length equal to the host's, warm ms per question);
  *   5. timing: `decide(state, 4 questions)` (packed into one forward, as the author's decide()) vs 4 x `decide(state, 1 question)`, warm;
- *   6. release.
+ *   6. zoo_input: the Model Zoo Text row's sentence, question and count through decide(), each call split into its stages ([ZooInputBench]);
+ *   7. lookup: the host embedding lookup of one request the Model Zoo's way and this module's way ([HostLookupBench]);
+ *   8. release.
  * One RESULT line per step under tag `hfmodels-decide`, numbers unrounded. Arguments: variant (s256_wfp16 |
- * s512_wfp16), backend (gpu | cpu | auto), dir, fixtures (default `<dir>/fixtures`: `app_gate_fixtures.json`, the
+ * s512_wfp16 | s256_npu_wfp16), backend (gpu | cpu | npu | auto), dir, fixtures (default `<dir>/fixtures`: `app_gate_fixtures.json`, the
  * sieve's `b_chat.jsonl`, `open-decision_b_chat_policy.jsonl` and `open-decision_b_chat_keys.jsonl`, and round 4's
- * `decide_form.json`), repeats (timing, default 5), dp_tol (default 0.01).
+ * `decide_form.json`), repeats (timing, default 5), dp_tol (default 0.01), parity (default 1; 0 skips step 3, so the
+ * demo is the graph's first work after the warm-up: its speed before the parity forwards warm the phone). An npu run needs the Qualcomm libraries in
+ * the test APK (tools/fetch_npu_libs.sh litert/src/androidTest/jniLibs/arm64-v8a v81) and counts only with LiteRT's
+ * `Replacing 1 out of 1 node(s) with delegate (DispatchDelegate)` in the gate log.
  *
  *   GATE_TEST=DebertaDecisionDeviceTest GATE_TAG=decide-opendecision tools/decide_gate.sh s256_wfp16 gpu
  */
@@ -56,6 +61,7 @@ class DebertaDecisionDeviceTest {
     private val backend = args.getString("backend") ?: "gpu"
     private val repeats = args.getString("repeats")?.toInt() ?: 5
     private val dpTol = args.getString("dp_tol")?.toDouble() ?: 0.01
+    private val parity = args.getString("parity") != "0"
     private val base = File(args.getString("dir") ?: "/data/local/tmp/hfmodels/open-decision")
     private val fixturesDir = File(args.getString("fixtures") ?: File(base, "fixtures").path)
     private val failures = ArrayList<String>()
@@ -67,7 +73,7 @@ class DebertaDecisionDeviceTest {
 
     @Test fun loadSequenceParityDemoTimingRelease(): Unit = runBlocking {
         val models = HfModels(ctx)
-        val policy = when (backend) { "cpu" -> BackendPolicy.Require(BackendKind.CPU); "gpu" -> BackendPolicy.Require(BackendKind.GPU); else -> BackendPolicy.Auto }
+        val policy = when (backend) { "cpu" -> BackendPolicy.Require(BackendKind.CPU); "gpu" -> BackendPolicy.Require(BackendKind.GPU); "npu" -> BackendPolicy.Require(BackendKind.NPU); else -> BackendPolicy.Auto }
         val descriptor = testCtx.assets.open(DESCRIPTOR_ASSET).bufferedReader().use { it.readText() }
         val commit = JSONObject(descriptor).getString("revision")
         val opts = LoadOptions(backendPolicy = policy, networkPolicy = NetworkPolicy.Offline, descriptorJson = descriptor)
@@ -87,7 +93,8 @@ class DebertaDecisionDeviceTest {
             val loadMs = SystemClock.elapsedRealtime() - t1
             val compileMs = m.info.notes.firstNotNullOfOrNull { Regex("compile_ms=(\\d+)").find(it)?.groupValues?.get(1) } ?: "?"
             result("load", events.last() is LoadEvent.Ready && events.none { it is LoadEvent.DownloadStarted },
-                "import_ms=$importMs load_ms=$loadMs compile_ms=$compileMs profile=${m.info.profileId} window=${m.limits.windowTokens} head=${m.limits.headTokens} max_options=${m.limits.maxOptions} notes=${m.info.notes.joinToString(" | ")}")
+                "import_ms=$importMs load_ms=$loadMs compile_ms=$compileMs profile=${m.info.profileId} window=${m.limits.windowTokens} head=${m.limits.headTokens} max_options=${m.limits.maxOptions} " +
+                    "npu_libs_ready=${LiteRtNpu.ready(ctx)} notes=${m.info.notes.joinToString(" | ")}")
             val impl = m as LiteRtDecisionModel
             val c = impl.contract as DebertaDecisionContract
             val window = m.limits.windowTokens
@@ -107,42 +114,45 @@ class DebertaDecisionDeviceTest {
             result("sequence", rows.isNotEmpty() && seqFail == 0, "rows=${rows.size} of ${all.size} mismatches=$seqFail window=$window")
 
             // 3. parity: each request through the loaded graph, all its questions in one forward
-            var argmaxQs = 0; var answerQs = 0; var questionsSeen = 0; var maxDp = 0.0; var maxDl = 0.0; var worst = ""
-            val forwardMs = ArrayList<Double>()
-            impl.scores(c.forward(questions(rows[0]), c.stateIds(rows[0]["state"] as String)))   // warm
-            for (f in rows) {
-                val qs = questions(f)
-                val fw = c.forward(qs, c.stateIds(f["state"] as String))
-                val tf = SystemClock.elapsedRealtimeNanos()
-                val logits = impl.scores(fw)
-                forwardMs += (SystemClock.elapsedRealtimeNanos() - tf) / 1e6
-                var offset = 0
-                for ((i, q) in qs.withIndex()) {
-                    val oracle = floats((f["logits"] as List<*>)[i])
-                    val got = logits.copyOfRange(offset, offset + oracle.size)
-                    offset += oracle.size
-                    questionsSeen++
-                    if (GlinerDecode.argmax(got) == GlinerDecode.argmax(oracle)) argmaxQs++ else Log.w(TAG, "${f["id"]} q$i: argmax differs; device ${got.toList()} oracle ${oracle.toList()}")
-                    val api = (f["api"] as List<*>)[i] as Map<*, *>
-                    val a = c.decode(q, got, null)
-                    val (same, dp) = when (a) {
-                        is Answer.Choice -> (a.choice == api["choice"]) to (api["probabilities"] as Map<*, *>).entries.maxOf { (k, v) -> abs(a.probabilities.getValue(k as String) - (v as Number).toDouble()) }
-                        is Answer.Score -> {
-                            val ref = (api["probabilities"] as Map<*, *>).values.map { (it as Number).toDouble() }
-                            val p = a.probabilities.values.toList()
-                            (p.indices.maxBy { p[it] } == ref.indices.maxBy { ref[it] }) to ref.indices.maxOf { abs(p[it] - ref[it]) }
+            if (!parity) result("parity", true, "skipped=true rows=${rows.size} (run argument parity=0: the demo is the graph's first work after the warm-up)")
+            else {
+                var argmaxQs = 0; var answerQs = 0; var questionsSeen = 0; var maxDp = 0.0; var maxDl = 0.0; var worst = ""
+                val forwardMs = ArrayList<Double>()
+                impl.scores(c.forward(questions(rows[0]), c.stateIds(rows[0]["state"] as String)))   // warm
+                for (f in rows) {
+                    val qs = questions(f)
+                    val fw = c.forward(qs, c.stateIds(f["state"] as String))
+                    val tf = SystemClock.elapsedRealtimeNanos()
+                    val logits = impl.scores(fw)
+                    forwardMs += (SystemClock.elapsedRealtimeNanos() - tf) / 1e6
+                    var offset = 0
+                    for ((i, q) in qs.withIndex()) {
+                        val oracle = floats((f["logits"] as List<*>)[i])
+                        val got = logits.copyOfRange(offset, offset + oracle.size)
+                        offset += oracle.size
+                        questionsSeen++
+                        if (GlinerDecode.argmax(got) == GlinerDecode.argmax(oracle)) argmaxQs++ else Log.w(TAG, "${f["id"]} q$i: argmax differs; device ${got.toList()} oracle ${oracle.toList()}")
+                        val api = (f["api"] as List<*>)[i] as Map<*, *>
+                        val a = c.decode(q, got, null)
+                        val (same, dp) = when (a) {
+                            is Answer.Choice -> (a.choice == api["choice"]) to (api["probabilities"] as Map<*, *>).entries.maxOf { (k, v) -> abs(a.probabilities.getValue(k as String) - (v as Number).toDouble()) }
+                            is Answer.Score -> {
+                                val ref = (api["probabilities"] as Map<*, *>).values.map { (it as Number).toDouble() }
+                                val p = a.probabilities.values.toList()
+                                (p.indices.maxBy { p[it] } == ref.indices.maxBy { ref[it] }) to ref.indices.maxOf { abs(p[it] - ref[it]) }
+                            }
+                            is Answer.Noul -> ((a.noul >= 0.5) == ((api["noul"] as Number).toDouble() >= 0.5)) to abs(a.noul - (api["noul"] as Number).toDouble())
                         }
-                        is Answer.Noul -> ((a.noul >= 0.5) == ((api["noul"] as Number).toDouble() >= 0.5)) to abs(a.noul - (api["noul"] as Number).toDouble())
+                        if (same) answerQs++ else Log.w(TAG, "${f["id"]} q$i: $a vs the author's $api")
+                        if (dp > maxDp) { maxDp = dp; worst = "${f["id"]} q$i" }
+                        maxDl = maxOf(maxDl, got.indices.maxOf { abs(got[it] - oracle[it]).toDouble() })
                     }
-                    if (same) answerQs++ else Log.w(TAG, "${f["id"]} q$i: $a vs the author's $api")
-                    if (dp > maxDp) { maxDp = dp; worst = "${f["id"]} q$i" }
-                    maxDl = maxOf(maxDl, got.indices.maxOf { abs(got[it] - oracle[it]).toDouble() })
                 }
+                val fs = forwardMs.sorted()
+                result("parity", argmaxQs == questionsSeen && answerQs == questionsSeen && maxDp <= dpTol,
+                    "rows=${rows.size} questions=$questionsSeen argmax_match=$argmaxQs/$questionsSeen answers_equal_author=$answerQs/$questionsSeen max_prob_abs_err=$maxDp (worst $worst) max_logit_abs_err_vs_author=$maxDl dp_tol=$dpTol " +
+                        "forward_ms_median=${fs[fs.size / 2]} p90=${fs[(fs.size * 9) / 10]} min=${fs.first()} max=${fs.last()}")
             }
-            val fs = forwardMs.sorted()
-            result("parity", argmaxQs == questionsSeen && answerQs == questionsSeen && maxDp <= dpTol,
-                "rows=${rows.size} questions=$questionsSeen argmax_match=$argmaxQs/$questionsSeen answers_equal_author=$answerQs/$questionsSeen max_prob_abs_err=$maxDp (worst $worst) max_logit_abs_err_vs_author=$maxDl dp_tol=$dpTol " +
-                    "forward_ms_median=${fs[fs.size / 2]} p90=${fs[(fs.size * 9) / 10]} min=${fs.first()} max=${fs.last()}")
 
             // 4. the sieve's chat sentences through decide(), vs the Mac answers and request lengths of the card's host
             val chat = File(fixturesDir, "b_chat.jsonl").readLines().filter { it.isNotBlank() }.map { Json.parseObject(it) }
@@ -198,7 +208,15 @@ class DebertaDecisionDeviceTest {
             result("timing", true, "repeats=$repeats forwards_for_4q=${c.plan(qs, c.stateIds(state)).size} decide_4q_total_ms_median=${batched.sorted()[batched.size / 2]} four_decide_1q_total_ms_median=${single.sorted()[single.size / 2]} state_tokens=${last.stateTokens} per_question_ms=${last.timing.questionMs.joinToString(",")} " +
                 "answers=${last.answers.mapValues { (_, a) -> when (a) { is Answer.Choice -> a.choice + " " + a.probabilities.getValue(a.choice); is Answer.Score -> a.score.toString(); is Answer.Noul -> a.noul.toString() } }}")
 
-            // 6. release
+            // 6. the Model Zoo Text row's input and count, each decide() split into its stages (the Zoo-vs-SDK comparison)
+            result("zoo_input", true, ZooInputBench.run(m, impl))
+
+            // 7. the host lookup of one request, the Model Zoo's way and this module's way, over the Zoo row's window (S256)
+            val fw0 = c.forward("q", B_POLICY, c.stateIds(chat[0]["text"] as String))
+            val padded = IntArray(ZOO_WINDOW) { if (it < fw0.ids.size) fw0.ids[it] else c.padId }
+            result("lookup", true, HostLookupBench.run(File(m.info.files.getValue("table")), DebertaDecisionContract.HIDDEN, padded, "arith"))
+
+            // 8. release
             val t2 = SystemClock.elapsedRealtime()
             m.closeAndJoin()
             result("release", true, "close_ms=${SystemClock.elapsedRealtime() - t2}")
@@ -233,6 +251,8 @@ class DebertaDecisionDeviceTest {
     }
 
     companion object {
+        /** The window of the litert-samples Model Zoo's Open-Decision row (S256), for the lookup comparison. */
+        const val ZOO_WINDOW = 256
         const val TAG = "hfmodels-decide"
         const val REPO = "litert-community/Open-Decision-DeBERTa-v3-Large-LiteRT"
         /** The development descriptor (catalog/dev, an androidTest asset): its revision and files drive the load. */

@@ -188,7 +188,7 @@ internal class LiteRtDecisionModel private constructor(
 
         /**
          * What to compile. `tableFile` set = a host-lookup graph (the token input takes embeddings of width
-         * `hidden`, the table's rows in `tableDtype`); null = a token-id graph.
+         * `hidden`, the table's rows in `tableDtype`); null = a token-id graph. `gpuPrecision` null = no GPU options.
          */
         class Spec(
             val mainFile: File,
@@ -196,7 +196,7 @@ internal class LiteRtDecisionModel private constructor(
             val tableDtype: TokenTable.Dtype,
             val hidden: Int,
             val accelerator: Accelerator,
-            val gpuFp32: Boolean,
+            val gpuPrecision: CompiledModel.GpuOptions.Precision?,
             val cpuThreads: Int,
         )
 
@@ -210,7 +210,7 @@ internal class LiteRtDecisionModel private constructor(
             val burst = if (host.appContext?.let(LiteRtNpu::ready) == true) CompiledModel.QualcommOptions(htpPerformanceMode = CompiledModel.QualcommOptions.HtpPerformanceMode.BURST) else null
             val options = CompiledModel.Options(spec.accelerator).apply {
                 when (spec.accelerator) {
-                    Accelerator.GPU -> if (spec.gpuFp32) gpuOptions = CompiledModel.GpuOptions(precision = CompiledModel.GpuOptions.Precision.FP32)
+                    Accelerator.GPU -> spec.gpuPrecision?.let { gpuOptions = CompiledModel.GpuOptions(precision = it) }
                     Accelerator.NPU -> Unit
                     else -> cpuOptions = CompiledModel.CpuOptions(numThreads = spec.cpuThreads)
                 }
