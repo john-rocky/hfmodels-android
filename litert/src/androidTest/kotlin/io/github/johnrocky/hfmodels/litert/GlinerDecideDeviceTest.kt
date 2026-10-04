@@ -42,8 +42,9 @@ import org.junit.runner.RunWith
  *      (decide()) and the four packed into one gliner2 request (the `pack_questions` plan, run through the loaded
  *      graph), each form vs the Mac host's answers in that form, and how many answers the packing changes here;
  *   6. timing: `decide(state, 4 questions)` vs 4 x `decide(state, 1 question)`, and the four packed, warm;
- *   7. lookup: the host embedding lookup of one request the Model Zoo's way and this module's way ([HostLookupBench]);
- *   8. release.
+ *   7. zoo_input: the Model Zoo Text row's sentence, question and count through decide(), each call split into its stages ([ZooInputBench]);
+ *   8. lookup: the host embedding lookup of one request the Model Zoo's way and this module's way ([HostLookupBench]);
+ *   9. release.
  * One RESULT line per step under tag `hfmodels-decide`, numbers unrounded. Arguments: variant (s128_wfp16 |
  * s256_wfp16 | s512_wfp16 | s128_npu_wfp16 | s128_fp32), backend (gpu | cpu | npu | auto), dir, fixtures (default
  * `<dir>/fixtures`: the card's `gate_fixtures.json`, the sieve's `b_chat.jsonl` and `gliner-decide_b_chat_policy.jsonl`,
@@ -289,12 +290,15 @@ class GlinerDecideDeviceTest {
                 "decide_4q_packed_total_ms_median=${packedTotal.sorted()[packedTotal.size / 2]} packed_forwards=${packed.plan(qs, stateIdsPacked).size} state_tokens=${last.stateTokens} per_question_ms=${last.timing.questionMs.joinToString(",")} " +
                 "answers=${show(last)} answers_packed=${show(lastPacked)}")
 
-            // 7. the host lookup of one request, the Model Zoo's way and this module's way (the same padded ids, the same table)
+            // 7. the Model Zoo Text row's input and count, each decide() split into its stages (the Zoo-vs-SDK comparison)
+            result("zoo_input", true, ZooInputBench.run(m, impl))
+
+            // 8. the host lookup of one request, the Model Zoo's way and this module's way (the same padded ids, the same table)
             val fw0 = c.forward("q", B_MAIN, c.stateIds(chat[0]["text"] as String))
             val padded = IntArray(window) { if (it < fw0.ids.size) fw0.ids[it] else c.padId }
             result("lookup", true, HostLookupBench.run(File(m.info.files.getValue("table")), GlinerDecideContract.HIDDEN, padded, "lut"))
 
-            // 8. release
+            // 9. release
             val t2 = SystemClock.elapsedRealtime()
             m.closeAndJoin()
             result("release", true, "close_ms=${SystemClock.elapsedRealtime() - t2}")
