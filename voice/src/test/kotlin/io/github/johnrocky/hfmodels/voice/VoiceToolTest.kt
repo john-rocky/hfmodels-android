@@ -1,5 +1,6 @@
 package io.github.johnrocky.hfmodels.voice
 
+import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
@@ -53,5 +54,25 @@ class VoiceToolTest {
         assertThrows(IllegalArgumentException::class.java) { ToolArgs.int(args, "missing") }
         assertEquals("30", ToolArgs.string(args, "b"))
         assertEquals(null, ToolArgs.stringOrNull(args, "missing"))
+    }
+
+    @Test fun aNumberThatIsNotWholeIsNotCutShort() {
+        // These were 1, 0, 0 and Int.MAX_VALUE; the model sees the message as "Error: <message>".
+        val args = mapOf<String, Any?>("a" to 1.5, "b" to -0.5, "c" to "NaN", "d" to "Infinity")
+        for ((key, v) in args) {
+            val e = assertThrows(IllegalArgumentException::class.java) { ToolArgs.int(args, key) }
+            assertEquals("$key '$v' must be a whole number", e.message)
+        }
+        assertEquals("a '1.0E10' is out of range", assertThrows(IllegalArgumentException::class.java) { ToolArgs.int(mapOf("a" to 1e10), "a") }.message)
+        assertEquals(listOf(7, 7, 7), listOf<Any>(7, 7.0, "7").map { ToolArgs.int(mapOf("a" to it), "a") })
+    }
+
+    @Test fun theTimerAndTheAlarmRefuseAPartOfAMinuteOrAnHour() {
+        // Before, a 1-minute timer started, and hour -0.5 passed the 0-23 check as 00.
+        val context = android.content.ContextWrapper(null)
+        val timer = assertThrows(IllegalArgumentException::class.java) { runBlocking { TimerTool(context).call(mapOf("minutes" to 1.5, "label" to "Tea")) } }
+        assertEquals("minutes '1.5' must be a whole number", timer.message)
+        val alarm = assertThrows(IllegalArgumentException::class.java) { runBlocking { AlarmTool(context).call(mapOf("hour" to -0.5, "minute" to 0)) } }
+        assertEquals("hour '-0.5' must be a whole number", alarm.message)
     }
 }

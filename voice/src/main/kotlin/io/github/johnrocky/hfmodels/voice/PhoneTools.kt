@@ -9,7 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.provider.AlarmClock
 import android.provider.CalendarContract
-import java.text.ParseException
+import java.text.ParsePosition
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -190,19 +190,23 @@ class TimerTool(private val context: Context) : VoiceTool {
     }
 }
 
+/** The seconds of "10:00:00" (group 1 keeps the minutes). */
+private val SECONDS = Regex("(:\\d{2}):\\d{2}(\\.\\d+)?$")
+
 /**
  * `get_calendar_events(date)` ([read]) and `add_calendar_event(title, start, end, location)` ([add])
  * on one calendar: the app's own local "Phone Agent" calendar, created on first use. An account
  * calendar is never touched, so a run cannot leak or alter someone's real schedule.
  */
 class CalendarTool(private val context: Context) {
-    private val fmtMin = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US)
+    // Strict: a lenient format reads "73:00" as 01:00 three days later and "2026-02-30" as March 2.
+    private val fmtMin = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).apply { isLenient = false }
 
     val read: VoiceTool = object : VoiceTool {
         override val name = "get_calendar_events"
         override val description = "Lists the events already on the phone calendar for one day."
         override val parameters = listOf(ToolParam("date", "string", "The day to list, as YYYY-MM-DD."))
-        override suspend fun call(args: Map<String, Any?>): String = withContext(Dispatchers.IO) { events(ToolArgs.string(args, "date")) }
+        override suspend fun call(args: Map<String, Any?>): String = withContext(Dispatchers.IO) { granted { events(ToolArgs.string(args, "date")) } }
     }
 
     val add: VoiceTool = object : VoiceTool {
@@ -213,17 +217,21 @@ class CalendarTool(private val context: Context) {
             ToolParam("title", "string", "Event title."),
             ToolParam("start", "string", "Start time as YYYY-MM-DD HH:MM."),
             ToolParam("end", "string", "End time as YYYY-MM-DD HH:MM."),
-            ToolParam("location", "string", "Where the event takes place."),
+            ToolParam("location", "string", "Where the event takes place.", required = false),
         )
         override suspend fun call(args: Map<String, Any?>): String = withContext(Dispatchers.IO) {
-            addEvent(ToolArgs.string(args, "title"), ToolArgs.string(args, "start"), ToolArgs.string(args, "end"), ToolArgs.stringOrNull(args, "location") ?: "")
+            granted { addEvent(ToolArgs.string(args, "title"), ToolArgs.string(args, "start"), ToolArgs.string(args, "end"), ToolArgs.stringOrNull(args, "location") ?: "") }
         }
     }
 
+    /**
+     * [block]'s result; without the calendar permission one plain sentence instead of Android's text, which names the
+     * provider and the permission with dots and would be said in pieces.
+     */
+    internal fun granted(block: () -> String): String = try { block() } catch (e: SecurityException) { "Error: the calendar permission is not granted" }
+
     internal fun events(date: String): String {
-        val day = parseOrNull { SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(date.trim().take(10)) } ?: throw IllegalArgumentException("bad date '$date' (use YYYY-MM-DD)")
-        val begin = day.time
-        val end = begin + 24L * 3600 * 1000
+        val (begin, end) = dayWindow(date) ?: throw IllegalArgumentException("bad date '$date' (use YYYY-MM-DD)")
         val uri = CalendarContract.Instances.CONTENT_URI.buildUpon().appendPath(begin.toString()).appendPath(end.toString()).build()
         val proj = arrayOf(CalendarContract.Instances.TITLE, CalendarContract.Instances.BEGIN, CalendarContract.Instances.END, CalendarContract.Instances.EVENT_LOCATION)
         val rows = JSONArray()
@@ -235,13 +243,37 @@ class CalendarTool(private val context: Context) {
         return if (rows.length() == 0) "No events on ${date.trim().take(10)}" else rows.toString()
     }
 
-    private fun parseMinute(s: String): Long {
-        val t = s.trim().replace('T', ' ').take(16)
-        return parseOrNull { fmtMin.parse(t) }?.time ?: throw IllegalArgumentException("bad time '$s' (use YYYY-MM-DD HH:MM)")
+    /**
+     * The local day [date] ("2026-10-05") from its midnight to the next one, in ms: 23 or 25 hours on a day the clocks
+     * change. Null for text that is not such a day.
+     */
+    internal fun dayWindow(date: String, zone: TimeZone = TimeZone.getDefault()): Pair<Long, Long>? {
+        val format = SimpleDateFormat("yyyy-MM-dd", Locale.US).apply { isLenient = false; timeZone = zone }
+        val day = parseWhole(format, date.trim().take(10)) ?: return null
+        val next = Calendar.getInstance(zone).apply {
+            time = day; add(Calendar.DAY_OF_YEAR, 1); set(Calendar.HOUR_OF_DAY, 0); set(Calendar.MINUTE, 0); set(Calendar.SECOND, 0); set(Calendar.MILLISECOND, 0)
+        }
+        return day.time to next.timeInMillis
     }
 
-    /** `DateFormat.parse` throws on text it cannot read instead of returning null: null here, so the caller's hint reaches the model. */
-    private inline fun parseOrNull(parse: () -> Date?): Date? = try { parse() } catch (e: ParseException) { null }
+    /**
+     * "2026-10-05 10:00", also with a T and with seconds (dropped), on this phone's clock. Any other text, such as
+     * "73:00", "2026-02-30" or "9:30 PM", goes back to the model with the format.
+     */
+    internal fun parseMinute(s: String): Long {
+        val t = s.trim().replace('T', ' ').replace(SECONDS, "$1")
+        return parseWhole(fmtMin, t)?.time ?: throw IllegalArgumentException("bad time '$s' (use YYYY-MM-DD HH:MM)")
+    }
+
+    /**
+     * [text] read by [format] to its end, or null: `DateFormat.parse` stops at the first character it cannot read and
+     * returns what it read up to there (" PM" of "9:30 PM" is left over).
+     */
+    private fun parseWhole(format: SimpleDateFormat, text: String): Date? {
+        val at = ParsePosition(0)
+        val parsed = format.parse(text, at)
+        return if (parsed != null && at.index == text.length) parsed else null
+    }
 
     private fun addEvent(title: String, start: String, end: String, location: String): String {
         val s = parseMinute(start)
@@ -256,8 +288,12 @@ class CalendarTool(private val context: Context) {
             put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().id)
         }
         context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, v) ?: throw IllegalStateException("calendar refused the event")
-        return "Event '$title' added: ${fmtMin.format(Date(s))} to ${fmtMin.format(Date(e))} at $location"
+        return receipt(title, s, e, location)
     }
+
+    /** What add_calendar_event says it did: "… at <location>" only when there is a location. */
+    internal fun receipt(title: String, start: Long, end: Long, location: String): String =
+        "Event '$title' added: ${fmtMin.format(Date(start))} to ${fmtMin.format(Date(end))}" + if (location.isBlank()) "" else " at $location"
 
     /** The local "Phone Agent" calendar's id, created on first use. */
     private fun calendarId(): Long {

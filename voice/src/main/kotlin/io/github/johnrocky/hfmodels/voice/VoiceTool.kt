@@ -60,11 +60,15 @@ object ToolArgs {
 
     fun stringOrNull(args: Map<String, Any?>, key: String): String? = args[key]?.toString()
 
-    /** `7`, `7.0` and `"7"` are 7. */
-    fun int(args: Map<String, Any?>, key: String): Int = when (val v = args[key]) {
-        is Number -> v.toDouble().toInt()
-        is String -> v.trim().toDoubleOrNull()?.toInt() ?: throw IllegalArgumentException("$key '$v' is not a number")
-        null -> throw IllegalArgumentException("missing $key")
-        else -> v.toString().trim().toDoubleOrNull()?.toInt() ?: throw IllegalArgumentException("$key '$v' is not a number")
+    /**
+     * `7`, `7.0` and `"7"` are 7. A number that is not whole (`1.5`), not finite (`"NaN"`) or outside Int is an
+     * [IllegalArgumentException], so the model is told instead of the tool running with the number cut short.
+     */
+    fun int(args: Map<String, Any?>, key: String): Int {
+        val v = args[key] ?: throw IllegalArgumentException("missing $key")
+        val d = (if (v is Number) v.toDouble() else v.toString().trim().toDoubleOrNull()) ?: throw IllegalArgumentException("$key '$v' is not a number")
+        require(d.isFinite() && d == Math.floor(d)) { "$key '$v' must be a whole number" }
+        require(d >= Int.MIN_VALUE && d <= Int.MAX_VALUE) { "$key '$v' is out of range" }
+        return d.toInt()
     }
 }
