@@ -1,0 +1,127 @@
+{
+ "version": "v1",
+ "f1": {
+  "meal": {
+   "type": "choice",
+   "instructions": "Which meal is the request for?",
+   "criteria": {
+    "any": "no meal named",
+    "breakfast": "breakfast",
+    "lunch": "lunch",
+    "dinner": "dinner",
+    "dessert": "dessert"
+   }
+  },
+  "diet": {
+   "type": "choice",
+   "instructions": "Which diet must the recipes follow?",
+   "criteria": {
+    "any": "no diet named",
+    "vegetarian": "vegetarian",
+    "vegan": "vegan"
+   }
+  },
+  "time": {
+   "type": "choice",
+   "instructions": "How much cooking time is allowed?",
+   "criteria": {
+    "any": "no time limit named",
+    "under_15": "under 15 minutes",
+    "under_30": "under 30 minutes",
+    "under_60": "under an hour"
+   }
+  },
+  "exclude": {
+   "type": "choice",
+   "instructions": "Which ingredient must be left out?",
+   "criteria": {
+    "nothing": "nothing to leave out",
+    "nuts": "no nuts",
+    "dairy": "no dairy",
+    "gluten": "no gluten"
+   }
+  },
+  "spice": {
+   "type": "score",
+   "instructions": "How spicy should the food be?",
+   "criteria": [
+    "not mentioned",
+    "mild",
+    "medium",
+    "hot"
+   ]
+  }
+ },
+ "f1_spice_keys": [
+  "any",
+  "mild",
+  "medium",
+  "hot"
+ ],
+ "f2": {
+  "theme": {
+   "type": "choice",
+   "instructions": "What should happen to the color theme?",
+   "criteria": {
+    "no_change": "no change to the theme",
+    "light": "switch to the light theme",
+    "dark": "switch to the dark theme"
+   }
+  },
+  "text_size": {
+   "type": "choice",
+   "instructions": "What should happen to the text size?",
+   "criteria": {
+    "no_change": "no change to the text size",
+    "smaller": "make the text smaller",
+    "larger": "make the text larger"
+   }
+  },
+  "timer": {
+   "type": "choice",
+   "instructions": "Which timer should be started?",
+   "criteria": {
+    "no_change": "no timer",
+    "5": "a 5 minute timer",
+    "10": "a 10 minute timer",
+    "15": "a 15 minute timer",
+    "30": "a 30 minute timer",
+    "60": "a 60 minute timer"
+   }
+  },
+  "volume": {
+   "type": "choice",
+   "instructions": "What should happen to the volume?",
+   "criteria": {
+    "no_change": "no change to the volume",
+    "mute": "mute the sound",
+    "lower": "turn the volume down",
+    "higher": "turn the volume up"
+   }
+  },
+  "dnd": {
+   "type": "choice",
+   "instructions": "What should happen to do not disturb?",
+   "criteria": {
+    "no_change": "no change to do not disturb",
+    "on": "turn do not disturb on",
+    "off": "turn do not disturb off"
+   }
+  }
+ },
+ "f3": {
+  "route": {
+   "type": "choice",
+   "instructions": "What does this notification need from you?",
+   "criteria": {
+    "hold": "nothing from you: news, an ad, a receipt, a code, a delivery or payment update, or chat",
+    "ask": "someone asks you to do something or asks you a question",
+    "plan": "someone sets a time or a place to meet"
+   }
+  }
+ },
+ "f3_pass": [
+  "ask",
+  "plan"
+ ]
+}
