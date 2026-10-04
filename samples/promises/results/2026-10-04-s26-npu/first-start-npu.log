@@ -1,0 +1,149 @@
+--------- beginning of main
+10-04 14:01:31.628  2179  2179 I promises: load variant=s128_npu_wfp16 policy=Require(backend=NPU) fallback=null backend_extra=npu npu_runtime=true network=Offline
+10-04 14:01:31.635  2179  2302 I hfmodels: resolve litert-community/GLiNER2.5-Decide-LiteRT: commit=db801972 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=7212d850
+10-04 14:01:32.284  2179  2302 I hfmodels: imported gliner25_decide_s128_npu_split_fc1_wfp16.tflite: 660302784 bytes, sha256 ok, from /storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.promises/files/gliner25_decide_s128_npu_split_fc1_wfp16.tflite
+10-04 14:01:32.284  2179  2179 I hfmodels: side-loaded gliner25_decide_s128_npu_split_fc1_wfp16.tflite from /storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.promises/files/gliner25_decide_s128_npu_split_fc1_wfp16.tflite (sha256 verified)
+10-04 14:01:32.554  2179  2303 I hfmodels: tokenizer tokenizer.json: 128011 tokens (Unigram), load_ms=263
+10-04 14:01:32.556  2179  2352 I litert  : [litert_runtime_builtin.cc:63] Loaded runtime library and found kLiteRtRuntimeBuiltin.
+10-04 14:01:32.556  2179  2352 I litert  : [environment.cc:36] Creating LiteRT environment with options
+10-04 14:01:32.556  2179  2352 I litert  : [accelerator_registry.cc:54] RegisterAccelerator: ptr=0xb400007022843790, name=NpuAccelerator
+10-04 14:01:32.556  2179  2352 I litert  : [npu_registry.cc:30] NPU accelerator registered.
+10-04 14:01:32.556  2179  2352 I litert  : [gpu_registry.cc:101] Attempting to load GPU accelerator(libLiteRtGpuAccelerator.so).
+10-04 14:01:32.556  2179  2352 I litert  : [gpu_registry.cc:101] Attempting to load GPU accelerator(libLiteRtClGlAccelerator.so).
+10-04 14:01:32.557  2179  2352 I litert  : [accelerator_registry.cc:54] RegisterAccelerator: ptr=0xb4000070228451d0, name=LiteRT GPU
+10-04 14:01:32.557  2179  2352 I litert  : [gpu_registry.cc:109] Dynamically loaded GPU accelerator(libLiteRtClGlAccelerator.so) registered.
+10-04 14:01:32.557  2179  2352 I litert  : [accelerator_registry.cc:54] RegisterAccelerator: ptr=0xb400007022843550, name=CpuAccelerator
+10-04 14:01:32.557  2179  2352 I litert  : [cpu_registry.cc:75] XNNPACK CPU accelerator registered.
+10-04 14:01:32.562  2179  2352 I litert  : [compiled_model.cc:754] NPU JIT compilation caching enabled with cache dir: /data/user/0/io.github.johnrocky.hfmodels.samples.promises/cache
+10-04 14:01:32.562  2179  2352 I litert  : [compiler_plugin.cc:308] Attempting to load plugin at: /data/app/~~7HWkHZyQcQrFmwpW-71m_Q==/io.github.johnrocky.hfmodels.samples.promises-n8eKnp7WCer8mEjdrc_AbA==/lib/arm64/libLiteRtCompilerPlugin_Qualcomm.so
+10-04 14:01:32.562  2179  2352 I litert  : [compiler_plugin.cc:250] Loading plugin at: /data/app/~~7HWkHZyQcQrFmwpW-71m_Q==/io.github.johnrocky.hfmodels.samples.promises-n8eKnp7WCer8mEjdrc_AbA==/lib/arm64/libLiteRtCompilerPlugin_Qualcomm.so
+10-04 14:01:32.567  2179  2352 I litert  : [compiler_plugin.cc:260] Loaded plugin at: /data/app/~~7HWkHZyQcQrFmwpW-71m_Q==/io.github.johnrocky.hfmodels.samples.promises-n8eKnp7WCer8mEjdrc_AbA==/lib/arm64/libLiteRtCompilerPlugin_Qualcomm.so
+10-04 14:01:32.567  2179  2352 I litert  : [compiler_plugin.cc:263] Resolved plugin api at: /data/app/~~7HWkHZyQcQrFmwpW-71m_Q==/io.github.johnrocky.hfmodels.samples.promises-n8eKnp7WCer8mEjdrc_AbA==/lib/arm64/libLiteRtCompilerPlugin_Qualcomm.so
+10-04 14:01:32.567  2179  2352 I litert  : [common.h:160] 
+10-04 14:01:32.567  2179  2352 I litert  : 
+10-04 14:01:32.567  2179  2352 I litert  : +------------------------------------------+
+10-04 14:01:32.567  2179  2352 I litert  : |              ::qnn::Options              |
+10-04 14:01:32.567  2179  2352 I litert  : +------------------------------------------+
+10-04 14:01:32.567  2179  2352 I litert  : [GENERAL]
+10-04 14:01:32.567  2179  2352 I litert  :   LogLevel                 : Info(3)
+10-04 14:01:32.567  2179  2352 I litert  :   BackendType              : Htp(2)
+10-04 14:01:32.567  2179  2352 I litert  :   Profiling                : Off(0)
+10-04 14:01:32.567  2179  2352 I litert  :   UseInt64BiasAsInt32      : true
+10-04 14:01:32.567  2179  2352 I litert  :   EnableWeightSharing      : false
+10-04 14:01:32.567  2179  2352 I litert  :   EnableJustInTime         : false
+10-04 14:01:32.567  2179  2352 I litert  :   GraphPriority            : Default(0)
+10-04 14:01:32.567  2179  2352 I litert  :   GraphIOTensorMemType     : MemHandle(1)
+10-04 14:01:32.567  2179  2352 I litert  :   CustomOpPackage          :
+10-04 14:01:32.567  2179  2352 I litert  :     name                   :
+10-04 14:01:32.567  2179  2352 I litert  :     interface_provider     :
+10-04 14:01:32.567  2179  2352 I litert  :     compile_package_path   :
+10-04 14:01:32.567  2179  2352 I litert  :     dispatch_package_path  :
+10-04 14:01:32.567  2179  2352 I litert  :     target                 :
+10-04 14:01:32.567  2179  2352 I litert  : [HTP]
+10-04 14:01:32.567  2179  2352 I litert  :   UseConvHMX               : true
+10-04 14:01:32.567  2179  2352 I litert  :   UseFoldReLU              : true
+10-04 14:01:32.567  2179  2352 I litert  :   HtpDlbc                  : false
+10-04 14:01:32.567  2179  2352 I litert  :   HtpDlbcWeights           : false
+10-04 14:01:32.567  2179  2352 I litert  :   HtpPPoint                : 0
+10-04 14:01:32.567  2179  2352 I litert  :   HtpPerformanceMode       : Burst(2)
+10-04 14:01:32.567  2179  2352 I litert  :   HtpPerfCtrlMode          : Manual(0)
+10-04 14:01:32.567  2179  2352 I litert  :   VtcmSize                 : 0
+10-04 14:01:32.567  2179  2352 I litert  :   NumHvxThreads            : 0
+10-04 14:01:32.567  2179  2352 I litert  :   OptimizationLevel        : HtpOptimizeForInferenceO3(2)
+10-04 14:01:32.567  2179  2352 I litert  : [IR]
+10-04 14:01:32.567  2179  2352 I litert  :   IrJsonDir    
+10-04 14:01:32.567  2179  2352 I litert  : [qnn_manager.cc:488] Adding shared library dir to path: /data/app/~~7HWkHZyQcQrFmwpW-71m_Q==/io.github.johnrocky.hfmodels.samples.promises-n8eKnp7WCer8mEjdrc_AbA==/lib/arm64
+10-04 14:01:32.567  2179  2352 I litert  : [dynamic_loading.cc:143] Adding /data/app/~~7HWkHZyQcQrFmwpW-71m_Q==/io.github.johnrocky.hfmodels.samples.promises-n8eKnp7WCer8mEjdrc_AbA==/lib/arm64 to LD_LIBRARY_PATH
+10-04 14:01:32.567  2179  2352 I litert  : [qnn_manager.cc:175] Loading qnn system shared library from "/data/app/~~7HWkHZyQcQrFmwpW-71m_Q==/io.github.johnrocky.hfmodels.samples.promises-n8eKnp7WCer8mEjdrc_AbA==/lib/arm64/libQnnSystem.so"
+10-04 14:01:32.567  2179  2352 I litert  : [qnn_manager.cc:142] Loading qnn shared library from "libQnnHtp.so"
+10-04 14:01:32.567  2179  2352 I litert  : [qnn_manager.cc:165] Loaded qnn shared library
+10-04 14:01:32.567  2179  2352 I litert  : [compiler_plugin.cc:268] Initialize plugin at: /data/app/~~7HWkHZyQcQrFmwpW-71m_Q==/io.github.johnrocky.hfmodels.samples.promises-n8eKnp7WCer8mEjdrc_AbA==/lib/arm64/libLiteRtCompilerPlugin_Qualcomm.so
+10-04 14:01:32.631  2179  2352 I litert  : [compiler_plugin.cc:947] Applying plugin with SDK version: v2.47.0.260601114230
+10-04 14:01:32.631  2179  2352 I litert  : [compiler_plugin.cc:928] Registered 0 transformations.
+10-04 14:01:32.632  2179  2352 I litert  : [compiler_plugin.cc:935] Applied transformations.
+10-04 14:01:32.765  2179  2352 I litert  : [compiler_plugin.cc:523] Partition strategy: 0
+10-04 14:01:32.771  2179  2352 I litert  : [compiler_plugin.cc:741] Partitioned subgraph<0>, selected 1874 ops, from a total of 1874 ops. resulted in 1 partitions.
+10-04 14:01:32.772  2179  2352 I litert  : [qnn_compiler_plugin.cc:530] Starting QNN Compilation for 1 subgraphs, soc_model=(null)
+10-04 14:01:32.772  2179  2352 I litert  : [qnn_compiler_plugin.cc:626] Creating context handle
+10-04 14:01:32.772  2179  2352 I litert  : [qnn_compiler_plugin.cc:659] Context handle created
+10-04 14:01:32.772  2179  2352 I litert  : [qnn_compiler_plugin.cc:674] Composing graph
+10-04 14:01:32.772  2179  2352 I litert  : [qnn_compiler_plugin.cc:678] Entry point name: qnn_partition_0
+10-04 14:01:50.406  2179  2352 I litert  : [qnn_compiler_plugin.cc:688] Graph composed
+10-04 14:01:50.406  2179  2352 I litert  : [qnn_compiler_plugin.cc:729] Generating context binary
+10-04 14:01:50.833  2179  2352 I litert  : [qnn_manager.cc:398] Serialized a context bin of size (bytes): 641011712
+10-04 14:01:50.833  2179  2352 I litert  : [qnn_compiler_plugin.cc:732] Context binary 0 generated
+10-04 14:01:51.144  2179  2352 I litert  : [compiled_model.cc:1250] 1 compiler plugins were applied successfully: Qualcomm compiler plugin (ver 0.1.0)
+10-04 14:01:51.144  2179  2352 I litert  : [compiled_model.cc:1264] JIT compilation changed model, reserializing...
+10-04 14:01:51.705  2179  2352 I tflite  : Initialized TensorFlow Lite runtime.
+10-04 14:01:51.705  2179  2352 I litert  : [litert_dispatch.cc:159] Loading shared library: /data/app/~~7HWkHZyQcQrFmwpW-71m_Q==/io.github.johnrocky.hfmodels.samples.promises-n8eKnp7WCer8mEjdrc_AbA==/lib/arm64/libLiteRtDispatch_Qualcomm.so
+10-04 14:01:51.707  2179  2352 I litert  : [common.h:160] 
+10-04 14:01:51.707  2179  2352 I litert  : 
+10-04 14:01:51.707  2179  2352 I litert  : +------------------------------------------+
+10-04 14:01:51.707  2179  2352 I litert  : |              ::qnn::Options              |
+10-04 14:01:51.707  2179  2352 I litert  : +------------------------------------------+
+10-04 14:01:51.707  2179  2352 I litert  : [GENERAL]
+10-04 14:01:51.707  2179  2352 I litert  :   LogLevel                 : Info(3)
+10-04 14:01:51.707  2179  2352 I litert  :   BackendType              : Htp(2)
+10-04 14:01:51.707  2179  2352 I litert  :   Profiling                : Off(0)
+10-04 14:01:51.707  2179  2352 I litert  :   UseInt64BiasAsInt32      : true
+10-04 14:01:51.707  2179  2352 I litert  :   EnableWeightSharing      : false
+10-04 14:01:51.707  2179  2352 I litert  :   EnableJustInTime         : false
+10-04 14:01:51.707  2179  2352 I litert  :   GraphPriority            : Default(0)
+10-04 14:01:51.707  2179  2352 I litert  :   GraphIOTensorMemType     : MemHandle(1)
+10-04 14:01:51.707  2179  2352 I litert  :   CustomOpPackage          :
+10-04 14:01:51.707  2179  2352 I litert  :     name                   :
+10-04 14:01:51.707  2179  2352 I litert  :     interface_provider     :
+10-04 14:01:51.707  2179  2352 I litert  :     compile_package_path   :
+10-04 14:01:51.707  2179  2352 I litert  :     dispatch_package_path  :
+10-04 14:01:51.707  2179  2352 I litert  :     target                 :
+10-04 14:01:51.707  2179  2352 I litert  : [HTP]
+10-04 14:01:51.707  2179  2352 I litert  :   UseConvHMX               : true
+10-04 14:01:51.707  2179  2352 I litert  :   UseFoldReLU              : true
+10-04 14:01:51.707  2179  2352 I litert  :   HtpDlbc                  : false
+10-04 14:01:51.707  2179  2352 I litert  :   HtpDlbcWeights           : false
+10-04 14:01:51.707  2179  2352 I litert  :   HtpPPoint                : 0
+10-04 14:01:51.707  2179  2352 I litert  :   HtpPerformanceMode       : Burst(2)
+10-04 14:01:51.707  2179  2352 I litert  :   HtpPerfCtrlMode          : Manual(0)
+10-04 14:01:51.707  2179  2352 I litert  :   VtcmSize                 : 0
+10-04 14:01:51.707  2179  2352 I litert  :   NumHvxThreads            : 0
+10-04 14:01:51.707  2179  2352 I litert  :   OptimizationLevel        : HtpOptimizeForInferenceO3(2)
+10-04 14:01:51.707  2179  2352 I litert  : [IR]
+10-04 14:01:51.707  2179  2352 I litert  :   IrJsonDir    
+10-04 14:01:51.707  2179  2352 I litert  : [qnn_manager.cc:488] Adding shared library dir to path: /data/app/~~7HWkHZyQcQrFmwpW-71m_Q==/io.github.johnrocky.hfmodels.samples.promises-n8eKnp7WCer8mEjdrc_AbA==/lib/arm64
+10-04 14:01:51.707  2179  2352 I litert  : [dynamic_loading.cc:132] dir already in LD_LIBRARY_PATH
+10-04 14:01:51.707  2179  2352 I litert  : [qnn_manager.cc:175] Loading qnn system shared library from "/data/app/~~7HWkHZyQcQrFmwpW-71m_Q==/io.github.johnrocky.hfmodels.samples.promises-n8eKnp7WCer8mEjdrc_AbA==/lib/arm64/libQnnSystem.so"
+10-04 14:01:51.707  2179  2352 I litert  : [qnn_manager.cc:142] Loading qnn shared library from "libQnnHtp.so"
+10-04 14:01:51.707  2179  2352 I litert  : [qnn_manager.cc:165] Loaded qnn shared library
+10-04 14:01:51.710  2179  2352 I tflite  : Replacing 1 out of 1 node(s) with delegate (DispatchDelegate) node, yielding 1 partitions for subgraph 0 (main).
+10-04 14:01:51.711  2179  2352 I litert  : [context_binary_info.cc:231] Context binary SDK version matches current SDK: 2.47.0
+10-04 14:01:51.711  2179  2352 I litert  : [context_binary_info.cc:112] Found qnn graph: qnn_partition_0
+10-04 14:01:51.711  2179  2352 I litert  : [litert_dispatch_device_context.cc:248] Creating new QNN context for bytecode 0xb400006c69941000 (size 641011712)
+10-04 14:01:51.814  2179  2352 I tflite  : Created TensorFlow Lite XNNPACK delegate for CPU.
+10-04 14:01:51.816  2179  2179 I hfmodels: ready litert-community/GLiNER2.5-Decide-LiteRT@db801972 variant=s128_npu_wfp16 profile=npu inference=NPU prepare_ms=19527
+10-04 14:01:51.832  2179  2352 I litert  : [environment.cc:36] Creating LiteRT environment with options
+10-04 14:01:51.832  2179  2352 W litert  : [npu_registry.cc:34] NPU accelerator could not be loaded and registered: kLiteRtStatusErrorInvalidArgument.
+10-04 14:01:51.832  2179  2352 I litert  : [gpu_registry.cc:101] Attempting to load GPU accelerator(libLiteRtGpuAccelerator.so).
+10-04 14:01:51.832  2179  2352 I litert  : [gpu_registry.cc:101] Attempting to load GPU accelerator(libLiteRtClGlAccelerator.so).
+10-04 14:01:51.832  2179  2352 I litert  : [accelerator_registry.cc:54] RegisterAccelerator: ptr=0xb4000070228cb690, name=LiteRT GPU
+10-04 14:01:51.832  2179  2352 I litert  : [gpu_registry.cc:109] Dynamically loaded GPU accelerator(libLiteRtClGlAccelerator.so) registered.
+10-04 14:01:51.832  2179  2352 I litert  : [accelerator_registry.cc:54] RegisterAccelerator: ptr=0xb4000070228cb090, name=CpuAccelerator
+10-04 14:01:51.832  2179  2352 I litert  : [cpu_registry.cc:75] XNNPACK CPU accelerator registered.
+10-04 14:01:51.863  2179  2179 I promises: ready model=litert-community/GLiNER2.5-Decide-LiteRT@db801972 variant=s128_npu_wfp16 profile=npu load_ms=20234 warmup_ms=46.472292 fallback=[] npu_failure=null notes=family=gliner2_decide compile_ms=19261 on npu (Qualcomm HTP V81, JIT, burst; the first compile on a phone takes tens of seconds, later loads read the cache) | observed backend is UNKNOWN: litert 2.2.0 reports no per-op execution target; 'initialized' is the accelerator the CompiledModel was created with | host token lookup: word_embeddings_fp16.bin (float16, 128011 rows x 1024) feeds inputs_embeds | one gliner2 task per question (task 'answer', the instructions as its prompt, the options as labels); a request longer than the 128-token window or with more than 32 labels is refused, never cut; probabilities are gliner2's single-label float32 softmax of the label logits (T=1)
+10-04 14:01:54.914  2179  2179 I promises: i=0 answer=request p=0.5887420177459717 ms=34.817917 question_ms=34.027552 tokens=10 expected=request sender=Them text="Can you bring the folding chairs to the party?"
+10-04 14:01:54.948  2179  2179 I promises: i=1 answer=promise p=0.39117398858070374 ms=32.489375 question_ms=31.416979 tokens=18 expected=promise sender=You text="Don't worry, I'll pick up the cake on my way home."
+10-04 14:01:54.981  2179  2179 I promises: i=2 answer=plan p=0.7114405632019043 ms=32.117917 question_ms=31.027345 tokens=17 expected=plan sender=You text="So it's dinner at your place on the 12th at 7, right?"
+10-04 14:01:55.015  2179  2179 I promises: i=3 answer=nothing p=0.8506577014923096 ms=31.947865 question_ms=31.42198 tokens=7 expected=nothing sender=Them text="That concert was way too loud."
+10-04 14:01:55.048  2179  2179 I promises: i=4 answer=promise p=0.38451674580574036 ms=31.707917 question_ms=31.011146 tokens=10 expected=promise sender=You text="I'll send you the photos tonight."
+10-04 14:01:55.080  2179  2179 I promises: i=5 answer=nothing p=0.3829794228076935 ms=30.585104 question_ms=30.012291 tokens=8 expected=nothing sender=Them text="Ugh, the train is late again."
+10-04 14:01:55.110  2179  2179 I promises: i=6 answer=request p=0.5322180986404419 ms=29.969375 question_ms=29.423334 tokens=9 expected=request sender=Them text="Text me when you get home, please."
+10-04 14:01:55.143  2179  2179 I promises: i=7 answer=promise p=0.4032984673976898 ms=31.022761 question_ms=30.279218 tokens=14 expected=promise sender=You text="I'll bring your charger back next time I see you."
+10-04 14:01:55.179  2179  2179 I promises: i=8 answer=nothing p=0.7358078956604004 ms=34.064583 question_ms=32.996823 tokens=12 expected=nothing sender=Them text="That trip when the car broke down still makes me laugh."
+10-04 14:01:55.219  2179  2179 I promises: i=9 answer=promise p=0.6633381843566895 ms=37.550469 question_ms=34.921146 tokens=16 expected=promise sender=You text="I promise I'll pay you back at the end of the month."
+10-04 14:01:55.256  2179  2179 I promises: i=10 answer=request p=0.6811638474464417 ms=36.439479 question_ms=35.037343 tokens=7 expected=request sender=Them text="Could you feed the cat tonight?"
+10-04 14:01:55.295  2179  2179 I promises: i=11 answer=request p=0.5814656019210815 ms=36.687291 question_ms=34.848385 tokens=11 expected=request sender=Them text="Can you pick up some milk on your way back?"
+10-04 14:01:55.334  2179  2179 I promises: i=12 answer=nothing p=0.39620915055274963 ms=36.57901 question_ms=35.351874 tokens=8 expected=nothing sender=You text="I'm making coffee right now."
+10-04 14:01:55.374  2179  2179 I promises: i=13 answer=plan p=0.7251359820365906 ms=37.525052 question_ms=35.488333 tokens=11 expected=plan sender=Them text="Great, the park at noon this weekend it is."
+10-04 14:01:55.414  2179  2179 I promises: i=14 answer=nothing p=0.9038740396499634 ms=37.575625 question_ms=35.649322 tokens=9 expected=nothing sender=You text="The new cafe downstairs has really good bread."
+10-04 14:01:55.452  2179  2179 I promises: i=15 answer=plan p=0.6087691187858582 ms=35.649636 question_ms=33.658384999999996 tokens=13 expected=plan sender=You text="Let's meet at the station at 6:30 tonight."
+10-04 14:01:55.459  2179  2179 I promises: DONE source=sample n=16 nothing=5 promise=4 request=4 plan=3 too_long=0 expected_agree=16/16 ms_median=34.817917 ms_p90=37.550469 question_ms_median=33.658384999999996 total_ms=575.568542 sentences_per_second=27.798600570494695 thermal=1->1 headroom=0.8666666746139526->0.8666666746139526 profile=npu file=/storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.promises/files/promises-result-1791090115.json
+10-04 14:01:55.466  2179  2179 I promises: TAP x=968 y=1849 visible=true text="So it's dinner at your place on the 12th at 7, right?"

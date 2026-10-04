@@ -1,0 +1,112 @@
+--------- beginning of main
+10-04 14:07:50.352  4549  4586 I hfmodels: resolve litert-community/GLiNER2.5-Decide-LiteRT: commit=db801972 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=7212d850
+10-04 14:07:50.871  4549  4586 I hfmodels: tokenizer tokenizer.json: 128011 tokens (Unigram), load_ms=504
+10-04 14:07:50.879  4549  4589 I litert  : [litert_runtime_builtin.cc:63] Loaded runtime library and found kLiteRtRuntimeBuiltin.
+10-04 14:07:50.879  4549  4589 I litert  : [environment.cc:36] Creating LiteRT environment with options
+10-04 14:07:50.880  4549  4589 I litert  : [accelerator_registry.cc:54] RegisterAccelerator: ptr=0xb40000702282df50, name=NpuAccelerator
+10-04 14:07:50.880  4549  4589 I litert  : [npu_registry.cc:30] NPU accelerator registered.
+10-04 14:07:50.880  4549  4589 I litert  : [gpu_registry.cc:101] Attempting to load GPU accelerator(libLiteRtGpuAccelerator.so).
+10-04 14:07:50.880  4549  4589 I litert  : [gpu_registry.cc:101] Attempting to load GPU accelerator(libLiteRtClGlAccelerator.so).
+10-04 14:07:50.885  4549  4589 I litert  : [accelerator_registry.cc:54] RegisterAccelerator: ptr=0xb40000702282e4f0, name=LiteRT GPU
+10-04 14:07:50.885  4549  4589 I litert  : [gpu_registry.cc:109] Dynamically loaded GPU accelerator(libLiteRtClGlAccelerator.so) registered.
+10-04 14:07:50.885  4549  4589 I litert  : [accelerator_registry.cc:54] RegisterAccelerator: ptr=0xb40000702282e550, name=CpuAccelerator
+10-04 14:07:50.885  4549  4589 I litert  : [cpu_registry.cc:75] XNNPACK CPU accelerator registered.
+10-04 14:07:50.913  4549  4589 I litert  : [compiled_model.cc:754] NPU JIT compilation caching enabled with cache dir: /data/user/0/io.github.johnrocky.hfmodels.samples.promises/cache
+10-04 14:07:50.913  4549  4589 I litert  : [compiler_plugin.cc:308] Attempting to load plugin at: /data/app/~~7HWkHZyQcQrFmwpW-71m_Q==/io.github.johnrocky.hfmodels.samples.promises-n8eKnp7WCer8mEjdrc_AbA==/lib/arm64/libLiteRtCompilerPlugin_Qualcomm.so
+10-04 14:07:50.913  4549  4589 I litert  : [compiler_plugin.cc:250] Loading plugin at: /data/app/~~7HWkHZyQcQrFmwpW-71m_Q==/io.github.johnrocky.hfmodels.samples.promises-n8eKnp7WCer8mEjdrc_AbA==/lib/arm64/libLiteRtCompilerPlugin_Qualcomm.so
+10-04 14:07:50.935  4549  4589 I litert  : [compiler_plugin.cc:260] Loaded plugin at: /data/app/~~7HWkHZyQcQrFmwpW-71m_Q==/io.github.johnrocky.hfmodels.samples.promises-n8eKnp7WCer8mEjdrc_AbA==/lib/arm64/libLiteRtCompilerPlugin_Qualcomm.so
+10-04 14:07:50.935  4549  4589 I litert  : [compiler_plugin.cc:263] Resolved plugin api at: /data/app/~~7HWkHZyQcQrFmwpW-71m_Q==/io.github.johnrocky.hfmodels.samples.promises-n8eKnp7WCer8mEjdrc_AbA==/lib/arm64/libLiteRtCompilerPlugin_Qualcomm.so
+10-04 14:07:50.935  4549  4589 I litert  : [common.h:160] 
+10-04 14:07:50.935  4549  4589 I litert  : 
+10-04 14:07:50.935  4549  4589 I litert  : +------------------------------------------+
+10-04 14:07:50.935  4549  4589 I litert  : |              ::qnn::Options              |
+10-04 14:07:50.935  4549  4589 I litert  : +------------------------------------------+
+10-04 14:07:50.935  4549  4589 I litert  : [GENERAL]
+10-04 14:07:50.935  4549  4589 I litert  :   LogLevel                 : Info(3)
+10-04 14:07:50.935  4549  4589 I litert  :   BackendType              : Htp(2)
+10-04 14:07:50.935  4549  4589 I litert  :   Profiling                : Off(0)
+10-04 14:07:50.935  4549  4589 I litert  :   UseInt64BiasAsInt32      : true
+10-04 14:07:50.935  4549  4589 I litert  :   EnableWeightSharing      : false
+10-04 14:07:50.935  4549  4589 I litert  :   EnableJustInTime         : false
+10-04 14:07:50.935  4549  4589 I litert  :   GraphPriority            : Default(0)
+10-04 14:07:50.935  4549  4589 I litert  :   GraphIOTensorMemType     : MemHandle(1)
+10-04 14:07:50.935  4549  4589 I litert  :   CustomOpPackage          :
+10-04 14:07:50.935  4549  4589 I litert  :     name                   :
+10-04 14:07:50.935  4549  4589 I litert  :     interface_provider     :
+10-04 14:07:50.935  4549  4589 I litert  :     compile_package_path   :
+10-04 14:07:50.935  4549  4589 I litert  :     dispatch_package_path  :
+10-04 14:07:50.935  4549  4589 I litert  :     target                 :
+10-04 14:07:50.935  4549  4589 I litert  : [HTP]
+10-04 14:07:50.935  4549  4589 I litert  :   UseConvHMX               : true
+10-04 14:07:50.935  4549  4589 I litert  :   UseFoldReLU              : true
+10-04 14:07:50.935  4549  4589 I litert  :   HtpDlbc                  : false
+10-04 14:07:50.935  4549  4589 I litert  :   HtpDlbcWeights           : false
+10-04 14:07:50.935  4549  4589 I litert  :   HtpPPoint                : 0
+10-04 14:07:50.935  4549  4589 I litert  :   HtpPerformanceMode       : Burst(2)
+10-04 14:07:50.935  4549  4589 I litert  :   HtpPerfCtrlMode          : Manual(0)
+10-04 14:07:50.935  4549  4589 I litert  :   VtcmSize                 : 0
+10-04 14:07:50.935  4549  4589 I litert  :   NumHvxThreads            : 0
+10-04 14:07:50.935  4549  4589 I litert  :   OptimizationLevel        : HtpOptimizeForInferenceO3(2)
+10-04 14:07:50.935  4549  4589 I litert  : [IR]
+10-04 14:07:50.935  4549  4589 I litert  :   IrJsonDir    
+10-04 14:07:50.935  4549  4589 I litert  : [qnn_manager.cc:488] Adding shared library dir to path: /data/app/~~7HWkHZyQcQrFmwpW-71m_Q==/io.github.johnrocky.hfmodels.samples.promises-n8eKnp7WCer8mEjdrc_AbA==/lib/arm64
+10-04 14:07:50.936  4549  4589 I litert  : [dynamic_loading.cc:143] Adding /data/app/~~7HWkHZyQcQrFmwpW-71m_Q==/io.github.johnrocky.hfmodels.samples.promises-n8eKnp7WCer8mEjdrc_AbA==/lib/arm64 to LD_LIBRARY_PATH
+10-04 14:07:50.936  4549  4589 I litert  : [qnn_manager.cc:175] Loading qnn system shared library from "/data/app/~~7HWkHZyQcQrFmwpW-71m_Q==/io.github.johnrocky.hfmodels.samples.promises-n8eKnp7WCer8mEjdrc_AbA==/lib/arm64/libQnnSystem.so"
+10-04 14:07:50.936  4549  4589 I litert  : [qnn_manager.cc:142] Loading qnn shared library from "libQnnHtp.so"
+10-04 14:07:50.936  4549  4589 I litert  : [qnn_manager.cc:165] Loaded qnn shared library
+10-04 14:07:50.936  4549  4589 I litert  : [compiler_plugin.cc:268] Initialize plugin at: /data/app/~~7HWkHZyQcQrFmwpW-71m_Q==/io.github.johnrocky.hfmodels.samples.promises-n8eKnp7WCer8mEjdrc_AbA==/lib/arm64/libLiteRtCompilerPlugin_Qualcomm.so
+10-04 14:07:51.722  4549  4589 I litert  : [compiled_model.cc:1233] Flatbuffer model initialized from cached model.
+10-04 14:07:51.727  4549  4589 I tflite  : Initialized TensorFlow Lite runtime.
+10-04 14:07:51.727  4549  4589 I litert  : [litert_dispatch.cc:159] Loading shared library: /data/app/~~7HWkHZyQcQrFmwpW-71m_Q==/io.github.johnrocky.hfmodels.samples.promises-n8eKnp7WCer8mEjdrc_AbA==/lib/arm64/libLiteRtDispatch_Qualcomm.so
+10-04 14:07:51.728  4549  4589 I litert  : [common.h:160] 
+10-04 14:07:51.728  4549  4589 I litert  : 
+10-04 14:07:51.728  4549  4589 I litert  : +------------------------------------------+
+10-04 14:07:51.728  4549  4589 I litert  : |              ::qnn::Options              |
+10-04 14:07:51.728  4549  4589 I litert  : +------------------------------------------+
+10-04 14:07:51.728  4549  4589 I litert  : [GENERAL]
+10-04 14:07:51.728  4549  4589 I litert  :   LogLevel                 : Info(3)
+10-04 14:07:51.728  4549  4589 I litert  :   BackendType              : Htp(2)
+10-04 14:07:51.728  4549  4589 I litert  :   Profiling                : Off(0)
+10-04 14:07:51.728  4549  4589 I litert  :   UseInt64BiasAsInt32      : true
+10-04 14:07:51.728  4549  4589 I litert  :   EnableWeightSharing      : false
+10-04 14:07:51.728  4549  4589 I litert  :   EnableJustInTime         : false
+10-04 14:07:51.728  4549  4589 I litert  :   GraphPriority            : Default(0)
+10-04 14:07:51.728  4549  4589 I litert  :   GraphIOTensorMemType     : MemHandle(1)
+10-04 14:07:51.728  4549  4589 I litert  :   CustomOpPackage          :
+10-04 14:07:51.728  4549  4589 I litert  :     name                   :
+10-04 14:07:51.728  4549  4589 I litert  :     interface_provider     :
+10-04 14:07:51.728  4549  4589 I litert  :     compile_package_path   :
+10-04 14:07:51.728  4549  4589 I litert  :     dispatch_package_path  :
+10-04 14:07:51.728  4549  4589 I litert  :     target                 :
+10-04 14:07:51.728  4549  4589 I litert  : [HTP]
+10-04 14:07:51.728  4549  4589 I litert  :   UseConvHMX               : true
+10-04 14:07:51.728  4549  4589 I litert  :   UseFoldReLU              : true
+10-04 14:07:51.728  4549  4589 I litert  :   HtpDlbc                  : false
+10-04 14:07:51.728  4549  4589 I litert  :   HtpDlbcWeights           : false
+10-04 14:07:51.728  4549  4589 I litert  :   HtpPPoint                : 0
+10-04 14:07:51.728  4549  4589 I litert  :   HtpPerformanceMode       : Burst(2)
+10-04 14:07:51.728  4549  4589 I litert  :   HtpPerfCtrlMode          : Manual(0)
+10-04 14:07:51.728  4549  4589 I litert  :   VtcmSize                 : 0
+10-04 14:07:51.728  4549  4589 I litert  :   NumHvxThreads            : 0
+10-04 14:07:51.728  4549  4589 I litert  :   OptimizationLevel        : HtpOptimizeForInferenceO3(2)
+10-04 14:07:51.728  4549  4589 I litert  : [IR]
+10-04 14:07:51.728  4549  4589 I litert  :   IrJsonDir    
+10-04 14:07:51.728  4549  4589 I litert  : [qnn_manager.cc:488] Adding shared library dir to path: /data/app/~~7HWkHZyQcQrFmwpW-71m_Q==/io.github.johnrocky.hfmodels.samples.promises-n8eKnp7WCer8mEjdrc_AbA==/lib/arm64
+10-04 14:07:51.729  4549  4589 I litert  : [dynamic_loading.cc:132] dir already in LD_LIBRARY_PATH
+10-04 14:07:51.729  4549  4589 I litert  : [qnn_manager.cc:175] Loading qnn system shared library from "/data/app/~~7HWkHZyQcQrFmwpW-71m_Q==/io.github.johnrocky.hfmodels.samples.promises-n8eKnp7WCer8mEjdrc_AbA==/lib/arm64/libQnnSystem.so"
+10-04 14:07:51.729  4549  4589 I litert  : [qnn_manager.cc:142] Loading qnn shared library from "libQnnHtp.so"
+10-04 14:07:51.729  4549  4589 I litert  : [qnn_manager.cc:165] Loaded qnn shared library
+10-04 14:07:51.827  4549  4589 I tflite  : Replacing 1 out of 1 node(s) with delegate (DispatchDelegate) node, yielding 1 partitions for subgraph 0 (main).
+10-04 14:07:51.828  4549  4589 I litert  : [context_binary_info.cc:231] Context binary SDK version matches current SDK: 2.47.0
+10-04 14:07:51.828  4549  4589 I litert  : [context_binary_info.cc:112] Found qnn graph: qnn_partition_0
+10-04 14:07:51.828  4549  4589 I litert  : [litert_dispatch_device_context.cc:248] Creating new QNN context for bytecode 0x6cc90b2690 (size 641011712)
+10-04 14:07:51.981  4549  4589 I tflite  : Created TensorFlow Lite XNNPACK delegate for CPU.
+10-04 14:07:51.982  4549  4571 I hfmodels: ready litert-community/GLiNER2.5-Decide-LiteRT@db801972 variant=s128_npu_wfp16 profile=npu inference=NPU prepare_ms=1617
+10-04 14:07:52.010  4549  4589 I litert  : [environment.cc:36] Creating LiteRT environment with options
+10-04 14:07:52.010  4549  4589 W litert  : [npu_registry.cc:34] NPU accelerator could not be loaded and registered: kLiteRtStatusErrorInvalidArgument.
+10-04 14:07:52.010  4549  4589 I litert  : [gpu_registry.cc:101] Attempting to load GPU accelerator(libLiteRtGpuAccelerator.so).
+10-04 14:07:52.011  4549  4589 I litert  : [gpu_registry.cc:101] Attempting to load GPU accelerator(libLiteRtClGlAccelerator.so).
+10-04 14:07:52.011  4549  4589 I litert  : [accelerator_registry.cc:54] RegisterAccelerator: ptr=0xb400007022843a30, name=LiteRT GPU
+10-04 14:07:52.011  4549  4589 I litert  : [gpu_registry.cc:109] Dynamically loaded GPU accelerator(libLiteRtClGlAccelerator.so) registered.
+10-04 14:07:52.011  4549  4589 I litert  : [accelerator_registry.cc:54] RegisterAccelerator: ptr=0xb400007022843c70, name=CpuAccelerator
+10-04 14:07:52.011  4549  4589 I litert  : [cpu_registry.cc:75] XNNPACK CPU accelerator registered.
