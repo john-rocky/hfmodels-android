@@ -146,11 +146,11 @@ class VoiceViewModel(private val app: Application) : AndroidViewModel(app) {
     }
 
     /** Opens the microphone and takes a turn per utterance until [stop]; the button's second press stops it. */
-    fun toggleListen() = if (listenJob?.isActive == true) stop() else listen()
+    fun toggleListen() = if (stillRunning(listenJob)) stop() else listen()
 
     fun listen() {
         val l = loop ?: return load { listen() }
-        if (listenJob?.isActive == true) return
+        if (stillRunning(listenJob)) return
         val mic = MicSource()
         // The record mode writes each turn's utterance: only then is the microphone's last audio kept.
         val t = if (recorder != null) MicTap(mic.sampleRate) else null
@@ -316,3 +316,11 @@ class VoiceViewModel(private val app: Application) : AndroidViewModel(app) {
         private fun q(s: String) = "\"" + s.replace("\n", "\\n").replace("\"", "'") + "\""
     }
 }
+
+/**
+ * Whether a listen still holds the microphone and the loop: until its job has completed, not only while it is active. A
+ * stopped listen is no longer active at once but unwinds for a while (the runtime confirms the model's stop, the
+ * conversation closes, the sentence in synthesis finishes); a listen started meanwhile opens a second microphone, and
+ * the first one's end then shows the screen as idle while the second one listens.
+ */
+internal fun stillRunning(job: Job?): Boolean = job?.isCompleted == false

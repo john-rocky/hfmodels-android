@@ -12,15 +12,20 @@ import io.github.johnrocky.hfmodels.speech.Transcript
 import io.github.johnrocky.hfmodels.speech.TranscriptTiming
 import io.github.johnrocky.hfmodels.voice.VoiceLoop.Event
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -267,6 +272,41 @@ class VoiceLoopTest {
         }
     }
 
+    @Test fun aStoppedListenEndsOnlyOnceItsTurnHasUnwoundAndTheLoopTakesANewListenBefore() {
+        // What an app's microphone button has to count (samples/voice: stillRunning): the job of a stopped listen
+        // completes only once its turn has unwound, and the loop takes a new listen before that, a second microphone.
+        val replyCancelled = CompletableDeferred<Unit>()
+        val stopTakes = CompletableDeferred<Unit>()
+        val loop = Loop(listOf(ToolEvent.Text("Setting it now. ")), transcript = { "SET AN ALARM" }, hangAfterScript = replyCancelled, stopTakes = stopTakes)
+        var opened = 0
+        // 20 ms chunks: silence, half a second of voice, silence; then nothing until cancelled.
+        fun mic() = flow {
+            opened++
+            for (i in 0 until 100) {
+                val level = if (i in 25 until 50) 0.1f else 0f
+                emit(FloatArray(320) { k -> if (k % 2 == 0) level else -level })
+            }
+            awaitCancellation()
+        }
+        runBlocking {
+            val events = ArrayList<Event>()
+            val first = launch { loop.engine.listen(mic()).collect { e -> events += e } }
+            while (events.none { it is Event.Speaking }) delay(1)
+            first.cancel()
+            try {
+                assertFalse(first.isActive)
+                assertFalse(first.isCompleted)
+                withTimeout(5_000) { while (runCatching { loop.engine.listen(mic()).first() }.isFailure) delay(1) }
+                assertEquals(2, opened)
+                assertFalse(first.isCompleted)
+            } finally {
+                stopTakes.complete(Unit)
+            }
+            first.join()
+            assertTrue(replyCancelled.isCompleted)
+        }
+    }
+
     /** The engine with a scripted reply, a speaker and a player that record, and an optional transcriber. */
     private class Loop(
         private val script: List<ToolEvent>,
@@ -274,6 +314,8 @@ class VoiceLoopTest {
         private val slowTranscriber: Boolean = false,
         /** Set: after the script the reply hangs until cancelled, then completes this. */
         private val hangAfterScript: CompletableDeferred<Unit>? = null,
+        /** Set: a cancelled reply stops only once this completes, as a model whose stop the runtime confirms later. */
+        private val stopTakes: CompletableDeferred<Unit>? = null,
         config: VoiceLoopConfig = VoiceLoopConfig(),
         actions: Set<String> = emptySet(),
         /** The first request waits this long before its script. */
@@ -325,7 +367,14 @@ class VoiceLoopTest {
             requestTexts += text
             if (requests == 1 && firstReplyDelayMs > 0) delay(firstReplyDelayMs)
             for (e in script) emit(e)
-            hangAfterScript?.let { done -> try { awaitCancellation() } finally { done.complete(Unit) } }
+            hangAfterScript?.let { done ->
+                try {
+                    awaitCancellation()
+                } finally {
+                    stopTakes?.let { withContext(NonCancellable) { it.await() } }
+                    done.complete(Unit)
+                }
+            }
         }
 
         val engine = LoopEngine(transcriber, speaker, ::reply, config, PlayerPort(
