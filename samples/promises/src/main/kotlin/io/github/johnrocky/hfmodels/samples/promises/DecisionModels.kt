@@ -24,11 +24,12 @@ import org.json.JSONObject
  * `s128_wfp16` (a 128-token window, float16 weights) on the descriptor's default profile, the GPU with the CPU as
  * the fallback; in an app that packages Qualcomm's runtime, variant `s128_npu_wfp16` on the NPU first ([choose]).
  * The development descriptor (catalog/dev, an asset of this app) goes in as `LoadOptions.descriptorJson`; the
- * repo's own hfmodels.json carries `s128_npu_wfp16` too since f6f6e9c9. The descriptor pins the commit, so a load
- * whose files are cached makes no network request. The first load downloads 0.93 GB into the app's private
+ * repo's own hfmodels.json carries `s128_npu_wfp16` too since f6f6e9c9. The descriptor pins the commit (600fe62b), so
+ * a load whose files are cached makes no network request. The first load downloads 0.93 GB into the app's private
  * storage and verifies every file's sha256; a copy pushed to the app's external files dir
  * (`adb push <file> /sdcard/Android/data/<applicationId>/files/`) is imported instead. The NPU variant's graph is
- * on the Hub at the pinned commit (f6f6e9c9) like the other files: downloaded when the app has no copy, or pushed.
+ * on the Hub at the pinned commit like the other files: downloaded when the app has no copy, or pushed. The device
+ * records in the README ran at db801972 and 310090c3; the files they loaded have the same bytes at 600fe62b.
  */
 class DecisionModels(context: Context) {
     private val app = context.applicationContext

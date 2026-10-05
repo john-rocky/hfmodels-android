@@ -93,7 +93,7 @@ If the NPU load fails with one of the codes in `DecisionModels.BACKEND_ERRORS`, 
 
 `--es backend npu`, `gpu` or `cpu` on the start that creates the screen fixes the backend, with no fallback; `gpu` and `cpu` load `s128_wfp16`. A running screen keeps its model, so force-stop the app first.
 
-The graph of `s128_npu_wfp16` is on the Hub at the commit the descriptor pins (f6f6e9c9, `gliner25_decide_s128_npu_wfp16.tflite`, 660 MB, the same bytes since 310090c3). When the app has no copy, the first NPU load downloads it; a pushed copy is imported instead, after the SDK checks its sha256 against the descriptor:
+The graph of `s128_npu_wfp16` is on the Hub at the commit the descriptor pins (600fe62b, `gliner25_decide_s128_npu_wfp16.tflite`, 660 MB, the same bytes since 310090c3). The device records in this README ran at db801972 and 310090c3 (at db801972 the NPU graph was a pushed copy with the same sha256); every file they loaded has the same bytes at 600fe62b. When the app has no copy, the first NPU load downloads it; a pushed copy is imported instead, after the SDK checks its sha256 against the descriptor:
 
 ```sh
 adb push gliner25_decide_s128_npu_wfp16.tflite /sdcard/Android/data/io.github.johnrocky.hfmodels.samples.promises/files/   # delete the copy afterwards
