@@ -227,17 +227,21 @@ class GlinerDecideParityTest {
         val f = generateSequence(File("").absoluteFile) { it.parentFile }.map { File(it, "catalog/dev/litert-community__GLiNER2.5-Decide-LiteRT.hfmodels.json") }.first { it.isFile }
         val d = io.github.johnrocky.hfmodels.descriptor.Descriptor.parse(f.readText(), "litert-community/GLiNER2.5-Decide-LiteRT")
         assertEquals("s128_wfp16", d.defaultVariant)
-        assertEquals(mapOf("s128_wfp16" to 128, "s256_wfp16" to 256, "s512_wfp16" to 512, "s128_npu_wfp16" to 128, "s128_fp32" to 128), d.variants.associate { it.id to it.handlerConfig.getInt("window") })
+        assertEquals(mapOf("s128_wfp16" to 128, "s256_wfp16" to 256, "s512_wfp16" to 512, "s128_npu_wfp16" to 128, "s256_npu_wfp16" to 256, "s512_fp16hw_wfp16" to 512, "s128_fp32" to 128), d.variants.associate { it.id to it.handlerConfig.getInt("window") })
         for (v in d.variants) {
             assertEquals(GlinerDecideContract.FAMILY, v.handlerConfig.getString("family"))
             assertEquals(32, v.handlerConfig.getInt("label_slots"))
             assertEquals("gpu", v.defaultProfile)
             assertEquals(listOf("cpu"), v.profile("gpu")!!.fallbackProfiles)
-            assertEquals(if (v.id == "s128_npu_wfp16") listOf("npu", "gpu", "cpu") else listOf("gpu", "cpu"), v.profiles.map { it.id })
+            assertEquals(if (v.id.endsWith("_npu_wfp16")) listOf("npu", "gpu", "cpu") else listOf("gpu", "cpu"), v.profiles.map { it.id })
         }
         // The NPU profile is asked for by name (BackendPolicy.Require) and never falls back.
-        assertEquals(emptyList<String>(), d.variants.single { it.id == "s128_npu_wfp16" }.profile("npu")!!.fallbackProfiles)
-        assertEquals(io.github.johnrocky.hfmodels.BackendKind.NPU, d.variants.single { it.id == "s128_npu_wfp16" }.profile("npu")!!.components["inference"])
+        for (id in listOf("s128_npu_wfp16", "s256_npu_wfp16")) {
+            assertEquals(emptyList<String>(), d.variants.single { it.id == id }.profile("npu")!!.fallbackProfiles)
+            assertEquals(io.github.johnrocky.hfmodels.BackendKind.NPU, d.variants.single { it.id == id }.profile("npu")!!.components["inference"])
+        }
+        // The graphs changed for float16 hardware compute on the GPU in FP16 with FP32 accumulation; the default graphs in FP32.
+        for (v in d.variants) assertEquals(if (v.id.endsWith("_npu_wfp16") || v.id == "s512_fp16hw_wfp16") "fp16_with_fp32_accum" else "fp32", v.handlerConfig.getString("gpu_precision"))
     }
 
     @Test fun questionsBecomeOneTaskTheWayTheSieveAskedThem() {
