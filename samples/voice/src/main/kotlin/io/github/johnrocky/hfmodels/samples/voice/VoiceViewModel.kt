@@ -45,7 +45,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.json.JSONObject
 
 /**
  * The three models, one [VoiceLoop] over them with the phone's real tools, and the microphone. One HfModels client per
@@ -134,12 +133,11 @@ class VoiceViewModel(private val app: Application) : AndroidViewModel(app) {
         }
     }
 
-    /** Pinned to a commit (the descriptor's, or the bundled catalog's) so a phone without a network loads from its store. */
+    /** Pinned to the commit the bundled catalog binds the id to, so a phone without a network loads from its store. */
     private suspend fun <M : PreparedModel> load(models: HfModels, task: Task<M>, spec: ModelSpec, label: String): M {
-        val descriptor = spec.descriptorAsset?.let { a -> app.assets.open(a).bufferedReader().use { it.readText() } }
-        val commit = descriptor?.let { JSONObject(it).getString("revision") } ?: BundledCatalog.load(app).defaultBinding(spec.id)?.modelCommit
+        val commit = BundledCatalog.load(app).defaultBinding(spec.id)?.modelCommit
         val online = network() != "none"
-        val options = LoadOptions(backendPolicy = spec.policy, networkPolicy = if (online) NetworkPolicy.Any else NetworkPolicy.Offline, descriptorJson = descriptor)
+        val options = LoadOptions(backendPolicy = spec.policy, networkPolicy = if (online) NetworkPolicy.Any else NetworkPolicy.Offline)
         return models.fromPretrained(ModelRef(spec.id, revision = commit, variant = spec.variant), task, options) { e ->
             _ui.update { it.copy(status = "$label: ${describe(e)}") }
         }
@@ -291,14 +289,14 @@ class VoiceViewModel(private val app: Application) : AndroidViewModel(app) {
         super.onCleared()
     }
 
-    /** A model of the loop: its id, variant, backend and (until its repo carries hfmodels.json) its descriptor asset. */
-    class ModelSpec(val id: String, val variant: String?, val policy: BackendPolicy, val descriptorAsset: String?)
+    /** A model of the loop: its id, variant and backend. */
+    class ModelSpec(val id: String, val variant: String?, val policy: BackendPolicy)
 
     companion object {
         const val TAG = "hfmodels-voice-sample"
-        val ASR = ModelSpec("litert-community/Zipformer-medium-CR-CTC-LiteRT", "medium_fp16", BackendPolicy.Require(BackendKind.GPU), "litert-community__Zipformer-medium-CR-CTC-LiteRT.hfmodels.json")
-        val TTS = ModelSpec("litert-community/kitten-tts-nano-0.8", "fp32", BackendPolicy.Auto, "litert-community__kitten-tts-nano-0.8.hfmodels.json")
-        val LLM = ModelSpec("litert-community/gemma-4-E2B-it-litert-lm", null, BackendPolicy.Require(BackendKind.GPU), null)
+        val ASR = ModelSpec("litert-community/Zipformer-medium-CR-CTC-LiteRT", "medium_fp16", BackendPolicy.Require(BackendKind.GPU))
+        val TTS = ModelSpec("litert-community/kitten-tts-nano-0.8", "fp32", BackendPolicy.Auto)
+        val LLM = ModelSpec("litert-community/gemma-4-E2B-it-litert-lm", null, BackendPolicy.Require(BackendKind.GPU))
 
         private fun describe(e: LoadEvent): String = when (e) {
             is LoadEvent.Downloading -> "downloading ${e.bytes * 100 / maxOf(1L, e.totalBytes)}%"

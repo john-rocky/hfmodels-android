@@ -33,9 +33,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    // The transcriber's and the speaker's repos carry no hfmodels.json yet: their development descriptors ship as
-    // assets and go to LoadOptions(descriptorJson = ...). Once the repos carry one, the ids alone load them.
-    sourceSets { named("main") { assets.srcDir(rootProject.file("catalog/dev")) } }
     testOptions { unitTests.isReturnDefaultValues = true }
 }
 

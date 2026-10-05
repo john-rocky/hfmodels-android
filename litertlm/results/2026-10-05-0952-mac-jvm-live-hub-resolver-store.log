@@ -1,0 +1,85 @@
+# Mac JVM, no phone: the SDK's Resolver and ModelStore (core at voice-by-id ee61fcc) against the Hugging Face Hub, run by a scratch unit test that is not in this repository, 2026-10-05 09:52-09:54 JST. The speech ids: plan by id, then their files (Zipformer medium_fp16: 2, Kitten fp32: 8) downloaded through ModelStore.ensure with the sha256 check. The chat and decide cases belong to other work. The run's log follows unchanged
+# The SDK's own Resolver and ModelStore (core, branch voice-by-id ee61fcc) run on the Mac's JVM against the real Hub, 2026-10-05 09:52-09:54 JST, by a scratch unit test that is not in the repository (a copy: r13-supervisor-live-hub-LiveHubScratchTest.kt.txt; the first part ran an earlier form of it with six plan-only cases).
+# Part 1: plans only (no weights fetched). Part 2: plan by id, then every planned file through ModelStore.ensure (a real download and the sha256 check).
+
+## Part 1
+== ModelRef("litert-community/LFM2.5-1.2B-Instruct") task=chat
+   PLAN commit=edeb0483 binding=RESOLVED_BRANCH descriptor=litert-community/LFM2.5-1.2B-Instruct@edeb0483/hfmodels.json variant=int4_gpu profile=gpu verification=MAINTAINER_TESTED bytes_to_download=736220768
+      file LFM2.5-1.2B-Instruct_int4_gpu.litertlm 736220768 sha256=36f7f0221bcc cached=false
+      log: I resolve litert-community/LFM2.5-1.2B-Instruct: commit=edeb0483 via RESOLVED_BRANCH, descriptor=litert-community/LFM2.5-1.2B-Instruct@edeb0483/hfmodels.json sha=9f96a19c
+== ModelRef("litert-community/LFM2.5-1.2B-Instruct") with the regenerated descriptor passed explicitly task=chat
+   PLAN commit=edeb0483 binding=RESOLVED_BRANCH descriptor=caller@explicit/hfmodels.json variant=int4_gpu profile=gpu verification=UNVERIFIED bytes_to_download=736220768
+      file LFM2.5-1.2B-Instruct_int4_gpu.litertlm 736220768 sha256=97e6a9700208 cached=false
+      log: I resolve litert-community/LFM2.5-1.2B-Instruct: commit=edeb0483 via RESOLVED_BRANCH, descriptor=caller@explicit/hfmodels.json sha=90b570fe
+== ModelRef("litert-community/LFM2.5-VL-1.6B") task=chat
+   PLAN commit=dda435ad binding=RESOLVED_BRANCH descriptor=litert-community/LFM2.5-VL-1.6B@dda435ad/hfmodels.json variant=int4 profile=gpu verification=MAINTAINER_TESTED bytes_to_download=1298142592
+      file LFM2.5-VL-1.6B_int4.litertlm 1298142592 sha256=44816005b42b cached=false
+      log: I resolve litert-community/LFM2.5-VL-1.6B: commit=dda435ad via RESOLVED_BRANCH, descriptor=litert-community/LFM2.5-VL-1.6B@dda435ad/hfmodels.json sha=88837480
+== ModelRef("litert-community/Zipformer-medium-CR-CTC-LiteRT") task=transcribe
+   PLAN commit=fa063a88 binding=RESOLVED_BRANCH descriptor=litert-community/Zipformer-medium-CR-CTC-LiteRT@fa063a88/hfmodels.json variant=medium_fp16 profile=gpu verification=UNVERIFIED bytes_to_download=131495992
+      file zipformer_ctc_fp16.tflite 131490944 sha256=9515d94c0430 cached=false
+      file tokens.txt 5048 sha256=49e3c2646595 cached=false
+      log: I resolve litert-community/Zipformer-medium-CR-CTC-LiteRT: commit=fa063a88 via RESOLVED_BRANCH, descriptor=litert-community/Zipformer-medium-CR-CTC-LiteRT@fa063a88/hfmodels.json sha=7aff6f2b
+== ModelRef("litert-community/kitten-tts-nano-0.8") task=speak
+   PLAN commit=2c5b198f binding=RESOLVED_BRANCH descriptor=litert-community/kitten-tts-nano-0.8@2c5b198f/hfmodels.json variant=fp32 profile=cpu verification=UNVERIFIED bytes_to_download=94367285
+      file kitten_predictor.tflite 33819808 sha256=0ca50bbf3c2f cached=false
+      file kitten_prosody.tflite 3284012 sha256=99b90a4ac4f5 cached=false
+      file kitten_vocoder.tflite 26433136 sha256=87afb43780fb cached=false
+      file voices.npz 3278902 sha256=8aa7cee235ab cached=false
+      file g2p/dp_g2p_matcha_fp16.tflite 25785872 sha256=6e4b481f6874 cached=false
+      file g2p/g2p_dict.txt.gz 1762038 sha256=5b3493a8cd4d cached=false
+      file g2p/g2p_meta.json 1904 sha256=7b87bfeaaa07 cached=false
+      file g2p/symbols.json 1613 sha256=366c66d45b1f cached=false
+      log: I resolve litert-community/kitten-tts-nano-0.8: commit=2c5b198f via RESOLVED_BRANCH, descriptor=litert-community/kitten-tts-nano-0.8@2c5b198f/hfmodels.json sha=5abba557
+== ModelRef("litert-community/laya-LiteRT") task=decide
+   PLAN commit=35bf9cd6 binding=RESOLVED_BRANCH descriptor=litert-community/laya-LiteRT@35bf9cd6/hfmodels.json variant=ml_s256_fp32 profile=gpu verification=PUBLISHER_TESTED bytes_to_download=1322545036
+      file laya_ml_s256_fp32.tflite 1287376352 sha256=98ba7a57d054 cached=false
+      file laya_ml_act_head_fp32.tflite 795816 sha256=30da532a8b75 cached=false
+      file multilingual/tokenizer.json 34363188 sha256=609d8f4c067c cached=false
+      file multilingual/tokenizer_config.json 524 sha256=6c6b2d8e3c84 cached=false
+      file multilingual/calibration.json 9156 sha256=80e148c68154 cached=false
+      log: I resolve litert-community/laya-LiteRT: commit=35bf9cd6 via RESOLVED_BRANCH, descriptor=litert-community/laya-LiteRT@35bf9cd6/hfmodels.json sha=4abbd6f5
+
+## Part 2
+== ModelRef("litert-community/Zipformer-medium-CR-CTC-LiteRT") task=transcribe: plan by id, then every planned file through ModelStore.ensure
+   PLAN commit=fa063a88 binding=RESOLVED_BRANCH descriptor=litert-community/Zipformer-medium-CR-CTC-LiteRT@fa063a88/hfmodels.json variant=medium_fp16 profile=gpu
+      zipformer_ctc_fp16.tflite: DOWNLOADED 131490944 bytes in 9948 ms, cached now=true
+      tokens.txt: DOWNLOADED 5048 bytes in 222 ms, cached now=true
+      log: I resolve litert-community/Zipformer-medium-CR-CTC-LiteRT: commit=fa063a88 via RESOLVED_BRANCH, descriptor=litert-community/Zipformer-medium-CR-CTC-LiteRT@fa063a88/hfmodels.json sha=7aff6f2b
+      log: I download zipformer_ctc_fp16.tflite <- https://huggingface.co/litert-community/Zipformer-medium-CR-CTC-LiteRT/resolve/fa063a88d8191b289e70686bf814f0b52f9144b2/zipformer_ctc_fp16.tflite
+      log: I downloaded zipformer_ctc_fp16.tflite: 131490944 bytes, sha256 ok
+      log: I download tokens.txt <- https://huggingface.co/litert-community/Zipformer-medium-CR-CTC-LiteRT/resolve/fa063a88d8191b289e70686bf814f0b52f9144b2/tokens.txt
+      log: I downloaded tokens.txt: 5048 bytes, sha256 ok
+== ModelRef("litert-community/kitten-tts-nano-0.8") task=speak: plan by id, then every planned file through ModelStore.ensure
+   PLAN commit=2c5b198f binding=RESOLVED_BRANCH descriptor=litert-community/kitten-tts-nano-0.8@2c5b198f/hfmodels.json variant=fp32 profile=cpu
+      kitten_predictor.tflite: DOWNLOADED 33819808 bytes in 3051 ms, cached now=true
+      kitten_prosody.tflite: DOWNLOADED 3284012 bytes in 1865 ms, cached now=true
+      kitten_vocoder.tflite: DOWNLOADED 26433136 bytes in 3016 ms, cached now=true
+      voices.npz: DOWNLOADED 3278902 bytes in 1905 ms, cached now=true
+      g2p/dp_g2p_matcha_fp16.tflite: DOWNLOADED 25785872 bytes in 2757 ms, cached now=true
+      g2p/g2p_dict.txt.gz: DOWNLOADED 1762038 bytes in 1728 ms, cached now=true
+      g2p/g2p_meta.json: DOWNLOADED 1904 bytes in 212 ms, cached now=true
+      g2p/symbols.json: DOWNLOADED 1613 bytes in 210 ms, cached now=true
+      log: I resolve litert-community/kitten-tts-nano-0.8: commit=2c5b198f via RESOLVED_BRANCH, descriptor=litert-community/kitten-tts-nano-0.8@2c5b198f/hfmodels.json sha=5abba557
+      log: I download kitten_predictor.tflite <- https://huggingface.co/litert-community/kitten-tts-nano-0.8/resolve/2c5b198f36e0b40a098585da7601bd752ff432d5/kitten_predictor.tflite
+      log: I downloaded kitten_predictor.tflite: 33819808 bytes, sha256 ok
+      log: I download kitten_prosody.tflite <- https://huggingface.co/litert-community/kitten-tts-nano-0.8/resolve/2c5b198f36e0b40a098585da7601bd752ff432d5/kitten_prosody.tflite
+      log: I downloaded kitten_prosody.tflite: 3284012 bytes, sha256 ok
+      log: I download kitten_vocoder.tflite <- https://huggingface.co/litert-community/kitten-tts-nano-0.8/resolve/2c5b198f36e0b40a098585da7601bd752ff432d5/kitten_vocoder.tflite
+      log: I downloaded kitten_vocoder.tflite: 26433136 bytes, sha256 ok
+      log: I download voices.npz <- https://huggingface.co/litert-community/kitten-tts-nano-0.8/resolve/2c5b198f36e0b40a098585da7601bd752ff432d5/voices.npz
+      log: I downloaded voices.npz: 3278902 bytes, sha256 ok
+      log: I download dp_g2p_matcha_fp16.tflite <- https://huggingface.co/litert-community/kitten-tts-nano-0.8/resolve/2c5b198f36e0b40a098585da7601bd752ff432d5/g2p/dp_g2p_matcha_fp16.tflite
+      log: I downloaded dp_g2p_matcha_fp16.tflite: 25785872 bytes, sha256 ok
+      log: I download g2p_dict.txt.gz <- https://huggingface.co/litert-community/kitten-tts-nano-0.8/resolve/2c5b198f36e0b40a098585da7601bd752ff432d5/g2p/g2p_dict.txt.gz
+      log: I downloaded g2p_dict.txt.gz: 1762038 bytes, sha256 ok
+      log: I download g2p_meta.json <- https://huggingface.co/litert-community/kitten-tts-nano-0.8/resolve/2c5b198f36e0b40a098585da7601bd752ff432d5/g2p/g2p_meta.json
+      log: I downloaded g2p_meta.json: 1904 bytes, sha256 ok
+      log: I download symbols.json <- https://huggingface.co/litert-community/kitten-tts-nano-0.8/resolve/2c5b198f36e0b40a098585da7601bd752ff432d5/g2p/symbols.json
+      log: I downloaded symbols.json: 1613 bytes, sha256 ok
+== ModelRef("litert-community/LFM2.5-1.2B-Instruct") task=chat: plan by id, then every planned file through ModelStore.ensure
+   PLAN commit=edeb0483 binding=RESOLVED_BRANCH descriptor=litert-community/LFM2.5-1.2B-Instruct@edeb0483/hfmodels.json variant=int4_gpu profile=gpu
+   ModelException CHECKSUM_MISMATCH: CHECKSUM_MISMATCH: 'LFM2.5-1.2B-Instruct_int4_gpu.litertlm': expected sha256 36f7f0221bcc42c75291da1d7e3422901024a5b06b9bfa3c02d7feface04f70a / 736220768 bytes, got 97e6a9700208f59fce2ceb993cd6c18ea77ada8c2a940f68332004f38a404671 / 736220768 bytes; partial deleted
+      log: I resolve litert-community/LFM2.5-1.2B-Instruct: commit=edeb0483 via RESOLVED_BRANCH, descriptor=litert-community/LFM2.5-1.2B-Instruct@edeb0483/hfmodels.json sha=9f96a19c
+      log: I download LFM2.5-1.2B-Instruct_int4_gpu.litertlm <- https://huggingface.co/litert-community/LFM2.5-1.2B-Instruct/resolve/edeb0483de2a1aa6eaa88fbfe4da19e7c99603d8/LFM2.5-1.2B-Instruct_int4_gpu.litertlm
+      log: E download LFM2.5-1.2B-Instruct_int4_gpu.litertlm: sha256/size mismatch (got 97e6a9700208f59fce2ceb993cd6c18ea77ada8c2a940f68332004f38a404671 / 736220768, expected 36f7f0221bcc42c75291da1d7e3422901024a5b06b9bfa3c02d7feface04f70a / 736220768); partial deleted

@@ -16,9 +16,10 @@ android {
         consumerProguardFiles("consumer-rules.pro")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-    // The device gates (TranscribeDeviceTest: the transcriber and the Endpointer in one process; SpeakDeviceTest) side-load
-    // the development descriptors as test-APK assets. They live here, not in hfmodels-litert, because the Endpointer is in
-    // this module and this module depends on hfmodels-litert.
+    // The device gates (TranscribeDeviceTest: the transcriber and the Endpointer in one process; SpeakDeviceTest) live here,
+    // not in hfmodels-litert, because the Endpointer is in this module and this module depends on hfmodels-litert. The
+    // transcriber and the speaker load from the bundled catalog; ToolsDeviceTest and VoiceLoopDeviceTest can take a chat
+    // model's development descriptor (catalog/dev, argument descriptor) as a test-APK asset.
     sourceSets { named("androidTest") { assets.srcDir(rootProject.file("catalog/dev")) } }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
