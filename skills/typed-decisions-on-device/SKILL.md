@@ -85,6 +85,16 @@ Call `decide` off the main thread. A request that does not fit is a `ModelExcept
 - Each graph has one static window: build the request, then pick the smallest window that holds it.
 - With AGP 9 and LiteRT 2.2.0, set `android.uniquePackageNames=false` (litert and litert-api declare the same namespace).
 
+## Build a feature, not a classifier screen
+
+A screen that shows the decisions themselves (a list of sentences sorted into bins) tells a viewer nothing about why they would want it. Put the decisions inside a feature and show the feature's result. Before writing the app, check three things:
+
+1. One sentence says what the person does and what happens: "type what you want, the list's filters set themselves" (`samples/finder`). If the sentence ends in a table of labels, pick another feature.
+2. Score the feature's questions before the app exists: 40 made-up inputs with hand-written answers, thresholds written down first (field accuracy ≥ 90 %, every field right on ≥ 75 % of the inputs, a filter set on an input that named none ≤ 5 %, an action taken on chit-chat ≤ 1 in 10). The Mac host of the model's card is enough; the phone gave the same answers on all 200 fields in the finder check.
+3. Look at three screenshots (before, after the first input, after the second) before recording: the input, what it set and why each row stayed must be readable without a caption.
+
+The finder sample passed all three on 2026-10-05 and was approved at first sight; the earlier sorted-chat sample had passed an accuracy-only sieve and was rejected. Records: `samples/finder/README.md`, the sieve's `PREREG.md` in the lane's assets.
+
 ## Pitfalls
 
 - fp16 changes the answers. The GPU's default precision computes in fp16; each of these cards measured that it changes answers, and on Open-Decision it can make the outputs non-finite. Ask for FP32 explicitly. The NPU computes in fp16 as well.
