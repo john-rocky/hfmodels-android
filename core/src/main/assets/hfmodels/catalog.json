@@ -3,7 +3,7 @@
   "catalog_id": "hfmodels-bundled",
   "origin": {
     "repo": "john-rocky/hfmodels-android",
-    "commit": "24f6317194d8ac8850838da390cf90d65954e8fb"
+    "commit": "a3e27e0f42aba1850ae3437e5df566913f713004"
   },
   "entries": [
     {
@@ -3956,7 +3956,7 @@
       "model_id": "litert-community/Zipformer-medium-CR-CTC-LiteRT",
       "model_commit": "fa063a88d8191b289e70686bf814f0b52f9144b2",
       "path": "catalog/entries/litert-community__Zipformer-medium-CR-CTC-LiteRT.json",
-      "provenance": "The CR-CTC checkpoints of the k2-fsa/icefall LibriSpeech zipformer recipe (Apache-2.0; the medium checkpoint is Zengwei/icefall-asr-librispeech-zipformer-medium-cr-ctc-20241018) converted with litert-torch to one classic LiteRT graph per size that runs fully on the GPU (no CPU fallback, no FFT inside the graph): a fixed 16 s window of 80-bin kaldi fbank frames computed on the host and four additive mask biases in, CTC logits out; greedy CTC with blank id 0 over the 500-token BPE vocabulary of tokens.txt runs on the host. small_fp16 (23 M parameters) and medium_fp16 (64 M); large_fp16 is published too and is not listed. gpu_precision 'default' is what the LiteRT model zoo app runs. small_fp16 and medium_fp16 passed the transcribe gate on gpu and on cpu on a Galaxy S26 SM-S942Q (Android 16 BP4A.251205.006, LiteRT 2.2.0, 2026-10-03) with a development copy of this descriptor at commit 7732ad6c and the files side-loaded, the same files (sha256) as this commit; a load of this commit has not run on a device, so the profiles carry no verification record.",
+      "provenance": "The CR-CTC checkpoints of the k2-fsa/icefall LibriSpeech zipformer recipe (Apache-2.0; the medium checkpoint is Zengwei/icefall-asr-librispeech-zipformer-medium-cr-ctc-20241018) converted with litert-torch to one classic LiteRT graph per size that runs fully on the GPU (no CPU fallback, no FFT inside the graph): a fixed 16 s window of 80-bin kaldi fbank frames computed on the host and four additive mask biases in, CTC logits out; greedy CTC with blank id 0 over the 500-token BPE vocabulary of tokens.txt runs on the host. small_fp16 (23 M parameters) and medium_fp16 (64 M); large_fp16 is published too and is not listed. gpu_precision 'default' is what the LiteRT model zoo app runs. small_fp16 and medium_fp16 passed the transcribe gate on gpu and on cpu on a Galaxy S26 SM-S942Q (Android 16 BP4A.251205.006, LiteRT 2.2.0) on 2026-10-03 with a development copy of this descriptor at commit 7732ad6c and the files side-loaded, the same files (sha256) as this commit, and again on 2026-10-05 at this commit with the repo's hfmodels.json, offline, from the files already in the test app's store (nothing was downloaded on the phone); the bundled catalog adds the 2026-10-05 runs to the profiles as verification records, which the repo's file does not carry.",
       "descriptor": {
         "schema_version": 1,
         "model_id": "litert-community/Zipformer-medium-CR-CTC-LiteRT",
@@ -4023,6 +4023,17 @@
                 "default_selectable": true,
                 "fallback_profiles": [
                   "cpu"
+                ],
+                "verification": [
+                  {
+                    "level": "PUBLISHER_TESTED",
+                    "device": "SM-S942Q (Galaxy S26)",
+                    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+                    "runtime": "litert 2.2.0",
+                    "result": "PASS",
+                    "date": "2026-10-05",
+                    "evidence": "litert/results/2026-10-05-1003-RFGL80R6A6H-litert2.2.0-transcribe-zipformer-small_fp16-gpu.log"
+                  }
                 ]
               },
               {
@@ -4044,7 +4055,18 @@
                     "arm64-v8a"
                   ]
                 },
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "PUBLISHER_TESTED",
+                    "device": "SM-S942Q (Galaxy S26)",
+                    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+                    "runtime": "litert 2.2.0",
+                    "result": "PASS",
+                    "date": "2026-10-05",
+                    "evidence": "litert/results/2026-10-05-1003-RFGL80R6A6H-litert2.2.0-transcribe-zipformer-small_fp16-cpu.log"
+                  }
+                ]
               }
             ],
             "handler_config": {
@@ -4117,6 +4139,17 @@
                 "default_selectable": true,
                 "fallback_profiles": [
                   "cpu"
+                ],
+                "verification": [
+                  {
+                    "level": "PUBLISHER_TESTED",
+                    "device": "SM-S942Q (Galaxy S26)",
+                    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+                    "runtime": "litert 2.2.0",
+                    "result": "PASS",
+                    "date": "2026-10-05",
+                    "evidence": "litert/results/2026-10-05-1004-RFGL80R6A6H-litert2.2.0-transcribe-zipformer-medium_fp16-gpu.log"
+                  }
                 ]
               },
               {
@@ -4138,7 +4171,18 @@
                     "arm64-v8a"
                   ]
                 },
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "PUBLISHER_TESTED",
+                    "device": "SM-S942Q (Galaxy S26)",
+                    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+                    "runtime": "litert 2.2.0",
+                    "result": "PASS",
+                    "date": "2026-10-05",
+                    "evidence": "litert/results/2026-10-05-1004-RFGL80R6A6H-litert2.2.0-transcribe-zipformer-medium_fp16-cpu.log"
+                  }
+                ]
               }
             ],
             "handler_config": {
@@ -4843,7 +4887,7 @@
       "model_id": "litert-community/kitten-tts-nano-0.8",
       "model_commit": "2c5b198f36e0b40a098585da7601bd752ff432d5",
       "path": "catalog/entries/litert-community__kitten-tts-nano-0.8.json",
-      "provenance": "KittenML/kitten-tts-nano-0.8-fp32 (Apache-2.0; KittenTTS nano: StyleTTS2, ISTFTNet and a mini-ALBERT, 8 voices, 24 kHz) re-authored in TF/Keras from the ONNX weights and converted with TFLiteConverter to three LiteRT graphs with a dynamic sequence length (predictor, prosody, vocoder) for the CPU. The text frontend needs no espeak-ng: g2p/dp_g2p_matcha_fp16.tflite, g2p/g2p_dict.txt.gz and g2p/g2p_meta.json are byte-identical copies of the same-named files of litert-community/Matcha-TTS@8d650e79 (the dictionary from OpenPhonemizer, BSD-3-Clause-Clear; the graph DeepPhonemizer, MIT), and g2p/symbols.json is the model's 178-symbol table; its phoneme IDs are not espeak-ng's, so the audio is not sample-identical to say.py's. fp32 is the card's 'deploy fp32'; fp16 has half the size. speed_priors are the publisher's say.py factors; the SDK multiplies speed by them as say.py does. xnnpack: the predictor runs without the XNNPACK delegate, the prosody and vocoder graphs with it: on a Galaxy S26 (2026-10-03, fp32) the peak RSS after the load was 334 MB instead of 624 MB and the median synthesis 301 ms instead of 288 ms, with the same frames. fp32 and fp16 on cpu passed the speak gate on a Galaxy S26 SM-S942Q (Android 16 BP4A.251205.006, LiteRT 2.2.0, 2026-10-03) with a development copy of this descriptor at commit d4662d89 and the files side-loaded (the four g2p/ files from local copies, before the repo carried them), the same files (sha256) as this commit; fp32 also with the predictor without XNNPACK and the speed priors, fp16 only with the earlier handler (no speed priors, XNNPACK on all three graphs). A load of this commit has not run on a device, so the profiles carry no verification record.",
+      "provenance": "KittenML/kitten-tts-nano-0.8-fp32 (Apache-2.0; KittenTTS nano: StyleTTS2, ISTFTNet and a mini-ALBERT, 8 voices, 24 kHz) re-authored in TF/Keras from the ONNX weights and converted with TFLiteConverter to three LiteRT graphs with a dynamic sequence length (predictor, prosody, vocoder) for the CPU. The text frontend needs no espeak-ng: g2p/dp_g2p_matcha_fp16.tflite, g2p/g2p_dict.txt.gz and g2p/g2p_meta.json are byte-identical copies of the same-named files of litert-community/Matcha-TTS@8d650e79 (the dictionary from OpenPhonemizer, BSD-3-Clause-Clear; the graph DeepPhonemizer, MIT), and g2p/symbols.json is the model's 178-symbol table; its phoneme IDs are not espeak-ng's, so the audio is not sample-identical to say.py's. fp32 is the card's 'deploy fp32'; fp16 has half the size. speed_priors are the publisher's say.py factors; the SDK multiplies speed by them as say.py does. xnnpack: the predictor runs without the XNNPACK delegate, the prosody and vocoder graphs with it: on a Galaxy S26 (2026-10-03, fp32) the peak RSS after the load was 334 MB instead of 624 MB and the median synthesis 301 ms instead of 288 ms, with the same frames. fp32 and fp16 on cpu passed the speak gate on a Galaxy S26 SM-S942Q (Android 16 BP4A.251205.006, LiteRT 2.2.0, 2026-10-03) with a development copy of this descriptor at commit d4662d89 and the files side-loaded (the four g2p/ files from local copies, before the repo carried them), the same files (sha256) as this commit; fp32 also with the predictor without XNNPACK and the speed priors, fp16 only with the earlier handler (no speed priors, XNNPACK on all three graphs). On 2026-10-05 fp32 and fp16 passed the speak gate again on the same phone at this commit, with the repo's hfmodels.json and the current handler (the predictor without XNNPACK, the speed priors), offline, from the files already in the test app's store (nothing was downloaded on the phone); the bundled catalog adds those runs to the profiles as verification records, which the repo's file does not carry.",
       "descriptor": {
         "schema_version": 1,
         "model_id": "litert-community/kitten-tts-nano-0.8",
@@ -4955,7 +4999,18 @@
                     "arm64-v8a"
                   ]
                 },
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "PUBLISHER_TESTED",
+                    "device": "SM-S942Q (Galaxy S26)",
+                    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+                    "runtime": "litert 2.2.0",
+                    "result": "PASS",
+                    "date": "2026-10-05",
+                    "evidence": "litert/results/2026-10-05-1004-RFGL80R6A6H-litert2.2.0-speak-kitten-fp32-cpu.log"
+                  }
+                ]
               }
             ],
             "handler_config": {
@@ -5105,7 +5160,18 @@
                     "arm64-v8a"
                   ]
                 },
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "PUBLISHER_TESTED",
+                    "device": "SM-S942Q (Galaxy S26)",
+                    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+                    "runtime": "litert 2.2.0",
+                    "result": "PASS",
+                    "date": "2026-10-05",
+                    "evidence": "litert/results/2026-10-05-1005-RFGL80R6A6H-litert2.2.0-speak-kitten-fp16-cpu.log"
+                  }
+                ]
               }
             ],
             "handler_config": {
