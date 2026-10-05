@@ -1,0 +1,15 @@
+# samples/voice app (debug build of ee61fcc), the microphone button tapped twice at once while the reply was spoken: --ez autoload true --ez autolisten true --ef start_rms 0.01; a Mac's say (Samantha, 175 words per minute, output volume 70) said 'What time is it?' toward the phone; on the first Speaking two taps on the button started together (adb shell 'input tap x y & input tap x y')  date=2026-10-05T01:09Z serial=RFGL80R6A6H device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZH9 android=16
+# network=none in the app's ready line; the lines from 'taps between' on are the run script's (events after the taps, RECORD_AUDIO in appops, the screen's text six seconds after the taps); the run's log follows unchanged
+   clickable: '' '' [396,1722][684,2010]
+   button: [396,1722][684,2010] tap at 540 1866
+   mode: parallel
+    10-05 10:09:55.820  3604  3661 I hfmodels-voice-sample: ready asr=litert-community/Zipformer-medium-CR-CTC-LiteRT/medium_fp16/gpu tts=litert-community/kitten-tts-nano-0.8/fp32/cpu llm=litert-community/gemma-4-E2B-it-litert-lm/default/gpu load_ms=4561 network=none
+    10-05 10:09:55.838  3604  3643 I hfmodels-voice-sample: event=Listening
+    10-05 10:10:01.658  3604  3661 I hfmodels-voice-sample: event=Heard text="What time is it." audio_ms=1420 transcribe_ms=122
+    10-05 10:10:01.658  3604  3661 I hfmodels-voice-sample: event=Thinking
+    10-05 10:10:02.573  3604  3768 I hfmodels-voice-sample: event=ToolCalled name=get_current_datetime args={} result="Monday, 2026-10-05 10:10" ms=1
+    10-05 10:10:03.536  3604  3663 I hfmodels-voice-sample: event=Speaking sentence="It is ten o'clock on Monday, October 5th, 2026," synth_ms=434 first_audio_ms=2000
+   taps between 10-05 10:10:03.000 and 10-05 10:10:03.000
+   after the taps: Listening events 0 | listen failed 0 | Speaking 1 | Done 0
+   appops RECORD_AUDIO: RECORD_AUDIO: mode=foreground READ_PHONE_STATE: mode=ignore ADD_VOICEMAIL: mode=ignore USE_SIP: mode=ignore -- RECORD_AUDIO (allow): null=[ Access: [top-s] 2026-10-05 10:09:55.848 (-14s434ms) duration=+8s72ms Access: [cch-s] 2026-10-03 19:01:52.749 (-1d15h8m17s533ms) duration=+2ms -- 10426|io.github
+   screen text: ['ON-DEVICE · LiteRT · NETWORK: NONE', 'Ready', 'Heard', 'What time is it.', '🕒 get_current_datetime()', 'Monday, 2026-10-05 10:10']
