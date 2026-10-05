@@ -1,4 +1,5 @@
-// hfmodels-litert: typed decisions on classic LiteRT (CompiledModel) decision encoders, on top of hfmodels-core.
+// hfmodels-litert: typed decisions on classic LiteRT (CompiledModel) decision encoders, speech to text (Transcribe) and
+// text to speech (Speak), on top of hfmodels-core.
 // Separate from hfmodels-litertlm on purpose: the litert AAR adds about 9 MB of native code, merges
 // FOREGROUND_SERVICE permissions into the app and needs android.uniquePackageNames=false on AGP 9;
 // a chat-only app should not pay for that.

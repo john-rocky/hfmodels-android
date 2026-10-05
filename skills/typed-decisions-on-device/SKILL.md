@@ -65,7 +65,7 @@ The chat question is the one in the request above, asked of 30 labelled chat sen
 
 ```kotlin
 // implementation("io.github.john-rocky.hfmodels:hfmodels-litert:0.2.0") + android.uniquePackageNames=false in gradle.properties
-// (these families are on main, 0.2.0; 0.1.2 on Maven Central carries laya only)
+// (these families came in with 0.2.0; 0.1.2 on Maven Central carries laya only)
 val models = HfModels(applicationContext)
 val model = models.fromPretrained(ModelRef("litert-community/GLiNER2.5-Decide-LiteRT"), EncoderDecisions)   // download, sha256, compile: GPU FP32, CPU fallback
 val q = Question.Choice("What is this sentence?", linkedMapOf("nothing" to "an opinion, a story, a vague maybe, or something happening right now", "promise" to "the speaker commits to do something later", "request" to "the speaker asks the listener to do something", "plan" to "a time or day agreed to meet or do something"))
