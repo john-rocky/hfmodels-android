@@ -1,0 +1,80 @@
+[
+  {
+    "model_id": "litert-community/Zipformer-medium-CR-CTC-LiteRT",
+    "model_commit": "fa063a88d8191b289e70686bf814f0b52f9144b2",
+    "level": "PUBLISHER_TESTED",
+    "device": "SM-S942Q (Galaxy S26)",
+    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+    "runtime": "litert 2.2.0",
+    "result": "PASS",
+    "date": "2026-10-05",
+    "variant": "small_fp16",
+    "profile": "gpu",
+    "evidence": "litert/results/2026-10-05-1003-RFGL80R6A6H-litert2.2.0-transcribe-zipformer-small_fp16-gpu.log"
+  },
+  {
+    "model_id": "litert-community/Zipformer-medium-CR-CTC-LiteRT",
+    "model_commit": "fa063a88d8191b289e70686bf814f0b52f9144b2",
+    "level": "PUBLISHER_TESTED",
+    "device": "SM-S942Q (Galaxy S26)",
+    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+    "runtime": "litert 2.2.0",
+    "result": "PASS",
+    "date": "2026-10-05",
+    "variant": "small_fp16",
+    "profile": "cpu",
+    "evidence": "litert/results/2026-10-05-1003-RFGL80R6A6H-litert2.2.0-transcribe-zipformer-small_fp16-cpu.log"
+  },
+  {
+    "model_id": "litert-community/Zipformer-medium-CR-CTC-LiteRT",
+    "model_commit": "fa063a88d8191b289e70686bf814f0b52f9144b2",
+    "level": "PUBLISHER_TESTED",
+    "device": "SM-S942Q (Galaxy S26)",
+    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+    "runtime": "litert 2.2.0",
+    "result": "PASS",
+    "date": "2026-10-05",
+    "variant": "medium_fp16",
+    "profile": "gpu",
+    "evidence": "litert/results/2026-10-05-1004-RFGL80R6A6H-litert2.2.0-transcribe-zipformer-medium_fp16-gpu.log"
+  },
+  {
+    "model_id": "litert-community/Zipformer-medium-CR-CTC-LiteRT",
+    "model_commit": "fa063a88d8191b289e70686bf814f0b52f9144b2",
+    "level": "PUBLISHER_TESTED",
+    "device": "SM-S942Q (Galaxy S26)",
+    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+    "runtime": "litert 2.2.0",
+    "result": "PASS",
+    "date": "2026-10-05",
+    "variant": "medium_fp16",
+    "profile": "cpu",
+    "evidence": "litert/results/2026-10-05-1004-RFGL80R6A6H-litert2.2.0-transcribe-zipformer-medium_fp16-cpu.log"
+  },
+  {
+    "model_id": "litert-community/kitten-tts-nano-0.8",
+    "model_commit": "2c5b198f36e0b40a098585da7601bd752ff432d5",
+    "level": "PUBLISHER_TESTED",
+    "device": "SM-S942Q (Galaxy S26)",
+    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+    "runtime": "litert 2.2.0",
+    "result": "PASS",
+    "date": "2026-10-05",
+    "variant": "fp32",
+    "profile": "cpu",
+    "evidence": "litert/results/2026-10-05-1004-RFGL80R6A6H-litert2.2.0-speak-kitten-fp32-cpu.log"
+  },
+  {
+    "model_id": "litert-community/kitten-tts-nano-0.8",
+    "model_commit": "2c5b198f36e0b40a098585da7601bd752ff432d5",
+    "level": "PUBLISHER_TESTED",
+    "device": "SM-S942Q (Galaxy S26)",
+    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+    "runtime": "litert 2.2.0",
+    "result": "PASS",
+    "date": "2026-10-05",
+    "variant": "fp16",
+    "profile": "cpu",
+    "evidence": "litert/results/2026-10-05-1005-RFGL80R6A6H-litert2.2.0-speak-kitten-fp16-cpu.log"
+  }
+]
