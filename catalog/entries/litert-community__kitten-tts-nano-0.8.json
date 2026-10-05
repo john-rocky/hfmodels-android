@@ -1,0 +1,321 @@
+{
+  "model_id": "litert-community/kitten-tts-nano-0.8",
+  "model_commit": "2c5b198f36e0b40a098585da7601bd752ff432d5",
+  "gated": false,
+  "path": "catalog/entries/litert-community__kitten-tts-nano-0.8.json",
+  "provenance": "KittenML/kitten-tts-nano-0.8-fp32 (Apache-2.0; KittenTTS nano: StyleTTS2, ISTFTNet and a mini-ALBERT, 8 voices, 24 kHz) re-authored in TF/Keras from the ONNX weights and converted with TFLiteConverter to three LiteRT graphs with a dynamic sequence length (predictor, prosody, vocoder) for the CPU. The text frontend needs no espeak-ng: g2p/dp_g2p_matcha_fp16.tflite, g2p/g2p_dict.txt.gz and g2p/g2p_meta.json are byte-identical copies of the same-named files of litert-community/Matcha-TTS@8d650e79 (the dictionary from OpenPhonemizer, BSD-3-Clause-Clear; the graph DeepPhonemizer, MIT), and g2p/symbols.json is the model's 178-symbol table; its phoneme IDs are not espeak-ng's, so the audio is not sample-identical to say.py's. fp32 is the card's 'deploy fp32'; fp16 has half the size. speed_priors are the publisher's say.py factors; the SDK multiplies speed by them as say.py does. xnnpack: the predictor runs without the XNNPACK delegate, the prosody and vocoder graphs with it: on a Galaxy S26 (2026-10-03, fp32) the peak RSS after the load was 334 MB instead of 624 MB and the median synthesis 301 ms instead of 288 ms, with the same frames. fp32 and fp16 on cpu passed the speak gate on a Galaxy S26 SM-S942Q (Android 16 BP4A.251205.006, LiteRT 2.2.0, 2026-10-03) with a development copy of this descriptor at commit d4662d89 and the files side-loaded (the four g2p/ files from local copies, before the repo carried them), the same files (sha256) as this commit; fp32 also with the predictor without XNNPACK and the speed priors, fp16 only with the earlier handler (no speed priors, XNNPACK on all three graphs). On 2026-10-05 fp32 and fp16 passed the speak gate again on the same phone at this commit, with the repo's hfmodels.json and the current handler (the predictor without XNNPACK, the speed priors), offline, from the files already in the test app's store (nothing was downloaded on the phone); the bundled catalog adds those runs to the profiles as verification records, which the repo's file does not carry.",
+  "descriptor": {
+    "schema_version": 1,
+    "model_id": "litert-community/kitten-tts-nano-0.8",
+    "tasks": [
+      "speak"
+    ],
+    "default_variant": "fp32",
+    "license": {
+      "id": "apache-2.0",
+      "url": "https://huggingface.co/litert-community/kitten-tts-nano-0.8/blob/d4662d891f9bf54b3d93432610d0d296d229e026/README.md"
+    },
+    "variants": [
+      {
+        "id": "fp32",
+        "runtime": "litert",
+        "handler": {
+          "id": "litert.speak",
+          "abi": 1
+        },
+        "runtime_range": {
+          "min_inclusive": "2.2.0",
+          "max_exclusive": "3.0.0"
+        },
+        "inputs": [
+          "text"
+        ],
+        "files": [
+          {
+            "id": "predictor",
+            "role": "model",
+            "path": "kitten_predictor.tflite",
+            "bytes": 33819808,
+            "sha256": "0ca50bbf3c2fa1ba2c779e3851a5d3c8e59dbb68790a6c392d03eff4fac49296"
+          },
+          {
+            "id": "prosody",
+            "role": "model",
+            "path": "kitten_prosody.tflite",
+            "bytes": 3284012,
+            "sha256": "99b90a4ac4f564068d57eab9eff04534dba31d430c2c831a825c81c328324532"
+          },
+          {
+            "id": "vocoder",
+            "role": "model",
+            "path": "kitten_vocoder.tflite",
+            "bytes": 26433136,
+            "sha256": "87afb43780fb78434418a143de100740e68d804aa8f45adfdeb0370c85ec4eaa"
+          },
+          {
+            "id": "voices",
+            "role": "voices",
+            "path": "voices.npz",
+            "bytes": 3278902,
+            "sha256": "8aa7cee235abb0739cb51e6559685f65a4dacd95568833d05699b1633f519b3f"
+          },
+          {
+            "id": "g2p_model",
+            "role": "model",
+            "path": "g2p/dp_g2p_matcha_fp16.tflite",
+            "bytes": 25785872,
+            "sha256": "6e4b481f6874dfabc32ce73bf6f0ea1ba6ab5986ee6f76a27779364be8a53c73"
+          },
+          {
+            "id": "g2p_dict",
+            "role": "lexicon",
+            "path": "g2p/g2p_dict.txt.gz",
+            "bytes": 1762038,
+            "sha256": "5b3493a8cd4d20b72c7b91415afaf3f32335ebd81f349698e1cedc898c59f979"
+          },
+          {
+            "id": "g2p_meta",
+            "role": "lexicon",
+            "path": "g2p/g2p_meta.json",
+            "bytes": 1904,
+            "sha256": "7b87bfeaaa072be236e8491d771b0cb97cc92c3e5d83e3558fff8849868810f5"
+          },
+          {
+            "id": "symbols",
+            "role": "lexicon",
+            "path": "g2p/symbols.json",
+            "bytes": 1613,
+            "sha256": "366c66d45b1f4ec25463e08d5849921ce364baab2a8a9891df7f9cec602db2fa"
+          }
+        ],
+        "default_profile": "cpu",
+        "profiles": [
+          {
+            "id": "cpu",
+            "priority": 50,
+            "files": [
+              "predictor",
+              "prosody",
+              "vocoder",
+              "voices",
+              "g2p_model",
+              "g2p_dict",
+              "g2p_meta",
+              "symbols"
+            ],
+            "enabled_inputs": [
+              "text"
+            ],
+            "components": {
+              "inference": "cpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "default_selectable": true
+          }
+        ],
+        "handler_config": {
+          "family": "kitten",
+          "files": {
+            "predictor": "predictor",
+            "prosody": "prosody",
+            "vocoder": "vocoder",
+            "voices": "voices",
+            "g2p_model": "g2p_model",
+            "g2p_dict": "g2p_dict",
+            "g2p_meta": "g2p_meta",
+            "symbols": "symbols"
+          },
+          "sample_rate": 24000,
+          "voices": [
+            "expr-voice-2-m",
+            "expr-voice-2-f",
+            "expr-voice-3-m",
+            "expr-voice-3-f",
+            "expr-voice-4-m",
+            "expr-voice-4-f",
+            "expr-voice-5-m",
+            "expr-voice-5-f"
+          ],
+          "default_voice": "expr-voice-2-m",
+          "style_rows": 400,
+          "style_dim": 256,
+          "speed_priors": {
+            "expr-voice-2-f": 0.8,
+            "expr-voice-2-m": 0.8,
+            "expr-voice-3-m": 0.8,
+            "expr-voice-3-f": 0.8,
+            "expr-voice-4-m": 0.9,
+            "expr-voice-4-f": 0.8,
+            "expr-voice-5-m": 0.8,
+            "expr-voice-5-f": 0.8
+          },
+          "xnnpack": {
+            "predictor": false
+          },
+          "cpu_threads": 4,
+          "tail_trim": 5000,
+          "min_samples": 1200,
+          "max_chars": 400,
+          "languages": [
+            "en"
+          ]
+        }
+      },
+      {
+        "id": "fp16",
+        "runtime": "litert",
+        "handler": {
+          "id": "litert.speak",
+          "abi": 1
+        },
+        "runtime_range": {
+          "min_inclusive": "2.2.0",
+          "max_exclusive": "3.0.0"
+        },
+        "inputs": [
+          "text"
+        ],
+        "files": [
+          {
+            "id": "predictor",
+            "role": "model",
+            "path": "kitten_predictor_fp16.tflite",
+            "bytes": 16990756,
+            "sha256": "5f00a375b858be4a2ef655d1387cb6d172e0d4ca8ae6b93fdbad3cd49c0515e7"
+          },
+          {
+            "id": "prosody",
+            "role": "model",
+            "path": "kitten_prosody_fp16.tflite",
+            "bytes": 1697636,
+            "sha256": "ea4501f8c0bcb617f85dc3703cd2dde5e1f49de175fcadaf05d6fccfdb080b6c"
+          },
+          {
+            "id": "vocoder",
+            "role": "model",
+            "path": "kitten_vocoder_fp16.tflite",
+            "bytes": 13367840,
+            "sha256": "626497f75d550e70b82955a3f212417a3c1eebb9d05176716069c92bf41a712d"
+          },
+          {
+            "id": "voices",
+            "role": "voices",
+            "path": "voices.npz",
+            "bytes": 3278902,
+            "sha256": "8aa7cee235abb0739cb51e6559685f65a4dacd95568833d05699b1633f519b3f"
+          },
+          {
+            "id": "g2p_model",
+            "role": "model",
+            "path": "g2p/dp_g2p_matcha_fp16.tflite",
+            "bytes": 25785872,
+            "sha256": "6e4b481f6874dfabc32ce73bf6f0ea1ba6ab5986ee6f76a27779364be8a53c73"
+          },
+          {
+            "id": "g2p_dict",
+            "role": "lexicon",
+            "path": "g2p/g2p_dict.txt.gz",
+            "bytes": 1762038,
+            "sha256": "5b3493a8cd4d20b72c7b91415afaf3f32335ebd81f349698e1cedc898c59f979"
+          },
+          {
+            "id": "g2p_meta",
+            "role": "lexicon",
+            "path": "g2p/g2p_meta.json",
+            "bytes": 1904,
+            "sha256": "7b87bfeaaa072be236e8491d771b0cb97cc92c3e5d83e3558fff8849868810f5"
+          },
+          {
+            "id": "symbols",
+            "role": "lexicon",
+            "path": "g2p/symbols.json",
+            "bytes": 1613,
+            "sha256": "366c66d45b1f4ec25463e08d5849921ce364baab2a8a9891df7f9cec602db2fa"
+          }
+        ],
+        "default_profile": "cpu",
+        "profiles": [
+          {
+            "id": "cpu",
+            "priority": 50,
+            "files": [
+              "predictor",
+              "prosody",
+              "vocoder",
+              "voices",
+              "g2p_model",
+              "g2p_dict",
+              "g2p_meta",
+              "symbols"
+            ],
+            "enabled_inputs": [
+              "text"
+            ],
+            "components": {
+              "inference": "cpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "default_selectable": true
+          }
+        ],
+        "handler_config": {
+          "family": "kitten",
+          "files": {
+            "predictor": "predictor",
+            "prosody": "prosody",
+            "vocoder": "vocoder",
+            "voices": "voices",
+            "g2p_model": "g2p_model",
+            "g2p_dict": "g2p_dict",
+            "g2p_meta": "g2p_meta",
+            "symbols": "symbols"
+          },
+          "sample_rate": 24000,
+          "voices": [
+            "expr-voice-2-m",
+            "expr-voice-2-f",
+            "expr-voice-3-m",
+            "expr-voice-3-f",
+            "expr-voice-4-m",
+            "expr-voice-4-f",
+            "expr-voice-5-m",
+            "expr-voice-5-f"
+          ],
+          "default_voice": "expr-voice-2-m",
+          "style_rows": 400,
+          "style_dim": 256,
+          "speed_priors": {
+            "expr-voice-2-f": 0.8,
+            "expr-voice-2-m": 0.8,
+            "expr-voice-3-m": 0.8,
+            "expr-voice-3-f": 0.8,
+            "expr-voice-4-m": 0.9,
+            "expr-voice-4-f": 0.8,
+            "expr-voice-5-m": 0.8,
+            "expr-voice-5-f": 0.8
+          },
+          "xnnpack": {
+            "predictor": false
+          },
+          "cpu_threads": 4,
+          "tail_trim": 5000,
+          "min_samples": 1200,
+          "max_chars": 400,
+          "languages": [
+            "en"
+          ]
+        }
+      }
+    ]
+  }
+}

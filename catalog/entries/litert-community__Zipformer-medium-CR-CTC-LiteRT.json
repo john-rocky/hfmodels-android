@@ -1,0 +1,209 @@
+{
+  "model_id": "litert-community/Zipformer-medium-CR-CTC-LiteRT",
+  "model_commit": "fa063a88d8191b289e70686bf814f0b52f9144b2",
+  "gated": false,
+  "path": "catalog/entries/litert-community__Zipformer-medium-CR-CTC-LiteRT.json",
+  "provenance": "The CR-CTC checkpoints of the k2-fsa/icefall LibriSpeech zipformer recipe (Apache-2.0; the medium checkpoint is Zengwei/icefall-asr-librispeech-zipformer-medium-cr-ctc-20241018) converted with litert-torch to one classic LiteRT graph per size that runs fully on the GPU (no CPU fallback, no FFT inside the graph): a fixed 16 s window of 80-bin kaldi fbank frames computed on the host and four additive mask biases in, CTC logits out; greedy CTC with blank id 0 over the 500-token BPE vocabulary of tokens.txt runs on the host. small_fp16 (23 M parameters) and medium_fp16 (64 M); large_fp16 is published too and is not listed. gpu_precision 'default' is what the LiteRT model zoo app runs. small_fp16 and medium_fp16 passed the transcribe gate on gpu and on cpu on a Galaxy S26 SM-S942Q (Android 16 BP4A.251205.006, LiteRT 2.2.0) on 2026-10-03 with a development copy of this descriptor at commit 7732ad6c and the files side-loaded, the same files (sha256) as this commit, and again on 2026-10-05 at this commit with the repo's hfmodels.json, offline, from the files already in the test app's store (nothing was downloaded on the phone); the bundled catalog adds the 2026-10-05 runs to the profiles as verification records, which the repo's file does not carry.",
+  "descriptor": {
+    "schema_version": 1,
+    "model_id": "litert-community/Zipformer-medium-CR-CTC-LiteRT",
+    "tasks": [
+      "transcribe"
+    ],
+    "default_variant": "medium_fp16",
+    "license": {
+      "id": "apache-2.0",
+      "url": "https://huggingface.co/litert-community/Zipformer-medium-CR-CTC-LiteRT/blob/7732ad6c15ec43402968d5ae04acfa7a204027f5/README.md"
+    },
+    "variants": [
+      {
+        "id": "small_fp16",
+        "runtime": "litert",
+        "handler": {
+          "id": "litert.transcribe",
+          "abi": 1
+        },
+        "runtime_range": {
+          "min_inclusive": "2.2.0",
+          "max_exclusive": "3.0.0"
+        },
+        "inputs": [
+          "audio"
+        ],
+        "files": [
+          {
+            "id": "main",
+            "role": "model",
+            "path": "zipformer_ctc_small_fp16.tflite",
+            "bytes": 46216688,
+            "sha256": "ff6d70c7e8cfdfcf994be625456ca6543e0dbcc76fd4fd428e2138642d0852ba"
+          },
+          {
+            "id": "tokens",
+            "role": "tokenizer",
+            "path": "tokens.txt",
+            "bytes": 5048,
+            "sha256": "49e3c2646595fd907228b3c6787069658f67b17377c60aeb8619c4551b2316fb"
+          }
+        ],
+        "default_profile": "gpu",
+        "profiles": [
+          {
+            "id": "gpu",
+            "priority": 100,
+            "files": [
+              "main",
+              "tokens"
+            ],
+            "enabled_inputs": [
+              "audio"
+            ],
+            "components": {
+              "inference": "gpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "default_selectable": true,
+            "fallback_profiles": [
+              "cpu"
+            ]
+          },
+          {
+            "id": "cpu",
+            "priority": 50,
+            "files": [
+              "main",
+              "tokens"
+            ],
+            "enabled_inputs": [
+              "audio"
+            ],
+            "components": {
+              "inference": "cpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "default_selectable": true
+          }
+        ],
+        "handler_config": {
+          "family": "zipformer_ctc",
+          "files": {
+            "main": "main",
+            "tokens": "tokens"
+          },
+          "sample_rate": 16000,
+          "window_seconds": 16,
+          "blank_id": 0,
+          "cpu_threads": 4,
+          "gpu_precision": "default",
+          "languages": [
+            "en"
+          ]
+        }
+      },
+      {
+        "id": "medium_fp16",
+        "runtime": "litert",
+        "handler": {
+          "id": "litert.transcribe",
+          "abi": 1
+        },
+        "runtime_range": {
+          "min_inclusive": "2.2.0",
+          "max_exclusive": "3.0.0"
+        },
+        "inputs": [
+          "audio"
+        ],
+        "files": [
+          {
+            "id": "main",
+            "role": "model",
+            "path": "zipformer_ctc_fp16.tflite",
+            "bytes": 131490944,
+            "sha256": "9515d94c04306798fecfe695eb8f79cc8ac98ed3d8eab81c28ac464b7dbddf48"
+          },
+          {
+            "id": "tokens",
+            "role": "tokenizer",
+            "path": "tokens.txt",
+            "bytes": 5048,
+            "sha256": "49e3c2646595fd907228b3c6787069658f67b17377c60aeb8619c4551b2316fb"
+          }
+        ],
+        "default_profile": "gpu",
+        "profiles": [
+          {
+            "id": "gpu",
+            "priority": 100,
+            "files": [
+              "main",
+              "tokens"
+            ],
+            "enabled_inputs": [
+              "audio"
+            ],
+            "components": {
+              "inference": "gpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "default_selectable": true,
+            "fallback_profiles": [
+              "cpu"
+            ]
+          },
+          {
+            "id": "cpu",
+            "priority": 50,
+            "files": [
+              "main",
+              "tokens"
+            ],
+            "enabled_inputs": [
+              "audio"
+            ],
+            "components": {
+              "inference": "cpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "default_selectable": true
+          }
+        ],
+        "handler_config": {
+          "family": "zipformer_ctc",
+          "files": {
+            "main": "main",
+            "tokens": "tokens"
+          },
+          "sample_rate": 16000,
+          "window_seconds": 16,
+          "blank_id": 0,
+          "cpu_threads": 4,
+          "gpu_precision": "default",
+          "languages": [
+            "en"
+          ]
+        }
+      }
+    ]
+  }
+}
