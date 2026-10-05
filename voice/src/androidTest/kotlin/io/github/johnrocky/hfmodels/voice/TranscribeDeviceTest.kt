@@ -7,6 +7,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import io.github.johnrocky.hfmodels.BackendKind
 import io.github.johnrocky.hfmodels.BackendPolicy
+import io.github.johnrocky.hfmodels.BundledCatalog
 import io.github.johnrocky.hfmodels.HfModels
 import io.github.johnrocky.hfmodels.LoadEvent
 import io.github.johnrocky.hfmodels.LoadOptions
@@ -25,9 +26,9 @@ import org.junit.runner.RunWith
 
 /**
  * Speech to text with `litert-community/Zipformer-medium-CR-CTC-LiteRT` on a named device, through the
- * public API and the development descriptor (catalog/dev, a test-APK asset, passed explicitly so the run
- * is offline; every file is imported from `dir`, laid out like the repo, and sha256-checked against the
- * descriptor). In one process and one load:
+ * public API at the commit the bundled catalog pins, offline: the descriptor is the catalog's entry (the
+ * repo's own hfmodels.json at that commit), and every file is imported from `dir`, laid out like the repo,
+ * and sha256-checked against it. In one process and one load:
  *   1. load (import, tokens, compile) and the profile that came up;
  *   2. transcribe: each fixture WAV once, one RESULT line per file (exact and normalized match with the
  *      expected text; normalized = lower case, every run of characters outside [a-z0-9] -> one space, trimmed);
@@ -41,14 +42,18 @@ import org.junit.runner.RunWith
  * fixtures (default /data/local/tmp/hfmodels-voice/commands: c01..c10.wav, 16 kHz mono s16, and
  * commands.tsv, id<TAB>expected text; tools/voice_fixtures.sh makes them). Two measurement switches, off by
  * default: preroll_ms (zeros put before each WAV for steps 2 and 3) and gpu_precision (default | fp32, written
- * into every variant's handler_config of the descriptor before the load).
+ * into every variant's handler_config of a copy of the catalog's descriptor, which then goes in explicitly).
+ * Loading as an app does: by_id=true loads `ModelRef(id, variant = ...)` without a revision (the load line's binding
+ * says how the commit was found: RESOLVED_BRANCH, the repo's head over the network, or SAVED_BINDING, the commit an
+ * earlier load bound), and network (offline | unmetered | any, default offline) is the load's network policy; with
+ * unmetered a file not in the store is never fetched over a metered network. Files not in the store are imported from
+ * `dir` first in either mode.
  *
  *   tools/transcribe_gate.sh small_fp16 gpu
  */
 @RunWith(AndroidJUnit4::class)
 class TranscribeDeviceTest {
     private val ctx = InstrumentationRegistry.getInstrumentation().targetContext
-    private val testCtx = InstrumentationRegistry.getInstrumentation().context
     private val args = InstrumentationRegistry.getArguments()
     private val variant = args.getString("variant") ?: "small_fp16"
     private val backend = args.getString("backend") ?: "gpu"
@@ -56,6 +61,11 @@ class TranscribeDeviceTest {
     private val fixtures = File(args.getString("fixtures") ?: "/data/local/tmp/hfmodels-voice/commands")
     private val prerollMs = args.getString("preroll_ms")?.toInt() ?: 0
     private val gpuPrecision = args.getString("gpu_precision")
+    private val byId = args.getString("by_id")?.toBoolean() ?: false
+    private val network = when (val n = args.getString("network") ?: "offline") {
+        "offline" -> NetworkPolicy.Offline; "unmetered" -> NetworkPolicy.Unmetered; "any" -> NetworkPolicy.Any
+        else -> error("network must be offline, unmetered or any, not '$n'")
+    }
     private val failures = ArrayList<String>()
 
     private fun result(step: String, ok: Boolean, detail: String) {
@@ -66,18 +76,19 @@ class TranscribeDeviceTest {
     @Test fun loadTranscribeTimingEndpointRelease(): Unit = runBlocking {
         val models = HfModels(ctx)
         val policy = when (backend) { "cpu" -> BackendPolicy.Require(BackendKind.CPU); "gpu" -> BackendPolicy.Require(BackendKind.GPU); else -> BackendPolicy.Auto }
-        val asset = testCtx.assets.open(DESCRIPTOR_ASSET).bufferedReader().use { it.readText() }
-        val commit = JSONObject(asset).getString("revision")
-        val descriptor = if (gpuPrecision == null) asset else JSONObject(asset).apply {
+        val entry = BundledCatalog.load(ctx).defaultBinding(REPO) ?: error("$REPO is not in the bundled catalog")
+        // Without the switch no descriptor goes in: the SDK finds the commit's as an app's load does (its descriptor cache,
+        // the repo's hfmodels.json when the policy allows the network, the bundled catalog's entry).
+        val descriptor = if (gpuPrecision == null) null else JSONObject(entry.descriptorJson).apply {
             val vs = getJSONArray("variants")
             for (i in 0 until vs.length()) vs.getJSONObject(i).getJSONObject("handler_config").put("gpu_precision", gpuPrecision)
         }.toString()
-        val opts = LoadOptions(backendPolicy = policy, networkPolicy = NetworkPolicy.Offline, descriptorJson = descriptor)
-        Log.i(TAG, "device=${Build.MODEL} soc=${Build.SOC_MANUFACTURER}/${Build.SOC_MODEL} build=${Build.DISPLAY} android=${Build.VERSION.RELEASE} model=$REPO@${commit.take(8)} variant=$variant backend=$backend preroll_ms=$prerollMs gpu_precision=${gpuPrecision ?: "descriptor"}")
+        val opts = LoadOptions(backendPolicy = policy, networkPolicy = network, descriptorJson = descriptor)
+        Log.i(TAG, "device=${Build.MODEL} soc=${Build.SOC_MANUFACTURER}/${Build.SOC_MODEL} build=${Build.DISPLAY} android=${Build.VERSION.RELEASE} model=$REPO@${if (byId) "id" else entry.modelCommit.take(8)} variant=$variant backend=$backend network=$network preroll_ms=$prerollMs gpu_precision=${gpuPrecision ?: "descriptor"}")
         var model: Transcriber? = null
         try {
             // 1. load
-            val ref = ModelRef(REPO, revision = commit, variant = variant)
+            val ref = if (byId) ModelRef(REPO, variant = variant) else ModelRef(REPO, revision = entry.modelCommit, variant = variant)
             val plan = models.inspect(ref, Transcribe, opts)
             val t0 = SystemClock.elapsedRealtime()
             for (f in plan.files) if (!f.cached) models.importFile(plan, f.id, File(base, f.path))
@@ -88,7 +99,8 @@ class TranscribeDeviceTest {
             model = m
             val loadMs = SystemClock.elapsedRealtime() - t1
             result("load", events.last() is LoadEvent.Ready && events.none { it is LoadEvent.DownloadStarted },
-                "import_ms=$importMs load_ms=$loadMs profile=${m.info.profileId} runtime=litert ${m.info.runtimeVersion} window_s=${m.limits.windowSeconds} sample_rate=${m.limits.sampleRate} notes=${m.info.notes.joinToString(" | ")}")
+                "commit=${m.info.commit.take(8)} binding=${m.info.bindingSource} descriptor=${m.info.descriptorOrigin.repo}@${m.info.descriptorOrigin.commit.take(8)}/${m.info.descriptorOrigin.path} " +
+                    "import_ms=$importMs load_ms=$loadMs profile=${m.info.profileId} runtime=litert ${m.info.runtimeVersion} window_s=${m.limits.windowSeconds} sample_rate=${m.limits.sampleRate} notes=${m.info.notes.joinToString(" | ")}")
 
             // 2. one transcription per fixture
             val expected = File(fixtures, "commands.tsv").readLines(Charsets.UTF_8).filter { it.isNotBlank() }.map { it.substringBefore('\t') to it.substringAfter('\t') }
@@ -201,7 +213,5 @@ class TranscribeDeviceTest {
     companion object {
         const val TAG = "hfmodels-transcribe"
         const val REPO = "litert-community/Zipformer-medium-CR-CTC-LiteRT"
-        /** The development descriptor (catalog/dev, an androidTest asset): its `revision` is the model commit the files were listed at. */
-        const val DESCRIPTOR_ASSET = "litert-community__Zipformer-medium-CR-CTC-LiteRT.hfmodels.json"
     }
 }

@@ -1,0 +1,24 @@
+# samples/voice app (debug build of ee61fcc), two runs that change nothing on the phone: (say2) --ez autoload true --es say 'What time is it?', then --es say 'What day is it today?' 1 s after the first Heard, HOME after the second TURN; (record) --ez autoload true --es record r13 --es say 'What time is it?', HOME after Done  date=2026-10-05T01:07Z serial=RFGL80R6A6H device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZH9 android=16
+# network=none in the app's ready lines; the summary line under each run is the run script's (first Heard seen, second TURN seen, Speaking events after HOME, turns logged; Done seen, TURN lines, the phone field, the recorded lines); the run's log follows unchanged
+== say2: io.github.johnrocky.hfmodels.samples.voice
+    10-05 10:07:26.986  1035  1100 I hfmodels-voice-sample: ready asr=litert-community/Zipformer-medium-CR-CTC-LiteRT/medium_fp16/gpu tts=litert-community/kitten-tts-nano-0.8/fp32/cpu llm=litert-community/gemma-4-E2B-it-litert-lm/default/gpu load_ms=4356 network=none
+    10-05 10:07:26.996  1035  1068 I hfmodels-voice-sample: event=Heard text="What time is it?" audio_ms=0 transcribe_ms=0
+    10-05 10:07:26.996  1035  1068 I hfmodels-voice-sample: event=Thinking
+    10-05 10:07:27.900  1035  1068 I hfmodels-voice-sample: event=ToolCalled name=get_current_datetime args={} result="Monday, 2026-10-05 10:07" ms=0
+    10-05 10:07:28.274  1035  1100 I hfmodels-voice-sample: event=Heard text="What day is it today?" audio_ms=0 transcribe_ms=0
+    10-05 10:07:28.274  1035  1100 I hfmodels-voice-sample: event=Thinking
+    10-05 10:07:28.794  1035  1484 I hfmodels-voice-sample: event=ToolCalled name=get_current_datetime args={} result="Monday, 2026-10-05 10:07" ms=1
+    10-05 10:07:29.459  1035  1100 I hfmodels-voice-sample: event=Speaking sentence="It is Monday, October 5th, 2026," synth_ms=256 first_audio_ms=1184
+    10-05 10:07:32.837  1035  1100 I hfmodels-voice-sample: event=Done total_ms=4562
+    10-05 10:07:32.845  1035  1070 I hfmodels-voice-sample: TURN input=text heard="What day is it today?" tools=[get_current_datetime()->"Monday, 2026-10-05 10:07"] ms_first_audio=1184 hangover_ms=0 ms_end_of_speech_to_sound=1184 ms_transcribe=0 ms_first_token=497 ms_first_sentence=919 ms_reply=919 ms_total=4562 spoken="It is Monday, October 5th, 2026." reply="It is Monday, October 5th, 2026." phone="Next alarm (Android): none" network=none
+   first Heard seen: True | second TURN seen: True | Speaking events after HOME: 0 | turns logged: 1
+== record: io.github.johnrocky.hfmodels.samples.voice
+    10-05 10:07:42.623  1700  1748 I hfmodels-voice-sample: ready asr=litert-community/Zipformer-medium-CR-CTC-LiteRT/medium_fp16/gpu tts=litert-community/kitten-tts-nano-0.8/fp32/cpu llm=litert-community/gemma-4-E2B-it-litert-lm/default/gpu load_ms=4713 network=none
+    10-05 10:07:42.639  1700  1731 I hfmodels-voice-sample: event=Heard text="What time is it?" audio_ms=0 transcribe_ms=0
+    10-05 10:07:42.640  1700  1731 I hfmodels-voice-sample: event=Thinking
+    10-05 10:07:43.572  1700  1748 I hfmodels-voice-sample: event=ToolCalled name=get_current_datetime args={} result="Monday, 2026-10-05 10:07" ms=1
+    10-05 10:07:44.624  1700  1749 I hfmodels-voice-sample: event=Speaking sentence="It is ten o'clock on Monday, October 5th, 2026," synth_ms=519 first_audio_ms=1986
+    10-05 10:07:48.509  1700  1749 I hfmodels-voice-sample: event=Done total_ms=5871
+    10-05 10:07:48.517  1700  1749 I hfmodels-voice-sample: TURN input=text heard="What time is it?" tools=[get_current_datetime()->"Monday, 2026-10-05 10:07"] ms_first_audio=1986 hangover_ms=0 ms_end_of_speech_to_sound=1986 ms_transcribe=0 ms_first_token=907 ms_first_sentence=1456 ms_reply=1455 ms_total=5871 spoken="It is ten o'clock on Monday, October 5th, 2026." reply="It is ten o'clock on Monday, October 5th, 2026." phone="Next alarm (Android): none" network=none
+    10-05 10:07:48.977  1700  1749 I hfmodels-voice-sample: recorded /storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.voice/files/record/r13/001
+   Done seen: True | TURN lines: 1 | phone field: Next alarm (Android): none | recorded lines: ['/storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.voice/files/record/r13/001']

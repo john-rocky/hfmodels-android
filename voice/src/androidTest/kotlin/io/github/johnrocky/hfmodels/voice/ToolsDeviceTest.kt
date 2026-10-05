@@ -39,8 +39,8 @@ import org.junit.runner.RunWith
  * with [RecordingTools] (nothing on the phone changes), and the first sentence of one reply through the
  * speaker. Every load is Offline; files are imported from local directories and sha256-checked. RESULT
  * lines under tag `hfmodels-tools`:
- *   1. load: Zipformer medium_fp16 on the GPU and Kitten fp32 on the CPU (development descriptors, test-APK
- *      assets), then the chat model (`llm` / `variant` / `backend`; the `descriptor` asset, or the bundled
+ *   1. load: Zipformer medium_fp16 on the GPU and Kitten fp32 on the CPU (each at the commit the bundled catalog
+ *      pins), then the chat model (`llm` / `variant` / `backend`; the `descriptor` asset, or the bundled
  *      catalog's entry at its commit); VmHWM before the chat model, after it and after everything; each plan
  *      inspected again through another client must find its files cached; c01.wav through the transcriber
  *      with all three loaded;
@@ -108,13 +108,13 @@ class ToolsDeviceTest {
         try {
             // 1. load: transcriber, speaker, then the chat model
             val hwmStart = status("VmHWM")
-            val asrLoad = load(asrModels, Transcribe, ASR_DESCRIPTOR, "medium_fp16", BackendPolicy.Require(BackendKind.GPU), File("/data/local/tmp/hfmodels/zipformer"))
+            val asrLoad = load(asrModels, Transcribe, ASR_REPO, null, "medium_fp16", BackendPolicy.Require(BackendKind.GPU), File("/data/local/tmp/hfmodels/zipformer"))
             val asr = asrLoad.model.also { open += it }
-            val ttsLoad = load(ttsModels, Speak, TTS_DESCRIPTOR, "fp32", BackendPolicy.Auto, File("/data/local/tmp/hfmodels/kitten"))
+            val ttsLoad = load(ttsModels, Speak, TTS_REPO, null, "fp32", BackendPolicy.Auto, File("/data/local/tmp/hfmodels/kitten"))
             val tts = ttsLoad.model.also { open += it }
             val hwmBeforeLlm = status("VmHWM")
             val llmPolicy = when (backend) { "cpu" -> BackendPolicy.Require(BackendKind.CPU); "gpu" -> BackendPolicy.Require(BackendKind.GPU); else -> BackendPolicy.Auto }
-            val llmLoad = load(llmModels, Tasks.Chat, descriptorAsset, variant, llmPolicy, dir)
+            val llmLoad = load(llmModels, Tasks.Chat, llm, descriptorAsset, variant, llmPolicy, dir)
             var chat = llmLoad.model.also { open += it }
             val hwmAfterLlm = status("VmHWM")
             // One store, three clients: each plan seen through another client finds its files.
@@ -204,11 +204,11 @@ class ToolsDeviceTest {
 
     /**
      * Inspect, import every file not cached from [from] (laid out like the repo), load; Offline at an explicit commit:
-     * the [asset] descriptor's `revision`, or (no asset: the chat model) the bundled catalog's entry for [llm].
+     * the [asset] descriptor's `revision` (its `model_id` the repo), or (no asset) the bundled catalog's entry for [id].
      */
-    private suspend fun <M : PreparedModel> load(models: HfModels, task: Task<M>, asset: String?, variant: String?, policy: BackendPolicy, from: File): Loaded<M> {
+    private suspend fun <M : PreparedModel> load(models: HfModels, task: Task<M>, id: String, asset: String?, variant: String?, policy: BackendPolicy, from: File): Loaded<M> {
         val descriptor = asset?.let { a -> testCtx.assets.open(a).bufferedReader().use { it.readText() } }
-        val repo = descriptor?.let { JSONObject(it).getString("model_id") } ?: llm
+        val repo = descriptor?.let { JSONObject(it).getString("model_id") } ?: id
         val commit = descriptor?.let { JSONObject(it).getString("revision") }
             ?: BundledCatalog.load(ctx).defaultBinding(repo)?.modelCommit ?: error("$repo is not in the bundled catalog; pass descriptor=<asset>")
         val ref = ModelRef(repo, revision = commit, variant = variant)
@@ -297,8 +297,8 @@ class ToolsDeviceTest {
 
     companion object {
         const val TAG = "hfmodels-tools"
-        const val ASR_DESCRIPTOR = "litert-community__Zipformer-medium-CR-CTC-LiteRT.hfmodels.json"
-        const val TTS_DESCRIPTOR = "litert-community__kitten-tts-nano-0.8.hfmodels.json"
+        const val ASR_REPO = "litert-community/Zipformer-medium-CR-CTC-LiteRT"
+        const val TTS_REPO = "litert-community/kitten-tts-nano-0.8"
         const val TURN_TIMEOUT_MS = 180_000L
         /** A sentence end with a space after it: the first sentence is complete (the Done event covers the last one). */
         val SENTENCE_END = Regex("[.!?。！？]+(?=\\s)")
