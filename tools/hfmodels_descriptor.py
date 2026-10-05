@@ -16,6 +16,12 @@ that declares channels in its own LlmMetadata is refused unless the spec spells 
 apply the bundle's own otherwise, but the descriptor should say so), and a spec whose channels differ
 from the bundle's is reported. `--no-bundle-header` skips that read.
 
+When the repo carries its own `hfmodels.json` at the commit, a load of that commit reads the repo's
+file when it has the network and the catalog's entry when it has not, so the two must say the same:
+when the repo's descriptor reads the same as the spec's (a profile's omitted keys taken at the
+defaults the SDK's parser applies), the entry carries the repo's descriptor as published; otherwise
+the difference is reported and the entry carries the spec's.
+
 Verification records are NOT written here; `tools/build_catalog.py` merges `verification/*.json`
 (produced by the device gate) into the profiles when it builds the bundled catalog.
 """
@@ -48,6 +54,32 @@ def repo_info(repo, revision, token):
 def fail(msg):
     print(f"error: {msg}", file=sys.stderr)
     sys.exit(2)
+
+
+# The keys a profile may omit, at the defaults the SDK's parser gives them
+# (core/src/main/kotlin/io/github/johnrocky/hfmodels/descriptor/Descriptor.kt, Profile.parse: priority line 171,
+# fallback_profiles line 176, default_selectable line 177, verification line 179).
+PROFILE_DEFAULTS = (("priority", 0), ("fallback_profiles", []), ("default_selectable", True), ("verification", []))
+
+
+def read_differences(a, b):
+    """The JSON paths where two descriptors differ as the SDK reads them: a profile's omitted keys count at PROFILE_DEFAULTS."""
+    def as_read(d):
+        d = json.loads(json.dumps(d))
+        for v in d.get("variants", []):
+            for p in v.get("profiles", []):
+                for k, default in PROFILE_DEFAULTS:
+                    p.setdefault(k, json.loads(json.dumps(default)))
+        return d
+
+    def paths(x, y, path):
+        if isinstance(x, dict) and isinstance(y, dict):
+            return [d for k in sorted(set(x) | set(y)) for d in (paths(x[k], y[k], f"{path}/{k}") if k in x and k in y else [f"{path}/{k}"])]
+        if isinstance(x, list) and isinstance(y, list) and len(x) == len(y):
+            return [d for i, (p, q) in enumerate(zip(x, y)) for d in paths(p, q, f"{path}[{i}]")]
+        return [] if x == y else [path or "/"]
+
+    return paths(as_read(a), as_read(b), "")
 
 
 # ---- .litertlm header: section table (FlatBuffer) + LlmMetadata (protobuf), same layout the SDK reads ----
@@ -233,6 +265,15 @@ def main():
             "inputs": v["inputs"], "files": vfiles, "default_profile": v["default_profile"], "profiles": profiles, "handler_config": hc,
         })
     if out["default_variant"] not in {v["id"] for v in out["variants"]}: fail("default_variant")
+    if "hfmodels.json" in files:
+        published = json.loads(get(f"{HUB}/{repo}/resolve/{commit}/hfmodels.json", a.token))
+        diff = read_differences(published, out)
+        if not diff:
+            out = published
+            print(f"note: {repo}@{commit[:8]} carries hfmodels.json and it reads the same as the spec; the entry carries it as published", file=sys.stderr)
+        else:
+            print(f"note: {repo}@{commit[:8]} carries hfmodels.json and it differs from the spec at {', '.join(diff[:8])}{' ...' if len(diff) > 8 else ''}; "
+                  "the entry carries the spec's descriptor, which a load of this commit reads only with neither the network nor a cached copy of the repo's", file=sys.stderr)
 
     entry = {
         "model_id": repo,
