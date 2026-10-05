@@ -257,9 +257,9 @@ Each row is one run in one process: side-load with a sha256 check (each GPU run 
 The third thing the SDK runs: the phone hears a request, does it with its own tools and answers aloud, with no network. Main only; not on Maven Central yet.
 
 ```kotlin
-// implementation("io.github.john-rocky.hfmodels:hfmodels-voice:0.2.0")   (main; + android.uniquePackageNames=false and the two catalog/dev descriptors as assets, see docs/api.md "Voice")
-val asr = HfModels(app).fromPretrained(ModelRef("litert-community/Zipformer-medium-CR-CTC-LiteRT", "7732ad6c15ec43402968d5ae04acfa7a204027f5", "medium_fp16"), Transcribe, LoadOptions(descriptorJson = zipformerJson))
-val tts = HfModels(app).fromPretrained(ModelRef("litert-community/kitten-tts-nano-0.8", "d4662d891f9bf54b3d93432610d0d296d229e026", "fp32"), Speak, LoadOptions(descriptorJson = kittenJson))
+// implementation("io.github.john-rocky.hfmodels:hfmodels-voice:0.2.0")   (main; + android.uniquePackageNames=false, see docs/api.md "Voice")
+val asr = HfModels(app).fromPretrained(ModelRef("litert-community/Zipformer-medium-CR-CTC-LiteRT"), Transcribe)
+val tts = HfModels(app).fromPretrained(ModelRef("litert-community/kitten-tts-nano-0.8"), Speak)
 val chat = HfModels(app).fromPretrained(ModelRef("litert-community/gemma-4-E2B-it-litert-lm"), Tasks.Chat)
 val loop = VoiceLoop(asr, chat, tts, PhoneTools.all(app), VoiceLoopConfig(player = SpeechPlayer()))
 loop.listen(MicSource().chunks()).collect { e -> show(e) }   // per utterance: Heard, Thinking, ToolCalled, Speaking, Done
@@ -269,7 +269,9 @@ loop.listen(MicSource().chunks()).collect { e -> show(e) }   // per utterance: H
 - Acts: the transcript goes to the chat model with the phone's tools (`PhoneTools`: the time, alarms and timers in the Clock app, events in the app's own calendar). The runtime parses Gemma 4's calls, the app runs them (the runtime never does), and the model answers. A tool says only what it could check: the alarm is "set" once Android reports it as the next alarm, "requested" when another alarm at that minute or earlier comes first; a timer is always "requested", because Android has no public API to read the Clock app's timers.
 - Says: KittenTTS nano speaks the answer sentence by sentence while it streams, on the CPU. After an action it says the tool's result ("Alarm set for 07:30 (Morning Alarm)"), not the model's words about it: for "Wake me up at six fifteen" Gemma 4 E2B once called `set_alarm(hour = 16, minute = 15)` and said "6:15" (`litertlm/results/2026-10-03-1637-…`, c02).
 
-The two speech repos carry no `hfmodels.json`, so each load passes the development descriptor from `catalog/dev/` and pins its commit (a repo that carries `hfmodels.json` loads by its id alone; these two do not yet). The speaker's descriptor also lists four G2P files that its repo does not carry, so those are side-loaded (`samples/voice/README.md`). Every run below imported the speech files from local copies and checked their sha256; none downloaded them from the Hub.
+Both speech repos carry `hfmodels.json`: Zipformer from commit fa063a88, Kitten from 2c5b198f, which also added the four G2P files under `g2p/`. The bundled catalog pins those two commits. The first load by id resolves the repo's branch over the network, reads its `hfmodels.json`, downloads the files the store lacks, checks their sha256 and binds the id to that commit; later loads use the binding and the stored files, with or without a network. `samples/voice` pins the catalog's commits instead. No load of these two commits has run on a device yet, by id or pinned.
+
+Every run below predates those commits: it passed a development descriptor with the same variants and files explicitly at the commit before (7732ad6c, d4662d89), imported every speech file from a local copy and checked its sha256 (the G2P files too, which the Kitten repo did not carry then), and downloaded nothing from the Hub. The files' sha256 are the ones the current commits list.
 
 The measurements are one Galaxy S26 SM-S942Q (Android 16 BP4A.251205.006, LiteRT 2.2.0, LiteRT-LM 0.16.1) on 2026-10-03. The spoken commands are ten synthetic WAVs (macOS `say`, voice Samantha, `tools/voice_fixtures.sh`), not a person; the loop has not been measured through the microphone with a person's voice. Each row is one run of the test or app it names; the logs are under `litert/results/` and `litertlm/results/`.
 
@@ -411,7 +413,7 @@ samples/voice one microphone button over VoiceLoop with the phone's real tools, 
 samples/promises a conversation sorted sentence by sentence into You promised / They asked you / Plans on GLiNER2.5-Decide, the milliseconds on screen; its androidTest/ holds a device check, results/ the Galaxy S26 records
 samples/ask  one bar chart the app draws and five questions about it in one conversation (the picture with question 1, then text-only turns), each answer marked against the data; results/ the Galaxy S26 records
 samples/pong a Pong the phone plays from its own frames, a new conversation per decision; its README says why the answers after the first are unreliable on this model (LiteRT-LM#3165); results/ the records
-catalog/     specs (curated) -> entries (generated) -> the bundled asset; dev/ the development descriptors (the decision graphs, the speech models, FunctionGemma); proposals/ the hfmodels.json drafts for model repos; tools/ generate and gate them
+catalog/     specs (curated) -> entries (generated) -> the bundled asset; dev/ the development descriptors (the decision graphs, FunctionGemma); proposals/ the hfmodels.json drafts for model repos; tools/ generate and gate them
 probes/      the runtime coexistence probe (LiteRT-LM + LiteRT in one release APK) and its logs
 docs/        api.md (the complete surface), errors.md, publishing.md; skills/ the agent procedure (hfmodels-android) and a draft on choosing and running decision models (typed-decisions-on-device); tested-runtime-matrix.json the verified matrix
 ```
