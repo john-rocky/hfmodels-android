@@ -349,7 +349,7 @@
             {
               "level": "PUBLISHER_TESTED",
               "result": "PASS",
-              "note": "371/371 questions of the 143 card gate requests that fit 256 tokens, packed as the author packs them, give the author's answers through the graph, max |dp| 0.00069, 184.3 ms per request (median); the 30 sieve sentences give the Mac host's answers (30/30), 350.1 ms per question (median), four questions in one forward 318.9 ms; thermal status 0 at the start, 2 at the end; GPU explicit FP32; 1906/1906 LITERT_CL; litert/results/2026-10-05-1126-RFGL80R6A6H-litert2.2.0-decide-opendecision-s256_npu_wfp16-gpu.log",
+              "note": "371/371 questions of the 143 card gate requests that fit 256 tokens, packed as the author packs them, give the author's answers through the graph, max |dp| 0.0058, 145.9 ms per request (median); the 30 sieve sentences give the Mac host's answers (30/30), 397.8 ms per question (median), four questions in one forward 317.9 ms; thermal status 0 at the start, 2 at the end; GPU FP16 with FP32 accumulation; 1906/1906 LITERT_CL; litert/results/2026-10-05-1130-RFGL80R6A6H-litert2.2.0-decide-opendecision-fp16acc32-s256_npu_wfp16-gpu.log",
               "device": "SM-S942Q (Galaxy S26)",
               "os_build": "BP4A.251205.006.S942QOPS1AZH9",
               "runtime": "litert 2.2.0",
@@ -394,7 +394,7 @@
           "tokenizer": "tokenizer"
         },
         "table_dtype": "float16",
-        "gpu_precision": "fp32",
+        "gpu_precision": "fp16_with_fp32_accum",
         "cpu_threads": 4,
         "languages": [
           "en"

@@ -460,7 +460,7 @@
           "tokenizer": "tokenizer"
         },
         "table_dtype": "float16",
-        "gpu_precision": "fp32",
+        "gpu_precision": "fp16_with_fp32_accum",
         "cpu_threads": 4,
         "languages": [
           "en"
