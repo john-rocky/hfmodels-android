@@ -45,10 +45,10 @@ dependencies {
 mavenPublishing {
     publishToMavenCentral()
     signAllPublications()
-    coordinates("io.github.john-rocky.hfmodels", "hfmodels-voice", project.findProperty("hfmodelsVersion") as String? ?: "0.1.2")
+    coordinates("io.github.john-rocky.hfmodels", "hfmodels-voice", project.findProperty("hfmodelsVersion") as String? ?: "0.2.0")
     pom {
         name.set("hfmodels-voice")
-        description.set("hfmodels voice loop: endpointing over microphone audio, on top of the LiteRT transcriber and the LiteRT-LM chat model")
+        description.set("hfmodels voice loop: endpointing over microphone audio, the transcript to a LiteRT-LM chat model with tool calls, the phone's tools (the time, alarms and timers in the Clock app, events in the app's own calendar) and the answer spoken sentence by sentence by the LiteRT speaker and played")
         url.set("https://github.com/john-rocky/hfmodels-android")
         licenses { license { name.set("Apache-2.0"); url.set("https://www.apache.org/licenses/LICENSE-2.0.txt") } }
         developers { developer { id.set("john-rocky"); name.set("Daisuke Majima"); url.set("https://github.com/john-rocky") } }
