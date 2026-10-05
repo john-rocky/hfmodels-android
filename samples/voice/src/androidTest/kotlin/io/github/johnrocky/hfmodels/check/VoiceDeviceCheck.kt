@@ -38,7 +38,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
-import org.json.JSONObject
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -55,8 +54,8 @@ import org.junit.runner.RunWith
  *   2. app/build.gradle.kts:
  *        android { defaultConfig { testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner" } }
  *        dependencies { androidTestImplementation("androidx.test:runner:1.7.0"); androidTestImplementation("androidx.test.ext:junit:1.3.0") }
- *      Until the transcriber's and the speaker's repos carry hfmodels.json, the app ships their development
- *      descriptors as assets (this sample: catalog/dev); the check reads them from the app's assets.
+ *      The check loads each id at the commit the SDK's bundled catalog pins for it (the transcriber's and the
+ *      speaker's repos carry hfmodels.json at those commits), so the app ships no descriptor of its own.
  *   3. the models in the app's store (one load in the app, or the files pushed into its external files dir), the
  *      permissions, and the command's audio (16 kHz mono 16-bit WAV):
  *        adb shell pm grant <applicationId> android.permission.READ_CALENDAR      # PhoneTools.phoneState reads the app's own calendar
@@ -117,9 +116,9 @@ class VoiceDeviceCheck {
 
             // 1. load, from the store (Offline when the phone has no network)
             val policy = if (net == "none") NetworkPolicy.Offline else NetworkPolicy.Any
-            val (asr, asrMs) = load(asrModels, Transcribe, ASR_ID, "medium_fp16", BackendPolicy.Require(BackendKind.GPU), ASR_DESCRIPTOR, policy).also { open += it.first }
-            val (tts, ttsMs) = load(ttsModels, Speak, TTS_ID, "fp32", BackendPolicy.Auto, TTS_DESCRIPTOR, policy).also { open += it.first }
-            val (chat, llmMs) = load(llmModels, Tasks.Chat, LLM_ID, null, BackendPolicy.Require(BackendKind.GPU), null, policy).also { open += it.first }
+            val (asr, asrMs) = load(asrModels, Transcribe, ASR_ID, "medium_fp16", BackendPolicy.Require(BackendKind.GPU), policy).also { open += it.first }
+            val (tts, ttsMs) = load(ttsModels, Speak, TTS_ID, "fp32", BackendPolicy.Auto, policy).also { open += it.first }
+            val (chat, llmMs) = load(llmModels, Tasks.Chat, LLM_ID, null, BackendPolicy.Require(BackendKind.GPU), policy).also { open += it.first }
             step("load", true, "asr=${asr.info.repoId}/${asr.info.variantId}/${asr.info.profileId} asr_ms=$asrMs tts=${tts.info.repoId}/${tts.info.variantId}/${tts.info.profileId} tts_ms=$ttsMs " +
                 "llm=${chat.info.repoId}/${chat.info.variantId}/${chat.info.profileId} llm_ms=$llmMs network_policy=$policy")
 
@@ -203,11 +202,10 @@ class VoiceDeviceCheck {
             if (left) "left=true todo=${q("turn off or delete the 07:30 alarm labelled '$label' in the Clock app by hand")}" else "left=false")
     }
 
-    private suspend fun <M : PreparedModel> load(models: HfModels, task: Task<M>, id: String, variant: String?, backend: BackendPolicy, descriptorAsset: String?, policy: NetworkPolicy): Pair<M, Long> {
-        val descriptor = descriptorAsset?.let { a -> ctx.assets.open(a).bufferedReader().use { it.readText() } }
-        val commit = descriptor?.let { JSONObject(it).getString("revision") } ?: BundledCatalog.load(ctx).defaultBinding(id)?.modelCommit
+    private suspend fun <M : PreparedModel> load(models: HfModels, task: Task<M>, id: String, variant: String?, backend: BackendPolicy, policy: NetworkPolicy): Pair<M, Long> {
+        val commit = BundledCatalog.load(ctx).defaultBinding(id)?.modelCommit
         val t0 = SystemClock.elapsedRealtime()
-        val m = models.fromPretrained(ModelRef(id, revision = commit, variant = variant), task, LoadOptions(backendPolicy = backend, networkPolicy = policy, descriptorJson = descriptor))
+        val m = models.fromPretrained(ModelRef(id, revision = commit, variant = variant), task, LoadOptions(backendPolicy = backend, networkPolicy = policy))
         return m to SystemClock.elapsedRealtime() - t0
     }
 
@@ -266,8 +264,6 @@ class VoiceDeviceCheck {
         const val ASR_ID = "litert-community/Zipformer-medium-CR-CTC-LiteRT"
         const val TTS_ID = "litert-community/kitten-tts-nano-0.8"
         const val LLM_ID = "litert-community/gemma-4-E2B-it-litert-lm"
-        const val ASR_DESCRIPTOR = "litert-community__Zipformer-medium-CR-CTC-LiteRT.hfmodels.json"
-        const val TTS_DESCRIPTOR = "litert-community__kitten-tts-nano-0.8.hfmodels.json"
         const val TURN_TIMEOUT_MS = 180_000L
         const val ALARM_WAIT_MS = 5_000L
     }
