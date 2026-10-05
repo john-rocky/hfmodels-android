@@ -3,7 +3,7 @@
   "catalog_id": "hfmodels-bundled",
   "origin": {
     "repo": "john-rocky/hfmodels-android",
-    "commit": "e0135deb3121bfd774d8775b6aa2d67dbc2e987e"
+    "commit": "33c5a98c888fe32089e5de5a943ebe648840abd7"
   },
   "entries": [
     {
@@ -2976,9 +2976,9 @@
     },
     {
       "model_id": "litert-community/Open-Decision-DeBERTa-v3-Large-LiteRT",
-      "model_commit": "7a276235b795e8ad3ae7ac6a9f237daa2098863a",
+      "model_commit": "26a2b642961006ae7b1e330ccf7727b0f640702c",
       "path": "catalog/entries/litert-community__Open-Decision-DeBERTa-v3-Large-LiteRT.json",
-      "provenance": "The DeBERTa-v3-large decision checkpoint named as the card's base_model, published by Mithril (formerly Kotoba Cloud) at revision 188ee67a5c93122b916e5acd5bdb0cb3623e380a (Apache-2.0; DeBERTa-v3-large is MIT), converted with litert-torch 0.9.3 to classic LiteRT graphs, one static window per graph (256 and 512 tokens), the FULLY_CONNECTED weights stored as float16 and the activations in float32. The graph takes the looked-up token embeddings (the [128100, 1024] float16 word table ships beside it), the attention mask and two routing matrices for the question and option spans, and returns one logit per option slot (128); the tokenizer is the source repository's tokenizer.json, the state is cut to its first 256 tokens as the author's Collator does, and the softmax runs at the author's temperature 1.05. GPU FP32 or CPU: the card measured that fp16 computation (the GPU's default precision, the NPU) changes or breaks the answers, so no NPU profile is declared.",
+      "provenance": "The DeBERTa-v3-large decision checkpoint named as the card's base_model, published by Mithril (formerly Kotoba Cloud) at revision 188ee67a5c93122b916e5acd5bdb0cb3623e380a (Apache-2.0; DeBERTa-v3-large is MIT), converted with litert-torch 0.9.3 to classic LiteRT graphs, one static window per graph (256 and 512 tokens), the FULLY_CONNECTED weights stored as float16 and the activations in float32. The graph takes the looked-up token embeddings (the [128100, 1024] float16 word table ships beside it), the attention mask and two routing matrices for the question and option spans, and returns one logit per option slot (128); the tokenizer is the source repository's tokenizer.json, the state is cut to its first 256 tokens as the author's Collator does, and the softmax runs at the author's temperature 1.05. GPU FP32 or CPU for those graphs: the card measured that fp16 computation (the GPU's default precision, the NPU) changes or breaks their answers. s256_npu_wfp16 is the S256 graph changed for float16 hardware (attention-mask constant -1e4, LayerNorm power-of-two pre-scale on all 49 norms, FC1 split in two; exact in float32), for the Qualcomm HTP.",
       "descriptor": {
         "schema_version": 1,
         "model_id": "litert-community/Open-Decision-DeBERTa-v3-Large-LiteRT",
@@ -3057,12 +3057,12 @@
                 "verification": [
                   {
                     "level": "PUBLISHER_TESTED",
+                    "result": "PASS",
+                    "note": "371/371 questions of the 143 card gate requests that fit 256 tokens, packed as the author packs them, give the author's answers through the graph, max |dp| 0.00069; the 30 sieve sentences give the Mac host's answers (30/30); 187.2 ms per question (median, warm), four questions in one forward 193.1 ms; litert/results/2026-10-03-1938-RFGL80R6A6H-litert2.2.0-decide-opendecision-s256_wfp16-gpu.log",
                     "device": "SM-S942Q (Galaxy S26)",
                     "os_build": "BP4A.251205.006.S942QOPS1AZH9",
                     "runtime": "litert 2.2.0",
-                    "result": "PASS",
-                    "date": "2026-10-03",
-                    "evidence": "litert/results/2026-10-03-1938-RFGL80R6A6H-litert2.2.0-decide-opendecision-s256_wfp16-gpu.log"
+                    "date": "2026-10-03"
                   }
                 ]
               },
@@ -3091,12 +3091,12 @@
                 "verification": [
                   {
                     "level": "PUBLISHER_TESTED",
+                    "result": "PASS",
+                    "note": "371/371 of the author's answers, max |dp| 0.00069; 30/30 as the Mac host; 654.6 ms per question (median, 4 threads), four questions in one forward 733.6 ms; litert/results/2026-10-03-1939-RFGL80R6A6H-litert2.2.0-decide-opendecision-s256_wfp16-cpu.log",
                     "device": "SM-S942Q (Galaxy S26)",
                     "os_build": "BP4A.251205.006.S942QOPS1AZH9",
                     "runtime": "litert 2.2.0",
-                    "result": "PASS",
-                    "date": "2026-10-03",
-                    "evidence": "litert/results/2026-10-03-1939-RFGL80R6A6H-litert2.2.0-decide-opendecision-s256_wfp16-cpu.log"
+                    "date": "2026-10-03"
                   }
                 ]
               }
@@ -3223,6 +3223,159 @@
               },
               "table_dtype": "float16",
               "gpu_precision": "fp32",
+              "cpu_threads": 4,
+              "languages": [
+                "en"
+              ]
+            }
+          },
+          {
+            "id": "s256_npu_wfp16",
+            "runtime": "litert",
+            "handler": {
+              "id": "litert.typed_decisions",
+              "abi": 1
+            },
+            "runtime_range": {
+              "min_inclusive": "2.2.0",
+              "max_exclusive": "3.0.0"
+            },
+            "inputs": [
+              "text"
+            ],
+            "files": [
+              {
+                "id": "main",
+                "role": "model",
+                "path": "deberta_v3_large_decision_s256_npu_wfp16.tflite",
+                "bytes": 712671952,
+                "sha256": "e4eedb0098a7727196184960c3c5fd47972921c8ded3981832c217f054357da0"
+              },
+              {
+                "id": "table",
+                "role": "model",
+                "path": "word_embeddings_fp16.bin",
+                "bytes": 262348800,
+                "sha256": "d1b86bce8ffa0aae67e7d99db5824e67b5241337d0b5132bf25f22bf9dd72b45"
+              },
+              {
+                "id": "tokenizer",
+                "role": "tokenizer",
+                "path": "tokenizer.json",
+                "bytes": 8657170,
+                "sha256": "cd119378b0160677b7a1e561ba29ada83918c1d420b326516a585382e83d9d39"
+              }
+            ],
+            "default_profile": "gpu",
+            "profiles": [
+              {
+                "id": "npu",
+                "priority": 120,
+                "files": [
+                  "main",
+                  "table",
+                  "tokenizer"
+                ],
+                "enabled_inputs": [
+                  "text"
+                ],
+                "components": {
+                  "inference": "npu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [],
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "PUBLISHER_TESTED",
+                    "device": "SM-S942Q (Galaxy S26)",
+                    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+                    "runtime": "litert 2.2.0",
+                    "result": "PASS",
+                    "date": "2026-10-05",
+                    "evidence": "litert/results/2026-10-05-1118-RFGL80R6A6H-litert2.2.0-decide-opendecision-s256_npu_wfp16-npu.log"
+                  }
+                ]
+              },
+              {
+                "id": "gpu",
+                "priority": 100,
+                "files": [
+                  "main",
+                  "table",
+                  "tokenizer"
+                ],
+                "enabled_inputs": [
+                  "text"
+                ],
+                "components": {
+                  "inference": "gpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [
+                  "cpu"
+                ],
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "PUBLISHER_TESTED",
+                    "device": "SM-S942Q (Galaxy S26)",
+                    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+                    "runtime": "litert 2.2.0",
+                    "result": "PASS",
+                    "date": "2026-10-05",
+                    "evidence": "litert/results/2026-10-05-1130-RFGL80R6A6H-litert2.2.0-decide-opendecision-fp16acc32-s256_npu_wfp16-gpu.log"
+                  }
+                ]
+              },
+              {
+                "id": "cpu",
+                "priority": 50,
+                "files": [
+                  "main",
+                  "table",
+                  "tokenizer"
+                ],
+                "enabled_inputs": [
+                  "text"
+                ],
+                "components": {
+                  "inference": "cpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [],
+                "default_selectable": true
+              }
+            ],
+            "handler_config": {
+              "family": "deberta_decision",
+              "window": 256,
+              "hidden": 1024,
+              "option_slots": 128,
+              "state_tokens": 256,
+              "temperature": 1.05,
+              "files": {
+                "main": "main",
+                "table": "table",
+                "tokenizer": "tokenizer"
+              },
+              "table_dtype": "float16",
+              "gpu_precision": "fp16_with_fp32_accum",
               "cpu_threads": 4,
               "languages": [
                 "en"
