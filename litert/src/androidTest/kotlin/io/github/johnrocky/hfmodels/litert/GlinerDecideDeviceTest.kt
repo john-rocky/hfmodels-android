@@ -46,7 +46,7 @@ import org.junit.runner.RunWith
  *   8. lookup: the host embedding lookup of one request the Model Zoo's way and this module's way ([HostLookupBench]);
  *   9. release.
  * One RESULT line per step under tag `hfmodels-decide`, numbers unrounded. Arguments: variant (s128_wfp16 |
- * s256_wfp16 | s512_wfp16 | s128_npu_wfp16 | s128_fp32), backend (gpu | cpu | npu | auto), dir, fixtures (default
+ * s256_wfp16 | s512_wfp16 | s128_npu_wfp16 | s256_npu_wfp16 | s512_fp16hw_wfp16 | s128_fp32), backend (gpu | cpu | npu | auto), dir, fixtures (default
  * `<dir>/fixtures`: the card's `gate_fixtures.json`, the sieve's `b_chat.jsonl` and `gliner-decide_b_chat_policy.jsonl`,
  * r11's `gliner-decide_b_chat_pack4.jsonl`), pack=0 (skips step 5), repeats (timing, default 5), dp_tol (default 0.01), and two changes to
  * the variant in the descriptor this run loads (the RESULT load line names them): gpu_precision (fp32 | fp16_with_fp32_accum
@@ -191,7 +191,8 @@ class GlinerDecideDeviceTest {
             val fs = forwardMs.sorted()
             result("parity", argmaxRows == rows.size && officialRows == rows.size && maxDp <= dpTol,
                 "rows=${rows.size} argmax_match=$argmaxRows/${rows.size} decisions_equal_official=$officialRows/${rows.size} max_prob_abs_err=$maxDp (worst $worst) max_logit_abs_err_vs_oracle=$maxDl max_logit_abs_err_vs_mac_cpu=$maxDmac dp_tol=$dpTol " +
-                    "forward_ms_median=${fs[fs.size / 2]} p90=${fs[(fs.size * 9) / 10]} min=${fs.first()} max=${fs.last()}")
+                    "forward_ms_median=${fs[fs.size / 2]} p90=${fs[(fs.size * 9) / 10]} min=${fs.first()} max=${fs.last()} " +
+                    "first10_median=${median(forwardMs.take(10))} last10_median=${median(forwardMs.takeLast(10))}")
 
             // 4. the sieve's chat sentences through decide(), vs the Mac answers of the card's host
             val chat = File(fixturesDir, "b_chat.jsonl").readLines().filter { it.isNotBlank() }.map { Json.parseObject(it) }
@@ -214,7 +215,8 @@ class GlinerDecideDeviceTest {
             val sm = ms.sorted(); val lk = lookup.sorted()
             result("demo", same == chat.size,
                 "rows=${chat.size} same_answer_as_mac=$same/${chat.size} max_prob_abs_err_vs_mac=$demoDp (worst $demoWorst) correct_device=$correctDevice/${chat.size} correct_mac=$correctMac/${chat.size} " +
-                    "question_ms_median=${sm[sm.size / 2]} p90=${sm[(sm.size * 9) / 10]} min=${sm.first()} max=${sm.last()} lookup_ms_median=${lk[lk.size / 2]}")
+                    "question_ms_median=${sm[sm.size / 2]} p90=${sm[(sm.size * 9) / 10]} min=${sm.first()} max=${sm.last()} lookup_ms_median=${lk[lk.size / 2]} " +
+                    "first10_median=${median(ms.take(10))} last10_median=${median(ms.takeLast(10))}")
 
             // 5. the same sentences with four questions: one forward per question, and the four packed into one request
             val packed = c.packing(true)
@@ -315,6 +317,9 @@ class GlinerDecideDeviceTest {
     }
 
     private fun ints(v: Any?): List<Int> = (v as List<*>).map { (it as Number).toInt() }
+
+    /** The median the other fields use (the upper one of an even count), of the values in run order: the first and the last ten of a step show the heat inside it. */
+    private fun median(v: List<Double>): Double = v.sorted()[v.size / 2]
 
     /** An answer's probabilities in label order: a choice's keys, a score's levels, a noul's false / true side. */
     private fun probabilities(q: Question, a: Answer): List<Double> = when (a) {

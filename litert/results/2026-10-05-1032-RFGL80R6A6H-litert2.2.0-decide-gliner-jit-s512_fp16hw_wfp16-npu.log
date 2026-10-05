@@ -1,0 +1,74 @@
+# hfmodels typed-decisions device gate  date=2026-10-05T01:32:59Z serial=RFGL80R6A6H device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZH9 android=16
+# git=009baa2 test=GlinerDecideDeviceTest variant=s512_fp16hw_wfp16 backend=npu thermal=Thermal Status: 0 battery_level= level: 80 battery_temp_x10C= temperature: 376 screen= mWakefulness=Dozing
+# gradle rc=1 end=2026-10-05T01:35:34Z thermal_end=Thermal Status: 0 battery_temp_end_x10C= temperature: 380
+--------- beginning of main
+10-05 10:33:00.561 11169 11183 I hfmodels-decide: device=SM-S942Q soc=QTI/SM8850 build=BP4A.251205.006.S942QOPS1AZH9 android=16 litert=2.2.0 model=litert-community/GLiNER2.5-Decide-LiteRT@f6f6e9c9 variant=s512_fp16hw_wfp16 backend=npu
+10-05 10:33:00.564 11169 11187 I hfmodels: resolve litert-community/GLiNER2.5-Decide-LiteRT: commit=f6f6e9c9 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=52c33999
+10-05 10:33:00.571 11169 11187 I hfmodels: resolve litert-community/GLiNER2.5-Decide-LiteRT: commit=f6f6e9c9 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=52c33999
+10-05 10:33:01.081 11169 11187 I hfmodels: tokenizer tokenizer.json: 128011 tokens (Unigram), load_ms=497
+--------- beginning of crash
+10-05 10:35:33.798 11291 11291 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+10-05 10:35:33.798 11291 11291 F DEBUG   : Build fingerprint: 'samsung/m1qjpnx/m1q:16/BP4A.251205.006/S942QOPS1AZH9_SJP1AZH9:user/release-keys'
+10-05 10:35:33.798 11291 11291 F DEBUG   : Kernel Release: '6.12.30-android16-5-pd30ff70-abogkiS942QOPS1AZH9-4k'
+10-05 10:35:33.798 11291 11291 F DEBUG   : Revision: '20'
+10-05 10:35:33.798 11291 11291 F DEBUG   : ABI: 'arm64'
+10-05 10:35:33.798 11291 11291 F DEBUG   : Processor: '2'
+10-05 10:35:33.798 11291 11291 F DEBUG   : Timestamp: 2026-10-05 10:35:32.966379685+0900
+10-05 10:35:33.798 11291 11291 F DEBUG   : Process uptime: 154s
+10-05 10:35:33.798 11291 11291 F DEBUG   : Executable: /system/bin/app_process64
+10-05 10:35:33.798 11291 11291 F DEBUG   : Cmdline: io.github.johnrocky.hfmodels.litert.test
+10-05 10:35:33.798 11291 11291 F DEBUG   : pid: 11169, tid: 11192, name: hfmodels-litert  >>> io.github.johnrocky.hfmodels.litert.test <<<
+10-05 10:35:33.798 11291 11291 F DEBUG   : uid: 10468
+10-05 10:35:33.798 11291 11291 F DEBUG   : tagged_addr_ctrl: 0000000000000001 (PR_TAGGED_ADDR_ENABLE)
+10-05 10:35:33.798 11291 11291 F DEBUG   : pac_enabled_keys: 000000000000000f (PR_PAC_APIAKEY, PR_PAC_APIBKEY, PR_PAC_APDAKEY, PR_PAC_APDBKEY)
+10-05 10:35:33.798 11291 11291 F DEBUG   : esr: 0000000092000006 (Data Abort Exception 0x24)
+10-05 10:35:33.799 11291 11291 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+10-05 10:35:33.799 11291 11291 F DEBUG   : Abort message: 'Scudo ERROR: internal map failure (error desc=Out of memory)'
+10-05 10:35:33.799 11291 11291 F DEBUG   :     x0  0000000000000000  x1  0000000000002bb8  x2  0000000000000006  x3  0000006d3d3f1660
+10-05 10:35:33.799 11291 11291 F DEBUG   :     x4  5245206f64756353  x5  5245206f64756353  x6  5245206f64756353  x7  746e69203a524f52
+10-05 10:35:33.799 11291 11291 F DEBUG   :     x8  00000000000000f0  x9  82dd2b40938e83a5  x10 000000ff00000020  x11 3d6373656420726f
+10-05 10:35:33.799 11291 11291 F DEBUG   :     x12 6d20666f2074754f  x13 000a2979726f6d65  x14 000003efbbfc9b01  x15 0000000034155555
+10-05 10:35:33.799 11291 11291 F DEBUG   :     x16 0000007125fce138  x17 0000007125fb36c0  x18 0000006d3bea4000  x19 0000000000002ba1
+10-05 10:35:33.799 11291 11291 F DEBUG   :     x20 0000000000002bb8  x21 00000000ffffffff  x22 0000000000000005  x23 0000000000000000
+10-05 10:35:33.799 11291 11291 F DEBUG   :     x24 0000006c387cd000  x25 0000006c387cdfe0  x26 0000006c387ce000  x27 0000007125fd3248
+10-05 10:35:33.799 11291 11291 F DEBUG   :     x28 fffffffffffffff0  x29 0000006d3d3f16e0
+10-05 10:35:33.799 11291 11291 F DEBUG   :     lr  0000007125f54784  sp  0000006d3d3f1660  pc  0000007125f547a8  pst 0000000000001000
+10-05 10:35:33.799 11291 11291 F DEBUG   :     esr 0000000092000006
+10-05 10:35:33.799 11291 11291 F DEBUG   : 31 total frames
+10-05 10:35:33.799 11291 11291 F DEBUG   : backtrace:
+10-05 10:35:33.799 11291 11291 F DEBUG   :       #00 pc 00000000000757a8  /apex/com.android.runtime/lib64/bionic/libc.so (abort+160) (BuildId: e28deee9fc7ad1daecee81acb7c02e5b)
+10-05 10:35:33.799 11291 11291 F DEBUG   :       #01 pc 000000000005cf50  /apex/com.android.runtime/lib64/bionic/libc.so (scudo::die()+12) (BuildId: e28deee9fc7ad1daecee81acb7c02e5b)
+10-05 10:35:33.799 11291 11291 F DEBUG   :       #02 pc 000000000005d9b0  /apex/com.android.runtime/lib64/bionic/libc.so (scudo::reportRawError(char const*)+32) (BuildId: e28deee9fc7ad1daecee81acb7c02e5b)
+10-05 10:35:33.799 11291 11291 F DEBUG   :       #03 pc 000000000005e0f8  /apex/com.android.runtime/lib64/bionic/libc.so (scudo::reportMapError(unsigned long)+176) (BuildId: e28deee9fc7ad1daecee81acb7c02e5b)
+10-05 10:35:33.799 11291 11291 F DEBUG   :       #04 pc 000000000005d5c0  /apex/com.android.runtime/lib64/bionic/libc.so (scudo::MemMapLinux::remapImpl(unsigned long, unsigned long, char const*, unsigned long)+216) (BuildId: e28deee9fc7ad1daecee81acb7c02e5b)
+10-05 10:35:33.799 11291 11291 F DEBUG   :       #05 pc 00000000000625f4  /apex/com.android.runtime/lib64/bionic/libc.so (scudo::MapAllocator<scudo::SecondaryConfig<scudo::AndroidNormalConfig>>::allocate(scudo::Options const&, unsigned long, unsigned long, unsigned long*, scudo::FillContentsMode)+464) (BuildId: e28deee9fc7ad1daecee81acb7c02e5b)
+10-05 10:35:33.799 11291 11291 F DEBUG   :       #06 pc 000000000005f5fc  /apex/com.android.runtime/lib64/bionic/libc.so (scudo::Allocator<scudo::AndroidNormalConfig, &scudo_malloc_postinit>::allocate(unsigned long, scudo::Chunk::Origin, unsigned long, bool)+904) (BuildId: e28deee9fc7ad1daecee81acb7c02e5b)
+10-05 10:35:33.799 11291 11291 F DEBUG   :       #07 pc 000000000005f928  /apex/com.android.runtime/lib64/bionic/libc.so (scudo_malloc+40) (BuildId: e28deee9fc7ad1daecee81acb7c02e5b)
+10-05 10:35:33.799 11291 11291 F DEBUG   :       #08 pc 0000000000059724  /apex/com.android.runtime/lib64/bionic/libc.so (malloc+48) (BuildId: e28deee9fc7ad1daecee81acb7c02e5b)
+10-05 10:35:33.799 11291 11291 F DEBUG   :       #09 pc 0000000004ed3994  /data/app/~~GT5f5egSfIYfUfdVcNHEPg==/io.github.johnrocky.hfmodels.litert.test-723rCcDqrgY7rWpQLtJ21w==/lib/arm64/libQnnHtpPrepare.so (operator new(unsigned long)+28) (BuildId: 6d10d2a58977b849)
+10-05 10:35:33.799 11291 11291 F DEBUG   :       #10 pc 0000000002e66c48  /data/app/~~GT5f5egSfIYfUfdVcNHEPg==/io.github.johnrocky.hfmodels.litert.test-723rCcDqrgY7rWpQLtJ21w==/lib/arm64/libQnnHtpPrepare.so (BuildId: 6d10d2a58977b849)
+10-05 10:35:33.799 11291 11291 F DEBUG   :       #11 pc 0000000002e65d2c  /data/app/~~GT5f5egSfIYfUfdVcNHEPg==/io.github.johnrocky.hfmodels.litert.test-723rCcDqrgY7rWpQLtJ21w==/lib/arm64/libQnnHtpPrepare.so (BuildId: 6d10d2a58977b849)
+10-05 10:35:33.799 11291 11291 F DEBUG   :       #12 pc 0000000002e61e1c  /data/app/~~GT5f5egSfIYfUfdVcNHEPg==/io.github.johnrocky.hfmodels.litert.test-723rCcDqrgY7rWpQLtJ21w==/lib/arm64/libQnnHtpPrepare.so (BuildId: 6d10d2a58977b849)
+10-05 10:35:33.799 11291 11291 F DEBUG   :       #13 pc 0000000002e61510  /data/app/~~GT5f5egSfIYfUfdVcNHEPg==/io.github.johnrocky.hfmodels.litert.test-723rCcDqrgY7rWpQLtJ21w==/lib/arm64/libQnnHtpPrepare.so (BuildId: 6d10d2a58977b849)
+10-05 10:35:33.799 11291 11291 F DEBUG   :       #14 pc 0000000002e5af90  /data/app/~~GT5f5egSfIYfUfdVcNHEPg==/io.github.johnrocky.hfmodels.litert.test-723rCcDqrgY7rWpQLtJ21w==/lib/arm64/libQnnHtpPrepare.so (BuildId: 6d10d2a58977b849)
+10-05 10:35:33.799 11291 11291 F DEBUG   :       #15 pc 0000000002e5a34c  /data/app/~~GT5f5egSfIYfUfdVcNHEPg==/io.github.johnrocky.hfmodels.litert.test-723rCcDqrgY7rWpQLtJ21w==/lib/arm64/libQnnHtpPrepare.so (BuildId: 6d10d2a58977b849)
+10-05 10:35:33.799 11291 11291 F DEBUG   :       #16 pc 0000000002e5a1a4  /data/app/~~GT5f5egSfIYfUfdVcNHEPg==/io.github.johnrocky.hfmodels.litert.test-723rCcDqrgY7rWpQLtJ21w==/lib/arm64/libQnnHtpPrepare.so (BuildId: 6d10d2a58977b849)
+10-05 10:35:33.799 11291 11291 F DEBUG   :       #17 pc 00000000030ec050  /data/app/~~GT5f5egSfIYfUfdVcNHEPg==/io.github.johnrocky.hfmodels.litert.test-723rCcDqrgY7rWpQLtJ21w==/lib/arm64/libQnnHtpPrepare.so (GraphPrepare::sequencing_stage(VtcmCacheInstance&, int&, bool, std::__ndk1::vector<hnnx::tagx<1u>, std::__ndk1::allocator<hnnx::tagx<1u>>>&, GraphPrepare::SequencingStageInfo&, bool)+308) (BuildId: 6d10d2a58977b849)
+10-05 10:35:33.799 11291 11291 F DEBUG   :       #18 pc 0000000002eeb7a0  /data/app/~~GT5f5egSfIYfUfdVcNHEPg==/io.github.johnrocky.hfmodels.litert.test-723rCcDqrgY7rWpQLtJ21w==/lib/arm64/libQnnHtpPrepare.so (GraphPrepare::do_prepare2(HexagonNNEnv&, VtcmCacheInstance&, int&, std::__ndk1::unique_ptr<ExternalTimePoint, std::__ndk1::default_delete<ExternalTimePoint>>&, bool)+2680) (BuildId: 6d10d2a58977b849)
+10-05 10:35:33.799 11291 11291 F DEBUG   :       #19 pc 0000000002eea20c  /data/app/~~GT5f5egSfIYfUfdVcNHEPg==/io.github.johnrocky.hfmodels.litert.test-723rCcDqrgY7rWpQLtJ21w==/lib/arm64/libQnnHtpPrepare.so (GraphPrepare::do_prepare2_retry_loop(HexagonNNEnv&, VtcmCacheInstance&, std::__ndk1::unique_ptr<ExternalTimePoint, std::__ndk1::default_delete<ExternalTimePoint>>&)+208) (BuildId: 6d10d2a58977b849)
+10-05 10:35:33.799 11291 11291 F DEBUG   :       #20 pc 0000000002f038e4  /data/app/~~GT5f5egSfIYfUfdVcNHEPg==/io.github.johnrocky.hfmodels.litert.test-723rCcDqrgY7rWpQLtJ21w==/lib/arm64/libQnnHtpPrepare.so (GraphPrepare::prepare(HexagonNNEnv&)+380) (BuildId: 6d10d2a58977b849)
+10-05 10:35:33.799 11291 11291 F DEBUG   :       #21 pc 000000000014f064  /data/app/~~GT5f5egSfIYfUfdVcNHEPg==/io.github.johnrocky.hfmodels.litert.test-723rCcDqrgY7rWpQLtJ21w==/lib/arm64/libQnnHtp.so (BuildId: f0737b0515169962)
+10-05 10:35:33.799 11291 11291 F DEBUG   :       #22 pc 00000000001458d8  /data/app/~~GT5f5egSfIYfUfdVcNHEPg==/io.github.johnrocky.hfmodels.litert.test-723rCcDqrgY7rWpQLtJ21w==/lib/arm64/libQnnHtp.so (BuildId: f0737b0515169962)
+10-05 10:35:33.799 11291 11291 F DEBUG   :       #23 pc 00000000001451b8  /data/app/~~GT5f5egSfIYfUfdVcNHEPg==/io.github.johnrocky.hfmodels.litert.test-723rCcDqrgY7rWpQLtJ21w==/lib/arm64/libQnnHtp.so (BuildId: f0737b0515169962)
+10-05 10:35:33.799 11291 11291 F DEBUG   :       #24 pc 0000000000277c80  /data/app/~~GT5f5egSfIYfUfdVcNHEPg==/io.github.johnrocky.hfmodels.litert.test-723rCcDqrgY7rWpQLtJ21w==/lib/arm64/libQnnHtp.so (BuildId: f0737b0515169962)
+10-05 10:35:33.799 11291 11291 F DEBUG   :       #25 pc 0000000000277204  /data/app/~~GT5f5egSfIYfUfdVcNHEPg==/io.github.johnrocky.hfmodels.litert.test-723rCcDqrgY7rWpQLtJ21w==/lib/arm64/libQnnHtp.so (BuildId: f0737b0515169962)
+10-05 10:35:33.799 11291 11291 F DEBUG   :       #26 pc 00000000002472ec  /data/app/~~GT5f5egSfIYfUfdVcNHEPg==/io.github.johnrocky.hfmodels.litert.test-723rCcDqrgY7rWpQLtJ21w==/lib/arm64/libQnnHtp.so (BuildId: f0737b0515169962)
+10-05 10:35:33.799 11291 11291 F DEBUG   :       #27 pc 000000000004f6d8  /data/app/~~GT5f5egSfIYfUfdVcNHEPg==/io.github.johnrocky.hfmodels.litert.test-723rCcDqrgY7rWpQLtJ21w==/lib/arm64/libLiteRtCompilerPlugin_Qualcomm.so (BuildId: 7d2f342ca806466a56278de69f61cc4b)
+10-05 10:35:33.799 11291 11291 F DEBUG   :       #28 pc 0000000000043458  /data/app/~~GT5f5egSfIYfUfdVcNHEPg==/io.github.johnrocky.hfmodels.litert.test-723rCcDqrgY7rWpQLtJ21w==/lib/arm64/libLiteRtCompilerPlugin_Qualcomm.so (BuildId: 7d2f342ca806466a56278de69f61cc4b)
+10-05 10:35:33.799 11291 11291 F DEBUG   :       #29 pc 0000000000043934  /data/app/~~GT5f5egSfIYfUfdVcNHEPg==/io.github.johnrocky.hfmodels.litert.test-723rCcDqrgY7rWpQLtJ21w==/lib/arm64/libLiteRtCompilerPlugin_Qualcomm.so (BuildId: 7d2f342ca806466a56278de69f61cc4b)
+10-05 10:35:33.799 11291 11291 F DEBUG   :       #30 pc 000000000003bd84  /data/app/~~GT5f5egSfIYfUfdVcNHEPg==/io.github.johnrocky.hfmodels.litert.test-723rCcDqrgY7rWpQLtJ21w==/lib/arm64/libLiteRtCompilerPlugin_Qualcomm.so (LiteRtCompilerPluginCompile+3284) (BuildId: 7d2f342ca806466a56278de69f61cc4b)
+## residency (4 lines, pid 11169)
+10-05 10:33:01.084 11169 11192 I litert  : [npu_registry.cc:30] NPU accelerator registered.
+10-05 10:33:01.121 11169 11192 I litert  : [compiled_model.cc:754] NPU JIT compilation caching enabled with cache dir: /data/user/0/io.github.johnrocky.hfmodels.litert.test/cache
+10-05 10:33:01.128 11169 11192 I litert  :   HtpPerformanceMode       : Burst(2)
+10-05 10:33:01.751 11169 11192 I litert  : [compiler_plugin.cc:741] Partitioned subgraph<0>, selected 1877 ops, from a total of 1877 ops. resulted in 1 partitions.
