@@ -26,6 +26,7 @@ import io.github.johnrocky.hfmodels.sha256Hex
 import io.github.johnrocky.hfmodels.store.HttpUrlConnectionSource
 import io.github.johnrocky.hfmodels.store.ModelStore
 import java.io.File
+import org.json.JSONObject
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -75,9 +76,9 @@ class ResolverTest {
 
     private fun descriptorFor(modelId: String) = Fixtures.chat(modelId, fileSha = sha256Hex(weights), bytes = weights.size.toLong())
 
-    private fun catalog(vararg entries: Pair<String, String>): Catalog = Catalog.parse(
+    private fun catalog(vararg entries: Pair<String, String>, descriptor: (String) -> String = { descriptorFor(it) }): Catalog = Catalog.parse(
         """{"schema_version":1,"catalog_id":"test","origin":{"repo":"john-rocky/hfmodels-android","commit":"${"b".repeat(40)}"},"entries":[""" +
-            entries.joinToString(",") { (id, c) -> """{"model_id":"$id","model_commit":"$c","path":"catalog/$id.json","descriptor":${descriptorFor(id)}}""" } + "]}",
+            entries.joinToString(",") { (id, c) -> """{"model_id":"$id","model_commit":"$c","path":"catalog/$id.json","descriptor":${descriptor(id)}}""" } + "]}",
     )
 
     @Before fun setUp() {
@@ -127,6 +128,38 @@ class ResolverTest {
         assertEquals("${hub.endpoint}/org/catalogued/resolve/$catalogCommit/model.litertlm", plan.files[0].url)
         // With an explicit revision the exception does not apply.
         try { resolver.inspect(ModelRef("org/catalogued", revision = "main"), FakeChat, LoadOptions()); fail() } catch (e: ModelException) { assertEquals(ErrorCode.MODEL_NOT_REGISTERED, e.code) }
+    }
+
+    /**
+     * At one commit the commit's own hfmodels.json is read before the catalog's entry for that commit (spec §6.3); the
+     * catalog stands in only for a commit that carries none. An entry pinned at a commit whose hfmodels.json is older
+     * than the entry is therefore never read online: the bundled catalog pinned GLiNER2.5-Decide's four variants at
+     * 310090c3, whose own hfmodels.json lists three (s128_npu_wfp16 came with f6f6e9c9), so an explicit-revision load
+     * of s128_npu_wfp16 was VARIANT_NOT_FOUND online. The order stays; the pin is what changes: an entry pins a commit
+     * that carries no hfmodels.json or the same descriptor (tools/check_catalog_pins.py).
+     */
+    @Test fun aCommitsOwnDescriptorIsReadBeforeTheCatalogEntryForThatCommit() {
+        val pinned = "3".repeat(40)
+        val own = descriptorFor("org/pinned")   // variant q8: what the commit itself carries
+        val catalogued = JSONObject(own).apply {   // q8 and q8_npu: what the catalog pins at the same commit
+            val variants = getJSONArray("variants")
+            variants.put(JSONObject(variants.getJSONObject(0).toString()).put("id", "q8_npu"))
+        }.toString()
+        hub.repo("org/pinned", pinned) { files["model.litertlm"] = weights; files["hfmodels.json"] = own.toByteArray() }
+        val r = Resolver(HfHub(HttpUrlConnectionSource(), hub.endpoint), store, bindings, DescriptorCache(File(tmp.root, "hfmodels")), catalog("org/pinned" to pinned, descriptor = { catalogued }), DeviceFacts(36, listOf("arm64-v8a")), log)
+        val ref = ModelRef("org/pinned", revision = pinned, variant = "q8_npu")
+        // Offline, before anything was read from the repo, the catalog is the only source and has the variant.
+        val offline = r.inspect(ref, FakeChat, LoadOptions(networkPolicy = NetworkPolicy.Offline))
+        assertEquals("john-rocky/hfmodels-android", offline.descriptorOrigin.repo)
+        assertEquals("q8_npu", offline.variant.id)
+        // Online, the commit's own hfmodels.json answers first and has no such variant.
+        try { r.inspect(ref, FakeChat, LoadOptions()); fail() } catch (e: ModelException) {
+            assertEquals(ErrorCode.VARIANT_NOT_FOUND, e.code)
+            assertTrue(e.reason, e.reason.contains("(have: [q8])"))
+        }
+        assertTrue(hub.requests.any { it.path == "/org/pinned/resolve/$pinned/hfmodels.json" })
+        // That read is cached for the commit, so the catalog's variant is now out of reach offline as well.
+        try { r.inspect(ref, FakeChat, LoadOptions(networkPolicy = NetworkPolicy.Offline)); fail() } catch (e: ModelException) { assertEquals(ErrorCode.VARIANT_NOT_FOUND, e.code) }
     }
 
     @Test fun unregisteredRepoIsModelNotRegistered() {
