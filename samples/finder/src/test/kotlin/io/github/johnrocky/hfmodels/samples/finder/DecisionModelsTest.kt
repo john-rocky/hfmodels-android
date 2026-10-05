@@ -40,8 +40,8 @@ class DecisionModelsTest {
     }
 
     /**
-     * The id resolves to the repo's own hfmodels.json (catalog/proposals holds the bytes the repo carries from f6f6e9c9)
-     * or, when a branch head carries none, to the bundled catalog's copy (catalog/entries, pinned at f6f6e9c9). Both name
+     * The id resolves to the repo's own hfmodels.json (catalog/proposals holds the bytes the repo carries from 600fe62b)
+     * or, when a branch head carries none, to the bundled catalog's copy (catalog/entries, pinned at 600fe62b). Both name
      * the two variants the app asks for, with the profiles [DecisionModels.choose] relies on.
      */
     @Test fun bothDescriptorsTheIdCanResolveToCarryTheVariantsTheAppNames() {
