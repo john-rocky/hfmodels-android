@@ -46,7 +46,9 @@ import org.junit.runner.RunWith
  * s512_wfp16 | s256_npu_wfp16), backend (gpu | cpu | npu | auto), dir, fixtures (default `<dir>/fixtures`: `app_gate_fixtures.json`, the
  * sieve's `b_chat.jsonl`, `open-decision_b_chat_policy.jsonl` and `open-decision_b_chat_keys.jsonl`, and round 4's
  * `decide_form.json`), repeats (timing, default 5), dp_tol (default 0.01), parity (default 1; 0 skips step 3, so the
- * demo is the graph's first work after the warm-up: its speed before the parity forwards warm the phone). An npu run needs the Qualcomm libraries in
+ * demo is the graph's first work after the warm-up: its speed before the parity forwards warm the phone), and gpu_precision
+ * (fp32 | fp16_with_fp32_accum | fp16 | default: written into the variant's handler_config in the descriptor this run loads; the
+ * RESULT load line names the change). An npu run needs the Qualcomm libraries in
  * the test APK (tools/fetch_npu_libs.sh litert/src/androidTest/jniLibs/arm64-v8a v81) and counts only with LiteRT's
  * `Replacing 1 out of 1 node(s) with delegate (DispatchDelegate)` in the gate log.
  *
@@ -62,9 +64,24 @@ class DebertaDecisionDeviceTest {
     private val repeats = args.getString("repeats")?.toInt() ?: 5
     private val dpTol = args.getString("dp_tol")?.toDouble() ?: 0.01
     private val parity = args.getString("parity") != "0"
+    private val gpuPrecision = args.getString("gpu_precision")
     private val base = File(args.getString("dir") ?: "/data/local/tmp/hfmodels/open-decision")
     private val fixturesDir = File(args.getString("fixtures") ?: File(base, "fixtures").path)
     private val failures = ArrayList<String>()
+
+    /** The descriptor with this run's change to its variant: `gpu_precision` in handler_config (GlinerDecideDeviceTest's form). */
+    private fun patched(text: String): Pair<String, String> {
+        if (gpuPrecision == null) return text to "none"
+        val d = JSONObject(text)
+        val variants = d.getJSONArray("variants")
+        val done = ArrayList<String>()
+        for (i in 0 until variants.length()) {
+            val v = variants.getJSONObject(i)
+            if (v.getString("id") != variant) continue
+            v.getJSONObject("handler_config").put("gpu_precision", gpuPrecision); done += "gpu_precision=$gpuPrecision"
+        }
+        return d.toString() to done.joinToString(",").ifEmpty { "none" }
+    }
 
     private fun result(step: String, ok: Boolean, detail: String) {
         Log.i(TAG, "RESULT step=$step ok=$ok variant=$variant backend=$backend $detail")
@@ -74,7 +91,7 @@ class DebertaDecisionDeviceTest {
     @Test fun loadSequenceParityDemoTimingRelease(): Unit = runBlocking {
         val models = HfModels(ctx)
         val policy = when (backend) { "cpu" -> BackendPolicy.Require(BackendKind.CPU); "gpu" -> BackendPolicy.Require(BackendKind.GPU); "npu" -> BackendPolicy.Require(BackendKind.NPU); else -> BackendPolicy.Auto }
-        val descriptor = testCtx.assets.open(DESCRIPTOR_ASSET).bufferedReader().use { it.readText() }
+        val (descriptor, patch) = patched(testCtx.assets.open(DESCRIPTOR_ASSET).bufferedReader().use { it.readText() })
         val commit = JSONObject(descriptor).getString("revision")
         val opts = LoadOptions(backendPolicy = policy, networkPolicy = NetworkPolicy.Offline, descriptorJson = descriptor)
         Log.i(TAG, "device=${Build.MODEL} soc=${Build.SOC_MANUFACTURER}/${Build.SOC_MODEL} build=${Build.DISPLAY} android=${Build.VERSION.RELEASE} litert=${BuildConfig.LITERT_VERSION} model=$REPO@${commit.take(8)} variant=$variant backend=$backend")
@@ -94,7 +111,7 @@ class DebertaDecisionDeviceTest {
             val compileMs = m.info.notes.firstNotNullOfOrNull { Regex("compile_ms=(\\d+)").find(it)?.groupValues?.get(1) } ?: "?"
             result("load", events.last() is LoadEvent.Ready && events.none { it is LoadEvent.DownloadStarted },
                 "import_ms=$importMs load_ms=$loadMs compile_ms=$compileMs profile=${m.info.profileId} window=${m.limits.windowTokens} head=${m.limits.headTokens} max_options=${m.limits.maxOptions} " +
-                    "npu_libs_ready=${LiteRtNpu.ready(ctx)} notes=${m.info.notes.joinToString(" | ")}")
+                    "descriptor_patch=$patch npu_libs_ready=${LiteRtNpu.ready(ctx)} notes=${m.info.notes.joinToString(" | ")}")
             val impl = m as LiteRtDecisionModel
             val c = impl.contract as DebertaDecisionContract
             val window = m.limits.windowTokens
