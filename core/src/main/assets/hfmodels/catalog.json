@@ -3,7 +3,7 @@
   "catalog_id": "hfmodels-bundled",
   "origin": {
     "repo": "john-rocky/hfmodels-android",
-    "commit": "d81e731f190fcc67f2689a5da3f601232a06b3c2"
+    "commit": "a3e27e0f42aba1850ae3437e5df566913f713004"
   },
   "entries": [
     {
@@ -3953,6 +3953,258 @@
       }
     },
     {
+      "model_id": "litert-community/Zipformer-medium-CR-CTC-LiteRT",
+      "model_commit": "fa063a88d8191b289e70686bf814f0b52f9144b2",
+      "path": "catalog/entries/litert-community__Zipformer-medium-CR-CTC-LiteRT.json",
+      "provenance": "The CR-CTC checkpoints of the k2-fsa/icefall LibriSpeech zipformer recipe (Apache-2.0; the medium checkpoint is Zengwei/icefall-asr-librispeech-zipformer-medium-cr-ctc-20241018) converted with litert-torch to one classic LiteRT graph per size that runs fully on the GPU (no CPU fallback, no FFT inside the graph): a fixed 16 s window of 80-bin kaldi fbank frames computed on the host and four additive mask biases in, CTC logits out; greedy CTC with blank id 0 over the 500-token BPE vocabulary of tokens.txt runs on the host. small_fp16 (23 M parameters) and medium_fp16 (64 M); large_fp16 is published too and is not listed. gpu_precision 'default' is what the LiteRT model zoo app runs. small_fp16 and medium_fp16 passed the transcribe gate on gpu and on cpu on a Galaxy S26 SM-S942Q (Android 16 BP4A.251205.006, LiteRT 2.2.0) on 2026-10-03 with a development copy of this descriptor at commit 7732ad6c and the files side-loaded, the same files (sha256) as this commit, and again on 2026-10-05 at this commit with the repo's hfmodels.json, offline, from the files already in the test app's store (nothing was downloaded on the phone); the bundled catalog adds the 2026-10-05 runs to the profiles as verification records, which the repo's file does not carry.",
+      "descriptor": {
+        "schema_version": 1,
+        "model_id": "litert-community/Zipformer-medium-CR-CTC-LiteRT",
+        "tasks": [
+          "transcribe"
+        ],
+        "default_variant": "medium_fp16",
+        "license": {
+          "id": "apache-2.0",
+          "url": "https://huggingface.co/litert-community/Zipformer-medium-CR-CTC-LiteRT/blob/7732ad6c15ec43402968d5ae04acfa7a204027f5/README.md"
+        },
+        "variants": [
+          {
+            "id": "small_fp16",
+            "runtime": "litert",
+            "handler": {
+              "id": "litert.transcribe",
+              "abi": 1
+            },
+            "runtime_range": {
+              "min_inclusive": "2.2.0",
+              "max_exclusive": "3.0.0"
+            },
+            "inputs": [
+              "audio"
+            ],
+            "files": [
+              {
+                "id": "main",
+                "role": "model",
+                "path": "zipformer_ctc_small_fp16.tflite",
+                "bytes": 46216688,
+                "sha256": "ff6d70c7e8cfdfcf994be625456ca6543e0dbcc76fd4fd428e2138642d0852ba"
+              },
+              {
+                "id": "tokens",
+                "role": "tokenizer",
+                "path": "tokens.txt",
+                "bytes": 5048,
+                "sha256": "49e3c2646595fd907228b3c6787069658f67b17377c60aeb8619c4551b2316fb"
+              }
+            ],
+            "default_profile": "gpu",
+            "profiles": [
+              {
+                "id": "gpu",
+                "priority": 100,
+                "files": [
+                  "main",
+                  "tokens"
+                ],
+                "enabled_inputs": [
+                  "audio"
+                ],
+                "components": {
+                  "inference": "gpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "default_selectable": true,
+                "fallback_profiles": [
+                  "cpu"
+                ],
+                "verification": [
+                  {
+                    "level": "PUBLISHER_TESTED",
+                    "device": "SM-S942Q (Galaxy S26)",
+                    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+                    "runtime": "litert 2.2.0",
+                    "result": "PASS",
+                    "date": "2026-10-05",
+                    "evidence": "litert/results/2026-10-05-1003-RFGL80R6A6H-litert2.2.0-transcribe-zipformer-small_fp16-gpu.log"
+                  }
+                ]
+              },
+              {
+                "id": "cpu",
+                "priority": 50,
+                "files": [
+                  "main",
+                  "tokens"
+                ],
+                "enabled_inputs": [
+                  "audio"
+                ],
+                "components": {
+                  "inference": "cpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "PUBLISHER_TESTED",
+                    "device": "SM-S942Q (Galaxy S26)",
+                    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+                    "runtime": "litert 2.2.0",
+                    "result": "PASS",
+                    "date": "2026-10-05",
+                    "evidence": "litert/results/2026-10-05-1003-RFGL80R6A6H-litert2.2.0-transcribe-zipformer-small_fp16-cpu.log"
+                  }
+                ]
+              }
+            ],
+            "handler_config": {
+              "family": "zipformer_ctc",
+              "files": {
+                "main": "main",
+                "tokens": "tokens"
+              },
+              "sample_rate": 16000,
+              "window_seconds": 16,
+              "blank_id": 0,
+              "cpu_threads": 4,
+              "gpu_precision": "default",
+              "languages": [
+                "en"
+              ]
+            }
+          },
+          {
+            "id": "medium_fp16",
+            "runtime": "litert",
+            "handler": {
+              "id": "litert.transcribe",
+              "abi": 1
+            },
+            "runtime_range": {
+              "min_inclusive": "2.2.0",
+              "max_exclusive": "3.0.0"
+            },
+            "inputs": [
+              "audio"
+            ],
+            "files": [
+              {
+                "id": "main",
+                "role": "model",
+                "path": "zipformer_ctc_fp16.tflite",
+                "bytes": 131490944,
+                "sha256": "9515d94c04306798fecfe695eb8f79cc8ac98ed3d8eab81c28ac464b7dbddf48"
+              },
+              {
+                "id": "tokens",
+                "role": "tokenizer",
+                "path": "tokens.txt",
+                "bytes": 5048,
+                "sha256": "49e3c2646595fd907228b3c6787069658f67b17377c60aeb8619c4551b2316fb"
+              }
+            ],
+            "default_profile": "gpu",
+            "profiles": [
+              {
+                "id": "gpu",
+                "priority": 100,
+                "files": [
+                  "main",
+                  "tokens"
+                ],
+                "enabled_inputs": [
+                  "audio"
+                ],
+                "components": {
+                  "inference": "gpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "default_selectable": true,
+                "fallback_profiles": [
+                  "cpu"
+                ],
+                "verification": [
+                  {
+                    "level": "PUBLISHER_TESTED",
+                    "device": "SM-S942Q (Galaxy S26)",
+                    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+                    "runtime": "litert 2.2.0",
+                    "result": "PASS",
+                    "date": "2026-10-05",
+                    "evidence": "litert/results/2026-10-05-1004-RFGL80R6A6H-litert2.2.0-transcribe-zipformer-medium_fp16-gpu.log"
+                  }
+                ]
+              },
+              {
+                "id": "cpu",
+                "priority": 50,
+                "files": [
+                  "main",
+                  "tokens"
+                ],
+                "enabled_inputs": [
+                  "audio"
+                ],
+                "components": {
+                  "inference": "cpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "PUBLISHER_TESTED",
+                    "device": "SM-S942Q (Galaxy S26)",
+                    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+                    "runtime": "litert 2.2.0",
+                    "result": "PASS",
+                    "date": "2026-10-05",
+                    "evidence": "litert/results/2026-10-05-1004-RFGL80R6A6H-litert2.2.0-transcribe-zipformer-medium_fp16-cpu.log"
+                  }
+                ]
+              }
+            ],
+            "handler_config": {
+              "family": "zipformer_ctc",
+              "files": {
+                "main": "main",
+                "tokens": "tokens"
+              },
+              "sample_rate": 16000,
+              "window_seconds": 16,
+              "blank_id": 0,
+              "cpu_threads": 4,
+              "gpu_precision": "default",
+              "languages": [
+                "en"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
       "model_id": "litert-community/decider-2b-vision-LiteRT",
       "model_commit": "6c024e946bb8489f3faacb2514b0c61b355d1fdb",
       "path": "catalog/entries/litert-community__decider-2b-vision-LiteRT.json",
@@ -4626,6 +4878,348 @@
               "metadata_source": "litertlm_manifest",
               "context_tokens": 4096,
               "manifest_min_runtime_version": "0.16"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "litert-community/kitten-tts-nano-0.8",
+      "model_commit": "2c5b198f36e0b40a098585da7601bd752ff432d5",
+      "path": "catalog/entries/litert-community__kitten-tts-nano-0.8.json",
+      "provenance": "KittenML/kitten-tts-nano-0.8-fp32 (Apache-2.0; KittenTTS nano: StyleTTS2, ISTFTNet and a mini-ALBERT, 8 voices, 24 kHz) re-authored in TF/Keras from the ONNX weights and converted with TFLiteConverter to three LiteRT graphs with a dynamic sequence length (predictor, prosody, vocoder) for the CPU. The text frontend needs no espeak-ng: g2p/dp_g2p_matcha_fp16.tflite, g2p/g2p_dict.txt.gz and g2p/g2p_meta.json are byte-identical copies of the same-named files of litert-community/Matcha-TTS@8d650e79 (the dictionary from OpenPhonemizer, BSD-3-Clause-Clear; the graph DeepPhonemizer, MIT), and g2p/symbols.json is the model's 178-symbol table; its phoneme IDs are not espeak-ng's, so the audio is not sample-identical to say.py's. fp32 is the card's 'deploy fp32'; fp16 has half the size. speed_priors are the publisher's say.py factors; the SDK multiplies speed by them as say.py does. xnnpack: the predictor runs without the XNNPACK delegate, the prosody and vocoder graphs with it: on a Galaxy S26 (2026-10-03, fp32) the peak RSS after the load was 334 MB instead of 624 MB and the median synthesis 301 ms instead of 288 ms, with the same frames. fp32 and fp16 on cpu passed the speak gate on a Galaxy S26 SM-S942Q (Android 16 BP4A.251205.006, LiteRT 2.2.0, 2026-10-03) with a development copy of this descriptor at commit d4662d89 and the files side-loaded (the four g2p/ files from local copies, before the repo carried them), the same files (sha256) as this commit; fp32 also with the predictor without XNNPACK and the speed priors, fp16 only with the earlier handler (no speed priors, XNNPACK on all three graphs). On 2026-10-05 fp32 and fp16 passed the speak gate again on the same phone at this commit, with the repo's hfmodels.json and the current handler (the predictor without XNNPACK, the speed priors), offline, from the files already in the test app's store (nothing was downloaded on the phone); the bundled catalog adds those runs to the profiles as verification records, which the repo's file does not carry.",
+      "descriptor": {
+        "schema_version": 1,
+        "model_id": "litert-community/kitten-tts-nano-0.8",
+        "tasks": [
+          "speak"
+        ],
+        "default_variant": "fp32",
+        "license": {
+          "id": "apache-2.0",
+          "url": "https://huggingface.co/litert-community/kitten-tts-nano-0.8/blob/d4662d891f9bf54b3d93432610d0d296d229e026/README.md"
+        },
+        "variants": [
+          {
+            "id": "fp32",
+            "runtime": "litert",
+            "handler": {
+              "id": "litert.speak",
+              "abi": 1
+            },
+            "runtime_range": {
+              "min_inclusive": "2.2.0",
+              "max_exclusive": "3.0.0"
+            },
+            "inputs": [
+              "text"
+            ],
+            "files": [
+              {
+                "id": "predictor",
+                "role": "model",
+                "path": "kitten_predictor.tflite",
+                "bytes": 33819808,
+                "sha256": "0ca50bbf3c2fa1ba2c779e3851a5d3c8e59dbb68790a6c392d03eff4fac49296"
+              },
+              {
+                "id": "prosody",
+                "role": "model",
+                "path": "kitten_prosody.tflite",
+                "bytes": 3284012,
+                "sha256": "99b90a4ac4f564068d57eab9eff04534dba31d430c2c831a825c81c328324532"
+              },
+              {
+                "id": "vocoder",
+                "role": "model",
+                "path": "kitten_vocoder.tflite",
+                "bytes": 26433136,
+                "sha256": "87afb43780fb78434418a143de100740e68d804aa8f45adfdeb0370c85ec4eaa"
+              },
+              {
+                "id": "voices",
+                "role": "voices",
+                "path": "voices.npz",
+                "bytes": 3278902,
+                "sha256": "8aa7cee235abb0739cb51e6559685f65a4dacd95568833d05699b1633f519b3f"
+              },
+              {
+                "id": "g2p_model",
+                "role": "model",
+                "path": "g2p/dp_g2p_matcha_fp16.tflite",
+                "bytes": 25785872,
+                "sha256": "6e4b481f6874dfabc32ce73bf6f0ea1ba6ab5986ee6f76a27779364be8a53c73"
+              },
+              {
+                "id": "g2p_dict",
+                "role": "lexicon",
+                "path": "g2p/g2p_dict.txt.gz",
+                "bytes": 1762038,
+                "sha256": "5b3493a8cd4d20b72c7b91415afaf3f32335ebd81f349698e1cedc898c59f979"
+              },
+              {
+                "id": "g2p_meta",
+                "role": "lexicon",
+                "path": "g2p/g2p_meta.json",
+                "bytes": 1904,
+                "sha256": "7b87bfeaaa072be236e8491d771b0cb97cc92c3e5d83e3558fff8849868810f5"
+              },
+              {
+                "id": "symbols",
+                "role": "lexicon",
+                "path": "g2p/symbols.json",
+                "bytes": 1613,
+                "sha256": "366c66d45b1f4ec25463e08d5849921ce364baab2a8a9891df7f9cec602db2fa"
+              }
+            ],
+            "default_profile": "cpu",
+            "profiles": [
+              {
+                "id": "cpu",
+                "priority": 50,
+                "files": [
+                  "predictor",
+                  "prosody",
+                  "vocoder",
+                  "voices",
+                  "g2p_model",
+                  "g2p_dict",
+                  "g2p_meta",
+                  "symbols"
+                ],
+                "enabled_inputs": [
+                  "text"
+                ],
+                "components": {
+                  "inference": "cpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "PUBLISHER_TESTED",
+                    "device": "SM-S942Q (Galaxy S26)",
+                    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+                    "runtime": "litert 2.2.0",
+                    "result": "PASS",
+                    "date": "2026-10-05",
+                    "evidence": "litert/results/2026-10-05-1004-RFGL80R6A6H-litert2.2.0-speak-kitten-fp32-cpu.log"
+                  }
+                ]
+              }
+            ],
+            "handler_config": {
+              "family": "kitten",
+              "files": {
+                "predictor": "predictor",
+                "prosody": "prosody",
+                "vocoder": "vocoder",
+                "voices": "voices",
+                "g2p_model": "g2p_model",
+                "g2p_dict": "g2p_dict",
+                "g2p_meta": "g2p_meta",
+                "symbols": "symbols"
+              },
+              "sample_rate": 24000,
+              "voices": [
+                "expr-voice-2-m",
+                "expr-voice-2-f",
+                "expr-voice-3-m",
+                "expr-voice-3-f",
+                "expr-voice-4-m",
+                "expr-voice-4-f",
+                "expr-voice-5-m",
+                "expr-voice-5-f"
+              ],
+              "default_voice": "expr-voice-2-m",
+              "style_rows": 400,
+              "style_dim": 256,
+              "speed_priors": {
+                "expr-voice-2-f": 0.8,
+                "expr-voice-2-m": 0.8,
+                "expr-voice-3-m": 0.8,
+                "expr-voice-3-f": 0.8,
+                "expr-voice-4-m": 0.9,
+                "expr-voice-4-f": 0.8,
+                "expr-voice-5-m": 0.8,
+                "expr-voice-5-f": 0.8
+              },
+              "xnnpack": {
+                "predictor": false
+              },
+              "cpu_threads": 4,
+              "tail_trim": 5000,
+              "min_samples": 1200,
+              "max_chars": 400,
+              "languages": [
+                "en"
+              ]
+            }
+          },
+          {
+            "id": "fp16",
+            "runtime": "litert",
+            "handler": {
+              "id": "litert.speak",
+              "abi": 1
+            },
+            "runtime_range": {
+              "min_inclusive": "2.2.0",
+              "max_exclusive": "3.0.0"
+            },
+            "inputs": [
+              "text"
+            ],
+            "files": [
+              {
+                "id": "predictor",
+                "role": "model",
+                "path": "kitten_predictor_fp16.tflite",
+                "bytes": 16990756,
+                "sha256": "5f00a375b858be4a2ef655d1387cb6d172e0d4ca8ae6b93fdbad3cd49c0515e7"
+              },
+              {
+                "id": "prosody",
+                "role": "model",
+                "path": "kitten_prosody_fp16.tflite",
+                "bytes": 1697636,
+                "sha256": "ea4501f8c0bcb617f85dc3703cd2dde5e1f49de175fcadaf05d6fccfdb080b6c"
+              },
+              {
+                "id": "vocoder",
+                "role": "model",
+                "path": "kitten_vocoder_fp16.tflite",
+                "bytes": 13367840,
+                "sha256": "626497f75d550e70b82955a3f212417a3c1eebb9d05176716069c92bf41a712d"
+              },
+              {
+                "id": "voices",
+                "role": "voices",
+                "path": "voices.npz",
+                "bytes": 3278902,
+                "sha256": "8aa7cee235abb0739cb51e6559685f65a4dacd95568833d05699b1633f519b3f"
+              },
+              {
+                "id": "g2p_model",
+                "role": "model",
+                "path": "g2p/dp_g2p_matcha_fp16.tflite",
+                "bytes": 25785872,
+                "sha256": "6e4b481f6874dfabc32ce73bf6f0ea1ba6ab5986ee6f76a27779364be8a53c73"
+              },
+              {
+                "id": "g2p_dict",
+                "role": "lexicon",
+                "path": "g2p/g2p_dict.txt.gz",
+                "bytes": 1762038,
+                "sha256": "5b3493a8cd4d20b72c7b91415afaf3f32335ebd81f349698e1cedc898c59f979"
+              },
+              {
+                "id": "g2p_meta",
+                "role": "lexicon",
+                "path": "g2p/g2p_meta.json",
+                "bytes": 1904,
+                "sha256": "7b87bfeaaa072be236e8491d771b0cb97cc92c3e5d83e3558fff8849868810f5"
+              },
+              {
+                "id": "symbols",
+                "role": "lexicon",
+                "path": "g2p/symbols.json",
+                "bytes": 1613,
+                "sha256": "366c66d45b1f4ec25463e08d5849921ce364baab2a8a9891df7f9cec602db2fa"
+              }
+            ],
+            "default_profile": "cpu",
+            "profiles": [
+              {
+                "id": "cpu",
+                "priority": 50,
+                "files": [
+                  "predictor",
+                  "prosody",
+                  "vocoder",
+                  "voices",
+                  "g2p_model",
+                  "g2p_dict",
+                  "g2p_meta",
+                  "symbols"
+                ],
+                "enabled_inputs": [
+                  "text"
+                ],
+                "components": {
+                  "inference": "cpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "PUBLISHER_TESTED",
+                    "device": "SM-S942Q (Galaxy S26)",
+                    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+                    "runtime": "litert 2.2.0",
+                    "result": "PASS",
+                    "date": "2026-10-05",
+                    "evidence": "litert/results/2026-10-05-1005-RFGL80R6A6H-litert2.2.0-speak-kitten-fp16-cpu.log"
+                  }
+                ]
+              }
+            ],
+            "handler_config": {
+              "family": "kitten",
+              "files": {
+                "predictor": "predictor",
+                "prosody": "prosody",
+                "vocoder": "vocoder",
+                "voices": "voices",
+                "g2p_model": "g2p_model",
+                "g2p_dict": "g2p_dict",
+                "g2p_meta": "g2p_meta",
+                "symbols": "symbols"
+              },
+              "sample_rate": 24000,
+              "voices": [
+                "expr-voice-2-m",
+                "expr-voice-2-f",
+                "expr-voice-3-m",
+                "expr-voice-3-f",
+                "expr-voice-4-m",
+                "expr-voice-4-f",
+                "expr-voice-5-m",
+                "expr-voice-5-f"
+              ],
+              "default_voice": "expr-voice-2-m",
+              "style_rows": 400,
+              "style_dim": 256,
+              "speed_priors": {
+                "expr-voice-2-f": 0.8,
+                "expr-voice-2-m": 0.8,
+                "expr-voice-3-m": 0.8,
+                "expr-voice-3-f": 0.8,
+                "expr-voice-4-m": 0.9,
+                "expr-voice-4-f": 0.8,
+                "expr-voice-5-m": 0.8,
+                "expr-voice-5-f": 0.8
+              },
+              "xnnpack": {
+                "predictor": false
+              },
+              "cpu_threads": 4,
+              "tail_trim": 5000,
+              "min_samples": 1200,
+              "max_chars": 400,
+              "languages": [
+                "en"
+              ]
             }
           }
         ]

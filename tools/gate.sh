@@ -1,15 +1,15 @@
 #!/bin/bash
-# A3 catalog gate on ONE named device: every bundled entry (or the ones given), one at a time,
+# A3 catalog gate on ONE named device: every bundled chat entry (or the ones given), one at a time,
 # through inspect -> download (Hub) -> prepare per profile -> generate, evicting between entries.
 #   export ANDROID_SERIAL=<serial>
-#   tools/gate.sh [model-id ...]           # default: every catalog entry, smallest default-variant file first
+#   tools/gate.sh [model-id ...]           # default: every chat entry of the catalog, smallest default-variant file first
 #   tools/gate_to_verification.py litertlm/results/<log> --date <date> > verification/<date>-<device>.json
 set -uo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; ROOT="$(cd "$HERE/.." && pwd)"
 : "${ANDROID_SERIAL:?export ANDROID_SERIAL=<serial> first}"
 export JAVA_HOME="${JAVA_HOME:-/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home}"
 ENTRIES=("$@")
-[ ${#ENTRIES[@]} -eq 0 ] && ENTRIES=($(python3 "$HERE/catalog_order.py" "$ROOT/core/src/main/assets/hfmodels/catalog.json"))
+[ ${#ENTRIES[@]} -eq 0 ] && ENTRIES=($(python3 "$HERE/catalog_order.py" "$ROOT/core/src/main/assets/hfmodels/catalog.json" --task chat))
 OUT="$ROOT/litertlm/results"; mkdir -p "$OUT"
 DEV=$(adb shell getprop ro.product.model | tr -d '\r')
 LOG="$OUT/$(date +%Y-%m-%d-%H%M)-$ANDROID_SERIAL-$(grep '^litertlmVersion=' "$ROOT/gradle.properties" | cut -d= -f2)-a3-gate.log"

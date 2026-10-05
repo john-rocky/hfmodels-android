@@ -1,0 +1,24 @@
+# samples/voice app (debug build of ee61fcc), one scripted typed turn in airplane mode, "What time is it?", on a store that held the model files and no binding or cached descriptor  date=2026-10-05T01:05:53Z serial=RFGL80R6A6H device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZH9 android=16
+# the two speech models loaded at the commits the bundled catalog pins (EXPLICIT_REVISION) with the catalog's entries as their descriptors (the app ships no descriptor); the phone was locked (the debug build's scripted mode shows over the keyguard); the run's log follows unchanged
+# SDK samples/voice at ee61fcc, apk 09:47:46 sha256 18285b37f1acff4b, 10:05:53
+11
+ls: files/hfmodels/bindings: No such file or directory
+ls: files/hfmodels/descriptors: No such file or directory
+2.6G	files/hfmodels/blobs
+Success
+airplane=1
+T0=10-05 10:05:56.000
+Starting: Intent { cmp=io.github.johnrocky.hfmodels.samples.voice/.MainActivity (has extras) }
+10-05 10:05:56.493 32640 32668 I hfmodels: resolve litert-community/Zipformer-medium-CR-CTC-LiteRT: commit=fa063a88 via EXPLICIT_REVISION, descriptor=john-rocky/hfmodels-android@24f63171/catalog/entries/litert-community__Zipformer-medium-CR-CTC-LiteRT.json sha=4a5a20bf
+10-05 10:05:58.130 32640 32668 I hfmodels: ready litert-community/Zipformer-medium-CR-CTC-LiteRT@fa063a88 variant=medium_fp16 profile=gpu inference=GPU prepare_ms=1629
+10-05 10:05:58.153 32640 32668 I hfmodels: resolve litert-community/kitten-tts-nano-0.8: commit=2c5b198f via EXPLICIT_REVISION, descriptor=john-rocky/hfmodels-android@24f63171/catalog/entries/litert-community__kitten-tts-nano-0.8.json sha=3f80c00b
+10-05 10:05:58.541 32640 32679 I hfmodels: ready litert-community/kitten-tts-nano-0.8@2c5b198f variant=fp32 profile=cpu inference=CPU prepare_ms=369
+10-05 10:05:58.551 32640 32679 I hfmodels: resolve litert-community/gemma-4-E2B-it-litert-lm: commit=b3ca0d2f via EXPLICIT_REVISION, descriptor=john-rocky/hfmodels-android@24f63171/catalog/entries/litert-community__gemma-4-E2B-it-litert-lm.json sha=81300c30
+10-05 10:06:02.108 32640 32668 I hfmodels: ready litert-community/gemma-4-E2B-it-litert-lm@b3ca0d2f variant=default profile=gpu language=GPU vision=GPU prepare_ms=3554
+10-05 10:06:02.121 32640 32668 I hfmodels-voice-sample: ready asr=litert-community/Zipformer-medium-CR-CTC-LiteRT/medium_fp16/gpu tts=litert-community/kitten-tts-nano-0.8/fp32/cpu llm=litert-community/gemma-4-E2B-it-litert-lm/default/gpu load_ms=5652 network=none
+10-05 10:06:02.139 32640 32679 I hfmodels-voice-sample: event=Heard text="What time is it?" audio_ms=0 transcribe_ms=0
+10-05 10:06:02.139 32640 32679 I hfmodels-voice-sample: event=Thinking
+10-05 10:06:03.384 32640 32679 I hfmodels-voice-sample: event=ToolCalled name=get_current_datetime args={} result="Monday, 2026-10-05 10:06" ms=0
+10-05 10:06:04.443 32640 32667 I hfmodels-voice-sample: event=Speaking sentence="It is ten o'clock on Monday, October 5th, 2026," synth_ms=541 first_audio_ms=2303
+10-05 10:06:08.368 32640 32667 I hfmodels-voice-sample: event=Done total_ms=6228
+10-05 10:06:08.391 32640 32667 I hfmodels-voice-sample: TURN input=text heard="What time is it?" tools=[get_current_datetime()->"Monday, 2026-10-05 10:06"] ms_first_audio=2303 hangover_ms=0 ms_end_of_speech_to_sound=2303 ms_transcribe=0 ms_first_token=1222 ms_first_sentence=1745 ms_reply=1745 ms_total=6228 spoken="It is ten o'clock on Monday, October 5th, 2026." reply="It is ten o'clock on Monday, October 5th, 2026." phone="Next alarm (Android): none" network=none
