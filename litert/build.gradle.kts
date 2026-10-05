@@ -1,4 +1,5 @@
-// hfmodels-litert: typed decisions on classic LiteRT (CompiledModel) decision encoders, on top of hfmodels-core.
+// hfmodels-litert: typed decisions on classic LiteRT (CompiledModel) decision encoders, speech to text (Transcribe) and
+// text to speech (Speak), on top of hfmodels-core.
 // Separate from hfmodels-litertlm on purpose: the litert AAR adds about 9 MB of native code, merges
 // FOREGROUND_SERVICE permissions into the app and needs android.uniquePackageNames=false on AGP 9;
 // a chat-only app should not pay for that.
@@ -61,10 +62,10 @@ dependencies {
 mavenPublishing {
     publishToMavenCentral()
     signAllPublications()
-    coordinates("io.github.john-rocky.hfmodels", "hfmodels-litert", project.findProperty("hfmodelsVersion") as String? ?: "0.1.2")
+    coordinates("io.github.john-rocky.hfmodels", "hfmodels-litert", project.findProperty("hfmodelsVersion") as String? ?: "0.2.0")
     pom {
         name.set("hfmodels-litert")
-        description.set("hfmodels adapter for Google's LiteRT runtime: typed decisions (choice / score / noul with calibrated probabilities) on a decision encoder, one forward per question")
+        description.set("hfmodels adapter for Google's LiteRT runtime: typed decisions on decision encoders (choice / score / noul, a probability per option), speech to text and text to speech")
         url.set("https://github.com/john-rocky/hfmodels-android")
         licenses { license { name.set("Apache-2.0"); url.set("https://www.apache.org/licenses/LICENSE-2.0.txt") } }
         developers { developer { id.set("john-rocky"); name.set("Daisuke Majima"); url.set("https://github.com/john-rocky") } }

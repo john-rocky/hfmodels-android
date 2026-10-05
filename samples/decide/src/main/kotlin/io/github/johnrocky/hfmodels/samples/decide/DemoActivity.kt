@@ -215,7 +215,7 @@ class DemoActivity : ComponentActivity() {
         stageLine("$questionsAsked questions", ACCENT, 30f).apply { typeface = Typeface.MONOSPACE }
         stageLine("${"%.0f".format(questionMsSum / questionsAsked)} ms each", ACCENT, 22f).apply { typeface = Typeface.MONOSPACE; setPadding(0, dp(6), 0, 0) }
         stageLine("Write your own questions about any text.\nThe model picks the answer and says how sure it is.\nNo server, no network.", FG, 16f).apply { setPadding(0, dp(18), 0, 0) }
-        stageLine("github.com/john-rocky/hfmodels-android\nhfmodels-litert 0.1.2 · Maven Central", DIM, 11.5f).apply { typeface = Typeface.MONOSPACE; setPadding(0, dp(16), 0, 0) }
+        stageLine("github.com/john-rocky/hfmodels-android\nhfmodels-litert 0.2.0 · Maven Central", DIM, 11.5f).apply { typeface = Typeface.MONOSPACE; setPadding(0, dp(16), 0, 0) }
     }
 
     override fun onDestroy() {

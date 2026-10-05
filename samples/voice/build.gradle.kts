@@ -38,7 +38,7 @@ android {
 
 dependencies {
     // In an app outside this repo:
-    //   implementation("io.github.john-rocky.hfmodels:hfmodels-voice:<version>")   // hfmodels-litert and hfmodels-litertlm come with it
+    //   implementation("io.github.john-rocky.hfmodels:hfmodels-voice:0.2.0")   // hfmodels-litert and hfmodels-litertlm come with it
     // and gradle.properties: android.uniquePackageNames=false (litert 2.2.0 / litert-api 2.2.0 share a namespace on AGP 9).
     implementation(project(":voice"))
     implementation(platform("androidx.compose:compose-bom:2025.12.00"))
