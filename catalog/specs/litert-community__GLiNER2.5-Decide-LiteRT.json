@@ -1,6 +1,6 @@
 {
   "model_id": "litert-community/GLiNER2.5-Decide-LiteRT",
-  "revision": "310090c3adbba13843f84b03a10f1321d8be5997",
+  "revision": "f6f6e9c99817e6d23f6c09761be62829ca86d522",
   "tasks": [
     "decide"
   ],

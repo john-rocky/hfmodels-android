@@ -1,6 +1,6 @@
 {
   "model_id": "litert-community/GLiNER2.5-Decide-LiteRT",
-  "model_commit": "310090c3adbba13843f84b03a10f1321d8be5997",
+  "model_commit": "f6f6e9c99817e6d23f6c09761be62829ca86d522",
   "gated": false,
   "path": "catalog/entries/litert-community__GLiNER2.5-Decide-LiteRT.json",
   "provenance": "fastino/GLiNER2.5-Decide@7ee5da4c2415e32259bcdc0b1a7367c32ce8d6f6 (Apache-2.0; a DeBERTa-v3-large encoder, MIT, with gliner2's classification head) converted with litert-torch 0.9.3 to classic LiteRT graphs of the classification path, one static window per graph (128, 256 and 512 tokens), the FULLY_CONNECTED weights stored as float16 and the activations in float32. The graph takes the looked-up token embeddings (the [128011, 1024] float16 table ships beside it), the attention mask and a [32, window] label routing matrix, and returns one logit per label slot; the tokenizer is the checkpoint's tokenizer.json, and a request longer than the window is refused, never cut. GPU FP32 or CPU for those graphs: the card measured that the GPU's default precision changes decisions, and that the default s128 graph gives wrong decisions on the NPU. s128_npu_wfp16 is the s128 graph changed for float16 hardware (LayerNorm power-of-two pre-scale on 22 norms, attention-mask constant -1e4, FC1 split in two; exact in float32), for the Qualcomm HTP and the GPU in FP16 with FP32 accumulation.",
