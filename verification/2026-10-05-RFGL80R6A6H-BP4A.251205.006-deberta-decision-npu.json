@@ -1,0 +1,28 @@
+[
+  {
+    "model_id": "litert-community/Open-Decision-DeBERTa-v3-Large-LiteRT",
+    "model_commit": "26a2b642961006ae7b1e330ccf7727b0f640702c",
+    "level": "PUBLISHER_TESTED",
+    "device": "SM-S942Q (Galaxy S26)",
+    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+    "runtime": "litert 2.2.0",
+    "result": "PASS",
+    "date": "2026-10-05",
+    "variant": "s256_npu_wfp16",
+    "profile": "npu",
+    "evidence": "litert/results/2026-10-05-1118-RFGL80R6A6H-litert2.2.0-decide-opendecision-s256_npu_wfp16-npu.log"
+  },
+  {
+    "model_id": "litert-community/Open-Decision-DeBERTa-v3-Large-LiteRT",
+    "model_commit": "26a2b642961006ae7b1e330ccf7727b0f640702c",
+    "level": "PUBLISHER_TESTED",
+    "device": "SM-S942Q (Galaxy S26)",
+    "os_build": "BP4A.251205.006.S942QOPS1AZH9",
+    "runtime": "litert 2.2.0",
+    "result": "PASS",
+    "date": "2026-10-05",
+    "variant": "s256_npu_wfp16",
+    "profile": "gpu",
+    "evidence": "litert/results/2026-10-05-1130-RFGL80R6A6H-litert2.2.0-decide-opendecision-fp16acc32-s256_npu_wfp16-gpu.log"
+  }
+]

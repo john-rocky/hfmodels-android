@@ -1,6 +1,6 @@
 {
   "model_id": "litert-community/Open-Decision-DeBERTa-v3-Large-LiteRT",
-  "revision": "7a276235b795e8ad3ae7ac6a9f237daa2098863a",
+  "revision": "26a2b642961006ae7b1e330ccf7727b0f640702c",
   "tasks": [
     "decide"
   ],
