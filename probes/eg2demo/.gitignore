@@ -16,3 +16,4 @@ app/**/local.properties
 *.apk
 *.mp4
 *.npy
+app/gradle/wrapper/gradle-wrapper.jar
