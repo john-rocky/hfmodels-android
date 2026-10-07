@@ -1,0 +1,18 @@
+# lane-internal: third-party sources, media, models, venv, outputs, native libs (Qualcomm licence: only inside an APK)
+ref/
+out/
+venv/
+models/
+fixtures/album/*.jpg
+fixtures/album/*.jpeg
+fixtures/album/*.png
+fixtures/queries/*.wav
+fixtures/queries/*.aiff
+app/**/build/
+app/**/.gradle/
+app/**/.kotlin/
+app/**/jniLibs/
+app/**/local.properties
+*.apk
+*.mp4
+*.npy
