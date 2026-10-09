@@ -1,0 +1,14 @@
+10-10 00:49:52.433  4033  4033 I ask     : PHOTO w=768 h=547 source=1023x728 bytes=223031
+10-10 00:50:35.887  4033  4033 I ask     : stage LOADING
+10-10 00:50:35.889  4033  4033 I ask     : load Resolving
+10-10 00:50:35.892  4033  5005 I hfmodels: resolve litert-community/decider-2b-vision-LiteRT: commit=6c024e94 via EXPLICIT_REVISION, descriptor=caller@explicit/hfmodels.json sha=a064e06f
+10-10 00:50:35.910  4033  4033 I ask     : load Verifying sha256
+10-10 00:50:35.914  4033  4033 I ask     : load Initializing profile gpu
+10-10 00:51:16.197  4033  4033 I hfmodels: ready litert-community/decider-2b-vision-LiteRT@6c024e94 variant=int8 profile=gpu language=GPU vision=GPU prepare_ms=40284
+10-10 00:51:16.197  4033  4033 I ask     : load Ready: profile gpu
+10-10 00:51:16.206  4033  4033 I ask     : READY profile=gpu load_ms=40318 variant=int8 commit=6c024e94 downloaded=false
+10-10 00:51:16.207  4033  4033 I ask     : stage OPENING
+10-10 00:51:23.104  4033  4033 I ask     : stage ASKING
+10-10 00:51:24.410  4033  4033 I ask     : ASK first_turn=true letter=C raw="C" answer_ms=1299.0 stream_ms=1300.0 conversation_ms=6875.1 load_ms=40318 options=3
+10-10 00:52:01.464  4033  4033 I ask     : stage ASKING
+10-10 00:52:01.869  4033  4033 I ask     : ASK first_turn=false letter=B raw="B" answer_ms=401.0 stream_ms=402.3 conversation_ms=null load_ms=null options=3
