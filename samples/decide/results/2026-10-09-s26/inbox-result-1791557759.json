@@ -1,0 +1,145 @@
+{
+  "source": "pasted",
+  "count": 5,
+  "total_s": 0.660853594,
+  "median_ms": 127.320521,
+  "p90_ms": 141.173698,
+  "msg_per_s": 7.5659723203381715,
+  "bins": {
+    "nothing you need to do": 1,
+    "a code to type in": 1,
+    "a package or a delivery": 1,
+    "money you have to pay": 1,
+    "an appointment or a booking": 1
+  },
+  "variant": "en_s256_fp32",
+  "backend": "gpu",
+  "device": "SM-S942Q",
+  "android_build": "BP4A.251205.006.S942QOPS1AZH9",
+  "android_release": "16",
+  "date": "2026-10-09T14:55:59.287897Z",
+  "thermal_before": 0,
+  "thermal_after": 0,
+  "model": "litert-community\/laya-LiteRT@35bf9cd6a14ff947566005ce7259b8d5e5c880e1",
+  "sdk_notes": [
+    "family=laya compile_ms=2877 on gpu (precision fp32)",
+    "observed backend is UNKNOWN: litert 2.2.0 reports no per-op execution target; 'initialized' is the accelerator the CompiledModel was created with"
+  ],
+  "questions": {
+    "need": {
+      "type": "choice",
+      "instructions": "What does this text message need from you?",
+      "criteria": {
+        "nothing you need to do": null,
+        "a code to type in": null,
+        "a package or a delivery": null,
+        "money you have to pay": null,
+        "an appointment or a booking": null
+      }
+    }
+  },
+  "series": [
+    [
+      0.142882031,
+      141.173698
+    ],
+    [
+      0.268773594,
+      124.038229
+    ],
+    [
+      0.401546667,
+      130.337396
+    ],
+    [
+      0.531165156,
+      127.320521
+    ],
+    [
+      0.660853594,
+      126.689114
+    ]
+  ],
+  "answers": [
+    {
+      "id": 0,
+      "from": "pasted",
+      "text": "Your Kelderbank verification code is 551902. Do not share it.",
+      "choice": "a code to type in",
+      "p_choice": 0.7099,
+      "probabilities": {
+        "nothing you need to do": 0.1594,
+        "a code to type in": 0.7099,
+        "a package or a delivery": 0.0433,
+        "money you have to pay": 0.0213,
+        "an appointment or a booking": 0.0661
+      },
+      "ms": 141.173698,
+      "t_s": 0.142882031
+    },
+    {
+      "id": 1,
+      "from": "pasted",
+      "text": "Parcelwick: your parcel arrives tomorrow between 9 am and 1 pm.",
+      "choice": "a package or a delivery",
+      "p_choice": 0.7505,
+      "probabilities": {
+        "nothing you need to do": 0.2041,
+        "a code to type in": 0.0187,
+        "a package or a delivery": 0.7505,
+        "money you have to pay": 0.011,
+        "an appointment or a booking": 0.0156
+      },
+      "ms": 124.038229,
+      "t_s": 0.268773594
+    },
+    {
+      "id": 2,
+      "from": "pasted",
+      "text": "Reminder: your Cobblemere Water bill of $54.20 is due on Monday.",
+      "choice": "money you have to pay",
+      "p_choice": 0.7933,
+      "probabilities": {
+        "nothing you need to do": 0.1552,
+        "a code to type in": 0.0126,
+        "a package or a delivery": 0.0241,
+        "money you have to pay": 0.7933,
+        "an appointment or a booking": 0.0149
+      },
+      "ms": 130.337396,
+      "t_s": 0.401546667
+    },
+    {
+      "id": 3,
+      "from": "pasted",
+      "text": "Molarbrook Dental: your cleaning is booked for Thu 15 Oct at 10:30 am.",
+      "choice": "an appointment or a booking",
+      "p_choice": 0.8743,
+      "probabilities": {
+        "nothing you need to do": 0.1024,
+        "a code to type in": 0.006,
+        "a package or a delivery": 0.0043,
+        "money you have to pay": 0.0129,
+        "an appointment or a booking": 0.8743
+      },
+      "ms": 127.320521,
+      "t_s": 0.531165156
+    },
+    {
+      "id": 4,
+      "from": "pasted",
+      "text": "Thanks for dinner last night, it was lovely to see you!",
+      "choice": "nothing you need to do",
+      "p_choice": 0.81,
+      "probabilities": {
+        "nothing you need to do": 0.81,
+        "a code to type in": 0.0364,
+        "a package or a delivery": 0.0488,
+        "money you have to pay": 0.028,
+        "an appointment or a booking": 0.0769
+      },
+      "ms": 126.689114,
+      "t_s": 0.660853594
+    }
+  ]
+}
