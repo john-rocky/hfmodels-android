@@ -1,0 +1,85 @@
+# Every invented name in samples/decide's texts, one per line, so each can be searched before a
+# recording; a name that turns out to belong to a real business or person is replaced. The unit test
+# (SmsGeneratorTest) fails when a sender or a vocabulary name is missing here.
+# Checked 2026-09-27/28: web searches (two or more per name), .com/.co.uk/.io/.app/.net DNS, the App Store
+# search API, UK Companies House; the first batch also Bing exact match and TMview. Names that turned out
+# to be real businesses or products were replaced before the recording.
+
+# Generator (src/sms/kotlin/.../SmsGenerator.kt): sender ids, then the names used inside the texts
+Kelderbank
+LorrowCU
+Lorrow Credit Union
+Mailbrook
+Parcelwick
+Crateford
+Crateford Couriers
+Heelgrove
+HobnailMkt
+Hobnail Market
+Brindlewatt
+Brindlewatt Energy
+Chattermoss
+Chattermoss Mobile
+Cobblemere
+Cobblemere Water
+Shieldwren
+Shieldwren Insurance
+Molarbrook
+Molarbrook Dental
+Lindenquay
+Lindenquay Clinic
+SnipSable
+Snip & Sable
+Brackwheel
+Brackwheel Motors
+CasaUmbrino
+Casa Umbrino
+Lungefold
+Lungefold Fitness
+Lanternby
+Lanternby Cinemas
+Tallowby
+Tallowby Vets
+Brookpell
+Brookpell Plumbing
+Keyfallow
+Keyfallow Homes
+
+# Generator: first names (people text from +1 NXX 555-01xx numbers), surnames, pets
+Maya
+Tom
+Aisha
+Ben
+Chloe
+Sam
+Nina
+Leo
+Grace
+Omar
+Ruby
+Jake
+Hannah
+Luis
+Lindqvist
+Okoro
+Brennan
+Castell
+Hartley
+Novak
+Ferreira
+Whitlow
+Biscuit
+Milo
+Pepper
+
+# Panel (src/main/kotlin/.../InboxPanel.kt): the 24 hand-labelled texts, names of real businesses replaced
+# by names of the generator's list above; near misses kept as measured: Marlowe Grocers (a Dublin grocer is
+# "Marlowe & Co"), Casa Verdino (a furniture showroom is "Febal Casa Verdino").
+Marlowe Grocers
+Heelgrove Outlet
+Priya
+Casa Verdino
+Elm Street Post Office
+Okafor
+Lena
+Daniel

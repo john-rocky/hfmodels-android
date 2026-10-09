@@ -1,7 +1,7 @@
-// samples/decide: three screens on TypedDecisions (voice gate, clipboard, query x passage) with the
-// measured milliseconds on screen. Model files are never in the APK: the decision model is loaded
-// through the SDK (side-loaded during development, see README.md), the extraction model's files are
-// fetched by GlinerAssets with a sha256 check.
+// samples/decide: four screens on TypedDecisions (voice gate, clipboard, query x passage, and the inbox:
+// your unread texts or pasted ones sorted on one tap) with the measured milliseconds on screen. Model files
+// are never in the APK: the decision model is loaded through the SDK (side-loaded during development, see
+// README.md), the extraction model's files are fetched by GlinerAssets with a sha256 check.
 plugins {
     id("com.android.application")
 }
@@ -16,6 +16,8 @@ android {
         versionCode = 1
         versionName = "0.1"
         ndk { abiFilters += setOf("arm64-v8a") }
+        // For the device check (src/androidTest/.../InboxDeviceCheck.kt).
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -32,6 +34,8 @@ android {
     // The npu backend loads the Qualcomm runtime from the app's native library dir: extract it at install
     // (src/main/jniLibs, never committed: tools/fetch_npu_libs.sh). Without those files the npu choice reports NATIVE_MODULE_MISSING.
     packaging { jniLibs { useLegacyPackaging = true } }
+    // The synthetic texts: shared with probes/smsseed, which seeds them into the phone's SMS store.
+    sourceSets["main"].kotlin.srcDir("src/sms/kotlin")
 }
 
 dependencies {
@@ -40,4 +44,8 @@ dependencies {
     // and gradle.properties: android.uniquePackageNames=false (litert 2.2.0 / litert-api 2.2.0 share a namespace on AGP 9).
     implementation(project(":litert"))
     implementation("androidx.activity:activity:1.10.1")
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.junit)
 }
