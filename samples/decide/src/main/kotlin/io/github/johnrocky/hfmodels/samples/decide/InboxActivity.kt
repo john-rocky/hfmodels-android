@@ -405,11 +405,11 @@ class InboxActivity : ComponentActivity() {
     /** A paragraph: the label's font, wrapped over as many lines as it needs. */
     private fun paragraph(size: Float, color: Int): TextView = label(size, color).apply { maxLines = Int.MAX_VALUE; ellipsize = null; setLineSpacing(0f, 1.2f) }
 
-    /** A capsule button; [primary] is filled with the action color, otherwise the background color with grey text. */
-    private fun capsuleButton(text: String, primary: Boolean, onClick: () -> Unit): TextView = label(15f, if (primary) InboxStyle.WHITE else InboxStyle.LATENCY, bold = true).apply {
+    /** A capsule button; [primary] is filled with the action color, otherwise with [fill] and grey text. */
+    private fun capsuleButton(text: String, primary: Boolean, fill: Int = InboxStyle.LANE, onClick: () -> Unit): TextView = label(15f, if (primary) InboxStyle.WHITE else InboxStyle.LATENCY, bold = true).apply {
         this.text = text
         gravity = Gravity.CENTER
-        background = capsule(if (primary) InboxStyle.ACTION else InboxStyle.BACKGROUND)
+        background = capsule(if (primary) InboxStyle.ACTION else fill)
         setPadding(px(20f).toInt(), px(11f).toInt(), px(20f).toInt(), px(11f).toInt())
         setOnClickListener { onClick() }
     }
@@ -464,7 +464,8 @@ class InboxActivity : ComponentActivity() {
         choiceTitle = label(18f, InboxStyle.WHITE, bold = true)
         choiceBody = paragraph(14f, InboxStyle.LATENCY)
         allowButton = capsuleButton("Allow", primary = true) { requestPermissions(arrayOf(Manifest.permission.READ_SMS), SMS_REQUEST) }
-        val pasteInstead = capsuleButton("Paste texts instead", primary = false) { paste(clipboardText()) }
+        // On the card (LANE) the second button takes the page color, so it stands out from the card.
+        val pasteInstead = capsuleButton("Paste texts instead", primary = false, fill = InboxStyle.BACKGROUND) { paste(clipboardText()) }
         choiceNote = paragraph(12.5f, InboxStyle.AXIS)
         val choiceButtons = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL; gravity = Gravity.CENTER_VERTICAL }
         choiceButtons.addView(allowButton, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { rightMargin = px(10f).toInt() })
