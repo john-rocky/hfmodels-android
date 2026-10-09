@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- The hold-to-talk button only. No INTERNET: the model file is pushed with adb, and nothing leaves the phone.
+         Photos come through the system photo picker, which needs no permission. -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <application
+        android:label="@string/app_name"
+        android:allowBackup="false"
+        android:largeHeap="true"
+        android:theme="@style/Theme.Eg2Search">
+        <!-- The GPU backend opens the vendor OpenCL library (apps targeting S+ must list it; the SDK's litertlm manifest
+             lists the same three, and this sample uses LiteRT-LM directly). -->
+        <uses-native-library android:name="libOpenCL.so" android:required="false" />
+        <uses-native-library android:name="libOpenCL-pixel.so" android:required="false" />
+        <uses-native-library android:name="libvndksupport.so" android:required="false" />
+        <!-- The Qualcomm NPU's FastRPC transport, for an APK that carries the NPU libraries (README.md, NPU): the
+             litertlm-android 0.18.0 AAR declares no vendor library. -->
+        <uses-native-library android:name="libcdsprpc.so" android:required="false" />
+        <!-- singleTask: the recording tools' starts with extras reach the running screen (onNewIntent) instead of a second
+             copy that would load the model again. -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|uiMode">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.Eg2Demo" parent="@android:style/Theme.DeviceDefault.NoActionBar">
+    <style name="Theme.Eg2Search" parent="@android:style/Theme.DeviceDefault.NoActionBar">
         <item name="android:windowBackground">@color/bg</item>
         <item name="android:colorBackground">@color/bg</item>
-        <!-- The status bar stays visible (airplane-mode icon) over the app background, with light icons. -->
+        <!-- The status bar stays visible over the app background, with light icons. -->
         <item name="android:statusBarColor">@color/bg</item>
         <item name="android:windowLightStatusBar">false</item>
         <!-- A plain dark launch screen: no default launcher icon on the system splash. -->
