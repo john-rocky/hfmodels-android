@@ -1,4 +1,4 @@
-package com.mlboydaisuke.eg2demo
+package io.github.johnrocky.hfmodels.samples.eg2search
 
 import java.io.File
 import java.io.RandomAccessFile

@@ -421,6 +421,7 @@ samples/chat the chat screen on the SDK (id in, chat out); its androidTest/ hold
 samples/decide three screens on typed decisions (voice gate, clipboard, query x passages) with the milliseconds on screen
 samples/voice one microphone button over VoiceLoop with the phone's real tools, the time from the end of speech to the first sound on screen; its androidTest/ holds the drop-in VoiceDeviceCheck
 samples/promises a conversation sorted sentence by sentence into You promised / They asked you / Plans on GLiNER2.5-Decide, the milliseconds on screen; its androidTest/ holds a device check, results/ the Galaxy S26 records
+samples/eg2search hold a button and say what is in a photo: EmbeddingGemma 2 740M finds it in your own album, added through the photo picker (LiteRT-LM 0.18.0 directly, not an SDK task); its androidTest/ holds a device check
 samples/ask  one bar chart the app draws and five questions about it in one conversation (the picture with question 1, then text-only turns), each answer marked against the data; results/ the Galaxy S26 records
 samples/pong a Pong the phone plays from its own frames, a new conversation per decision; its README says why the answers after the first are unreliable on this model (LiteRT-LM#3165); results/ the records
 catalog/     specs (curated) -> entries (generated) -> the bundled asset; dev/ the development descriptors (the decision graphs, FunctionGemma); proposals/ the hfmodels.json drafts for model repos; tools/ generate and gate them
