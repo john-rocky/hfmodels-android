@@ -32,6 +32,8 @@ android {
     // The npu backend loads the Qualcomm runtime from the app's native library dir: extract it at install
     // (src/main/jniLibs, never committed: tools/fetch_npu_libs.sh). Without those files the npu choice reports NATIVE_MODULE_MISSING.
     packaging { jniLibs { useLegacyPackaging = true } }
+    // The synthetic texts: shared with probes/smsseed, which seeds them into the phone's SMS store.
+    sourceSets["main"].kotlin.srcDir("src/sms/kotlin")
 }
 
 dependencies {
@@ -40,4 +42,5 @@ dependencies {
     // and gradle.properties: android.uniquePackageNames=false (litert 2.2.0 / litert-api 2.2.0 share a namespace on AGP 9).
     implementation(project(":litert"))
     implementation("androidx.activity:activity:1.10.1")
+    testImplementation(libs.junit)
 }
