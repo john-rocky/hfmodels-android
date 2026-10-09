@@ -24,7 +24,13 @@
         </activity>
         <!-- The scripted demo for a screen recording; how to start it is in the KDoc of DemoActivity.kt -->
         <activity android:name=".DemoActivity" android:exported="true" android:screenOrientation="portrait" android:theme="@android:style/Theme.Material.NoActionBar" />
-        <!-- SMS inbox triage on one tap; how to start it (autostart, panel) is in the KDoc of InboxActivity.kt -->
-        <activity android:name=".InboxActivity" android:exported="true" android:screenOrientation="portrait" android:theme="@android:style/Theme.Material.NoActionBar" />
+        <!-- Your unread texts (or pasted ones) sorted on one tap, with its own launcher icon; the scripted starts
+             (autostart, panel, paste) are in the KDoc of InboxActivity.kt -->
+        <activity android:name=".InboxActivity" android:label="@string/inbox_name" android:exported="true" android:screenOrientation="portrait" android:theme="@android:style/Theme.Material.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 </manifest>
