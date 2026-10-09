@@ -22,7 +22,7 @@ Fill the options from A down. When the letter arrives, its option lights up with
 
 ## One conversation per loaded model
 
-The photo goes into the first turn of a conversation, and every further question about it is a text-only turn of the same conversation. On this model family LiteRT-LM carries a conversation's state into the next conversation on the same loaded model ([google-ai-edge/LiteRT-LM#3165](https://github.com/google-ai-edge/LiteRT-LM/issues/3165)), so the app never opens a second conversation on a loaded model: after a new photo, a Stop or the Demo, the next Ask closes the model and loads it again before it sends the photo (40 s on the S26's GPU), and the line under the options says so. `Asker.kt` keeps this rule for the screen and the device check alike.
+The photo goes into the first turn of a conversation, and every further question about it is a text-only turn of the same conversation. On this model family LiteRT-LM carries a conversation's state into the next conversation on the same loaded model ([google-ai-edge/LiteRT-LM#3165](https://github.com/google-ai-edge/LiteRT-LM/issues/3165)), so the app never opens a second conversation on a loaded model: after a new photo, a Stop or the Demo, the next Ask closes the model and loads it again before it sends the photo (40 s on the S26's GPU), and the line under the options says so. The CPU profile loads in 16 to 18 s, so with the backend set to cpu a new photo's first letter comes sooner (19.5 s against 68.1 s in the device check's process, load and opening included), while each further question takes longer (644 against 385 ms). `Asker.kt` keeps this rule for the screen and the device check alike.
 
 ## What one question sends
 
@@ -109,24 +109,28 @@ After each chart (or Stop) the app writes `ask-result-<epoch s>.json` and `frame
 
 ### 2026-10-10: your photo
 
-Measured on one Galaxy S26 (SM-S942Q, Android 16, build BP4A.251205.006.S942QOPS1AZH9) with litertlm-android 0.16.1 and the `int8` file pushed into the app's files directory, GPU profile: first by the device check, then on the screen. The logs are in [`results/2026-10-10-s26/`](results/2026-10-10-s26/). The phone came from another run at thermal status 2.
+Measured on one Galaxy S26 (SM-S942Q, Android 16, build BP4A.251205.006.S942QOPS1AZH9) with litertlm-android 0.16.1 and the `int8` file pushed into the app's files directory: on the GPU profile first by the device check, then on the screen, and last by the device check on the CPU profile. The logs are in [`results/2026-10-10-s26/`](results/2026-10-10-s26/). The phone came from another run at thermal status 2; the CPU check started and ended at 1.
 
 | where | question | options | letter | answer ms | opening the conversation | load before it |
 |---|---|---|---|---|---|---|
-| device check | chart_00: Which bar is the tallest? | the red / green / purple bar | B, matches the chart | 982.6 | 7,889 ms | 79.6 s, with the import |
-| device check | What is this a photo of? | a car / a boat / a bicycle | C | 1,027.7 | 7,013 ms | 60.1 s |
-| device check | What colour is the bicycle? (the same photo, text-only) | blue / red / green | B | 385.4 | none | none |
-| device check | What is this a photo of?, after the Stop | a car / a boat / a bicycle | C | 1,097.5 | 7,159 ms | 59.9 s |
-| the screen | What is this a photo of? | a car / a boat / a bicycle | C | 1,299 | 6,875 ms | 40.3 s |
-| the screen | What colour is the bicycle? (the same photo, text-only) | blue / red / green | B | 401 | none | none |
+| device check, GPU | chart_00: Which bar is the tallest? | the red / green / purple bar | B, matches the chart | 982.6 | 7,889 ms | 79.6 s, with the import |
+| device check, GPU | What is this a photo of? | a car / a boat / a bicycle | C | 1,027.7 | 7,013 ms | 60.1 s |
+| device check, GPU | What colour is the bicycle? (the same photo, text-only) | blue / red / green | B | 385.4 | none | none |
+| device check, GPU | What is this a photo of?, after the Stop | a car / a boat / a bicycle | C | 1,097.5 | 7,159 ms | 59.9 s |
+| the screen, GPU | What is this a photo of? | a car / a boat / a bicycle | C | 1,299 | 6,875 ms | 40.3 s |
+| the screen, GPU | What colour is the bicycle? (the same photo, text-only) | blue / red / green | B | 401 | none | none |
+| device check, CPU | chart_00: Which bar is the tallest? | the red / green / purple bar | B, matches the chart | 2,962.9 | 2,413 ms | 23.7 s |
+| device check, CPU | What is this a photo of? | a car / a boat / a bicycle | C | 1,780.6 | 1,174 ms | 16.5 s |
+| device check, CPU | What colour is the bicycle? (the same photo, text-only) | blue / red / green | B | 643.8 | none | none |
+| device check, CPU | What is this a photo of?, after the Stop | a car / a boat / a bicycle | C | 1,778.9 | 1,075 ms | 18.0 s |
 
 The photo went to the model as a 768 x 547 JPEG of 223,031 bytes (from 1023 x 728), read through `PhotoImport` in 28.6 ms.
 
-The first load in the check took 79.6 s: 14.8 s to hash and import the pushed file, then 64.8 s for the engine. The loads after it, inside the check's process, took 60 s; the app on the screen loaded in 40.3 s, as on 2026-09-29 (38.7 to 39.5 s). Opening a conversation took 6.9 to 7.9 s, against 4.8 to 5.3 s on 2026-09-29 at thermal status 0. The causes of both differences are not established.
+The first GPU load in the check took 79.6 s: 14.8 s to hash and import the pushed file, then 64.8 s for the engine. The GPU loads after it, inside the check's process, took 60 s; the app on the screen loaded in 40.3 s, as on 2026-09-29 (38.7 to 39.5 s). Opening a conversation on the GPU took 6.9 to 7.9 s, against 4.8 to 5.3 s on 2026-09-29 at thermal status 0. The causes of both differences are not established. On the CPU the loads took 16.5 to 23.7 s and opening a conversation 1.1 to 2.4 s.
 
-The Stop landed 6.2 ms after the third question was sent, while the session was GENERATING: the turn ended without a letter, its conversation was closed, and the next question opened a new conversation on a new load and got its letter. Closing the model took 4.5 s; the second close did nothing.
+The Stop landed 6.2 ms (GPU) and 2.3 ms (CPU) after the third question was sent, while the session was GENERATING: the turn ended without a letter, its conversation was closed, and the next question opened a new conversation on a new load and got its letter. Closing the model took 4.5 s on the GPU and 0.4 s on the CPU; the second close did nothing.
 
-All seven failure paths passed: `missing-model`, `no-photo`, `empty-question`, `one-option` and `bad-photo` each ended in its sentence of the table above, `big-photo` and `rotated-photo` in the sizes there.
+All seven failure paths passed in both checks: `missing-model`, `no-photo`, `empty-question`, `one-option` and `bad-photo` each ended in its sentence of the table above, `big-photo` and `rotated-photo` in the sizes there.
 
 The Demo ran twice on the same phone that day: from its button on chart_00 (5 of 5 match the chart; 885.5 / 236.8 / 248.3 / 320.3 / 244.9 ms; load 38.0 s) and in recording mode on chart_01 (5 of 5; 1,144.0 / 300.2 / 280.7 / 411.5 / 312.8 ms; load 44.0 s). Both records are in the same folder.
 
