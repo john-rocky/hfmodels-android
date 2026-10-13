@@ -47,14 +47,17 @@ import org.junit.runner.RunWith
  * Device check for samples/look. On the connected phone and in the app's own process it proves what the
  * screen relies on, through the app's own code (Looker, PhotoImport, Typed, Stats):
  *
- * - load: the model loads (from the app's store, or a copy pushed to its files dir is hashed and imported);
- * - photo: the Example button's photo put into MediaStore and read back through PhotoImport (what the picker's
- *   result goes through), asked "What is this a photo of?": an answer with text, streamed; its full text, the
- *   first token and the chunks are printed (whether it names the photo's subject is recorded, not required:
+ * - load: the model loads (from the app's store, or a copy pushed to its files dir is hashed and imported) and a
+ *   conversation opens on it, as the screen does at start (READY);
+ * - photo: the strip's first example (the sign) put into MediaStore and read back through PhotoImport (what the
+ *   picker's result goes through), and read from assets as a tap on the strip does: the same bytes; asked "What does
+ *   this sign say?" on the ready conversation, without waiting for a load: an answer with text, streamed; its full
+ *   text, the first token and the chunks are printed (whether it gives the sign's words is recorded, not required:
  *   the model's answer is not the app's to guarantee);
- * - follow-up: "What colour is it?" about the same photo, a text-only turn of the same conversation: text;
- * - stop: a third question cancelled after its first chunk; the next question opens a new conversation on a
- *   new load (one conversation per load, google-ai-edge/LiteRT-LM#3165) and answers;
+ * - follow-up: "What colour is the sign?" about the same photo, a text-only turn of the same conversation: text;
+ * - stop: a third question cancelled after its first chunk; its conversation closes; the model loads again and a
+ *   new conversation opens (one conversation per load, google-ai-edge/LiteRT-LM#3165), as the screen does after a
+ *   Stop, and the first question again goes into it and answers;
  * - release: close, and close again, without an exception;
  *
  * and the failure paths, each ending in a sentence for the screen instead of a crash: missing-model (a
@@ -63,36 +66,43 @@ import org.junit.runner.RunWith
  * rotated-photo (a JPEG stored sideways with an EXIF rotation comes back upright) and bad-photo (bytes that are
  * not an image: an exception with a message).
  *
+ *   python3 samples/look/tools/fetch_examples.py   # the example photos, before the build
  *   ./gradlew :samples:look:assembleDebug :samples:look:assembleDebugAndroidTest
  *   adb install -r samples/look/build/outputs/apk/debug/look-debug.apk
  *   adb install -r samples/look/build/outputs/apk/androidTest/debug/look-debug-androidTest.apk
  *   adb shell am start -n io.github.johnrocky.hfmodels.samples.look/.MainActivity   # creates the files dir the push needs
- *   adb push MiniCPM-V-4.7-1B-VL_int8vis.litertlm /sdcard/Android/data/io.github.johnrocky.hfmodels.samples.look/files/
+ *   adb push MiniCPM-V-4.7-1B-VL_int8.litertlm /sdcard/Android/data/io.github.johnrocky.hfmodels.samples.look/files/
  *   adb shell am instrument -w -e class io.github.johnrocky.hfmodels.check.LookDeviceCheck \
- *       -e backend cpu -e network offline -e variant vl_int8vis \
+ *       -e backend gpu -e network offline -e variant vl_int8 \
  *       io.github.johnrocky.hfmodels.samples.look.test/androidx.test.runner.AndroidJUnitRunner
  *   adb logcat -d -s hfmodels-check | grep RESULT
  *
- * The photo is the app's first example (assets/examples/), a red bicycle leaning on a tree, no person, no
- * text. The check puts it into MediaStore under Pictures/hfmodels-look-check/ and deletes it at the end.
+ * The check puts the sign into MediaStore under Pictures/hfmodels-look-check/ and deletes it at the end;
+ * keep_photo=true leaves it there for the photo picker, and the class LookCheckPhotos below deletes it later.
  * The last line is `RESULT ok=true ...` when every step passed.
- * Arguments: backend=gpu|cpu (default: the descriptor's default profile), network=offline|any (default: the
- * app's rule, the phone's store first), variant=vl_int8|vl_int8vis (default: the app's choice by RAM).
+ * Arguments: backend=gpu|cpu|<profile id> (default: the descriptor's default profile), network=offline|any (default:
+ * the app's rule, the phone's store first), variant=vl_int8|vl_int8vis (default: the app's choice by RAM), keep_photo.
  */
 @RunWith(AndroidJUnit4::class)
 class LookDeviceCheck {
     private val ctx = InstrumentationRegistry.getInstrumentation().targetContext
     private val args = InstrumentationRegistry.getArguments()
     private val backend = args.getString("backend")
-    private val policy = when (backend) { "cpu" -> BackendPolicy.Require(BackendKind.CPU); "gpu" -> BackendPolicy.Require(BackendKind.GPU); else -> BackendPolicy.Auto }
+    private val policy = when (backend) {
+        null, "", "auto" -> BackendPolicy.Auto
+        "cpu" -> BackendPolicy.Require(BackendKind.CPU)
+        "gpu" -> BackendPolicy.Require(BackendKind.GPU)
+        else -> BackendPolicy.RequireProfile(backend)
+    }
     private val network = when (args.getString("network")) { "offline" -> NetworkPolicy.Offline; "any" -> NetworkPolicy.Any; else -> null }
+    private val keepPhoto = args.getString("keep_photo") == "true"
     private val totalMem = ActivityManager.MemoryInfo().also { ctx.getSystemService(ActivityManager::class.java).getMemoryInfo(it) }.totalMem
     private val variant = args.getString("variant") ?: Variants.forMemory(totalMem)
     private val resolver: ContentResolver = ctx.contentResolver
 
     private val example = Examples.PHOTOS.first()
-    private val subjectWords = listOf("bicycle", "bike")
-    private val colourWords = listOf("red")
+    private val signWords = "please keep off the grass"
+    private val colourWords = listOf("white")
 
     @Test fun lookPhotoFollowUpStopRelease(): Unit = runBlocking {
         val failures = ArrayList<String>()
@@ -113,14 +123,16 @@ class LookDeviceCheck {
         var sdk = "?"
         var runtime = "?"
 
-        // load
+        // load: the model and a conversation opened on it, as the screen does at start (READY)
         val t0 = SystemClock.elapsedRealtime()
         try {
-            val m = withTimeout(LOAD_TIMEOUT_MS) { looker.load() }
+            withTimeout(LOAD_TIMEOUT_MS) { looker.prepare() }
+            val m = checkNotNull(looker.model)
             profile = m.info.profileId; sdk = m.info.sdkVersion; runtime = "${m.info.runtime} ${m.info.runtimeVersion}"
             components = m.info.components.entries.joinToString(",") { "${it.key}=${it.value.initialized}" }
-            step("load", true, "backend=${backend ?: "default"} network=${looker.loadNetwork} load_ms=${looker.loadMs} downloaded=${looker.downloaded} " +
-                "commit=${m.info.commit.take(8)} components=$components fallback=${m.info.fallbackHistory} total_mem=$totalMem events=$events")
+            step("load", looker.ready, "backend=${backend ?: "default"} network=${looker.loadNetwork} load_ms=${looker.loadMs} open_ms=${ms(looker.openMs)} " +
+                "ready=${looker.ready} downloaded=${looker.downloaded} commit=${m.info.commit.take(8)} components=$components fallback=${m.info.fallbackHistory} " +
+                "total_mem=$totalMem events=$events")
         } catch (t: Throwable) {
             step("load", false, "backend=${backend ?: "default"} network=$network error=${what(t)} load_ms=${SystemClock.elapsedRealtime() - t0}")
             Log.i(TAG, "RESULT ok=false failed=$failures device=${Build.MODEL} build=${Build.DISPLAY}")
@@ -132,30 +144,33 @@ class LookDeviceCheck {
         var current = "photo"
         var photoUri: Uri? = null
         try {
-            // photo: the example's bytes -> MediaStore -> PhotoImport (the picker's path) -> a new conversation
+            // photo: the example's bytes -> MediaStore -> PhotoImport (the picker's path); the strip's path reads the asset
             val source = ctx.assets.open(example.asset).use { it.readBytes() }
             removeCheckPhotos(resolver)
             photoUri = insertPhoto(resolver, "look-check-${example.asset.substringAfterLast('/')}", source)
             val i0 = SystemClock.elapsedRealtimeNanos()
             val photo = PhotoImport.load(resolver, photoUri)
             val importMs = (SystemClock.elapsedRealtimeNanos() - i0) / 1e6
+            val strip = PhotoImport.loadAsset(ctx.assets, example.asset)
             val pic = Picture(photo.bytes)
-            val q1 = "What is this a photo of?"
+            val q1 = example.question
             val ready = Typed.check(true, q1) as Typed.Result.Ready
-            val pr = withTimeout(LOAD_TIMEOUT_MS + TURN_TIMEOUT_MS) { looker.ask(pic, ready.question) }
-            step("photo", pr.firstTurn && pr.text.isNotBlank(),
-                "photo=${example.asset} source=${photo.sourceWidth}x${photo.sourceHeight} sent=${photo.width}x${photo.height} jpeg_bytes=${photo.bytes.size} " +
-                    "jpeg_sha256=${sha256(photo.bytes)} import_ms=${ms(importMs)} question=${q(q1)} names_subject=${names(pr.text, subjectWords)} " +
-                    "${timing(pr)} conversation_ms=${ms(pr.conversationMs)} reload_ms=${pr.loadMs} first_turn=${pr.firstTurn} answer=${q(pr.text)}")
+            val pr = withTimeout(TURN_TIMEOUT_MS) { looker.ask(pic, ready.question) }
+            step("photo", pr.firstTurn && !pr.waitedForLoad && pr.text.isNotBlank(),
+                "photo=${example.asset} source_bytes=${source.size} source=${photo.sourceWidth}x${photo.sourceHeight} sent=${photo.width}x${photo.height} " +
+                    "jpeg_bytes=${photo.bytes.size} jpeg_sha256=${sha256(photo.bytes)} strip_same_bytes=${strip.bytes.contentEquals(photo.bytes)} " +
+                    "import_ms=${ms(importMs)} question=${q(q1)} gives_sign_words=${gives(pr.text, signWords)} ${timing(pr)} " +
+                    "load_ms=${pr.loadMs} open_ms=${ms(pr.openMs)} waited_for_load=${pr.waitedForLoad} first_turn=${pr.firstTurn} answer=${q(pr.text)}")
 
             // follow-up: the same photo, a text-only turn of the same conversation
             current = "follow-up"
-            val q2 = "What colour is it?"
+            val q2 = "What colour is the sign?"
             val fr = withTimeout(TURN_TIMEOUT_MS) { looker.ask(pic, q2) }
-            step("follow-up", !fr.firstTurn && fr.loadMs == null && fr.text.isNotBlank(),
-                "question=${q(q2)} names_colour=${names(fr.text, colourWords)} ${timing(fr)} first_turn=${fr.firstTurn} answer=${q(fr.text)}")
+            step("follow-up", !fr.firstTurn && !fr.waitedForLoad && fr.text.isNotBlank(),
+                "question=${q(q2)} names_colour=${colourWords.any { fr.text.contains(it, ignoreCase = true) }} ${timing(fr)} first_turn=${fr.firstTurn} answer=${q(fr.text)}")
 
-            // stop: a third question cancelled after its first chunk; the next question opens a new conversation on a new load
+            // stop: a third question cancelled after its first chunk; the model loads again, a new conversation opens,
+            // and the first question goes into it
             current = "stop"
             val q3 = "Describe everything you can see in this photo, in detail."
             var finished: Reply? = null
@@ -169,12 +184,17 @@ class LookDeviceCheck {
             job.cancelAndJoin()
             val stopped = finished == null && thrown is kotlinx.coroutines.CancellationException
             val closed = looker.sessionState == null
-            val after = withTimeout(LOAD_TIMEOUT_MS + TURN_TIMEOUT_MS) { looker.ask(pic, ready.question) }
-            step("stop", streaming && stateAtCancel == SessionState.GENERATING && stopped && closed && after.firstTurn && after.loadMs != null && after.text.isNotBlank(),
+            val loadsBefore = looker.loads
+            val p0 = SystemClock.elapsedRealtime()
+            withTimeout(LOAD_TIMEOUT_MS) { looker.prepare() }
+            val prepareMs = SystemClock.elapsedRealtime() - p0
+            val reloaded = looker.loads == loadsBefore + 1 && looker.ready
+            val after = withTimeout(TURN_TIMEOUT_MS) { looker.ask(pic, ready.question) }
+            step("stop", streaming && stateAtCancel == SessionState.GENERATING && stopped && closed && reloaded && after.firstTurn && !after.waitedForLoad && after.text.isNotBlank(),
                 "state_at_cancel=$stateAtCancel cancel_after_ms=${ms(cancelAfterMs)} outcome=${if (stopped) "cancelled" else if (finished != null) "answered_first" else what(thrown)} " +
-                    "conversation_closed=$closed next_question=${q(q1)} next_first_turn=${after.firstTurn} reload_ms=${after.loadMs} " +
-                    "next_conversation_ms=${ms(after.conversationMs)} next_names_subject=${names(after.text, subjectWords)} next_same_as_first=${after.text == pr.text} " +
-                    "${timing(after, "next_")} next_answer=${q(after.text)}")
+                    "conversation_closed=$closed reloaded=$reloaded prepare_ms=$prepareMs reload_ms=${after.loadMs} next_open_ms=${ms(after.openMs)} " +
+                    "next_question=${q(q1)} next_first_turn=${after.firstTurn} next_gives_sign_words=${gives(after.text, signWords)} " +
+                    "next_same_as_first=${after.text == pr.text} ${timing(after, "next_")} next_answer=${q(after.text)}")
         } catch (t: Throwable) {
             step(current, false, "error=${what(t)}")
         } finally {
@@ -186,7 +206,7 @@ class LookDeviceCheck {
             val client = runCatching { models.closeAndJoin(); models.closeAndJoin() }
             val errors = listOf(first, second, client).mapNotNull { it.exceptionOrNull()?.let(::what) }
             step("release", errors.isEmpty() && closeMs < 10_000, "close_ms=$closeMs second_close=${if (second.isSuccess) "no-op" else "threw"} errors=$errors")
-            photoUri?.let { resolver.delete(it, null, null) }
+            photoUri?.let { uri -> if (keepPhoto) Log.i(TAG, "kept $uri in $RELATIVE_PATH") else resolver.delete(uri, null, null) }
         }
 
         // The failure paths: each must end in a sentence for the screen, never a crash.
@@ -205,7 +225,7 @@ class LookDeviceCheck {
 
         // no-photo, empty-question: refused before the model is involved
         fun refused(r: Typed.Result) = (r as? Typed.Result.Refused)?.message
-        refused(Typed.check(false, "What is this a photo of?")).let { path("no-photo", it == Typed.NO_PHOTO, "screen=${q(it ?: "accepted")}") }
+        refused(Typed.check(false, "What does this sign say?")).let { path("no-photo", it == Typed.NO_PHOTO, "screen=${q(it ?: "accepted")}") }
         refused(Typed.check(true, "   ")).let { path("empty-question", it == Typed.NO_QUESTION, "screen=${q(it ?: "accepted")}") }
 
         // big-photo: 6000 x 4500 (27 megapixels, more than the SDK's 25-megapixel image cap) comes back as 768 x 576
@@ -260,7 +280,7 @@ class LookDeviceCheck {
 
         Log.i(TAG, "RESULT ok=${failures.isEmpty()} model=${Looker.REPO}@${Looker.REVISION.take(8)} variant=$variant profile=$profile components=$components failed=$failures " +
             "failure_paths_ok=${failurePaths.size} sdk=$sdk runtime=$runtime device=${Build.MODEL} soc=${Build.SOC_MODEL} build=${Build.DISPLAY} " +
-            "thermal=$thermalBefore->${power.currentThermalStatus} vmhwm_kb=${vmHwmKb()}")
+            "thermal=$thermalBefore->${power.currentThermalStatus} vmhwm_kb=${vmHwmKb()} kept_photo=$keepPhoto")
         assertTrue("failed steps: $failures (adb logcat -d -s hfmodels-check)", failures.isEmpty())
     }
 
@@ -268,7 +288,8 @@ class LookDeviceCheck {
     private fun timing(r: Reply, p: String = "") = "${p}first_token_ms=${ms(r.timing.firstTokenMs)} ${p}chunks=${r.timing.chunks} ${p}all_chunks=${r.timing.allChunks} " +
         "${p}chunks_per_s=${ms(r.timing.chunksPerSecond)} ${p}stream_ms=${ms(r.timing.streamMs)} ${p}chars=${r.timing.chars}"
 
-    private fun names(text: String, words: List<String>) = words.any { text.contains(it, ignoreCase = true) }
+    /** True when [text] holds [words] once Markdown's stars are gone and every run of spaces or line breaks is one space. */
+    private fun gives(text: String, words: String) = text.replace("*", "").replace(Regex("\\s+"), " ").contains(words, ignoreCase = true)
 
     /** A JPEG of [w] x [h]: a sky, a field and a sun, so the scaled photo is not one flat colour. */
     private fun bigJpeg(w: Int, h: Int): ByteArray {
@@ -312,11 +333,11 @@ class LookDeviceCheck {
         const val MISSING_REVISION = "0000000000000000000000000000000000000001"
         const val RELATIVE_PATH = "Pictures/hfmodels-look-check/"
 
-        /** Puts [bytes] into MediaStore as a JPEG under [RELATIVE_PATH], as a camera or a download would. */
+        /** Puts [bytes] into MediaStore as an image under [RELATIVE_PATH], as a camera or a download would; the type follows the name. */
         fun insertPhoto(resolver: ContentResolver, name: String, bytes: ByteArray): Uri {
             val values = ContentValues().apply {
                 put(MediaStore.Images.Media.DISPLAY_NAME, name)
-                put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+                put(MediaStore.Images.Media.MIME_TYPE, if (name.endsWith(".webp")) "image/webp" else "image/jpeg")
                 put(MediaStore.Images.Media.RELATIVE_PATH, RELATIVE_PATH)
                 put(MediaStore.Images.Media.IS_PENDING, 1)
             }
@@ -335,5 +356,20 @@ class LookDeviceCheck {
             }
             return ids.sumOf { resolver.delete(Uri.withAppendedPath(collection, it.toString()), null, null) }
         }
+    }
+}
+
+/**
+ * Deletes the photo LookDeviceCheck left in MediaStore with keep_photo=true (after the picker was shown):
+ *
+ *   adb shell am instrument -w -e class io.github.johnrocky.hfmodels.check.LookCheckPhotos \
+ *       io.github.johnrocky.hfmodels.samples.look.test/androidx.test.runner.AndroidJUnitRunner
+ */
+@RunWith(AndroidJUnit4::class)
+class LookCheckPhotos {
+    @Test fun remove() {
+        val resolver = InstrumentationRegistry.getInstrumentation().targetContext.contentResolver
+        val removed = LookDeviceCheck.removeCheckPhotos(resolver)
+        Log.i(LookDeviceCheck.TAG, "RESULT step=remove-photos ok=true removed=$removed path=${LookDeviceCheck.RELATIVE_PATH}")
     }
 }

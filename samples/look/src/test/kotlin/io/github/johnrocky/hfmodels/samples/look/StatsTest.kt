@@ -40,9 +40,12 @@ class StatsTest {
     @Test
     fun theLineUnderTheAnswer() {
         val t = Stats.of(0, 9_000 * ms, listOf(Chunk(930 * ms, 3)) + (1..65).map { Chunk(930 * ms + it * 2_000 * ms / 65, 4) })
-        assertEquals("first token 0.93 s · 32.5 chunks/s · GPU · on-device, offline", Stats.line(t, "GPU", offline = true))
-        assertEquals("first token 0.93 s · 32.5 chunks/s · CPU · on-device", Stats.line(t, "CPU", offline = false))
-        assertEquals("first token 0.93 s · 32.5 tok/s · CPU · on-device", Stats.line(t, "CPU", offline = false, rateUnit = "tok/s"))
+        // A chunk carries one token with this model and runtime, so the screen counts tokens.
+        assertEquals("tok/s", Stats.RATE_UNIT)
+        assertEquals("first token 0.93 s · 32.5 tok/s · GPU · on-device, offline", Stats.line(t, "GPU", offline = true))
+        assertEquals("first token 0.93 s · 32.5 tok/s · CPU · on-device", Stats.line(t, "CPU", offline = false))
+        assertEquals("first token 0.93 s · 32.5 tok/s · GPU, vision CPU · on-device, offline", Stats.line(t, "GPU, vision CPU", offline = true))
+        assertEquals("first token 0.93 s · 32.5 chunks/s · CPU · on-device", Stats.line(t, "CPU", offline = false, rateUnit = "chunks/s"))
         val silent = Stats.of(0, ms, emptyList())
         assertEquals("no text · CPU · on-device", Stats.line(silent, "CPU", offline = false))
     }

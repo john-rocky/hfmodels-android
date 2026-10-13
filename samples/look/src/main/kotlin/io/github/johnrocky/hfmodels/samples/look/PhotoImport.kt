@@ -14,7 +14,7 @@ import kotlin.math.roundToInt
 class Photo(val bytes: ByteArray, val width: Int, val height: Int, val sourceWidth: Int, val sourceHeight: Int)
 
 /**
- * The photo picker's result (or a bundled example) to the bytes the model gets. The original is decoded with
+ * The photo picker's result, the camera's shot or a bundled example to the bytes the model gets. The original is decoded with
  * its EXIF rotation applied, subsampled while it decodes (a 50-megapixel photo never sits in memory at full
  * size), scaled so its long side is at most [MAX_SIDE] (never up), and encoded as JPEG. The screen shows these bytes.
  */
@@ -27,6 +27,12 @@ object PhotoImport {
 
     /** A bundled example from assets, through the same steps as a picked photo. */
     fun loadAsset(assets: AssetManager, path: String, maxSide: Int = MAX_SIDE): Photo = load(ImageDecoder.createSource(assets, path), maxSide)
+
+    /** A small picture of a bundled example for the strip (never sent to the model). Throws when the file is not in assets. */
+    fun thumbnail(assets: AssetManager, path: String, longSide: Int): Bitmap =
+        ImageDecoder.decodeBitmap(ImageDecoder.createSource(assets, path)) { decoder, info, _ ->
+            decoder.setTargetSampleSize(sampleSize(info.size.width, info.size.height, longSide))
+        }
 
     fun load(source: ImageDecoder.Source, maxSide: Int = MAX_SIDE): Photo {
         var sourceW = 0

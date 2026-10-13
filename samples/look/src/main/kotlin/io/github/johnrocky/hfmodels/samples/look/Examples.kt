@@ -1,9 +1,9 @@
 package io.github.johnrocky.hfmodels.samples.look
 
-/** A bundled example: a photo in assets and the question asked about it when nothing is typed. */
-class Example(val id: String, val asset: String, val question: String)
+/** A bundled example: a photo in assets, what it shows (the strip's content description), and its example question. */
+class Example(val id: String, val asset: String, val question: String, val shows: String)
 
-/** The example questions (the chips under the question box) and the example photos (the Example button). */
+/** The example questions (the chips under the question box) and the example photos (the strip under the photo). */
 object Examples {
     /** As the screen shows them and as the model gets them. */
     val QUESTIONS = listOf(
@@ -13,16 +13,16 @@ object Examples {
     )
 
     /**
-     * The photos the Example button cycles through, in assets/examples/. a01_red_bicycle.jpg is CC0 1.0
-     * (Openverse a9e0bff3-3272-4c3a-bbd4-92e542e1f41a, a Flickr photo; 1023 x 728, sha256 4147220d…), the
-     * photo of probes/eg2demo/fixtures/album.json a01 and of the ask sample's device check.
+     * The photos of the strip, in assets/examples/. They are not in the repository: tools/fetch_examples.py downloads
+     * them by the URLs, sizes and sha256 of tools/examples.json, which lists the same ids and files (a JVM test keeps
+     * the two equal). All three are CC0 1.0; the README says where each one comes from. A tap on one goes through
+     * [PhotoImport] like a picked photo; its question is used when recording mode is given none.
      */
     val PHOTOS = listOf(
-        Example("bicycle", "examples/a01_red_bicycle.jpg", "What is this a photo of?"),
+        Example("sign", "examples/sign.webp", QUESTIONS[0], "a sign in a lawn"),
+        Example("object", "examples/object.jpg", QUESTIONS[1], "chess pieces on a board"),
+        Example("scene", "examples/scene.jpg", QUESTIONS[2], "a lighthouse by the sea"),
     )
 
     fun photo(id: String?): Example? = PHOTOS.firstOrNull { it.id == id }
-
-    /** The example after [current] (the first one when none is shown). */
-    fun next(current: Example?): Example = PHOTOS[(PHOTOS.indexOf(current) + 1) % PHOTOS.size]
 }

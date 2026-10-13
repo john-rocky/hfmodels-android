@@ -31,23 +31,29 @@ class Picture(val bytes: ByteArray)
 class Reply(
     val text: String,
     val timing: Timing,
-    /** True when this turn carried the photo (a new conversation); false for a text-only turn of the open one. */
+    /** True when this turn carried the photo (the conversation's first turn); false for a text-only turn of the open one. */
     val firstTurn: Boolean,
-    /** Opening the conversation, on a first turn. */
-    val conversationMs: Double?,
-    /** The load this question waited for (no model was loaded, or the loaded one had held a conversation); null when none. */
-    val loadMs: Long?,
+    /** The load the conversation was opened on, in ms. */
+    val loadMs: Long,
+    /** Opening that conversation, in ms. */
+    val openMs: Double,
+    /**
+     * True when this question had to wait for the load and the opening itself (no conversation was ready); false when
+     * they were done before it, at READY. Neither is ever inside [Timing.firstTokenMs], which starts at `stream`.
+     */
+    val waitedForLoad: Boolean,
 )
 
 /**
  * The model and the one conversation it holds, for the screen and the device check alike.
  *
- * A conversation opens with a photo and its first question (turn 1: the image and the text); each further
- * question about the same photo is a text-only turn of that conversation. The decoder keeps a running state
- * (a Qwen3.5-style hybrid), and a new conversation on the same loaded model starts from the previous
- * conversation's state (google-ai-edge/LiteRT-LM#3165), so a loaded model holds one conversation only: a new
- * photo, or a turn that was stopped or failed (its conversation is then INVALID), closes the model and loads
- * it again before the next conversation opens.
+ * [prepare] loads the model and opens a conversation before any question: READY on the screen. The first question
+ * about a photo is that conversation's first turn (the image and the text); each further question about the same
+ * photo is a text-only turn of it. The decoder keeps a running state (a Qwen3.5-style hybrid), and a new
+ * conversation on the same loaded model starts from the previous conversation's state
+ * (google-ai-edge/LiteRT-LM#3165), so a loaded model holds one conversation only: before a new photo, or after a
+ * turn that was stopped or failed (its conversation is then INVALID), [prepare] closes the model, loads it again and
+ * opens a new conversation.
  *
  * One caller at a time: the screen runs one job, the check runs its steps in order.
  */
@@ -76,9 +82,9 @@ class Looker(
         fun describe(t: Throwable): String = if (t is ModelException) "${t.code}: ${t.reason}" else "${t.javaClass.simpleName}: ${t.message}"
     }
 
-    enum class Stage { CLOSING, LOADING, OPENING, ASKING }
+    enum class Stage { CLOSING, LOADING, OPENING, READY, ASKING }
 
-    /** Called on the caller's dispatcher as [load] and [ask] move on. */
+    /** Called on the caller's dispatcher as [prepare] and [ask] move on. */
     var onStage: (Stage) -> Unit = {}
     /** The SDK's load events, on the caller's dispatcher. */
     var onEvent: (LoadEvent) -> Unit = {}
@@ -95,20 +101,25 @@ class Looker(
     /** Loads that finished. */
     var loads = 0
         private set
+    /** Opening the open (or the last) conversation, in ms. */
+    var openMs = 0.0
+        private set
 
-    /** True once [model] has held a conversation: the next conversation needs a new load. */
+    /** True once a conversation has been opened on [model]: a second one needs a new load. */
     private var used = false
     private var session: ChatSession? = null
     private var sessionPicture: Picture? = null
-    /** Turns answered on [session], and the time it took to open it. */
+    /** Turns answered on [session]. */
     private var sessionTurns = 0
-    private var sessionOpenMs = 0.0
 
     /** The open conversation's state; null when none is open. */
     val sessionState: SessionState? get() = session?.state
 
-    /** True when the loaded model has held a conversation: the next new conversation loads it again first. */
-    val heldConversation: Boolean get() = model != null && used
+    /** A conversation is open and has taken no turn: the next question goes straight into it (READY). */
+    val ready: Boolean get() = session != null && sessionTurns == 0 && session?.state == SessionState.READY
+
+    /** True when the loaded model has held a conversation that took a turn: a new photo needs a new load first. */
+    val heldConversation: Boolean get() = model != null && used && !ready
 
     /** Loads the model unless one is loaded. Throws [ModelException] (the screen shows [describe]). */
     suspend fun load(): ChatModel {
@@ -143,10 +154,13 @@ class Looker(
     }
 
     /**
-     * Opens a conversation for [picture] (the open one is closed; a model that has held one is closed and
-     * loaded again) and returns the time it took.
+     * Makes the model ready for a new photo: a conversation open on a model that has held no other. Nothing to do
+     * when one is ready. Otherwise the open conversation is closed, a model that has held a conversation is closed
+     * and loaded again, and a new conversation is opened. The screen calls it when the app starts, after a new photo
+     * and after a Stop, so the question that follows waits for none of it.
      */
-    suspend fun open(picture: Picture): Double {
+    suspend fun prepare() {
+        if (ready) return
         endConversation()
         model?.takeIf { used }?.let { held ->
             onStage(Stage.CLOSING)
@@ -162,23 +176,25 @@ class Looker(
         // that declares no sampler (LiteRT-LM 0.16.1, CPU and GPU), written out so that it stays so.
         val config = ConversationConfig(samplerConfig = SamplerConfig(topK = 1, topP = 0.95, temperature = 1.0))
         val s = withContext(Dispatchers.Default) { m.createConversation(config) }
-        session = s; sessionPicture = picture; sessionTurns = 0
-        sessionOpenMs = (SystemClock.elapsedRealtimeNanos() - c0) / 1e6
-        return sessionOpenMs
+        session = s; sessionPicture = null; sessionTurns = 0
+        openMs = (SystemClock.elapsedRealtimeNanos() - c0) / 1e6
+        onStage(Stage.READY)
     }
 
     /**
      * One question about [picture]; [onText] gets each piece of the answer as it streams, with the ms since
-     * `stream` was called (on a background thread). The first question in a conversation sends the photo with
-     * the text; a further question about the same picture (the same object) is a text-only turn of that
-     * conversation. Cancelling the caller stops the turn: its conversation is closed, and the next question
-     * opens a new one on a new load.
+     * `stream` was called (on a background thread). On a ready conversation the question is its first turn and
+     * carries the photo; a further question about the same picture (the same object) is a text-only turn of that
+     * conversation; any other case calls [prepare] first. Cancelling the caller stops the turn: its conversation is
+     * closed, and the next [prepare] loads the model again.
      */
     suspend fun ask(picture: Picture, question: String, onText: (piece: String, ms: Double) -> Unit = { _, _ -> }): Reply {
-        val loadsBefore = loads
-        if (session == null || sessionPicture !== picture || session?.state != SessionState.READY) open(picture)
+        val sameConversation = session != null && sessionTurns > 0 && sessionPicture === picture && session?.state == SessionState.READY
+        val waited = !sameConversation && !ready
+        if (waited) prepare()
         val s = checkNotNull(session)
         val firstTurn = sessionTurns == 0
+        if (firstTurn) sessionPicture = picture
         val contents = if (firstTurn) {
             Contents.of(Content.ImageBytes(picture.bytes), Content.Text(question))
         } else {
@@ -206,8 +222,9 @@ class Looker(
                 text = text.toString(),
                 timing = Stats.of(t0, t1, chunks),
                 firstTurn = firstTurn,
-                conversationMs = if (firstTurn) sessionOpenMs else null,
-                loadMs = if (loads != loadsBefore) loadMs else null,
+                loadMs = loadMs,
+                openMs = openMs,
+                waitedForLoad = waited,
             )
         } catch (t: Throwable) {
             // Stopped or failed: the session is INVALID (the runtime's rule) and the model has held it.
@@ -219,7 +236,7 @@ class Looker(
     /** Closes the open conversation, if any. The model stays loaded, but it has held a conversation. */
     suspend fun endConversation() {
         val s = session ?: return
-        session = null; sessionPicture = null
+        session = null; sessionPicture = null; sessionTurns = 0
         withContext(NonCancellable) { runCatching { s.closeAndJoin() } }
     }
 
@@ -233,7 +250,7 @@ class Looker(
 
     /** [close] for onDestroy, which cannot wait: the SDK finishes the close on its own threads. */
     fun closeNow() {
-        session?.close(); session = null; sessionPicture = null
+        session?.close(); session = null; sessionPicture = null; sessionTurns = 0
         model?.close(); model = null
     }
 }

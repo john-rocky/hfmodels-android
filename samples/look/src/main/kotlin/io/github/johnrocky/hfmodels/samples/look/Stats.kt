@@ -42,9 +42,8 @@ object Stats {
     }
 
     /**
-     * The line under the answer: `first token 2.31 s · 21.8 chunks/s · CPU · on-device, offline`. [rateUnit] names
-     * what the speed counts ("chunks/s" until a chunk is shown to be one token); [offline] when the load before the
-     * answer made no network request.
+     * The line under the answer: `first token 0.93 s · 32.5 tok/s · GPU · on-device, offline`. [rateUnit] names what
+     * the speed counts; [offline] when the load before the answer made no network request.
      */
     fun line(t: Timing, backend: String, offline: Boolean, rateUnit: String = RATE_UNIT): String {
         val first = t.firstTokenMs?.let { String.format(Locale.US, "first token %.2f s", it / 1000.0) } ?: "no text"
@@ -53,5 +52,10 @@ object Stats {
         return listOfNotNull(first, rate, backend, where).joinToString(" · ")
     }
 
-    const val RATE_UNIT = "chunks/s"
+    /**
+     * The speed counts streamed chunks, and the screen calls them tokens: with this model on LiteRT-LM 0.16.1 every
+     * chunk with text carried one token (the device check's answers of 2026-10-14 on a Pixel 8a, 142 chunks = 142
+     * tokens and 44 = 44 by the model's Hugging Face tokenizer). The record keeps the chunk counts as measured.
+     */
+    const val RATE_UNIT = "tok/s"
 }

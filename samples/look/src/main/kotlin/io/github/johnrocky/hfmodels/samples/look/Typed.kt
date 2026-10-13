@@ -14,8 +14,8 @@ object Typed {
         data class Refused(val message: String) : Result()
     }
 
-    const val NO_PHOTO = "Pick a photo or an example first."
-    const val NO_QUESTION = "Type a question, or tap one of the examples."
+    const val NO_PHOTO = "Choose a photo first: tap an example, pick a photo or take one."
+    const val NO_QUESTION = "Type a question, or tap one of the questions under the box."
     const val TOO_LONG = "At most $MAX_QUESTION_CHARS characters, please."
 
     fun check(hasPhoto: Boolean, question: String): Result {

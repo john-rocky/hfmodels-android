@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- INTERNET (first download) and the GPU's uses-native-library entries come from the SDK's manifests. -->
+    <!-- INTERNET (first download) and the GPU's uses-native-library entries come from the SDK's manifests.
+         No CAMERA permission: Take a photo asks the phone's camera app, which writes into the provider below. -->
     <application
         android:label="@string/app_name"
         android:allowBackup="false"
         android:largeHeap="true">
-        <!-- Recording mode (autostart) is described in the KDoc of MainActivity.kt. -->
+        <!-- Take mode and recording mode (adb extras) are described in the KDoc of MainActivity.kt. -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -17,5 +18,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.photos"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/photo_paths" />
+        </provider>
     </application>
 </manifest>

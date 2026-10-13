@@ -1,0 +1,3 @@
+# The example photos are fetched by tools/fetch_examples.py (examples.json is the record); one of them is a WebP,
+# which the repository-wide image rules do not cover.
+/src/main/assets/examples/
