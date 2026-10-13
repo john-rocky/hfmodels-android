@@ -1,0 +1,253 @@
+{
+  "schema_version": 1,
+  "model_id": "litert-community/MiniCPM-V-4.7-1B",
+  "tasks": [
+    "chat"
+  ],
+  "default_variant": "vl_int8",
+  "license": {
+    "id": "apache-2.0",
+    "url": "https://huggingface.co/litert-community/MiniCPM-V-4.7-1B"
+  },
+  "variants": [
+    {
+      "id": "vl_int8",
+      "runtime": "litert_lm",
+      "handler": {
+        "id": "litertlm.conversation",
+        "abi": 1
+      },
+      "runtime_range": {
+        "min_inclusive": "0.16.0",
+        "max_exclusive": "0.18.0"
+      },
+      "inputs": [
+        "text",
+        "image"
+      ],
+      "files": [
+        {
+          "id": "weights",
+          "role": "model",
+          "path": "MiniCPM-V-4.7-1B-VL_int8.litertlm",
+          "bytes": 2210907248,
+          "sha256": "4c9c30b24a5e9187c36d1a45773dbb2c7f32a8ee8cb5788df97b8d14453bb140"
+        }
+      ],
+      "default_profile": "gpu",
+      "profiles": [
+        {
+          "id": "gpu",
+          "priority": 100,
+          "files": [
+            "weights"
+          ],
+          "enabled_inputs": [
+            "text",
+            "image"
+          ],
+          "components": {
+            "language": "gpu",
+            "vision": "gpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "fallback_profiles": [
+            "gpu_vision_cpu",
+            "cpu"
+          ],
+          "default_selectable": true
+        },
+        {
+          "id": "gpu_vision_cpu",
+          "priority": 90,
+          "files": [
+            "weights"
+          ],
+          "enabled_inputs": [
+            "text",
+            "image"
+          ],
+          "components": {
+            "language": "gpu",
+            "vision": "cpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "fallback_profiles": [
+            "cpu"
+          ],
+          "default_selectable": false
+        },
+        {
+          "id": "cpu",
+          "priority": 50,
+          "files": [
+            "weights"
+          ],
+          "enabled_inputs": [
+            "text",
+            "image"
+          ],
+          "components": {
+            "language": "cpu",
+            "vision": "cpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "fallback_profiles": [],
+          "default_selectable": true
+        }
+      ],
+      "handler_config": {
+        "metadata_source": "litertlm_manifest",
+        "context_tokens": 4096,
+        "manifest_min_runtime_version": "0.16.0"
+      }
+    },
+    {
+      "id": "vl_int8vis",
+      "runtime": "litert_lm",
+      "handler": {
+        "id": "litertlm.conversation",
+        "abi": 1
+      },
+      "runtime_range": {
+        "min_inclusive": "0.16.0",
+        "max_exclusive": "0.18.0"
+      },
+      "inputs": [
+        "text",
+        "image"
+      ],
+      "files": [
+        {
+          "id": "weights",
+          "role": "model",
+          "path": "MiniCPM-V-4.7-1B-VL_int8vis.litertlm",
+          "bytes": 1698202736,
+          "sha256": "20c73b5a1e48a315974cff1853535ff5d017100b6420d5ef221b9dd1b955dd7c"
+        }
+      ],
+      "default_profile": "cpu",
+      "profiles": [
+        {
+          "id": "cpu",
+          "priority": 50,
+          "files": [
+            "weights"
+          ],
+          "enabled_inputs": [
+            "text",
+            "image"
+          ],
+          "components": {
+            "language": "cpu",
+            "vision": "cpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "fallback_profiles": [],
+          "default_selectable": true
+        }
+      ],
+      "handler_config": {
+        "metadata_source": "litertlm_manifest",
+        "context_tokens": 4096,
+        "manifest_min_runtime_version": "0.16.0"
+      }
+    },
+    {
+      "id": "int8",
+      "runtime": "litert_lm",
+      "handler": {
+        "id": "litertlm.conversation",
+        "abi": 1
+      },
+      "runtime_range": {
+        "min_inclusive": "0.16.0",
+        "max_exclusive": "0.18.0"
+      },
+      "inputs": [
+        "text"
+      ],
+      "files": [
+        {
+          "id": "weights",
+          "role": "model",
+          "path": "MiniCPM-V-4.7-1B_int8.litertlm",
+          "bytes": 1221623648,
+          "sha256": "92d7d2e57b9d9bf9b3cba2cdcb2434578a0168721c06fa224dc75755701aad2a"
+        }
+      ],
+      "default_profile": "cpu",
+      "profiles": [
+        {
+          "id": "gpu",
+          "priority": 100,
+          "files": [
+            "weights"
+          ],
+          "enabled_inputs": [
+            "text"
+          ],
+          "components": {
+            "language": "gpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "fallback_profiles": [
+            "cpu"
+          ],
+          "default_selectable": true
+        },
+        {
+          "id": "cpu",
+          "priority": 50,
+          "files": [
+            "weights"
+          ],
+          "enabled_inputs": [
+            "text"
+          ],
+          "components": {
+            "language": "cpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "fallback_profiles": [],
+          "default_selectable": true
+        }
+      ],
+      "handler_config": {
+        "metadata_source": "litertlm_manifest",
+        "context_tokens": 4096,
+        "manifest_min_runtime_version": "0.16.0"
+      }
+    }
+  ]
+}
