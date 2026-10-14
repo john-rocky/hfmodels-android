@@ -28,6 +28,8 @@ The numbers line reads `first token <seconds> s · <rate> tok/s · <backend> · 
 
 The model writes Markdown. The screen drops the `**`, `#` and `- ` marks and sets the bold parts in bold (`AnswerText.kt`); the record keeps the text as the model wrote it. While the answer fits in its box, its first line stays at the top; once it does not, the box follows the last line.
 
+The answer is drawn at most once per frame: the pieces that arrive between two frames are drawn together, and once more when the answer is done. The times on the numbers line are taken in `Looker`'s stream callback as each piece arrives, apart from the drawing.
+
 ## One conversation per loaded model
 
 The model loads when the app starts, and a conversation is opened on it right after: READY. The first question about a photo is that conversation's first turn, the photo and the question together; every further question about the same photo is a text-only turn of the same conversation. On this model family LiteRT-LM carries a conversation's state into the next conversation on the same loaded model ([google-ai-edge/LiteRT-LM#3165](https://github.com/google-ai-edge/LiteRT-LM/issues/3165)), so the app never opens a second conversation on a loaded model: after a new photo or a Stop it closes the model, loads it again and opens a new conversation straight away, and the state line says so. `Looker.kt` keeps this rule for the screen and the device check alike.
@@ -85,8 +87,8 @@ Both show over the lock screen and keep the screen on: behind a lock screen an a
 
 | extra | take mode | recording mode |
 |---|---|---|
-| `--ez take true` | on: the status bar stays visible, everything from it down to the numbers line sits in the top 9:16 of the screen (1080 x 1920 on a 1080-pixel-wide phone), the versions line below it without the phone's name; nothing runs by itself | — |
-| `--ez autostart true` | — | on: the system bars are hidden; after READY and `delay` it does what a tap on the example and a tap on Ask do |
+| `--ez take true` | on: the status bar stays visible, everything from it down to the numbers line sits in the top 9:16 of the screen (1080 x 1920 on a 1080-pixel-wide phone), the versions line below it without the phone's name; the answer box holds 11 lines and the photo takes the room that is left (the sign example's answer took 10 lines in the larger type of the other modes on a Galaxy S26, so in this box it shows whole from its first line); nothing runs by itself | with `--ez autostart true` too: recording mode on the take mode's screen, status bar included |
+| `--ez autostart true` | — | on: the system bars are hidden (not with `--ez take true`); after READY and `delay` it does what a tap on the example and a tap on Ask do |
 | `--ei delay 3` | — | seconds between READY and the example |
 | `--es example sign` | — | `sign`, `object` or `scene` (default `sign`) |
 | `--es question "'…'"` | — | the question (default: the example's own); keep the single quotes inside the double ones, or `am` splits it at its spaces |
@@ -100,9 +102,9 @@ adb shell am start -n io.github.johnrocky.hfmodels.samples.look/.MainActivity --
 adb logcat -s look
 ```
 
-Logcat tag `look`: `READY profile=… load_ms=… open_ms=…` once a conversation is open, `BOUNDS` with the screen position of the examples, the question chips, Ask, the answer and the numbers line (what a recording taps and crops), `PHOTO source=… w=… h=…`, `ASK first_turn=… first_token_ms=… chunks=… chunks_per_s=…`, `DONE json=<path>`.
+Logcat tag `look`: `READY profile=… load_ms=… open_ms=…` once a conversation is open, `BOUNDS` with the screen position of the examples, the question chips, Ask, the answer box, the answer's text as laid out in it (`answer_text`, `answer_lines`, `answer_scroll`: whether it shows whole from its first line) and the numbers line (what a recording taps and crops), `PHOTO source=… w=… h=…`, `ASK first_turn=… first_token_ms=… chunks=… render_count=… chunks_per_s=…`, `DONE json=<path>`.
 
-After every answer, from a button or in recording mode, the app writes `look-result-<epoch s>.json` and `frames-<epoch s>/000.jpg` (the exact JPEG bytes the model got) to `/sdcard/Android/data/io.github.johnrocky.hfmodels.samples.look/files/`: the question; the photo's source, sha256, size and original size; the answer as written and as shown; the numbers line and its backend; `first_token_ms`, `stream_ms`, `chunks`, `chunks_per_s` and every chunk's time; whether it was the first turn; `load_ms` and `open_ms` of the load and the opening before it, and whether the question waited for them; the profile, its components and fallbacks, the versions, the phone, the thermal status before and after, and the process's peak memory (VmHWM).
+After every answer, from a button or in recording mode, the app writes `look-result-<epoch s>.json` and `frames-<epoch s>/000.jpg` (the exact JPEG bytes the model got) to `/sdcard/Android/data/io.github.johnrocky.hfmodels.samples.look/files/`: the question; the photo's source, sha256, size and original size; the answer as written and as shown; the numbers line and its backend; `first_token_ms`, `stream_ms`, `chunks`, `chunks_per_s` and every chunk's time; how many times the answer box was drawn (`render_count`, beside `chunks`); whether it was the first turn; `load_ms` and `open_ms` of the load and the opening before it, and whether the question waited for them; the profile, its components and fallbacks, the versions, the phone, the thermal status before and after, and the process's peak memory (VmHWM).
 
 ## Tests
 
@@ -114,14 +116,14 @@ After every answer, from a button or in recording mode, the app writes `look-res
 
 Measured on one Galaxy S26 (SM-S942Q, Android 16, build BP4A.251205.006.S942QOPS1AZH9) with litertlm-android 0.16.1 and the `vl_int8` file pushed into the app's files directory, on the GPU profile (the language model and the vision encoder initialized on the GPU, no fallback), offline, in airplane mode. The photo was the sign example with "What does this sign say?"; it went to the model as a 768 x 576 JPEG of 191,815 bytes, the same bytes from the strip and from the picker. The three answers to it, in two processes, were the same text: the sign's words "Please KEEP OFF THE GRASS" in bold, then "It’s a simple, bold warning sign placed in a grassy area to remind people not to stand or walk on the grass."
 
-| where | load | opening the conversation | first token | tokens | tok/s | thermal status |
-|---|---|---|---|---|---|---|
-| device check, the first load (with hashing and importing the pushed file) | 60.8 s | 14,044 ms | 1,519 ms | 43 | 37.2 | 1 |
-| device check, a second question about the same photo, "What colour is the sign?" | none | none | 350 ms | 48 | 35.7 | 1 |
-| device check, after the Stop (a second load in the same process) | 85.5 s | 16,391 ms | 1,674 ms | 43 | 37.3 | 1 |
-| the screen, recording mode (a new process) | 33.5 s | 9,410 ms | 1,816 ms | 43 | 23.4 | 2 |
+| where | load | opening the conversation | first token | tokens | tok/s | the answer drawn | thermal status |
+|---|---|---|---|---|---|---|---|
+| device check, the first load (with hashing and importing the pushed file) | 60.8 s | 14,044 ms | 1,519 ms | 43 | 37.2 | no screen | 1 |
+| device check, a second question about the same photo, "What colour is the sign?" | none | none | 350 ms | 48 | 35.7 | no screen | 1 |
+| device check, after the Stop (a second load in the same process) | 85.5 s | 16,391 ms | 1,674 ms | 43 | 37.3 | no screen | 1 |
+| the screen, recording mode (a new process) | 33.5 s | 9,410 ms | 1,816 ms | 43 | 23.4 | at every token (the version before this one) | 2 |
 
-The device check runs in the app's process without the screen; recording mode shows the answer on the screen as it streams. The phone came from another run at thermal status 2 with the GPU's top clock held at 726 MHz, and was at 1 with the clock back at 1,300 MHz by the device check. The recording-mode answer came at thermal status 2, and the time between its tokens grew from 35 ms to 41–49 ms; the device check's answer to the same photo and question, at 1, came at 37.2 tok/s. The causes of the difference are not established beyond that.
+The device check runs in the app's process without the screen; recording mode shows the answer on the screen as it streams. The version of the app that ran these rows drew the answer again at every token; this version draws it at most once per frame and records the count. The phone came from another run at thermal status 2 with the GPU's top clock held at 726 MHz, and was at 1 with the clock back at 1,300 MHz by the device check. The recording-mode answer came at thermal status 2, and the time between its tokens grew from 35 ms to 41–49 ms; the device check's answer to the same photo and question, at 1, came at 37.2 tok/s. The causes of the difference are not established beyond that.
 
 Each chunk carried one token here too (43 = 43 and 48 = 48 by the model's Hugging Face tokenizer). The decoder's seven signatures (prefill 1024, 256, 64, 16, 4 and 1, decode) and the vision encoder's graph (1,824 nodes) ran on the GPU delegate in full; the vision adapter ran on the CPU (XNNPACK took 24 of its 30 nodes). Setting up the GPU delegate for the decoder took 47 s at the first load and 68 s at the second. Opening a conversation took 9.4 to 16.4 s; it happens before READY and is not in the first token. The app's peak VmHWM was 5,174,308 kB in the device check and 5,367,156 kB on the screen. The second question's answer began "The sign is white with black text."
 

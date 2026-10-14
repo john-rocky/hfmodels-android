@@ -19,6 +19,7 @@ import android.text.TextUtils
 import android.text.style.StyleSpan
 import android.util.Log
 import android.util.TypedValue
+import android.view.Choreographer
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -74,17 +75,21 @@ import org.json.JSONObject
  * ([Looker]): after a new photo or a Stop the app closes the model, loads it again and opens a new conversation, and
  * the state line says so.
  *
+ * The answer is drawn at most once per frame: pieces that arrive within one frame are drawn together, and the record
+ * says how many times the box was drawn (`render_count`) beside the chunk count.
+ *
  * Take mode is the screen for a recording driven by taps (adb `input tap` goes through the same code as a finger): it
  * shows over the lock screen with the screen kept on and the status bar visible, nothing runs by itself, and
  * everything from the status bar down to the numbers line sits in the top 9:16 of the screen (1080 x 1920 on a
- * 1080-pixel-wide phone); the line with the model and the versions is below it, without the phone's name.
+ * 1080-pixel-wide phone); the answer box holds [TAKE_ANSWER_LINES] lines and the photo takes the rest; the line with
+ * the model and the versions is below it, without the phone's name.
  *
  *     adb shell am start -n io.github.johnrocky.hfmodels.samples.look/.MainActivity \
  *         --ez take true --es backend gpu --es variant vl_int8 --es network offline
  *
  * Recording mode runs one example and its question by itself (a check, not a take): over the lock screen, system
  * bars hidden, screen kept on, it waits `delay` seconds after READY, then does what a tap on the example and a tap
- * on Ask do:
+ * on Ask do. With `--ez take true` as well it runs on the take mode's screen, status bar included:
  *
  *     adb shell am start -n io.github.johnrocky.hfmodels.samples.look/.MainActivity \
  *         --ez autostart true --ei delay 3 --es example sign --es question "'What does this sign say?'" \
@@ -113,6 +118,14 @@ class MainActivity : ComponentActivity() {
         const val CAMERA_FILE = "camera/look-camera.jpg"
         const val STATE_CAMERA_URI = "camera_uri"
         val BACKENDS = listOf("auto", "gpu", "cpu")
+        /**
+         * Take mode: the answer's type size (in units of the screen width / 402) and the lines its box holds. The sign
+         * example's answer took 10 lines at 21 units on a Galaxy S26 (its first line, the sign's four, a blank one, a
+         * sentence of four), at most that at 17, so it shows whole, from its first line to its last; the photo above
+         * gives up the room.
+         */
+        const val TAKE_ANSWER_SIZE = 17f
+        const val TAKE_ANSWER_LINES = 11
         const val FETCH_HINT = "The example photos are not in this build: run samples/look/tools/fetch_examples.py, then build again."
     }
 
@@ -142,8 +155,20 @@ class MainActivity : ComponentActivity() {
     private var photoSource = ""
     private var cameraUri: Uri? = null
     private var examplesMissing = false
-    /** The answer as the model writes it; the screen shows [AnswerText.render] of it. */
+    /** The answer as the model writes it; the screen shows [AnswerText.render] of it, drawn at most once per frame. */
     private val raw = StringBuilder()
+    /** True when [raw] holds text the answer box does not show yet: the next frame draws it ([drawAnswer]). */
+    private var answerStale = false
+    /** Times the answer box was drawn for the current question: once per frame at most while it streams, once more at DONE. */
+    private var renders = 0
+    /** Counts questions, so that a piece arriving after its question has ended is dropped (the final text is on screen). */
+    private var asks = 0
+    private val drawAnswer = Choreographer.FrameCallback {
+        if (answerStale) {
+            answerStale = false
+            showAnswer()
+        }
+    }
 
     private var u = 1f
     private lateinit var pill: TextView
@@ -175,7 +200,12 @@ class MainActivity : ComponentActivity() {
         if (saved && uri != null) choosePhoto("camera") { PhotoImport.load(contentResolver, uri) } else Log.i(TAG, "CAMERA no photo saved=$saved")
     }
 
-    private val mode get() = if (take) "take" else if (recording) "recording" else "normal"
+    private val mode get() = when {
+        take && recording -> "take+autostart"
+        take -> "take"
+        recording -> "recording"
+        else -> "normal"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -464,6 +494,8 @@ class MainActivity : ComponentActivity() {
         val pic = picture ?: return
         val sent = photo
         clearAnswer()
+        renders = 0
+        val seq = ++asks
         asking = true
         render()
         val thermalBefore = thermalStatus()
@@ -474,13 +506,19 @@ class MainActivity : ComponentActivity() {
         try {
             reply = looker.ask(pic, question) { piece, ms ->
                 runOnUiThread {
+                    if (seq != asks || !asking) return@runOnUiThread
                     if (raw.isEmpty()) {
                         detail = "Answering"
                         numbers.text = String.format(Locale.US, "first token %.2f s", ms / 1000.0)
                         render()
                     }
                     raw.append(piece)
-                    showAnswer()
+                    // The next frame draws the answer: pieces that arrive within one frame are drawn together. The
+                    // times on the numbers line come from Looker's stream callback, not from the screen.
+                    if (!answerStale) {
+                        answerStale = true
+                        Choreographer.getInstance().postFrameCallback(drawAnswer)
+                    }
                 }
             }
         } catch (e: CancellationException) {
@@ -505,6 +543,7 @@ class MainActivity : ComponentActivity() {
                         }
                         raw.setLength(0)
                         raw.append(r.text)
+                        cancelDraw()
                         showAnswer()
                         numbers.text = line
                         if (r.text.isEmpty()) say("The model wrote no text.", REFUSED)
@@ -516,7 +555,7 @@ class MainActivity : ComponentActivity() {
                     else -> fail(failure ?: "unknown failure")
                 }
                 Log.i(TAG, "ASK first_turn=${r?.firstTurn} first_token_ms=${r?.timing?.firstTokenMs?.let { round1(it) }} chunks=${r?.timing?.chunks} " +
-                    "chunks_per_s=${r?.timing?.chunksPerSecond?.let { round1(it) }} stream_ms=${r?.timing?.streamMs?.let { round1(it) }} " +
+                    "render_count=$renders chunks_per_s=${r?.timing?.chunksPerSecond?.let { round1(it) }} stream_ms=${r?.timing?.streamMs?.let { round1(it) }} " +
                     "load_ms=${r?.loadMs} open_ms=${r?.openMs?.let { round1(it) }} waited_for_load=${r?.waitedForLoad} stopped=$stopped " +
                     "failure=${failure?.let { JSONObject.quote(it) }} line=${JSONObject.quote(line)} text=${JSONObject.quote(r?.text ?: "")}")
                 val record = JSONObject()
@@ -540,6 +579,7 @@ class MainActivity : ComponentActivity() {
                     .put("stream_ms", r?.timing?.streamMs?.let { round1(it) } ?: JSONObject.NULL)
                     .put("chunks", r?.timing?.chunks ?: JSONObject.NULL)
                     .put("all_chunks", r?.timing?.allChunks ?: JSONObject.NULL)
+                    .put("render_count", renders)
                     .put("chunks_per_s", r?.timing?.chunksPerSecond?.let { round2(it) } ?: JSONObject.NULL)
                     .put("chunk_ms", JSONArray(r?.timing?.chunkMs?.map { round1(it) } ?: emptyList<Double>()))
                     .put("first_turn", r?.firstTurn ?: JSONObject.NULL)
@@ -603,6 +643,13 @@ class MainActivity : ComponentActivity() {
         for (r in shown.bold) s.setSpan(StyleSpan(Typeface.BOLD), r.first, r.last + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         answer.setTextColor(WHITE)
         answer.text = s
+        renders++
+    }
+
+    /** Drops a draw the next frame would do: the answer box is about to show something else, or the final text. */
+    private fun cancelDraw() {
+        Choreographer.getInstance().removeFrameCallback(drawAnswer)
+        answerStale = false
     }
 
     /** While the answer fits, its first line stays at the top; once it is taller than the box, its last line stays in view. */
@@ -612,6 +659,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun clearAnswer() {
+        cancelDraw()
         raw.setLength(0)
         answer.text = ""
         answer.setTextColor(WHITE)
@@ -620,6 +668,7 @@ class MainActivity : ComponentActivity() {
 
     /** A sentence in the answer area that is not the model's: a refusal, a failure to read a photo, a note. */
     private fun say(text: String, color: Int) {
+        cancelDraw()
         raw.setLength(0)
         answer.text = text
         answer.setTextColor(color)
@@ -702,7 +751,8 @@ class MainActivity : ComponentActivity() {
         }
         slot.addView(photoView, FrameLayout.LayoutParams(match, match))
         slot.addView(placeholder, FrameLayout.LayoutParams(match, match))
-        content.addView(slot, if (take) params(match, px(180f).toInt(), top = 6f) else params(match, 0, 1.1f, top = 6f))
+        // In take mode the photo takes what the answer box (a fixed number of lines) leaves of the 9:16 frame.
+        content.addView(slot, if (take) params(match, 0, 1f, top = 6f) else params(match, 0, 1.1f, top = 6f))
 
         // (3) the examples, Pick a photo (the system picker) and Take a photo (the camera app)
         val strip = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
@@ -789,13 +839,21 @@ class MainActivity : ComponentActivity() {
         // (6) the answer as it streams, in large type
         answerScroll = ScrollView(this).apply { background = rounded(CARD, 14f) }
         answer = TextView(this).apply {
-            setTextSize(TypedValue.COMPLEX_UNIT_PX, px(if (take) 19f else 21f)); setTextColor(WHITE)
+            setTextSize(TypedValue.COMPLEX_UNIT_PX, px(if (take) TAKE_ANSWER_SIZE else 21f)); setTextColor(WHITE)
             setLineSpacing(0f, 1.1f)
             setPadding(px(12f).toInt(), px(10f).toInt(), px(12f).toInt(), px(10f).toInt())
         }
         answer.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ -> keepAnswerInView() }
         answerScroll.addView(answer, FrameLayout.LayoutParams(match, wrap))
-        content.addView(answerScroll, params(match, 0, 1f, top = 6f))
+        if (take) {
+            // TAKE_ANSWER_LINES lines of this type: the line height with its spacing, the font's own padding above the
+            // first line and below the last, and the box's padding.
+            val fm = answer.paint.fontMetricsInt
+            val box = answer.lineHeight * TAKE_ANSWER_LINES + (fm.ascent - fm.top) + (fm.bottom - fm.descent) + answer.paddingTop + answer.paddingBottom
+            content.addView(answerScroll, params(match, box, top = 6f))
+        } else {
+            content.addView(answerScroll, params(match, 0, 1f, top = 6f))
+        }
 
         // (7) the numbers: first token, speed, backend, whether the load made a request; one line, the type shrinks to fit
         numbers = label(16f, WHITE, bold = true).apply {
@@ -811,14 +869,19 @@ class MainActivity : ComponentActivity() {
         content.requestFocus()
     }
 
-    /** Where the tappable things and the numbers line are on the screen, in pixels (left,top,right,bottom). */
+    /**
+     * Where the tappable things and the numbers line are on the screen, in pixels (left,top,right,bottom). `answer` is
+     * the box, `answer_text` the text in it as laid out (above the box's top when it has scrolled, below its bottom
+     * when it does not fit), with its line count and the box's scroll offset.
+     */
     private fun logBounds(moment: String) {
         val at = IntArray(2)
         fun b(v: View): String { v.getLocationOnScreen(at); return "${at[0]},${at[1]},${at[0] + v.width},${at[1] + v.height}" }
         val dm = resources.displayMetrics
         val parts = Examples.PHOTOS.mapIndexed { i, ex -> "example_${ex.id}=${b(thumbs[i])}" } +
             chips.mapIndexed { i, c -> "chip_${i + 1}=${b(c)}" } +
-            listOf("photo=${b(slot)}", "question=${b(questionBox)}", "ask=${b(ask)}", "answer=${b(answerScroll)}", "numbers=${b(numbers)}",
+            listOf("photo=${b(slot)}", "question=${b(questionBox)}", "ask=${b(ask)}", "answer=${b(answerScroll)}", "answer_text=${b(answer)}",
+                "answer_lines=${answer.lineCount}", "answer_scroll=${answerScroll.scrollY}", "numbers=${b(numbers)}",
                 "footer=${b(footer)}", "screen=${dm.widthPixels}x${dm.heightPixels}", "mode=$mode")
         Log.i(TAG, "BOUNDS $moment " + parts.joinToString(" "))
     }
@@ -856,6 +919,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        cancelDraw()
         scope.cancel()
         looker.closeNow()
         models.close()
