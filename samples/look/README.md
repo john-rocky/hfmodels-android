@@ -22,7 +22,7 @@ Pick a photo opens the system photo picker and Take a photo the phone's camera a
 The numbers line reads `first token <seconds> s · <rate> tok/s · <backend> · on-device, offline`:
 
 - first token: from calling `stream` to the first chunk that carries text. The load and the opening of the conversation happen before READY and are not in it.
-- tok/s: (chunks − 1) / (time from the first to the last chunk). Every chunk with text carried one token with this model on LiteRT-LM 0.16.1: the device check's answers on a Pixel 8a (2026-10-14), counted with the model's Hugging Face tokenizer, gave 142 chunks = 142 tokens and 44 = 44. The record keeps the chunk counts.
+- tok/s: (chunks − 1) / (time from the first to the last chunk). Every chunk with text carried one token with this model on LiteRT-LM 0.16.1: the answers of 2026-10-14 on a Pixel 8a's CPU and a Galaxy S26's GPU, counted with the model's Hugging Face tokenizer, gave 142 chunks = 142 tokens, 44 = 44, 43 = 43 and 48 = 48. The record keeps the chunk counts.
 - GPU or CPU: the backend the language model was initialized on (`PreparedModelInfo.components`), and the vision encoder's after it when that one differs ("GPU, vision CPU").
 - offline: the load before the answer ran with `NetworkPolicy.Offline`, so the SDK made no request. Without it the line says only "on-device".
 
@@ -109,6 +109,25 @@ After every answer, from a button or in recording mode, the app writes `look-res
 `./gradlew :samples:look:testDebugUnitTest` checks the parts that do not need a phone: the first token, the rate and the numbers line (`StatsTest`); the answer as the screen shows it, on the sign answer exactly as the model wrote it and while it streams (`AnswerTextTest`); what the screen refuses before the model, the example questions and photos, that `tools/examples.json` names the same photos as the app, the file each phone loads, and the size each photo is sent at (`TypedTest`).
 
 ## Numbers
+
+### 2026-10-14: Galaxy S26, GPU
+
+Measured on one Galaxy S26 (SM-S942Q, Android 16, build BP4A.251205.006.S942QOPS1AZH9) with litertlm-android 0.16.1 and the `vl_int8` file pushed into the app's files directory, on the GPU profile (the language model and the vision encoder initialized on the GPU, no fallback), offline, in airplane mode. The photo was the sign example with "What does this sign say?"; it went to the model as a 768 x 576 JPEG of 191,815 bytes, the same bytes from the strip and from the picker. The three answers to it, in two processes, were the same text: the sign's words "Please KEEP OFF THE GRASS" in bold, then "It’s a simple, bold warning sign placed in a grassy area to remind people not to stand or walk on the grass."
+
+| where | load | opening the conversation | first token | tokens | tok/s | thermal status |
+|---|---|---|---|---|---|---|
+| device check, the first load (with hashing and importing the pushed file) | 60.8 s | 14,044 ms | 1,519 ms | 43 | 37.2 | 1 |
+| device check, a second question about the same photo, "What colour is the sign?" | none | none | 350 ms | 48 | 35.7 | 1 |
+| device check, after the Stop (a second load in the same process) | 85.5 s | 16,391 ms | 1,674 ms | 43 | 37.3 | 1 |
+| the screen, recording mode (a new process) | 33.5 s | 9,410 ms | 1,816 ms | 43 | 23.4 | 2 |
+
+The device check runs in the app's process without the screen; recording mode shows the answer on the screen as it streams. The phone came from another run at thermal status 2 with the GPU's top clock held at 726 MHz, and was at 1 with the clock back at 1,300 MHz by the device check. The recording-mode answer came at thermal status 2, and the time between its tokens grew from 35 ms to 41–49 ms; the device check's answer to the same photo and question, at 1, came at 37.2 tok/s. The causes of the difference are not established beyond that.
+
+Each chunk carried one token here too (43 = 43 and 48 = 48 by the model's Hugging Face tokenizer). The decoder's seven signatures (prefill 1024, 256, 64, 16, 4 and 1, decode) and the vision encoder's graph (1,824 nodes) ran on the GPU delegate in full; the vision adapter ran on the CPU (XNNPACK took 24 of its 30 nodes). Setting up the GPU delegate for the decoder took 47 s at the first load and 68 s at the second. Opening a conversation took 9.4 to 16.4 s; it happens before READY and is not in the first token. The app's peak VmHWM was 5,174,308 kB in the device check and 5,367,156 kB on the screen. The second question's answer began "The sign is white with black text."
+
+The same JPEG and question through LiteRT-LM 0.18.0 on a Mac CPU (greedy) gave the sign's words the same way and the same sentence after them up to its last words: "not to stand on or touch the grass", where the phone wrote "not to stand or walk on the grass".
+
+One phone, one day; not a benchmark.
 
 ### 2026-10-14: Pixel 8a, CPU, the sample's first version
 
