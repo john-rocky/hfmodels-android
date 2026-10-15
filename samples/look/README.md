@@ -112,6 +112,22 @@ After every answer, from a button or in recording mode, the app writes `look-res
 
 ## Numbers
 
+### 2026-10-15: Galaxy S26, GPU, a cool phone
+
+The same phone, file, profile, photo and question as on 2026-10-14 below, with this version of the app (the answer drawn at most once per frame). Before the first app process the phone had cooled from thermal status 1 with the battery at 39.8 °C to status 0 at 37.3 °C, with the GPU's top clock at 1,300 MHz, in the two minutes before the app was started.
+
+| where | load | opening the conversation | first token | tokens | tok/s | the answer drawn | thermal status |
+|---|---|---|---|---|---|---|---|
+| the screen, recording mode on take mode's screen (a new process) | 33.9 s | 9,047 ms | 1,204 ms | 43 | 37.0 | 44 times | 1 |
+| the screen, take mode, tapped: the sign, the question, Ask (a new process) | 35.0 s | 9,828 ms | 1,315 ms | 43 | 35.6 | 44 times | 1 |
+| device check, the first load | 97.8 s | 22,615 ms | 1,974 ms | 43 | 37.2 | no screen | 1 |
+| device check, a second question about the same photo, "What colour is the sign?" | none | none | 416 ms | 48 | 35.8 | no screen | 1 |
+| device check, after the Stop (a second load in the same process) | 91.5 s | 15,556 ms | 1,596 ms | 43 | 38.0 | no screen | 1 |
+
+All four answers to the sign were the text of 2026-10-14 below, word for word, and the second question's answer was too; each chunk carried one token again (43 = 43 and 48 = 48 by the model's Hugging Face tokenizer), and the take's JPEG and question through LiteRT-LM 0.18.0 on a Mac CPU gave the Mac answer of 2026-10-14 below, word for word. On the screen the tokens came 26 to 31 ms apart. That is slower than one frame, so each token was drawn in a frame of its own: the box was drawn 44 times for 43 tokens, the last time at DONE. Each new process set up the GPU delegate for the decoder again: 29 and 30 s in the two screen processes, 83 s at the device check's first load, in a process the system ran as `foreground` rather than `top-app`. The load raised the thermal status for a while: right after take mode reached READY the phone read status 2 with the GPU's top clock at 726 MHz, and 60 s later, when the recording started, it was back at 1 and 1,300 MHz. The first token came in 1.20 and 1.32 s on the screen and in 1.97 and 1.60 s in the device check of the same hour. The causes of these differences are not established.
+
+One phone, one day; not a benchmark.
+
 ### 2026-10-14: Galaxy S26, GPU
 
 Measured on one Galaxy S26 (SM-S942Q, Android 16, build BP4A.251205.006.S942QOPS1AZH9) with litertlm-android 0.16.1 and the `vl_int8` file pushed into the app's files directory, on the GPU profile (the language model and the vision encoder initialized on the GPU, no fallback), offline, in airplane mode. The photo was the sign example with "What does this sign say?"; it went to the model as a 768 x 576 JPEG of 191,815 bytes, the same bytes from the strip and from the picker. The three answers to it, in two processes, were the same text: the sign's words "Please KEEP OFF THE GRASS" in bold, then "It’s a simple, bold warning sign placed in a grassy area to remind people not to stand or walk on the grass."
