@@ -1527,6 +1527,142 @@
       }
     ]
   },
+  "typed_decisions_phocinae": {
+    "$comment": "hfmodels-litert (EncoderDecisions, family laya) on litert-community/Phocinae-Largha-150M-LiteRT as it is on the Hub (branch head aac521b0; the repo's own hfmodels.json, no catalog entry, no development descriptor; default variant L384_embeds: the host-lookup graph with float16 FULLY_CONNECTED weights, the float16 token table, tokenizer.json), loaded by id through the public API on one device on one day: litert/src/androidTest/.../HubRepoDecideDeviceTest.kt run by tools/decide_gate.sh with GATE_RUNNER=am GATE_TEST=HubRepoDecideDeviceTest. The first run downloaded the six files (324,775,825 B) from the Hub over the phone's LTE; the later runs reused them (SAVED_BINDING). Reference = the repo's examples/run_example.expected.json (the publisher's host on a desktop CPU, window 384, the int8emb graph) for examples/request.json: three questions (choice / noul / score) about one state; same argmax per question and max |dp| over every option, the model lane's bar of 0.02. input_tokens = the three sequences as the SDK builds them, equal to the expected file's usage.input_tokens (437). question_ms = the SDK's per-question wall clock inside decide(state, 3 questions), the median over 5 warm calls; total_ms = the median of those calls. NPU runs counted only with LiteRT's `Replacing 1 out of 1 node(s) with delegate (DispatchDelegate)` in the test process's log; GPU runs show `LITERT_CL` on 1801/1801 nodes, CPU runs XNNPACK on 1801/1801; the act head runs on XNNPACK (4/4 nodes) in every run. Thermal status 0 before and after every run (five runs in 4 minutes, battery 28.3 -> 30.0 C). The CPU profile of L384_embeds carries no verification record in the repo's descriptor; this row is the first measurement of it.",
+    "device": {
+      "model": "SM-S942Q (Galaxy S26)",
+      "serial": "RFGL80R6A6H",
+      "android": "16",
+      "build": "BP4A.251205.006.S942QOPS1AZH9"
+    },
+    "date": "2026-10-18",
+    "runtime": "com.google.ai.edge.litert:litert:2.2.0 (GPU at the descriptor's gpu_precision fp16; CPU 4 threads; NPU = Qualcomm HTP V81 JIT with the v81 runtime of tools/fetch_npu_libs.sh packaged in the test APK)",
+    "sdk": "0.2.1-SNAPSHOT (commit 44fc9b5 plus the test)",
+    "rows": [
+      {
+        "apk": "without Qualcomm's runtime",
+        "variant": "L384_embeds",
+        "backend": "auto",
+        "profile": "gpu",
+        "result": "PASS",
+        "binding": "RESOLVED_BRANCH, commit aac521b0, descriptor hfmodels.json of the repo",
+        "fallback": "npu -> gpu: NATIVE_MODULE_MISSING (the nine libraries named)",
+        "downloaded_bytes": 324775825,
+        "load_ms": 73933,
+        "compile_ms": 1287,
+        "input_tokens": "437/437",
+        "argmax_equal": "3/3",
+        "max_prob_abs_err": 0.0035,
+        "max_act_prob_abs_err": 0.0008,
+        "first_call_total_ms": 117.6,
+        "total_ms_median": 85.3,
+        "question_ms_median": [
+          27.1,
+          25.2,
+          26.8
+        ],
+        "log": "litert/results/2026-10-18-0024-RFGL80R6A6H-litert2.2.0-decide-phocinae-nonpu-L384_embeds-auto.log"
+      },
+      {
+        "apk": "with Qualcomm's runtime (v81)",
+        "variant": "default -> L384_embeds",
+        "backend": "auto",
+        "profile": "npu",
+        "result": "PASS",
+        "binding": "SAVED_BINDING, commit aac521b0",
+        "fallback": "none",
+        "downloaded_bytes": 0,
+        "load_ms": 12730,
+        "compile_ms": 9897,
+        "compile_note": "first JIT compile on this phone (Qualcomm compiler plugin, 1801/1801 ops in 1 partition)",
+        "input_tokens": "437/437",
+        "argmax_equal": "3/3",
+        "max_prob_abs_err": 0.0024,
+        "max_act_prob_abs_err": 0.0002,
+        "first_call_total_ms": 93.4,
+        "total_ms_median": 71.1,
+        "question_ms_median": [
+          22.8,
+          20.8,
+          21.3
+        ],
+        "log": "litert/results/2026-10-18-0027-RFGL80R6A6H-litert2.2.0-decide-phocinae-npu-jit-default-auto.log"
+      },
+      {
+        "apk": "with Qualcomm's runtime (v81)",
+        "variant": "default -> L384_embeds",
+        "backend": "auto",
+        "profile": "npu",
+        "result": "PASS",
+        "binding": "SAVED_BINDING, commit aac521b0",
+        "fallback": "none",
+        "downloaded_bytes": 0,
+        "load_ms": 3023,
+        "compile_ms": 194,
+        "compile_note": "read from the JIT cache (`Flatbuffer model initialized from cached model`)",
+        "input_tokens": "437/437",
+        "argmax_equal": "3/3",
+        "max_prob_abs_err": 0.0024,
+        "max_act_prob_abs_err": 0.0002,
+        "first_call_total_ms": 87.7,
+        "total_ms_median": 75.0,
+        "question_ms_median": [
+          24.4,
+          21.8,
+          22.8
+        ],
+        "log": "litert/results/2026-10-18-0027-RFGL80R6A6H-litert2.2.0-decide-phocinae-npu-cached-default-auto.log"
+      },
+      {
+        "apk": "with Qualcomm's runtime (v81)",
+        "variant": "default -> L384_embeds",
+        "backend": "gpu",
+        "profile": "gpu",
+        "result": "PASS",
+        "binding": "SAVED_BINDING, commit aac521b0",
+        "fallback": "none (Require)",
+        "downloaded_bytes": 0,
+        "load_ms": 4150,
+        "compile_ms": 1349,
+        "input_tokens": "437/437",
+        "argmax_equal": "3/3",
+        "max_prob_abs_err": 0.0035,
+        "max_act_prob_abs_err": 0.0008,
+        "first_call_total_ms": 100.3,
+        "total_ms_median": 86.8,
+        "question_ms_median": [
+          26.6,
+          26.2,
+          27.2
+        ],
+        "log": "litert/results/2026-10-18-0028-RFGL80R6A6H-litert2.2.0-decide-phocinae-gpu-default-gpu.log"
+      },
+      {
+        "apk": "with Qualcomm's runtime (v81)",
+        "variant": "default -> L384_embeds",
+        "backend": "cpu",
+        "profile": "cpu",
+        "result": "PASS",
+        "binding": "SAVED_BINDING, commit aac521b0",
+        "fallback": "none (Require)",
+        "downloaded_bytes": 0,
+        "load_ms": 3078,
+        "compile_ms": 289,
+        "input_tokens": "437/437",
+        "argmax_equal": "3/3",
+        "max_prob_abs_err": 0.002,
+        "max_act_prob_abs_err": 0.0003,
+        "first_call_total_ms": 413.4,
+        "total_ms_median": 394.5,
+        "question_ms_median": [
+          130.9,
+          130.1,
+          130.4
+        ],
+        "log": "litert/results/2026-10-18-0028-RFGL80R6A6H-litert2.2.0-decide-phocinae-cpu-default-cpu.log"
+      }
+    ]
+  },
   "typed_decisions_runtime_probe": {
     "$comment": "NOT a shipped SDK path. probes/scoring on the Galaxy S26: the LiteRT-LM Kotlin binding of the kotlin-text-scoring branch (Session.runTextScoring / saveCheckpoint / rewindToCheckpoint) with the pending fix of google-ai-edge/LiteRT-LM#3562 applied, built and synced in as the README of the probe says. One decision = one prefill of the rendered prompt, the three option letters scored, a rewind between them (shared arm); the direct arm prefills afresh for every letter. Medians over the rows, warm, one phone, one afternoon; the thermal status is recorded per run. The agreement columns compare the quantized bundle with the fp32 last-position logits of the same prompts (and, for MiniCPM5-2B, with the same bundle's own graph read on a Mac); they measure quantization, not the binding. No ranking between runtimes is implied.",
     "device": {
