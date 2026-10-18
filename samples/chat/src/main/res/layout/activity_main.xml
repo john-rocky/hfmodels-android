@@ -18,6 +18,8 @@
 
     <TextView android:id="@+id/status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Enter an id and press Load." android:textSize="12sp" />
 
+    <CheckBox android:id="@+id/think" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Think before answering" android:checked="true" android:visibility="gone" />
+
     <ScrollView android:id="@+id/transcript_scroll" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
         <TextView android:id="@+id/transcript" android:layout_width="match_parent" android:layout_height="wrap_content" android:textIsSelectable="true" />
     </ScrollView>
