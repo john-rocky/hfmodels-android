@@ -1,0 +1,95 @@
+{
+  "model_id": "litert-community/Nemotron-3-Nano-4B",
+  "revision": "a790c6910707efeab3ddc661aad1f78089f74cc4",
+  "tasks": [
+    "chat"
+  ],
+  "default_variant": "int8",
+  "license": {
+    "id": "nvidia-nemotron-open-model-license",
+    "url": "https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-nemotron-open-model-license/"
+  },
+  "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json. A hybrid Mamba-2 / attention reasoning model: the bundle declares the thought channel and its generation prompt opens it (<think> then a newline), so the model reasons from its first token; with thinking off the template closes the block at once (<think></think>). handler_config.channels spells the same channel and thinking_default is true. The manifest lists cpu and gpu with cpu as the default: on one Galaxy S26 the GPU path crashed while the OpenCL delegate initialized its kernels (litert_lm_advanced_main v0.16.0, 2026-09-05, the manifest's known_issues), so the default profile is cpu and the gpu profile loads only when asked for.",
+  "variants": [
+    {
+      "id": "int8",
+      "runtime": "litert_lm",
+      "handler": {
+        "id": "litertlm.conversation",
+        "abi": 1
+      },
+      "runtime_range": {
+        "min_inclusive": "0.16.0",
+        "max_exclusive": "0.18.0"
+      },
+      "inputs": [
+        "text"
+      ],
+      "files": [
+        {
+          "id": "weights",
+          "role": "model",
+          "path": "Nemotron-3-Nano-4B_int8.litertlm"
+        }
+      ],
+      "default_profile": "cpu",
+      "profiles": [
+        {
+          "id": "gpu",
+          "priority": 100,
+          "files": [
+            "weights"
+          ],
+          "enabled_inputs": [
+            "text"
+          ],
+          "components": {
+            "language": "gpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "fallback_profiles": [
+            "cpu"
+          ],
+          "default_selectable": true
+        },
+        {
+          "id": "cpu",
+          "priority": 50,
+          "files": [
+            "weights"
+          ],
+          "enabled_inputs": [
+            "text"
+          ],
+          "components": {
+            "language": "cpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "fallback_profiles": [],
+          "default_selectable": true
+        }
+      ],
+      "handler_config": {
+        "metadata_source": "litertlm_manifest",
+        "channels": [
+          {
+            "name": "thought",
+            "start": "<think>\n",
+            "end": "\n</think>"
+          }
+        ],
+        "thinking_default": true
+      }
+    }
+  ]
+}
