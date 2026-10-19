@@ -18,11 +18,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -31,8 +29,9 @@ import kotlinx.coroutines.withTimeoutOrNull
 /**
  * The three models ([TranslateModels]), the turn loop over them, the language choice and the two microphone buttons. A
  * press opens the microphone for one utterance: the endpointer cuts it after 800 ms of silence (or a second press ends
- * it), the turn hears, translates and, for Spanish or French heard, speaks the English. [ui] is what the screen draws;
- * every turn writes one TURN line under the log tag [TAG].
+ * it), and the turn hears, translates and, for Spanish or French heard, speaks the English. The turn starts early, at
+ * 300 ms of silence ([EarlyEndpointer], [listen]): the screen and the voice follow it only once the utterance is cut, and
+ * voice before then cancels it. [ui] is what the screen draws; every turn writes one TURN line under the log tag [TAG].
  */
 class TranslateViewModel(private val app: Application) : AndroidViewModel(app) {
     private val models = TranslateModels(app)
@@ -109,37 +108,23 @@ class TranslateViewModel(private val app: Application) : AndroidViewModel(app) {
         listenJob = viewModelScope.launch(Dispatchers.Default) {
             recorder?.begin("Listening", direction)
             _ui.update { it.copy(listening = direction, turn = direction, status = "Listening (${direction.heard})…", error = null) }
-            val ep = Endpointer(startRms = config.startRms, maxUtteranceMs = WINDOW_MS)
-            var started = false
-            var stoppedByPress = false
-            var cutNanos = 0L
-            var cutElapsed = 0L
-            val opened = SystemClock.elapsedRealtime()
+            val ep = EarlyEndpointer(Endpointer(startRms = config.startRms, maxUtteranceMs = WINDOW_MS))
             // The microphone's level once a second (the RMS of the second and its loudest 20 ms): the input gate's floor is
             // set above what a silent press logs on the phone.
-            var levelSum = 0.0; var levelN = 0; var levelMax = 0.0; var levelAt = opened
-            val utterance: FloatArray? = try {
+            var levelSum = 0.0; var levelN = 0; var levelMax = 0.0; var levelAt = SystemClock.elapsedRealtime()
+            val heard: Heard? = try {
                 withTimeoutOrNull(NO_SPEECH_MS + WINDOW_MS + 2_000L) {
-                    MicSource().chunks().mapNotNull { chunk ->
+                    listen(MicSource().chunks(), ep, early = true, input = "mic", stopRequested = { stopRequested }, noSpeechMs = NO_SPEECH_MS,
+                        startTurn = { s -> launchTurn(l, direction, s) }) { chunk, speech ->
                         var e = 0.0
                         for (x in chunk) e += x.toDouble() * x
                         levelSum += e; levelN += chunk.size; levelMax = maxOf(levelMax, kotlin.math.sqrt(e / chunk.size))
                         val now = SystemClock.elapsedRealtime()
                         if (now - levelAt >= 1000) {
-                            Log.i(TAG, "mic_level dir=${direction.tag} rms=${"%.4f".format(java.util.Locale.US, kotlin.math.sqrt(levelSum / maxOf(1, levelN)))} max_rms=${"%.4f".format(java.util.Locale.US, levelMax)} start_rms=${config.startRms} floor_rms=${config.floorRms} speech=$started")
+                            Log.i(TAG, "mic_level dir=${direction.tag} rms=${"%.4f".format(java.util.Locale.US, kotlin.math.sqrt(levelSum / maxOf(1, levelN)))} max_rms=${"%.4f".format(java.util.Locale.US, levelMax)} start_rms=${config.startRms} floor_rms=${config.floorRms} speech=$speech")
                             levelSum = 0.0; levelN = 0; levelMax = 0.0; levelAt = now
                         }
-                        val events = ep.feed(chunk)
-                        if (events.any { it is Endpointer.Event.SpeechStart }) started = true
-                        val cut = (events.firstOrNull { it is Endpointer.Event.Utterance } as Endpointer.Event.Utterance?)?.pcm
-                            ?: when {
-                                stopRequested -> { stoppedByPress = true; ep.flush()?.pcm ?: NOTHING }
-                                !started && SystemClock.elapsedRealtime() - opened > NO_SPEECH_MS -> NOTHING
-                                else -> null
-                            }
-                        if (cut != null) { cutNanos = System.nanoTime(); cutElapsed = SystemClock.elapsedRealtimeNanos() }
-                        cut
-                    }.first()
+                    }
                 }
             } catch (e: CancellationException) {
                 throw e
@@ -149,13 +134,12 @@ class TranslateViewModel(private val app: Application) : AndroidViewModel(app) {
                 return@launch
             }
             _ui.update { it.copy(listening = null) }
-            if (utterance == null || utterance.isEmpty()) {
-                nothingHeard(direction, "mic", "no speech after the button")
+            val turn = heard?.turn
+            if (turn == null) {
+                nothingHeard(direction, "mic", heard?.nothingHeard ?: "no speech after the button", heard?.discardedEarly ?: 0)
                 return@launch
             }
-            turnJob = viewModelScope.launch(Dispatchers.Default) {
-                runTurn(l, direction, utterance, cutNanos, cutElapsed, hangoverMs = if (stoppedByPress) 0 else ep.hangoverMs, input = if (stoppedByPress) "mic-press" else "mic")
-            }
+            turnJob = turn
         }
     }
 
@@ -167,15 +151,17 @@ class TranslateViewModel(private val app: Application) : AndroidViewModel(app) {
     }
 
     /**
-     * A WAV (16 kHz mono 16-bit) as one press of [direction]'s button: its audio goes through the endpointer as the
-     * microphone's would, in real time when [realTime] (the screen and the clock then look as they do for a voice), and
-     * its first utterance makes the turn. For recordings and checks; the user's own path is [press]. A direction of the
-     * other language switches the screen to that language first.
+     * A WAV (16 kHz mono 16-bit) as one press of [direction]'s button: its audio goes through the endpointer and the
+     * early start as the microphone's would, in real time when [realTime] (the screen and the clock then look as they do
+     * for a voice; at once, without the early start, otherwise), and its first utterance makes the turn. For recordings
+     * and checks; the user's own path is [press]. A direction of the other language switches the screen to that language
+     * first.
      */
     fun play(file: File, direction: Direction, realTime: Boolean = true) {
         val l = loop ?: return load { play(file, direction, realTime) }
         if (listenJob?.isCompleted == false || turnJob?.isCompleted == false) return
         if (direction.language != _ui.value.language) chooseLanguage(direction.language)
+        stopRequested = false
         listenJob = viewModelScope.launch(Dispatchers.Default) {
             val (pcm, rate) = try { Wav.read(file) } catch (e: Exception) {
                 _ui.update { it.copy(error = "${file.name}: ${e.message}") }
@@ -184,50 +170,58 @@ class TranslateViewModel(private val app: Application) : AndroidViewModel(app) {
             if (rate != ParakeetFrontEnd.RATE) { _ui.update { it.copy(error = "${file.name}: $rate Hz, expected ${ParakeetFrontEnd.RATE}") }; return@launch }
             recorder?.begin("Listening", direction)
             _ui.update { it.copy(listening = direction, turn = direction, status = "Listening (${direction.heard})…", error = null) }
-            val ep = Endpointer(startRms = config.startRms, maxUtteranceMs = WINDOW_MS)
-            val start = SystemClock.elapsedRealtime()
-            val all = pcm + FloatArray(ParakeetFrontEnd.RATE * (ep.hangoverMs + 200) / 1000)
-            var utterance: FloatArray? = null
-            var i = 0
-            while (i < all.size && utterance == null) {
-                val k = i / CHUNK
-                if (realTime) delay(maxOf(0L, start + k * 20L - SystemClock.elapsedRealtime()))
-                utterance = (ep.feed(all.copyOfRange(i, minOf(i + CHUNK, all.size))).firstOrNull { it is Endpointer.Event.Utterance } as Endpointer.Event.Utterance?)?.pcm
-                i += CHUNK
-            }
-            if (utterance == null) utterance = ep.flush()?.pcm
-            val cutNanos = System.nanoTime()
-            val cutElapsed = SystemClock.elapsedRealtimeNanos()
+            val ep = EarlyEndpointer(Endpointer(startRms = config.startRms, maxUtteranceMs = WINDOW_MS))
+            val heard = listen(wavChunks(pcm, ep.endpointer.hangoverMs + 200, realTime), ep, early = realTime, input = "file:${file.name}",
+                stopRequested = { stopRequested }, noSpeechMs = null, startTurn = { s -> launchTurn(l, direction, s) })
             _ui.update { it.copy(listening = null) }
-            if (utterance == null) {
-                nothingHeard(direction, "file:${file.name}", "the endpointer found no speech")
+            val turn = heard.turn
+            if (turn == null) {
+                nothingHeard(direction, "file:${file.name}", heard.nothingHeard ?: "the endpointer found no speech", heard.discardedEarly)
                 return@launch
             }
-            val u: FloatArray = utterance
-            turnJob = viewModelScope.launch(Dispatchers.Default) { runTurn(l, direction, u, cutNanos, cutElapsed, ep.hangoverMs, "file:${file.name}") }
+            turnJob = turn
         }
     }
 
     /** A press (or a file) with no utterance: the screen says so and the TURN line records it. */
-    private fun nothingHeard(direction: Direction, input: String, why: String) {
-        val r = TurnRecord(direction, input, hangoverMs = 0, audioMs = 0.0).apply { nothingHeard = why }
+    private fun nothingHeard(direction: Direction, input: String, why: String, discardedEarly: Int) {
+        val r = TurnRecord(direction, input, hangoverMs = 0, audioMs = 0.0, discardedEarly = discardedEarly, specMs = EarlyEndpointer.EARLY_MS).apply { nothingHeard = why }
         Log.i(TAG, turnLine(r, "asr:cpu,mt:${models.mtBackend.lowercase()},tts:${if (models.speaker != null) "cpu" else "none"}", TranslateModels.network(app), TranslateModels.vmHwmKb()))
         _ui.update { it.startTurn(direction).copy(busy = false, status = "Nothing heard") }
     }
 
-    private suspend fun runTurn(l: TranslateLoop, direction: Direction, pcm: FloatArray, cutNanos: Long, cutElapsed: Long, hangoverMs: Int, input: String) {
-        _ui.update { it.startTurn(direction) }
+    /** [s]'s turn on a job of its own (it outlives the listening that started it); the Stop button and [stop] reach it. */
+    private fun launchTurn(l: TranslateLoop, direction: Direction, s: TurnStart): Job =
+        viewModelScope.launch(Dispatchers.Default) { runTurn(l, direction, s) }.also { turnJob = it }
+
+    /**
+     * One turn. Its events reach the screen and the recording only once its gate is open: until then (an early turn,
+     * the utterance not cut yet) they are held, and a turn cancelled before then never shows. The TURN line too waits for
+     * the gate.
+     */
+    private suspend fun runTurn(l: TranslateLoop, direction: Direction, s: TurnStart) = coroutineScope {
+        val held = ArrayList<TranslateLoop.Event>()
+        var shown = false
+        fun show(e: TranslateLoop.Event) { _ui.update { it.on(e) }; recorder?.event(e) }
+        val reveal = launch {
+            s.gate.await()
+            synchronized(held) { _ui.update { it.startTurn(direction) }; held.forEach(::show); held.clear(); shown = true }
+        }
         try {
-            l.turn(direction, pcm, cutNanos, hangoverMs, input).collect { e ->
-                _ui.update { it.on(e) }
-                recorder?.event(e)
-                if (e is TranslateLoop.Event.Done) withContext(NonCancellable) { afterTurn(e.record, pcm, cutElapsed) }
+            l.turn(direction, s.pcm, s.cutNanos, s.hangoverMs, s.input, s.gate, s.early, s.discardedEarly, s.specMs).collect { e ->
+                synchronized(held) { if (shown) show(e) else held += e }
+                if (e is TranslateLoop.Event.Done) {
+                    reveal.join()
+                    withContext(NonCancellable) { afterTurn(e.record, s.pcm, s.cutElapsedNanos) }
+                }
             }
         } catch (e: CancellationException) {
-            _ui.update { it.copy(busy = false, status = "Stopped") }
+            reveal.cancel()
+            if (synchronized(held) { shown }) _ui.update { it.copy(busy = false, status = "Stopped") }
             throw e
         } catch (e: Exception) {
             Log.e(TAG, "turn failed", e)
+            reveal.join()
             _ui.update { it.copy(busy = false, status = "Ready", error = "${e.javaClass.simpleName}: ${e.message}") }
         }
     }
@@ -296,7 +290,5 @@ class TranslateViewModel(private val app: Application) : AndroidViewModel(app) {
         const val WINDOW_MS = 30_000
         /** A press with no speech start in this time ends as "Nothing heard". */
         const val NO_SPEECH_MS = 8_000L
-        private const val CHUNK = ParakeetFrontEnd.RATE * 20 / 1000
-        private val NOTHING = FloatArray(0)
     }
 }

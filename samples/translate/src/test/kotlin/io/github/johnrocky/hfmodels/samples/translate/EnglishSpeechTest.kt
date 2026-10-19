@@ -64,6 +64,54 @@ class EnglishSpeechTest {
         assertEquals(listOf("It costs 2.5 euros"), d.flush())
     }
 
+    @Test fun theFirstPieceIsAClauseAfterFourWords() {
+        val c = SpeechCutter()
+        // The comma has nothing after it yet.
+        assertEquals(emptyList<String>(), c.add("To get to the Louvre Museum,"))
+        assertEquals(listOf("To get to the Louvre Museum,"), c.add(" continue straight"))
+        assertEquals(0, c.sentencesEnded)
+        // After the first piece, whole sentences: a later comma is not a cut.
+        assertEquals(listOf("continue straight for two blocks, then turn right."), c.add(" for two blocks, then turn right. Then"))
+        assertEquals(1, c.sentencesEnded)
+        assertEquals(listOf("Then ask again."), c.add(" ask again.") + c.flush())
+        assertEquals(2, c.sentencesEnded)
+        // A semicolon or a colon counts as a comma does; the words before it count, not the marks.
+        val d = SpeechCutter()
+        assertEquals(listOf("Sorry, we don't accept cards here;"), d.add("Sorry, we don't accept cards here; only cash."))
+        assertEquals(listOf("only cash."), d.flush())
+        assertEquals(listOf("The menu has three parts:"), SpeechCutter().add("The menu has three parts: starters"))
+    }
+
+    @Test fun aShortClauseOrAnEarlierSentenceEndGivesTheWholeFirstSentence() {
+        // "Excuse me," has two words: the first piece is the whole sentence.
+        val a = SpeechCutter()
+        assertEquals(emptyList<String>(), a.add("Excuse me, what time is the next bus"))
+        assertEquals(listOf("Excuse me, what time is the next bus to the airport?"), a.add(" to the airport? Thanks"))
+        assertEquals(1, a.sentencesEnded)
+        // The sentence ends before the clause mark.
+        val b = SpeechCutter()
+        assertEquals(listOf("That's 18 euros in total."), b.add("That's 18 euros in total. Would you like a bag, sir?"))
+        assertEquals(listOf("Would you like a bag, sir?"), b.flush())
+        // A time or a number is not a clause mark (no white space after the colon or the comma).
+        val c = SpeechCutter()
+        assertEquals(emptyList<String>(), c.add("The train to Lyon leaves at 9:30 and costs 23,50"))
+        assertEquals(listOf("The train to Lyon leaves at 9:30 and costs 23,50 euros;"), c.add(" euros; so hurry"))
+        // No mark at all: the whole translation at the end.
+        val e = SpeechCutter()
+        assertEquals(emptyList<String>(), e.add("Thank you very much"))
+        assertEquals(listOf("Thank you very much"), e.flush())
+        assertEquals(1, e.sentencesEnded)
+        assertEquals(emptyList<String>(), SpeechCutter().flush())
+    }
+
+    @Test fun thePiecesOfAStreamDoNotDependOnHowItArrives() {
+        val text = "To get to the Louvre Museum, continue straight for two blocks. Then turn right at 3 p.m. Thanks!"
+        val whole = SpeechCutter().let { it.add(text) + it.flush() }
+        val pieces = SpeechCutter().let { c -> text.chunked(3).flatMap { c.add(it) } + c.flush() }
+        assertEquals(listOf("To get to the Louvre Museum,", "continue straight for two blocks.", "Then turn right at 3 p.m. Thanks!"), whole)
+        assertEquals(whole, pieces)
+    }
+
     @Test fun theCutsOfAStreamDoNotDependOnHowItArrives() {
         val text = "To get to Plaza Mayor, keep going straight for two streets. Then turn left at 3 p.m. Thanks!"
         val whole = SentenceCutter().let { it.add(text) + it.flush() }

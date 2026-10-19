@@ -130,7 +130,7 @@ internal class SentenceCutter {
         pending.append(delta)
         val out = ArrayList<String>()
         while (true) {
-            val cut = firstCut() ?: break
+            val cut = firstCut(pending)?.second ?: break
             val sentence = pending.substring(0, cut).trim()
             pending.delete(0, cut)
             if (sentence.isNotEmpty()) out += sentence
@@ -144,41 +144,113 @@ internal class SentenceCutter {
         return if (rest.isEmpty()) emptyList() else listOf(rest)
     }
 
-    /** The index after the white space that follows the first sentence end with a character after it, or null. */
-    private fun firstCut(): Int? {
-        var i = 0
-        while (i < pending.length) {
-            if (pending[i] in ENDS) {
-                var j = i
-                while (j < pending.length && pending[j] in ENDS) j++
-                while (j < pending.length && pending[j] in CLOSERS) j++
-                var k = j
-                while (k < pending.length && pending[k].isWhitespace()) k++
-                if (k > j && k < pending.length && !abbreviationBefore(i)) return k
-                i = j
-            } else i++
-        }
-        return null
-    }
-
-    /** Whether the word that the mark at [at] ends is an abbreviation or an initial, whose dot does not end a sentence. */
-    private fun abbreviationBefore(at: Int): Boolean {
-        if (pending[at] != '.') return false
-        var s = at
-        while (s > 0 && !pending[s - 1].isWhitespace()) s--
-        val word = pending.substring(s, at)
-        if (word.isEmpty()) return false
-        if (word.length == 1 && word[0].isLetter()) return true
-        if (DOTTED.matches(word)) return true
-        return word.trimStart('(', '"', '\'') in ABBREVIATIONS
-    }
-
     companion object {
         private const val ENDS = ".!?"
         private const val CLOSERS = "\"')]”’"
         /** "U.S" before the final dot, "a.m", "e.g". */
         private val DOTTED = Regex("""([A-Za-z]\.)+[A-Za-z]""")
         val ABBREVIATIONS = setOf("Mr", "Mrs", "Ms", "Dr", "St", "No", "Ave", "vs", "etc", "approx", "Jr", "Sr")
+
+        /**
+         * The first sentence end of [text] with a character after it: the index of its first mark and the index after
+         * the white space that follows it; null when there is none yet.
+         */
+        fun firstCut(text: CharSequence): Pair<Int, Int>? {
+            var i = 0
+            while (i < text.length) {
+                if (text[i] in ENDS) {
+                    var j = i
+                    while (j < text.length && text[j] in ENDS) j++
+                    while (j < text.length && text[j] in CLOSERS) j++
+                    var k = j
+                    while (k < text.length && text[k].isWhitespace()) k++
+                    if (k > j && k < text.length && !abbreviationBefore(text, i)) return i to k
+                    i = j
+                } else i++
+            }
+            return null
+        }
+
+        /** Whether the word that the mark at [at] ends is an abbreviation or an initial, whose dot does not end a sentence. */
+        private fun abbreviationBefore(text: CharSequence, at: Int): Boolean {
+            if (text[at] != '.') return false
+            var s = at
+            while (s > 0 && !text[s - 1].isWhitespace()) s--
+            val word = text.substring(s, at)
+            if (word.isEmpty()) return false
+            if (word.length == 1 && word[0].isLetter()) return true
+            if (DOTTED.matches(word)) return true
+            return word.trimStart('(', '"', '\'') in ABBREVIATIONS
+        }
+    }
+}
+
+/**
+ * What the speaker says of the streamed translation, piece by piece: the first piece ends at the first `,` `;` or `:`
+ * (with white space after it) that comes after at least [minWords] words, so the voice starts before the first sentence
+ * is finished, unless a sentence ends before such a mark; every later piece is a whole sentence ([SentenceCutter]).
+ * [sentencesEnded] counts the sentences finished so far (the first one may be said in two pieces).
+ */
+internal class SpeechCutter(private val minWords: Int = MIN_WORDS) {
+    private val sentences = SentenceCutter()
+    /** The text before the first piece is out; null after. */
+    private var head: StringBuilder? = StringBuilder()
+
+    var sentencesEnded = 0
+        private set
+
+    fun add(delta: String): List<String> {
+        val h = head ?: return sentences.add(delta).also { sentencesEnded += it.size }
+        h.append(delta)
+        val sentence = SentenceCutter.firstCut(h)
+        val clause = clauseCut(h)
+        if (clause != null && (sentence == null || clause.first < sentence.first)) {
+            val piece = h.substring(0, clause.first + 1).trim()
+            val rest = h.substring(clause.second)
+            head = null
+            return listOf(piece) + sentences.add(rest).also { sentencesEnded += it.size }
+        }
+        if (sentence == null) return emptyList()
+        head = null
+        return sentences.add(h.toString()).also { sentencesEnded += it.size }
+    }
+
+    fun flush(): List<String> {
+        val h = head
+        if (h != null) {
+            head = null
+            val rest = h.toString().trim()
+            if (rest.isEmpty()) return emptyList()
+            sentencesEnded++
+            return listOf(rest)
+        }
+        return sentences.flush().also { sentencesEnded += it.size }
+    }
+
+    /** The first `,` `;` `:` of [text] with white space after it and at least [minWords] words before it: its index and the index after the white space. */
+    private fun clauseCut(text: CharSequence): Pair<Int, Int>? {
+        var words = 0
+        var inWord = false
+        for (i in text.indices) {
+            val c = text[i]
+            if (c.isLetterOrDigit()) {
+                if (!inWord) { words++; inWord = true }
+                continue
+            }
+            if (c.isWhitespace()) inWord = false
+            if (c in CLAUSE_MARKS && words >= minWords && i + 1 < text.length && text[i + 1].isWhitespace()) {
+                var k = i + 1
+                while (k < text.length && text[k].isWhitespace()) k++
+                return i to k
+            }
+        }
+        return null
+    }
+
+    companion object {
+        /** Words before the first piece's mark (the lane's decision before any number: 4). */
+        const val MIN_WORDS = 4
+        private const val CLAUSE_MARKS = ",;:"
     }
 }
 

@@ -21,7 +21,36 @@ class TranslateUiTest {
     private fun spoken() = TurnRecord(Direction.ES_EN, "mic", hangoverMs = 800, audioMs = 5080.0).apply {
         heard = "Son 23 euros en total."; translation = "A total of 23 euros."; spoken += "A total of 23 euros,"
         transcribeMs = 700.0; translateCreateMs = 0.4; translateFirstTokenMs = 950.0; firstSentenceMs = 1700.0; translateDoneMs = 1720.0
+        firstChunkMs = 1700.0; firstChunk = "A total of 23 euros."
         firstSynthMs = 1950.0; firstAudioMs = 2100.0; tokens = 9; totalMs = 4200.0; rms = 0.0812; voicedMs = 3900
+    }
+
+    @Test fun anEarlyTurnCountsFromTheEarlyCutAndItsFirstPiece() {
+        // Started at the early cut (300 ms of silence), its first piece a clause, its gate opened 510 ms after the cut.
+        val r = TurnRecord(Direction.FR_EN, "mic", hangoverMs = 300, audioMs = 4600.0, early = true, discardedEarly = 0, specMs = 300, cutAtNanos = 1_000_000_000L,
+            gate = Gate.opened(1_510_000_000L)).apply {
+            heard = "Pour aller au musée du Louvre, continuez tout droit."; translation = "To get to the Louvre Museum, continue straight."
+            transcribeMs = 1900.0; firstChunkMs = 2400.0; firstChunk = "To get to the Louvre Museum,"; firstSentenceMs = 2700.0; translateDoneMs = 2750.0
+            firstSynthMs = 2750.0; audioReadyMs = 2750.0; firstAudioMs = 2760.0
+        }
+        assertEquals(510.0, r.gateMs!!, 1e-9)
+        assertEquals(3060.0, r.endOfSpeechToSoundMs!!, 0.0)
+        assertEquals("French speech to English voice in 3.1 s", result(r))
+        assertEquals("(300 ms end of speech + 1.9 s hearing + 500 ms translating + 360 ms voice)", breakdown(r))
+        val line = turnLine(r, "asr:cpu,mt:gpu,tts:cpu", "none", null)
+        for (key in listOf("spec_ms=300", "early=true", "discarded_early=0", "hangover_ms=300", "ms_gate=510", "l1=\"300+2760\"", "ms_end_of_speech_to_sound=3060",
+            "ms_first_chunk=2400", "first_chunk=\"To get to the Louvre Museum,\"", "ms_first_sentence=2700", "ms_audio_ready=2750")) {
+            assertTrue("$key in $line", line.contains(key))
+        }
+    }
+
+    @Test fun theWholeTextIsNotShownBeforeTheGate() {
+        // An early English turn whose translation was done before the utterance was cut: its seconds count to the cut.
+        val r = TurnRecord(Direction.EN_FR, "mic", hangoverMs = 300, audioMs = 3000.0, early = true, specMs = 300, cutAtNanos = 0L, gate = Gate.opened(500_000_000L)).apply {
+            heard = "Thanks."; translation = "Merci."; transcribeMs = 300.0; translateDoneMs = 420.0
+        }
+        assertEquals(800.0, r.endOfSpeechToTextMs!!, 0.0)
+        assertEquals("(300 ms end of speech + 300 ms hearing + 200 ms translating)", breakdown(r))
     }
 
     @Test fun spanishToEnglishCountsToTheFirstSound() {

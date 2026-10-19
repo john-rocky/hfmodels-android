@@ -15,6 +15,9 @@ import io.github.johnrocky.hfmodels.ModelException
 import io.github.johnrocky.hfmodels.ModelRef
 import io.github.johnrocky.hfmodels.NetworkPolicy
 import io.github.johnrocky.hfmodels.samples.translate.Direction
+import io.github.johnrocky.hfmodels.samples.translate.EarlyEndpointer
+import io.github.johnrocky.hfmodels.samples.translate.EarlyTurn
+import io.github.johnrocky.hfmodels.samples.translate.Gate
 import io.github.johnrocky.hfmodels.samples.translate.InputGate
 import io.github.johnrocky.hfmodels.samples.translate.Language
 import io.github.johnrocky.hfmodels.samples.translate.ParakeetGraphTask
@@ -22,16 +25,25 @@ import io.github.johnrocky.hfmodels.samples.translate.TranslateLoop
 import io.github.johnrocky.hfmodels.samples.translate.TranslateLoop.Event
 import io.github.johnrocky.hfmodels.samples.translate.TranslateModels
 import io.github.johnrocky.hfmodels.samples.translate.TurnRecord
+import io.github.johnrocky.hfmodels.samples.translate.TurnStart
 import io.github.johnrocky.hfmodels.samples.translate.Wav
 import io.github.johnrocky.hfmodels.samples.translate.asPlayer
+import io.github.johnrocky.hfmodels.samples.translate.earlyTurnsOf
+import io.github.johnrocky.hfmodels.samples.translate.listen
 import io.github.johnrocky.hfmodels.samples.translate.q
 import io.github.johnrocky.hfmodels.samples.translate.turnLine
 import io.github.johnrocky.hfmodels.samples.translate.utterancesOf
+import io.github.johnrocky.hfmodels.samples.translate.wavChunks
 import io.github.johnrocky.hfmodels.voice.Endpointer
 import io.github.johnrocky.hfmodels.voice.SpeechPlayer
 import java.io.File
 import java.util.Locale
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.atomic.AtomicInteger
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.toList
@@ -49,17 +61,26 @@ import org.junit.runner.RunWith
  * one `RESULT` line per step under `adb logcat -s hfmodels-check`, the transcripts beside the Mac's, and a summary with
  * the median from the end of speech to the first English sound over the Spanish (or French) turns.
  *
+ * The 20 turns start as the app's do, at the early cut ([EarlyEndpointer]: 300 ms of silence after speech), with the
+ * file cut at once: the turn's clock starts at the early cut (`hangover_ms` 300), and its gate opens 500 ms later, when
+ * the endpointer's 800 ms hangover would have ended, so no sound comes before it; the end of speech to the first sound is
+ * `hangover_ms + ms_first_audio` (the TURN line's `l1`). In this form no early turn runs before the standing one:
+ * `discarded_early` counts the early cuts that voice voided in the file. The `pause_resume` step runs the press path
+ * itself ([listen]) on a WAV at the microphone's pace: a sentence with 500 ms of silence inside, so the early turn at the
+ * pause is cancelled when the voice comes back, and the one utterance's turn hears both halves.
+ *
  * The fixtures (not in this repository: the ten sentences read by macOS voices and the failure-path files, 16 kHz mono
  * 16-bit) in `<fixtures>` (default /data/local/tmp/translate): `sentences.tsv` (id, dir, src, ref, sec, checks),
  * `mac_asr_30s.tsv` (the Mac host's transcripts, id<TAB>text), `wav/<id>.wav` for every row, `silence_5s.wav`,
- * `noise_5s.wav`, `long_35s.wav`, and one sentence in the other language: `fr_input.wav` for the Spanish pair (rows
- * es-en / en-es), `es_input.wav` for the French pair (rows fr-en / en-fr). The rows' `dir` gives the pair; the failure
- * paths use its buttons.
+ * `noise_5s.wav`, `long_35s.wav`, one sentence in the other language (`fr_input.wav` for the Spanish pair, rows es-en /
+ * en-es; `es_input.wav` for the French pair, rows fr-en / en-fr), and `pause_resume.wav` with `pause_resume.tsv` (dir,
+ * src with `|` at the pause, the words the transcript must hold, the words the translation must hold: `;` between the
+ * halves, `|` between alternatives). The rows' `dir` gives the pair; the failure paths use its buttons.
  *
  * Steps: load / turn (x20) / nothing_heard_silence / nothing_heard_noise / gate_noise / long_35s / french (both buttons,
  * behaviour recorded; spanish for the French pair) / missing_file (a load of a file the store does not have, offline:
- * the screen's words) / stop (a turn stopped mid-translation, then the next turn) / memory / release, and `RESULT info`
- * lines for the network.
+ * the screen's words) / stop (a turn stopped mid-translation, then the next turn) / pause_resume / memory / release, and
+ * `RESULT info` lines for the network.
  * Arguments: fixtures (dir), rounds (default 2), mt_backend (gpu|cpu; default the app's choice).
  *   ./gradlew :samples:translate:connectedDebugAndroidTest -Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true \
  *     -Pandroid.testInstrumentationRunnerArguments.class=io.github.johnrocky.hfmodels.check.TranslateDeviceCheck
@@ -129,14 +150,31 @@ class TranslateDeviceCheck {
         val p = speaker?.let { SpeechPlayer(it.sampleRate) }.also { onPlayer(it) }
         val t = models.transcriber!!
         val tr = models.translator!!
-        val loop = TranslateLoop({ t.transcribeDetailed(it) }, { text, target, created -> tr.translate(text, target, created) }, speaker, p?.asPlayer())
+        // Every hearing call counted, and the ones a cancel ended (the pause_resume step's early turn).
+        val hearCalls = AtomicInteger()
+        val hearCancelled = AtomicInteger()
+        val loop = TranslateLoop({ pcm ->
+            hearCalls.incrementAndGet()
+            try { t.transcribeDetailed(pcm) } catch (e: CancellationException) { hearCancelled.incrementAndGet(); throw e }
+        }, { text, target, created -> tr.translate(text, target, created) }, speaker, p?.asPlayer())
         val backends = "asr:cpu,mt:${models.mtBackend.lowercase()},tts:${if (speaker != null) "cpu" else "none"}"
-        suspend fun turn(direction: Direction, utterance: FloatArray, input: String): Pair<List<Event>, TurnRecord?> {
-            val events = withTimeout(TURN_TIMEOUT_MS) { loop.turn(direction, utterance, System.nanoTime(), HANGOVER_MS, input).toList() }
+        fun logTurn(r: TurnRecord?) { if (r != null) Log.i(TAG, turnLine(r, backends, TranslateModels.network(ctx), TranslateModels.vmHwmKb())) }
+        // A turn that starts from [cut] as the app's would: at the early cut with its gate opened 500 ms later, or at the
+        // endpointer's cut with the gate open.
+        suspend fun turn(direction: Direction, cut: EarlyTurn, input: String): Pair<List<Event>, TurnRecord?> {
+            val start = System.nanoTime()
+            val gate = if (cut.early) Gate() else Gate.opened(start)
+            val opener = if (cut.early) launch { delay((HANGOVER_MS - EarlyEndpointer.EARLY_MS).toLong()); gate.open() } else null
+            val events = try {
+                withTimeout(TURN_TIMEOUT_MS) { loop.turn(direction, cut.pcm, start, cut.hangoverMs, input, gate, cut.early, cut.voidedEarly, EarlyEndpointer.EARLY_MS).toList() }
+            } finally {
+                opener?.cancel()
+            }
             val r = (events.lastOrNull() as? Event.Done)?.record
-            r?.let { Log.i(TAG, turnLine(it, backends, TranslateModels.network(ctx), TranslateModels.vmHwmKb())) }
+            logTurn(r)
             return events to r
         }
+        fun cutsOf(file: String): List<EarlyTurn> = earlyTurnsOf(Wav.read(File(dir, "wav/$file.wav")).first, EarlyEndpointer(Endpointer(maxUtteranceMs = WINDOW_MS)))
 
         // 2. the ten sentences, [rounds] times
         val rows = File(dir, "sentences.tsv").readLines().drop(1).filter { it.isNotBlank() }.map { it.split('\t') }
@@ -150,24 +188,26 @@ class TranslateDeviceCheck {
         for (round in 1..rounds) for (row in rows) {
             val id = row[0]
             val direction = Direction.of(row[1]) ?: continue
-            val utterance = utterancesOf(Wav.read(File(dir, "wav/$id.wav")).first, Endpointer(maxUtteranceMs = WINDOW_MS)).firstOrNull()
-            if (utterance == null) { step("turn", false, "round=$round id=$id reason=\"the endpointer found no speech\""); continue }
-            val (events, r) = turn(direction, utterance, "file:$id")
+            val cut = cutsOf(id).firstOrNull()
+            if (cut == null) { step("turn", false, "round=$round id=$id reason=\"the endpointer found no speech\""); continue }
+            val (events, r) = turn(direction, cut, "file:$id")
             val ok = r != null && r.heard.isNotEmpty() && r.translation.isNotEmpty() && r.errors.isEmpty() && (!direction.spoken || speaker == null || r.firstAudioMs != null)
             step("turn", ok, "round=$round id=$id dir=${direction.tag} heard=${q(r?.heard.orEmpty())} mac=${q(mac[id].orEmpty())} same_as_mac=${r?.heard == mac[id]} " +
                 "translation=${q(r?.translation.orEmpty())} ref=${q(row.getOrNull(3).orEmpty())} spoken=${q(r?.spoken?.joinToString(" ").orEmpty())} " +
-                "ms_end_of_speech_to_sound=${f(r?.endOfSpeechToSoundMs)} ms_end_of_speech_to_text=${f(r?.endOfSpeechToTextMs)} errors=${events.filterIsInstance<Event.Error>().size}")
+                "early=${r?.early} ms_end_of_speech_to_sound=${f(r?.endOfSpeechToSoundMs)} ms_end_of_speech_to_text=${f(r?.endOfSpeechToTextMs)} errors=${events.filterIsInstance<Event.Error>().size}")
             if (r != null && ok) (if (direction.spoken) spoken else written) += r
         }
         val hwmTurns = TranslateModels.vmHwmKb()
         val toEnglish = language.toEnglish.tag.replace('-', '_')
         val fromEnglish = language.fromEnglish.tag.replace('-', '_')
         Log.i(TAG, "RESULT step=summary ok=true turns=${spoken.size + written.size} ${toEnglish}_turns=${spoken.size} ${fromEnglish}_turns=${written.size} " +
+            "early_turns=${spoken.count { it.early }} spec_ms=${EarlyEndpointer.EARLY_MS} " +
             "l1_median_ms_end_of_speech_to_sound=${f(median(spoken.mapNotNull { it.endOfSpeechToSoundMs }))} " +
             "median_ms_transcribe=${f(median(spoken.mapNotNull { it.transcribeMs }))} median_asr_encode_ms=${f(median(spoken.mapNotNull { it.asr?.encodeMs }))} " +
             "median_asr_decode_ms=${f(median(spoken.mapNotNull { it.asr?.decodeMs }))} median_ms_translate_create=${f1(median(spoken.mapNotNull { it.translateCreateMs }))} " +
-            "median_ms_translate_first_token=${f(median(spoken.mapNotNull { it.translateFirstTokenMs }))} median_ms_first_sentence=${f(median(spoken.mapNotNull { it.firstSentenceMs }))} " +
-            "median_ms_first_synth=${f(median(spoken.mapNotNull { it.firstSynthMs }))} median_ms_first_audio=${f(median(spoken.mapNotNull { it.firstAudioMs }))} " +
+            "median_ms_translate_first_token=${f(median(spoken.mapNotNull { it.translateFirstTokenMs }))} median_ms_first_chunk=${f(median(spoken.mapNotNull { it.firstChunkMs }))} " +
+            "median_ms_first_sentence=${f(median(spoken.mapNotNull { it.firstSentenceMs }))} median_ms_first_synth=${f(median(spoken.mapNotNull { it.firstSynthMs }))} " +
+            "median_ms_gate=${f(median(spoken.mapNotNull { it.gateMs }))} median_ms_first_audio=${f(median(spoken.mapNotNull { it.firstAudioMs }))} " +
             "${fromEnglish}_median_ms_end_of_speech_to_text=${f(median(written.mapNotNull { it.endOfSpeechToTextMs }))} hangover_ms=$HANGOVER_MS mt_backend=${models.mtBackend}")
         step("memory", true, "vmhwm_kb_before_load=$hwmBefore vmhwm_kb_after_load=$hwmLoaded vmhwm_kb_after_turns=$hwmTurns")
 
@@ -178,22 +218,22 @@ class TranslateDeviceCheck {
             step("nothing_heard_${name.substringBefore('_')}", n == 0, "file=$name.wav utterances=$n screen=\"Nothing heard\"")
         }
         val noise = Wav.read(File(dir, "wav/noise_5s.wav")).first
-        val (gateEvents, gateRecord) = turn(language.toEnglish, noise, "file:noise_5s(whole)")
+        val (gateEvents, gateRecord) = turn(language.toEnglish, EarlyTurn(noise, false, HANGOVER_MS, 0), "file:noise_5s(whole)")
         step("gate_noise", gateEvents.any { it is Event.NothingHeard } && gateRecord?.heard.isNullOrEmpty(),
             "reason=${q(gateRecord?.nothingHeard.orEmpty())} rms=${String.format(Locale.US, "%.4f", gateRecord?.rms ?: 0.0)} floor=${InputGate.DEFAULT_FLOOR_RMS}")
 
-        // 4. 35 s of speech: the endpointer cuts it at the 30 s window; each part is a turn.
-        val long = utterancesOf(Wav.read(File(dir, "wav/long_35s.wav")).first, Endpointer(maxUtteranceMs = WINDOW_MS))
+        // 4. 35 s of speech: the endpointer cuts it at the window; each part is a turn.
+        val long = cutsOf("long_35s")
         val parts = long.map { u -> turn(language.toEnglish, u, "file:long_35s").second }
         step("long_35s", long.size >= 2 && parts.all { it != null && it.heard.isNotEmpty() },
-            "utterances=${long.size} seconds=${long.joinToString(",", "[", "]") { String.format(Locale.US, "%.2f", it.size / 16000.0) }} " +
+            "utterances=${long.size} seconds=${long.joinToString(",", "[", "]") { String.format(Locale.US, "%.2f", it.pcm.size / 16000.0) }} early=${long.joinToString(",", "[", "]") { it.early.toString() }} " +
                 "heard=${parts.joinToString(" | ") { q(it?.heard.orEmpty()) }} pieces=${parts.joinToString(",", "[", "]") { (it?.asr?.pieces ?: 0).toString() }} " +
                 "ms_end_of_speech_to_sound=${parts.joinToString(",", "[", "]") { f(it?.endOfSpeechToSoundMs) }}")
 
         // 5. The other language into both buttons (French for the Spanish pair, Spanish for the French pair): what happens
-        // is recorded (parakeet finds the language itself; Hy-MT2 translates what it gets).
+        // is recorded (Hy-MT2 translates what it gets).
         val otherInput = "${other.tag}_input"
-        val foreign = utterancesOf(Wav.read(File(dir, "wav/$otherInput.wav")).first, Endpointer(maxUtteranceMs = WINDOW_MS)).firstOrNull()
+        val foreign = cutsOf(otherInput).firstOrNull()
         for (d in language.directions) {
             val r = foreign?.let { turn(d, it, "file:$otherInput").second }
             step("${other.label.lowercase()}_${d.tag}", r != null, "heard=${q(r?.heard.orEmpty())} translation=${q(r?.translation.orEmpty())} errors=${q(r?.errors?.joinToString(" | ").orEmpty())}")
@@ -205,27 +245,76 @@ class TranslateDeviceCheck {
         val stopId = intoEnglish.getOrElse(2) { intoEnglish.first() }
         val nextId = intoEnglish.first()
         val stopUtterance = utterancesOf(Wav.read(File(dir, "wav/$stopId.wav")).first, Endpointer(maxUtteranceMs = WINDOW_MS)).first()
-        val seen = java.util.concurrent.CopyOnWriteArrayList<Event>()
+        val seen = CopyOnWriteArrayList<Event>()
         val job = launch(Dispatchers.Default) { loop.turn(language.toEnglish, stopUtterance, System.nanoTime(), HANGOVER_MS, "file:$stopId-stop").collect { seen += it } }
         val until = SystemClock.elapsedRealtime() + TURN_TIMEOUT_MS
         while (seen.none { it is Event.Translation } && SystemClock.elapsedRealtime() < until && job.isActive) delay(10)
         val s0 = SystemClock.elapsedRealtime()
         job.cancelAndJoin()
         val stopMs = SystemClock.elapsedRealtime() - s0
-        val (_, after) = turn(language.toEnglish, utterancesOf(Wav.read(File(dir, "wav/$nextId.wav")).first, Endpointer(maxUtteranceMs = WINDOW_MS)).first(), "file:$nextId-after-stop")
+        val (_, after) = turn(language.toEnglish, cutsOf(nextId).first(), "file:$nextId-after-stop")
         step("stop", stopMs < 2_000 && seen.none { it is Event.Done } && after != null && after.translation.isNotEmpty(),
             "stop_ms=$stopMs events_before_stop=${seen.size} next_turn_translation=${q(after?.translation.orEmpty())}")
 
-        // 7. the network, as reported (this check does not switch it), and the pair the rows gave
+        // 7. A pause shorter than the hangover, at the microphone's pace through the press path: the early turn at the pause
+        // is cancelled when the voice comes back, the utterance goes on, and its one turn hears both halves.
+        pauseResume(loop, language, hearCalls, hearCancelled, ::logTurn, step)
+
+        // 8. the network, as reported (this check does not switch it), and the pair the rows gave
         Log.i(TAG, "RESULT info network=$net airplane_mode=$airplane pair=${language.tag}")
 
-        // 8. release
+        // 9. release
         val r0 = SystemClock.elapsedRealtime()
         p?.close(); onPlayer(null)
         models.closeAndJoin()
         val closeMs = SystemClock.elapsedRealtime() - r0
         step("release", closeMs < 10_000, "close_ms=$closeMs")
     }
+
+    private suspend fun kotlinx.coroutines.CoroutineScope.pauseResume(
+        loop: TranslateLoop, language: Language, hearCalls: AtomicInteger, hearCancelled: AtomicInteger,
+        logTurn: (TurnRecord?) -> Unit, step: (String, Boolean, String) -> Unit,
+    ) {
+        val row = File(dir, "pause_resume.tsv").takeIf { it.canRead() }?.readLines()?.drop(1)?.firstOrNull { it.isNotBlank() }?.split('\t')
+        val wav = File(dir, "wav/pause_resume.wav")
+        if (row == null || row.size < 4 || !wav.canRead()) { step("pause_resume", false, "reason=\"no pause_resume.tsv or wav/pause_resume.wav in ${dir.path}\""); return }
+        val direction = Direction.of(row[0]) ?: language.toEnglish
+        val pcm = Wav.read(wav).first
+        val utterances = utterancesOf(pcm, Endpointer(maxUtteranceMs = WINDOW_MS)).size
+        val started = CopyOnWriteArrayList<Pair<TurnStart, Job>>()
+        val done = ConcurrentHashMap<TurnStart, TurnRecord>()
+        val calls0 = hearCalls.get()
+        val cancelled0 = hearCancelled.get()
+        val heard = withTimeout(TURN_TIMEOUT_MS) {
+            listen(wavChunks(pcm, HANGOVER_MS + 200, realTime = true), EarlyEndpointer(Endpointer(maxUtteranceMs = WINDOW_MS)), early = true, input = "file:pause_resume",
+                stopRequested = { false }, noSpeechMs = null, startTurn = { s ->
+                    launch(Dispatchers.Default) {
+                        val e = loop.turn(direction, s.pcm, s.cutNanos, s.hangoverMs, s.input, s.gate, s.early, s.discardedEarly, s.specMs).toList()
+                        (e.lastOrNull() as? Event.Done)?.record?.let { done[s] = it }
+                    }.also { started += s to it }
+                })
+        }
+        withTimeout(TURN_TIMEOUT_MS) { heard.turn?.join() }
+        for ((_, j) in started) j.join()
+        val r = heard.start?.let { done[it] }
+        logTurn(r)
+        val cancelledTurns = started.count { it.second.isCancelled }
+        val heardOk = r != null && hasAll(r.heard, row[2])
+        val translationOk = r != null && hasAll(r.translation, row[3])
+        step("pause_resume", utterances == 1 && heard.discardedEarly == 1 && cancelledTurns == 1 && r != null && r.early && heardOk && translationOk,
+            "dir=${direction.tag} utterances=$utterances turns_started=${started.size} discarded_early=${heard.discardedEarly} cancelled_turns=$cancelledTurns " +
+                "hearing_calls=${hearCalls.get() - calls0} hearing_cancelled=${hearCancelled.get() - cancelled0} early=${r?.early} " +
+                "heard=${q(r?.heard.orEmpty())} heard_has_both=$heardOk translation=${q(r?.translation.orEmpty())} translation_has_both=$translationOk " +
+                "ms_end_of_speech_to_sound=${f(r?.endOfSpeechToSoundMs)} ms_gate=${f(r?.gateMs)}")
+    }
+
+    /** Every `;` group of [keys] has one `|` alternative in [text] (case and accents ignored). */
+    private fun hasAll(text: String, keys: String): Boolean {
+        val t = fold(text)
+        return keys.split(';').map { it.trim() }.filter { it.isNotEmpty() }.all { g -> g.split('|').any { t.contains(fold(it.trim())) } }
+    }
+
+    private fun fold(s: String) = java.text.Normalizer.normalize(s.lowercase(Locale.ROOT), java.text.Normalizer.Form.NFD).replace(Regex("\\p{Mn}+"), "")
 
     /** A load of a file the store does not have, with no network: the SDK's OFFLINE_CACHE_MISS and the app's words for it. */
     private suspend fun missingFile(step: (String, Boolean, String) -> Unit) {

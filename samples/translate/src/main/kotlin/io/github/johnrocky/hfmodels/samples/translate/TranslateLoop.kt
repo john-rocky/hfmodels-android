@@ -34,14 +34,16 @@ fun SpeechPlayer.asPlayer(): Player = object : Player {
 
 /**
  * One utterance through the chain, as [turn]'s events: the input gate ([InputGate]), hearing ([hear]: parakeet),
- * translating ([translate]: Hy-MT2, streamed), and for [Direction.spoken] the English said sentence by sentence while the
- * rest is still being translated: each finished sentence ([SentenceCutter]) is rewritten for the speaker
- * ([EnglishSpeech]), cut into the speaker's chunks (`SentenceSplitter.split`), synthesized on one coroutine and played
- * on another. The loop owns none of the models and not the player.
+ * translating ([translate]: Hy-MT2, streamed), and for [Direction.spoken] the English said piece by piece while the
+ * rest is still being translated: the first piece at the first clause mark after four words ([SpeechCutter]), then each
+ * finished sentence, rewritten for the speaker ([EnglishSpeech]), cut into the speaker's chunks
+ * (`SentenceSplitter.split`), synthesized on one coroutine and played on another. Nothing is played before the turn's
+ * [Gate] opens: a turn that starts at an early cut hears, translates and synthesizes while the endpointer still waits,
+ * and sounds only once the utterance is cut. The loop owns none of the models and not the player.
  *
- * Times are milliseconds from the cut of the utterance (`cutAtNanos`: the endpointer's end, which includes its hangover
- * of silence), as hfmodels-voice counts them; a listener hears the first sound `hangoverMs + firstAudioMs` after they stop
- * talking ([TurnRecord.endOfSpeechToSoundMs]).
+ * Times are milliseconds from the cut the turn started from (`cutAtNanos`: the early cut, or the endpointer's end, which
+ * includes its hangover of silence), as hfmodels-voice counts them; a listener hears the first sound
+ * `hangoverMs + firstAudioMs` after they stop talking ([TurnRecord.endOfSpeechToSoundMs]).
  */
 class TranslateLoop(
     private val hear: suspend (FloatArray) -> ParakeetResult,
@@ -70,12 +72,22 @@ class TranslateLoop(
 
     private val lock = Mutex()
 
-    fun turn(direction: Direction, pcm: FloatArray, cutAtNanos: Long, hangoverMs: Int, input: String): Flow<Event> = channelFlow {
-        lock.withLock { run(direction, pcm, cutAtNanos, hangoverMs, input) }
+    /**
+     * [gate]: opened = may sound at once; closed = the turn started at an early cut and sounds when it opens.
+     * [early], [discardedEarly], [specMs]: what the TURN line says of the early start (whether this turn started at an
+     * early cut, the early turns cancelled before it, the early cut's silence; 0 when the listening had no early cut).
+     */
+    fun turn(
+        direction: Direction, pcm: FloatArray, cutAtNanos: Long, hangoverMs: Int, input: String,
+        gate: Gate = Gate.opened(cutAtNanos), early: Boolean = false, discardedEarly: Int = 0, specMs: Int = 0,
+    ): Flow<Event> = channelFlow {
+        lock.withLock {
+            val r = TurnRecord(direction, input, hangoverMs, pcm.size * 1000.0 / ParakeetFrontEnd.RATE, early, discardedEarly, specMs, cutAtNanos, gate)
+            run(direction, pcm, cutAtNanos, r)
+        }
     }
 
-    private suspend fun ProducerScope<Event>.run(direction: Direction, pcm: FloatArray, t0: Long, hangoverMs: Int, input: String) {
-        val r = TurnRecord(direction = direction, input = input, hangoverMs = hangoverMs, audioMs = pcm.size * 1000.0 / ParakeetFrontEnd.RATE)
+    private suspend fun ProducerScope<Event>.run(direction: Direction, pcm: FloatArray, t0: Long, r: TurnRecord) {
         try {
             steps(direction, pcm, t0, r)
         } catch (e: CancellationException) {
@@ -90,12 +102,12 @@ class TranslateLoop(
     /** The turn up to its end; returns early when nothing was heard or hearing failed ([run] sends Done either way). */
     private suspend fun ProducerScope<Event>.steps(direction: Direction, pcm: FloatArray, t0: Long, r: TurnRecord) {
         fun since(at: Long) = (at - t0) / 1e6
-        val gate = InputGate.check(pcm, ParakeetFrontEnd.RATE, config.startRms, config.floorRms)
-        r.rms = gate.rms
-        r.voicedMs = gate.voicedMs
-        if (!gate.heard) {
-            r.nothingHeard = gate.reason
-            send(Event.NothingHeard(gate.reason))
+        val level = InputGate.check(pcm, ParakeetFrontEnd.RATE, config.startRms, config.floorRms)
+        r.rms = level.rms
+        r.voicedMs = level.voicedMs
+        if (!level.heard) {
+            r.nothingHeard = level.reason
+            send(Event.NothingHeard(level.reason))
             return
         }
         val heard = try {
@@ -116,18 +128,23 @@ class TranslateLoop(
             return
         }
         val speech = if (direction.spoken && speaker != null) Speech(this, t0, r) else null
-        val cutter = SentenceCutter()
+        val cutter = SpeechCutter()
         val text = StringBuilder()
+        fun sentenceEnded() { if (r.firstSentenceMs == null && cutter.sentencesEnded > 0) r.firstSentenceMs = since(System.nanoTime()) }
         try {
             translate(r.heard, direction.target) { ms -> r.translateCreateMs = ms }.collect { delta ->
                 if (r.translateFirstTokenMs == null) r.translateFirstTokenMs = since(System.nanoTime())
                 r.tokens++
                 text.append(delta)
                 send(Event.Translation(text.toString().trim()))
-                speech?.say(cutter.add(delta))
+                val pieces = cutter.add(delta)
+                sentenceEnded()
+                speech?.say(pieces)
             }
             r.translateDoneMs = since(System.nanoTime())
-            speech?.say(cutter.flush())
+            val rest = cutter.flush()
+            sentenceEnded()
+            speech?.say(rest)
         } catch (e: ModelException) {
             r.translateDoneMs = since(System.nanoTime())
             r.errors += "translating: ${e.code}: ${e.reason}"
@@ -138,9 +155,9 @@ class TranslateLoop(
     }
 
     /**
-     * The English of one turn, said: sentences in, synthesized in order on one coroutine and, with a player, played on
-     * another, so the next sentence is synthesized while one plays. A chunk with nothing to say (INVALID_INPUT) is
-     * skipped; any other speaker or player failure ends the turn's speech (the text is still shown).
+     * The English of one turn, said: pieces in, synthesized in order on one coroutine and, with a player, played on
+     * another once the turn's gate is open, so the next piece is synthesized while one plays. A chunk with nothing to say
+     * (INVALID_INPUT) is skipped; any other speaker or player failure ends the turn's speech (the text is still shown).
      */
     private inner class Speech(private val scope: ProducerScope<Event>, private val t0: Long, private val r: TurnRecord) {
         private val chunks = Channel<String>(Channel.UNLIMITED)
@@ -163,10 +180,14 @@ class TranslateLoop(
                 }
                 val done = System.nanoTime()
                 val first = r.firstSynthMs == null
-                if (first) r.firstSynthMs = since(done)
+                if (first) { r.firstSynthMs = since(done); r.audioReadyMs = r.firstSynthMs }
                 r.spoken += c
                 if (player != null) audio.send(a.samples) else if (config.keepAudio) r.playedAudio += a.samples
-                val firstAudioMs = if (!first) null else if (player == null) since(done) else awaitFirstWrite()?.let(::since)
+                val firstAudioMs = when {
+                    !first -> null
+                    player == null -> { r.gate.await(); since(maxOf(done, System.nanoTime())) }
+                    else -> { r.gate.await(); awaitFirstWrite()?.let(::since) }
+                }
                 scope.send(Event.Speaking(c, a.timing.totalMs, firstAudioMs))
             }
             audio.close()
@@ -176,6 +197,8 @@ class TranslateLoop(
             scope.launch {
                 for (pcm in audio) {
                     if (failed) continue
+                    // The first sound waits for the cut of the utterance (an early turn's gate is closed until then).
+                    r.gate.await()
                     try {
                         if (config.keepAudio) { r.playedAudio += pcm; r.playedAtNanos += System.nanoTime() }
                         p.play(pcm)
@@ -190,19 +213,19 @@ class TranslateLoop(
             }
         }
 
-        /** The player is idle when the first chunk comes, so its first write starts within milliseconds. */
+        /** The player is idle when the first chunk comes, so its first write starts within milliseconds of the gate. */
         private suspend fun awaitFirstWrite(): Long? = withTimeoutOrNull(FIRST_WRITE_WAIT_MS) {
             var at = player!!.firstWriteAtNanos
             while (at < t0 && !failed) { delay(1); at = player.firstWriteAtNanos }
             at.takeIf { it >= t0 }
         }
 
-        /** Finished sentences of the translation: rewritten for the speaker and cut into its chunks. */
-        fun say(sentences: List<String>) {
-            for (s in sentences) {
-                if (r.firstSentenceMs == null) r.firstSentenceMs = since(System.nanoTime())
+        /** Pieces of the translation: rewritten for the speaker and cut into its chunks. */
+        fun say(pieces: List<String>) {
+            for (s in pieces) {
                 val spoken = EnglishSpeech.rewrite(s)
                 if (spoken.isBlank()) continue
+                if (r.firstChunkMs == null) { r.firstChunkMs = since(System.nanoTime()); r.firstChunk = s }
                 for (c in SentenceSplitter.split(spoken, speaker!!.maxChars)) chunks.trySend(c)
             }
         }
@@ -215,7 +238,7 @@ class TranslateLoop(
                 player.drain()
                 r.firstAudioMs = player.firstWriteAtNanos.takeIf { it >= t0 }?.let(::since)
             } else if (player == null) {
-                r.firstAudioMs = r.firstSynthMs
+                r.firstAudioMs = r.firstSynthMs?.let { s -> r.gate.await(); maxOf(s, r.gateMs ?: 0.0) }
             }
         }
     }
@@ -227,13 +250,21 @@ class TranslateLoop(
 
 /**
  * One turn's record: the TURN log line, the screen's seconds, and a recording's English track. Milliseconds count from
- * the cut of the utterance; null = did not happen.
+ * the cut the turn started from ([cutAtNanos]); null = did not happen.
  */
 class TurnRecord(
     val direction: Direction,
     val input: String,
     val hangoverMs: Int,
     val audioMs: Double,
+    /** The turn started at an early cut ([EarlyEndpointer]), [hangoverMs] of silence after speech. */
+    val early: Boolean = false,
+    /** Early turns cancelled before this one in the same press (voice came back before the hangover ended). */
+    val discardedEarly: Int = 0,
+    /** The listening's early cut (300 ms), 0 when it had none. */
+    val specMs: Int = 0,
+    val cutAtNanos: Long = 0L,
+    val gate: Gate = Gate.opened(cutAtNanos),
 ) {
     var heard: String = ""
     var translation: String = ""
@@ -252,13 +283,21 @@ class TurnRecord(
     var translateDoneMs: Double? = null
     var tokens: Int = 0
     var firstSentenceMs: Double? = null
+    /** The first piece the speaker got and when (a clause, or the first sentence when it ended first). */
+    var firstChunkMs: Double? = null
+    var firstChunk: String = ""
     var firstSynthMs: Double? = null
+    /** The first chunk's audio ready to play, before the gate. */
+    var audioReadyMs: Double? = null
     var firstAudioMs: Double? = null
     var totalMs: Double = 0.0
 
-    /** From the end of speech to the first English sound: the endpointer's hangover plus [firstAudioMs]. */
+    /** When the gate opened (the turn may sound), or null while closed. */
+    val gateMs: Double? get() = gate.openedAtNanos.takeIf { gate.isOpen }?.let { maxOf(0.0, (it - cutAtNanos) / 1e6) }
+
+    /** From the end of speech to the first English sound: the silence at the cut plus [firstAudioMs]. */
     val endOfSpeechToSoundMs: Double? get() = firstAudioMs?.let { it + hangoverMs }
 
-    /** From the end of speech to the whole translation on the screen. */
-    val endOfSpeechToTextMs: Double? get() = translateDoneMs?.let { it + hangoverMs }
+    /** From the end of speech to the whole translation on the screen (not before the gate: the screen shows the turn then). */
+    val endOfSpeechToTextMs: Double? get() = translateDoneMs?.let { maxOf(it, gateMs ?: 0.0) + hangoverMs }
 }

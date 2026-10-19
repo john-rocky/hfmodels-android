@@ -162,6 +162,51 @@ class TranslateLoopTest {
         assertEquals("No sound", result(r))
     }
 
+    @Test fun anEarlyTurnMakesNoSoundBeforeItsGateOpens() = runBlocking {
+        val player = FakePlayer()
+        val loop = TranslateLoop(heard("Hola."), streamed("Hello", " there."), FakeSpeaker(), player)
+        val gate = Gate()
+        val t0 = System.nanoTime()
+        val opener = launch(Dispatchers.Default) { delay(300); gate.open() }
+        val r = (loop.turn(Direction.ES_EN, voice, t0, 300, "mic", gate, early = true, discardedEarly = 1, specMs = 300).toList().last() as Event.Done).record
+        opener.join()
+        // Heard, translated and synthesized long before the gate; the first write only after it.
+        assertTrue("audio ready at ${r.audioReadyMs}", r.audioReadyMs!! < 250.0)
+        assertTrue(player.firstWriteAtNanos >= gate.openedAtNanos)
+        assertTrue("gate at ${r.gateMs}", r.gateMs!! >= 299.0)
+        assertTrue("first audio at ${r.firstAudioMs}", r.firstAudioMs!! >= r.gateMs!!)
+        assertEquals(r.firstAudioMs!! + 300, r.endOfSpeechToSoundMs!!, 0.0)
+        val line = turnLine(r, "asr:cpu,mt:gpu,tts:cpu", "none", null)
+        for (key in listOf("spec_ms=300", "early=true", "discarded_early=1", "hangover_ms=300", "l1=\"300+", "ms_gate=", "ms_audio_ready=")) assertTrue("$key in $line", line.contains(key))
+    }
+
+    @Test fun theFirstPieceSaidIsAClauseAfterFourWords() = runBlocking {
+        val speaker = FakeSpeaker()
+        val loop = TranslateLoop(heard("Pour aller au musée du Louvre, continuez tout droit."), streamed("To get to the Louvre", " Museum,", " continue straight", " for two blocks,", " then turn right."), speaker, FakePlayer())
+        val r = (loop.turn(Direction.FR_EN, voice, System.nanoTime(), 800, "file").toList().last() as Event.Done).record
+        assertEquals(listOf("To get to the Louvre Museum,", "continue straight for two blocks, then turn right,"), speaker.said)
+        assertEquals("To get to the Louvre Museum,", r.firstChunk)
+        // The first piece went to the speaker before the first sentence was finished.
+        assertTrue("${r.firstChunkMs} < ${r.firstSentenceMs}", r.firstChunkMs!! < r.firstSentenceMs!!)
+        val line = turnLine(r, "asr:cpu,mt:gpu,tts:cpu", "none", null)
+        assertTrue(line, line.contains("first_chunk=\"To get to the Louvre Museum,\"") && line.contains("ms_first_chunk=") && line.contains("ms_first_sentence="))
+    }
+
+    @Test fun anEarlyTurnStoppedBeforeItsGateNeverSounds() = runBlocking {
+        val player = FakePlayer()
+        val loop = TranslateLoop(heard("Hola."), streamed("Hello."), FakeSpeaker(), player)
+        val events = java.util.concurrent.CopyOnWriteArrayList<Event>()
+        val job = launch(Dispatchers.Default) { loop.turn(Direction.ES_EN, voice, System.nanoTime(), 300, "mic", Gate(), early = true, specMs = 300).collect { events += it } }
+        // The translation is in and its first chunk synthesized; the turn waits at the gate.
+        while (events.none { it is Event.Translation } && job.isActive) delay(5)
+        delay(100)
+        assertTrue(job.isActive)
+        job.cancelAndJoin()
+        assertTrue(player.played.isEmpty())
+        assertTrue(player.stopped)
+        assertFalse(events.any { it is Event.Done })
+    }
+
     @Test fun stoppingATurnStopsTheSound() = runBlocking {
         val player = FakePlayer()
         val endless: (String, String, (Double) -> Unit) -> Flow<String> = { _, _, created -> flow { created(0.1); emit("Hello there. And"); awaitCancellation() } }
