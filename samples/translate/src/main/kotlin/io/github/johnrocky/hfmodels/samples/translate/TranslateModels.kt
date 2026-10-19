@@ -91,16 +91,18 @@ class TranslateModels(private val context: Context) {
                 else -> if (remembered != null) { gpuCheck = "skipped (failed before on this phone: $remembered)"; false } else true
             }
             var chat: ChatModel? = null
+            // Every write of the GPU marks is commit(), not apply(): the process can end right after (a stop after a failed
+            // load), and the next start reads the marks.
             if (tryGpu) {
                 prefs().edit().putString(PREF_GPU_ATTEMPT, key).commit()
                 chat = try {
                     load("Translation", mtModels, Tasks.Chat, ref, LoadOptions(backendPolicy = BackendPolicy.Require(BackendKind.GPU), networkPolicy = network), onStatus)
                 } catch (e: Failure) {
-                    prefs().edit().remove(PREF_GPU_ATTEMPT).apply()
+                    prefs().edit().remove(PREF_GPU_ATTEMPT).commit()
                     if (mtPreference == BackendKind.GPU) throw e
                     gpuCheck = "fail (load: ${e.reason.take(120)})"
                     // Not remembered when the file is missing: that is not the GPU's failure.
-                    if (e.code == ErrorCode.INITIALIZATION_FAILED) prefs().edit().putString(PREF_GPU_FAILED, "$key\tload: ${e.reason.take(120)}").apply()
+                    if (e.code == ErrorCode.INITIALIZATION_FAILED) prefs().edit().putString(PREF_GPU_FAILED, "$key\tload: ${e.reason.take(120)}").commit()
                     null
                 }
                 if (chat != null) {
@@ -108,13 +110,13 @@ class TranslateModels(private val context: Context) {
                     val why = try {
                         OutputCheck.verdict(OutputCheck.PROBES.map { Translator(chat!!).translateAll(it.spanish, "English") })
                     } catch (e: ModelException) { "${e.code}: ${e.reason}" }
-                    prefs().edit().remove(PREF_GPU_ATTEMPT).apply()
+                    prefs().edit().remove(PREF_GPU_ATTEMPT).commit()
                     if (why == null) {
                         gpuCheck = "pass"
-                        prefs().edit().remove(PREF_GPU_FAILED).apply()
+                        prefs().edit().remove(PREF_GPU_FAILED).commit()
                     } else {
                         gpuCheck = "fail ($why)"
-                        prefs().edit().putString(PREF_GPU_FAILED, "$key\t$why").apply()
+                        prefs().edit().putString(PREF_GPU_FAILED, "$key\t$why").commit()
                         withContext(NonCancellable) { chat!!.closeAndJoin() }
                         chat = null
                         if (mtPreference == BackendKind.GPU) throw Failure("Translation", null, "the GPU's output check failed: $why")
