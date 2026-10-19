@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- The two microphone buttons (granted at run time). -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- The network line on the screen and in the TURN log (none in airplane mode); the SDK declares INTERNET for the
+         first download of the model files. -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <application
+        android:label="@string/app_name"
+        android:allowBackup="false"
+        android:largeHeap="true"
+        android:theme="@android:style/Theme.Material.NoActionBar">
+        <!-- singleTop: `adb shell am start` with new extras reaches the running screen (onNewIntent). -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
