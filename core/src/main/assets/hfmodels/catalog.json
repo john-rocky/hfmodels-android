@@ -3,7 +3,7 @@
   "catalog_id": "hfmodels-bundled",
   "origin": {
     "repo": "john-rocky/hfmodels-android",
-    "commit": "cc7813f4571cd8cdfa97ea16be77c8842c5e42e6"
+    "commit": "5e221fcfbd74453f7588fa3578ef8c0845aa5f75"
   },
   "entries": [
     {
@@ -1311,6 +1311,101 @@
               "languages": [
                 "en"
               ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "litert-community/Hy-MT2-1.8B",
+      "model_commit": "0d2c5681276f71b61c4f2a14fbb9791341b28017",
+      "path": "catalog/entries/litert-community__Hy-MT2-1.8B.json",
+      "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json (cpu and gpu, cpu the default; gpu recommended for Android flagships). A translation model, not open chat: one conversation per message with the card's prompt, 'Translate the following text into <language>. Note that you should **only output the translated result without any additional explanation**:' then an empty line and the text, as the user message (no system instruction). A second message in the same conversation fails (the template's else branch, LiteRT-LM #3166): measured on litert-lm-api 0.16.1 and 0.17.1 on a Mac CPU on 2026-10-19, and by the card on 0.17.1 and 0.18.0. The file is the 2026-10-06 GPU graph rewrite with the signature input param_tensor; on 2026-10-19 litert-lm-api 0.16.1 (the SDK's pin) and 0.17.1 translated the same ten sentences on a Mac CPU with greedy sampling, near-identical. runtime_range is the one version this file ran on that the SDK links (0.17.0 was not run; 0.17.1 is outside the SDK's pin). No device has run the gpu profile on 0.16.x: the card's GPU numbers come from LiteRT-LM main builds of 2026-09-18 and adac974b, so the default profile is cpu and gpu loads only when asked for.",
+      "descriptor": {
+        "schema_version": 1,
+        "model_id": "litert-community/Hy-MT2-1.8B",
+        "tasks": [
+          "chat"
+        ],
+        "default_variant": "int8",
+        "license": {
+          "id": "apache-2.0"
+        },
+        "variants": [
+          {
+            "id": "int8",
+            "runtime": "litert_lm",
+            "handler": {
+              "id": "litertlm.conversation",
+              "abi": 1
+            },
+            "runtime_range": {
+              "min_inclusive": "0.16.1",
+              "max_exclusive": "0.16.2"
+            },
+            "inputs": [
+              "text"
+            ],
+            "files": [
+              {
+                "id": "weights",
+                "role": "model",
+                "path": "Hy-MT2-1.8B_int8.litertlm",
+                "bytes": 1827026224,
+                "sha256": "275ff52bf04c4d577e1bf48733daa77d873d78b0637841574d7a10e1560a011a"
+              }
+            ],
+            "default_profile": "cpu",
+            "profiles": [
+              {
+                "id": "gpu",
+                "priority": 100,
+                "files": [
+                  "weights"
+                ],
+                "enabled_inputs": [
+                  "text"
+                ],
+                "components": {
+                  "language": "gpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [
+                  "cpu"
+                ],
+                "default_selectable": true
+              },
+              {
+                "id": "cpu",
+                "priority": 50,
+                "files": [
+                  "weights"
+                ],
+                "enabled_inputs": [
+                  "text"
+                ],
+                "components": {
+                  "language": "cpu"
+                },
+                "requirements": {
+                  "min_android_api": 31,
+                  "abis": [
+                    "arm64-v8a"
+                  ]
+                },
+                "fallback_profiles": [],
+                "default_selectable": true
+              }
+            ],
+            "handler_config": {
+              "metadata_source": "litertlm_manifest",
+              "context_tokens": 4096,
+              "manifest_min_runtime_version": null
             }
           }
         ]
