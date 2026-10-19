@@ -16,6 +16,7 @@ import io.github.johnrocky.hfmodels.ModelRef
 import io.github.johnrocky.hfmodels.NetworkPolicy
 import io.github.johnrocky.hfmodels.samples.translate.Direction
 import io.github.johnrocky.hfmodels.samples.translate.InputGate
+import io.github.johnrocky.hfmodels.samples.translate.Language
 import io.github.johnrocky.hfmodels.samples.translate.ParakeetGraphTask
 import io.github.johnrocky.hfmodels.samples.translate.TranslateLoop
 import io.github.johnrocky.hfmodels.samples.translate.TranslateLoop.Event
@@ -46,16 +47,19 @@ import org.junit.runner.RunWith
  * are imported; offline when the phone has no network), the ten fixed sentences go through the endpointer and the turn
  * as a microphone's would (the direction from `sentences.tsv`), twice (20 turns), and the failure paths run. It prints
  * one `RESULT` line per step under `adb logcat -s hfmodels-check`, the transcripts beside the Mac's, and a summary with
- * the median from the end of speech to the first English sound over the Spanish turns.
+ * the median from the end of speech to the first English sound over the Spanish (or French) turns.
  *
  * The fixtures (not in this repository: the ten sentences read by macOS voices and the failure-path files, 16 kHz mono
  * 16-bit) in `<fixtures>` (default /data/local/tmp/translate): `sentences.tsv` (id, dir, src, ref, sec, checks),
- * `mac_asr_30s.tsv` (the Mac host's transcripts, id<TAB>text), `wav/e01.wav … n05.wav`, `silence_5s.wav`, `noise_5s.wav`,
- * `long_35s.wav`, `fr_input.wav`.
+ * `mac_asr_30s.tsv` (the Mac host's transcripts, id<TAB>text), `wav/<id>.wav` for every row, `silence_5s.wav`,
+ * `noise_5s.wav`, `long_35s.wav`, and one sentence in the other language: `fr_input.wav` for the Spanish pair (rows
+ * es-en / en-es), `es_input.wav` for the French pair (rows fr-en / en-fr). The rows' `dir` gives the pair; the failure
+ * paths use its buttons.
  *
  * Steps: load / turn (x20) / nothing_heard_silence / nothing_heard_noise / gate_noise / long_35s / french (both buttons,
- * behaviour recorded) / missing_file (a load of a file the store does not have, offline: the screen's words) /
- * stop (a turn stopped mid-translation, then the next turn) / memory / release, and `RESULT info` lines for the network.
+ * behaviour recorded; spanish for the French pair) / missing_file (a load of a file the store does not have, offline:
+ * the screen's words) / stop (a turn stopped mid-translation, then the next turn) / memory / release, and `RESULT info`
+ * lines for the network.
  * Arguments: fixtures (dir), rounds (default 2), mt_backend (gpu|cpu; default the app's choice).
  *   ./gradlew :samples:translate:connectedDebugAndroidTest -Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true \
  *     -Pandroid.testInstrumentationRunnerArguments.class=io.github.johnrocky.hfmodels.check.TranslateDeviceCheck
@@ -136,6 +140,9 @@ class TranslateDeviceCheck {
 
         // 2. the ten sentences, [rounds] times
         val rows = File(dir, "sentences.tsv").readLines().drop(1).filter { it.isNotBlank() }.map { it.split('\t') }
+        // The pair of the rows (Spanish: es-en / en-es, French: fr-en / en-fr): the failure paths use its buttons.
+        val language = rows.firstNotNullOfOrNull { Direction.of(it[1])?.language } ?: Language.DEFAULT
+        val other = Language.entries.first { it != language }
         val mac = File(dir, "mac_asr_30s.tsv").takeIf { it.canRead() }?.readLines()?.filter { it.isNotBlank() }?.associate { it.substringBefore('\t') to it.substringAfter('\t') }.orEmpty()
         val hwmLoaded = TranslateModels.vmHwmKb()
         val spoken = ArrayList<TurnRecord>()
@@ -153,13 +160,15 @@ class TranslateDeviceCheck {
             if (r != null && ok) (if (direction.spoken) spoken else written) += r
         }
         val hwmTurns = TranslateModels.vmHwmKb()
-        Log.i(TAG, "RESULT step=summary ok=true turns=${spoken.size + written.size} es_en_turns=${spoken.size} en_es_turns=${written.size} " +
+        val toEnglish = language.toEnglish.tag.replace('-', '_')
+        val fromEnglish = language.fromEnglish.tag.replace('-', '_')
+        Log.i(TAG, "RESULT step=summary ok=true turns=${spoken.size + written.size} ${toEnglish}_turns=${spoken.size} ${fromEnglish}_turns=${written.size} " +
             "l1_median_ms_end_of_speech_to_sound=${f(median(spoken.mapNotNull { it.endOfSpeechToSoundMs }))} " +
             "median_ms_transcribe=${f(median(spoken.mapNotNull { it.transcribeMs }))} median_asr_encode_ms=${f(median(spoken.mapNotNull { it.asr?.encodeMs }))} " +
             "median_asr_decode_ms=${f(median(spoken.mapNotNull { it.asr?.decodeMs }))} median_ms_translate_create=${f1(median(spoken.mapNotNull { it.translateCreateMs }))} " +
             "median_ms_translate_first_token=${f(median(spoken.mapNotNull { it.translateFirstTokenMs }))} median_ms_first_sentence=${f(median(spoken.mapNotNull { it.firstSentenceMs }))} " +
             "median_ms_first_synth=${f(median(spoken.mapNotNull { it.firstSynthMs }))} median_ms_first_audio=${f(median(spoken.mapNotNull { it.firstAudioMs }))} " +
-            "en_es_median_ms_end_of_speech_to_text=${f(median(written.mapNotNull { it.endOfSpeechToTextMs }))} hangover_ms=$HANGOVER_MS mt_backend=${models.mtBackend}")
+            "${fromEnglish}_median_ms_end_of_speech_to_text=${f(median(written.mapNotNull { it.endOfSpeechToTextMs }))} hangover_ms=$HANGOVER_MS mt_backend=${models.mtBackend}")
         step("memory", true, "vmhwm_kb_before_load=$hwmBefore vmhwm_kb_after_load=$hwmLoaded vmhwm_kb_after_turns=$hwmTurns")
 
         // 3. nothing to hear: the endpointer cuts nothing from silence or quiet noise; the gate refuses the noise as an utterance.
@@ -169,40 +178,46 @@ class TranslateDeviceCheck {
             step("nothing_heard_${name.substringBefore('_')}", n == 0, "file=$name.wav utterances=$n screen=\"Nothing heard\"")
         }
         val noise = Wav.read(File(dir, "wav/noise_5s.wav")).first
-        val (gateEvents, gateRecord) = turn(Direction.ES_EN, noise, "file:noise_5s(whole)")
+        val (gateEvents, gateRecord) = turn(language.toEnglish, noise, "file:noise_5s(whole)")
         step("gate_noise", gateEvents.any { it is Event.NothingHeard } && gateRecord?.heard.isNullOrEmpty(),
             "reason=${q(gateRecord?.nothingHeard.orEmpty())} rms=${String.format(Locale.US, "%.4f", gateRecord?.rms ?: 0.0)} floor=${InputGate.DEFAULT_FLOOR_RMS}")
 
         // 4. 35 s of speech: the endpointer cuts it at the 30 s window; each part is a turn.
         val long = utterancesOf(Wav.read(File(dir, "wav/long_35s.wav")).first, Endpointer(maxUtteranceMs = WINDOW_MS))
-        val parts = long.map { u -> turn(Direction.ES_EN, u, "file:long_35s").second }
+        val parts = long.map { u -> turn(language.toEnglish, u, "file:long_35s").second }
         step("long_35s", long.size >= 2 && parts.all { it != null && it.heard.isNotEmpty() },
             "utterances=${long.size} seconds=${long.joinToString(",", "[", "]") { String.format(Locale.US, "%.2f", it.size / 16000.0) }} " +
                 "heard=${parts.joinToString(" | ") { q(it?.heard.orEmpty()) }} pieces=${parts.joinToString(",", "[", "]") { (it?.asr?.pieces ?: 0).toString() }} " +
                 "ms_end_of_speech_to_sound=${parts.joinToString(",", "[", "]") { f(it?.endOfSpeechToSoundMs) }}")
 
-        // 5. French into both buttons: what happens is recorded (parakeet finds the language itself; Hy-MT2 translates what it gets).
-        val french = utterancesOf(Wav.read(File(dir, "wav/fr_input.wav")).first, Endpointer(maxUtteranceMs = WINDOW_MS)).firstOrNull()
-        for (d in Direction.entries) {
-            val r = french?.let { turn(d, it, "file:fr_input").second }
-            step("french_${d.tag}", r != null, "heard=${q(r?.heard.orEmpty())} translation=${q(r?.translation.orEmpty())} errors=${q(r?.errors?.joinToString(" | ").orEmpty())}")
+        // 5. The other language into both buttons (French for the Spanish pair, Spanish for the French pair): what happens
+        // is recorded (parakeet finds the language itself; Hy-MT2 translates what it gets).
+        val otherInput = "${other.tag}_input"
+        val foreign = utterancesOf(Wav.read(File(dir, "wav/$otherInput.wav")).first, Endpointer(maxUtteranceMs = WINDOW_MS)).firstOrNull()
+        for (d in language.directions) {
+            val r = foreign?.let { turn(d, it, "file:$otherInput").second }
+            step("${other.label.lowercase()}_${d.tag}", r != null, "heard=${q(r?.heard.orEmpty())} translation=${q(r?.translation.orEmpty())} errors=${q(r?.errors?.joinToString(" | ").orEmpty())}")
         }
 
-        // 6. Stop in the middle of a Spanish turn (as the button does), then the next turn.
-        val e03 = utterancesOf(Wav.read(File(dir, "wav/e03.wav")).first, Endpointer(maxUtteranceMs = WINDOW_MS)).first()
+        // 6. Stop in the middle of a turn into English (as the button does), then the next turn: the pair's third and first
+        // sentences into English (e03 and e01 for the Spanish pair).
+        val intoEnglish = rows.filter { Direction.of(it[1]) == language.toEnglish }.map { it[0] }
+        val stopId = intoEnglish.getOrElse(2) { intoEnglish.first() }
+        val nextId = intoEnglish.first()
+        val stopUtterance = utterancesOf(Wav.read(File(dir, "wav/$stopId.wav")).first, Endpointer(maxUtteranceMs = WINDOW_MS)).first()
         val seen = java.util.concurrent.CopyOnWriteArrayList<Event>()
-        val job = launch(Dispatchers.Default) { loop.turn(Direction.ES_EN, e03, System.nanoTime(), HANGOVER_MS, "file:e03-stop").collect { seen += it } }
+        val job = launch(Dispatchers.Default) { loop.turn(language.toEnglish, stopUtterance, System.nanoTime(), HANGOVER_MS, "file:$stopId-stop").collect { seen += it } }
         val until = SystemClock.elapsedRealtime() + TURN_TIMEOUT_MS
         while (seen.none { it is Event.Translation } && SystemClock.elapsedRealtime() < until && job.isActive) delay(10)
         val s0 = SystemClock.elapsedRealtime()
         job.cancelAndJoin()
         val stopMs = SystemClock.elapsedRealtime() - s0
-        val (_, after) = turn(Direction.ES_EN, utterancesOf(Wav.read(File(dir, "wav/e01.wav")).first, Endpointer(maxUtteranceMs = WINDOW_MS)).first(), "file:e01-after-stop")
+        val (_, after) = turn(language.toEnglish, utterancesOf(Wav.read(File(dir, "wav/$nextId.wav")).first, Endpointer(maxUtteranceMs = WINDOW_MS)).first(), "file:$nextId-after-stop")
         step("stop", stopMs < 2_000 && seen.none { it is Event.Done } && after != null && after.translation.isNotEmpty(),
             "stop_ms=$stopMs events_before_stop=${seen.size} next_turn_translation=${q(after?.translation.orEmpty())}")
 
-        // 7. the network, as reported (this check does not switch it)
-        Log.i(TAG, "RESULT info network=$net airplane_mode=$airplane")
+        // 7. the network, as reported (this check does not switch it), and the pair the rows gave
+        Log.i(TAG, "RESULT info network=$net airplane_mode=$airplane pair=${language.tag}")
 
         // 8. release
         val r0 = SystemClock.elapsedRealtime()

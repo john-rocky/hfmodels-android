@@ -6,7 +6,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** The prompt, the seconds as the screen writes them, the TURN line, the output check. */
+/** The prompt, the seconds as the screen writes them, the TURN line, the output check, the two pairs and the language choice. */
 class TranslateUiTest {
     @Test fun thePromptIsTheCardsWordForWord() {
         // litert-community/Hy-MT2-1.8B's card, "Usage" (lines 95-97 at 0d2c5681), with its Japanese example.
@@ -85,6 +85,72 @@ class TranslateUiTest {
         assertEquals("parakeet-tdt-0.6b-v3 · CPU · loaded in 2.1 s", ModelLine("parakeet-tdt-0.6b-v3", "CPU", 2140.0).text)
         assertEquals("Kitten TTS nano 0.8 · not loaded · OFFLINE", ModelLine("Kitten TTS nano 0.8", "not loaded", null, "OFFLINE").text)
         assertEquals(Direction.ES_EN, Direction.of("es-en"))
-        assertNull(Direction.of("fr-en"))
+        assertNull(Direction.of("de-en"))
+        assertEquals(Direction.FR_EN, Direction.of("fr-en"))
+    }
+
+    @Test fun theFrenchPromptIsTheCardsFormWithFrench() {
+        // The card's prompt with the source card's English name of the language (tencent/Hy-MT2-1.8B, "Supported Languages").
+        assertEquals("Translate the following text into French. Note that you should **only output the translated result without any additional explanation**:\n\nHello.",
+            translationPrompt("Hello.", Direction.EN_FR.target))
+        assertEquals("Translate the following text into English. Note that you should **only output the translated result without any additional explanation**:\n\nBonjour.",
+            translationPrompt("Bonjour.", Direction.FR_EN.target))
+        // The Spanish pair's two prompts, byte for byte.
+        assertEquals("Translate the following text into Spanish. Note that you should **only output the translated result without any additional explanation**:\n\nHello.",
+            translationPrompt("Hello.", Direction.EN_ES.target))
+        assertEquals("Translate the following text into English. Note that you should **only output the translated result without any additional explanation**:\n\nHola.",
+            translationPrompt("Hola.", Direction.ES_EN.target))
+    }
+
+    @Test fun theFourDirections() {
+        assertEquals(listOf("es-en", "en-es", "fr-en", "en-fr"), Direction.entries.map { it.tag })
+        for (d in Direction.entries) assertEquals(d, Direction.of(d.tag))
+        assertEquals(listOf("Habla español", "Speak English", "Parlez français", "Speak English"), Direction.entries.map { it.button })
+        assertEquals(listOf(true, false, true, false), Direction.entries.map { it.spoken })
+        assertEquals(listOf("Spanish", "English", "French", "English"), Direction.entries.map { it.heard })
+        assertEquals(listOf("English", "Spanish", "English", "French"), Direction.entries.map { it.target })
+        assertEquals(listOf(Direction.ES_EN, Direction.EN_ES), Language.SPANISH.directions)
+        assertEquals(listOf(Direction.FR_EN, Direction.EN_FR), Language.FRENCH.directions)
+        assertNull(Direction.of("fr"))
+    }
+
+    @Test fun spanishIsTheDefaultLanguage() {
+        assertEquals(Language.SPANISH, Language.DEFAULT)
+        assertEquals(Language.SPANISH, TranslateUi().language)
+        assertEquals(listOf(Direction.ES_EN, Direction.EN_ES), TranslateUi().language.directions)
+        assertEquals(Language.FRENCH, Language.of("fr"))
+        assertEquals(Language.SPANISH, Language.of("es"))
+        assertNull(Language.of("de"))
+        // The Spanish screen's line, word for word.
+        assertEquals("No network, no account: Spanish speech becomes an English voice, English becomes Spanish text.", intro(Language.SPANISH))
+        assertEquals("No network, no account: French speech becomes an English voice, English becomes French text.", intro(Language.FRENCH))
+    }
+
+    @Test fun choosingALanguageClearsTheLastTurnButNotDuringOne() {
+        val last = TranslateUi(ready = true).startTurn(Direction.ES_EN).on(Event.Heard("Son 23 euros en total.", 5080.0, 700.0)).on(Event.Done(spoken()))
+        val fr = last.withLanguage(Language.FRENCH)
+        assertEquals(Language.FRENCH, fr.language)
+        assertNull(fr.turn)
+        assertEquals(listOf("", "", "", ""), listOf(fr.heard, fr.translation, fr.result, fr.breakdown))
+        assertEquals(true, fr.ready)
+        val running = TranslateUi(ready = true).startTurn(Direction.ES_EN)
+        assertEquals(running, running.withLanguage(Language.FRENCH))
+        val listening = TranslateUi(ready = true, listening = Direction.ES_EN)
+        assertEquals(listening, listening.withLanguage(Language.FRENCH))
+    }
+
+    @Test fun frenchCountsAsSpanishDoes() {
+        val said = TurnRecord(Direction.FR_EN, "mic", hangoverMs = 800, audioMs = 5000.0).apply {
+            heard = "Ça fait dix-huit euros en tout."; translation = "That's eighteen euros in total."
+            transcribeMs = 700.0; firstSentenceMs = 1700.0; translateDoneMs = 1720.0; firstAudioMs = 2100.0
+        }
+        assertEquals("French speech to English voice in 2.9 s", result(said))
+        assertTrue(turnLine(said, "asr:cpu,mt:gpu,tts:cpu", "none", null).startsWith("TURN dir=fr-en input=mic "))
+        val written = TurnRecord(Direction.EN_FR, "mic", hangoverMs = 800, audioMs = 5000.0).apply {
+            heard = "Excuse me."; translation = "Excusez-moi."; transcribeMs = 600.0; translateDoneMs = 1500.0
+        }
+        assertEquals("English speech to French text in 2.3 s", result(written))
+        assertEquals("(800 ms end of speech + 600 ms hearing + 900 ms translating)", breakdown(written))
+        assertTrue(turnLine(written, "asr:cpu,mt:gpu,tts:cpu", "none", null).startsWith("TURN dir=en-fr input=mic "))
     }
 }

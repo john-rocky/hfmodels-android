@@ -23,9 +23,11 @@ import java.io.File
  * The translator's screen. Launch extras, for a scripted take or a check in a debuggable build (a release build ignores
  * them; all optional; a running screen takes them again):
  *   --ez autoload true        load the three models now
+ *   --es pair es|fr           the other person's language, as the choice at the top (default es, Spanish; fr, French)
  *   --es play <wav>           this WAV (16 kHz mono 16-bit; a path, or a name in the external files dir) as one press of
  *                             the button of --es dir, through the endpointer in real time (--ez realtime false: at once)
- *   --es dir es-en|en-es      which button (default es-en, "Habla español")
+ *   --es dir es-en|en-es|fr-en|en-fr  which button (default: the other person's of the chosen language, es-en "Habla
+ *                             español" or fr-en "Parlez français"); a direction of the other language switches to it
  *   --es record <name>        write each turn's sound and events under <external files>/record/<name>/<turn>/
  *   --ef start_rms 0.01       the endpointer's start level (default 0.02, a voice toward the phone; less for a speaker)
  *   --ef floor_rms 0.005      the input gate's RMS floor (below it: "Nothing heard")
@@ -56,7 +58,7 @@ class MainActivity : ComponentActivity() {
                 val flag = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                 if (keepOn) window.addFlags(flag) else window.clearFlags(flag)
             }
-            TranslateScreen(ui, onPress = { vm.press(it) }, onLoad = { vm.load() })
+            TranslateScreen(ui, onPress = { vm.press(it) }, onLoad = { vm.load() }, onLanguage = { vm.chooseLanguage(it) })
         }
         if (savedInstanceState == null) handle(intent)
     }
@@ -97,9 +99,10 @@ class MainActivity : ComponentActivity() {
         val start = if (i.hasExtra("start_rms")) i.getFloatExtra("start_rms", 0.02f) else null
         val floor = if (i.hasExtra("floor_rms")) i.getFloatExtra("floor_rms", InputGate.DEFAULT_FLOOR_RMS) else null
         if (start != null || floor != null) vm.levels(start, floor)
+        i.getStringExtra("pair")?.let { tag -> Language.of(tag)?.let { vm.chooseLanguage(it) } ?: Log.w(TranslateViewModel.TAG, "unknown pair $tag (es or fr)") }
         val play = i.getStringExtra("play")
-        val dir = Direction.of(i.getStringExtra("dir") ?: "es-en") ?: Direction.ES_EN
-        Log.i(TranslateViewModel.TAG, "extras autoload=${i.getBooleanExtra("autoload", false)} play=$play dir=${dir.tag} record=${i.getStringExtra("record")} mt_backend=${i.getStringExtra("mt_backend")}")
+        val dir = i.getStringExtra("dir")?.let { Direction.of(it) } ?: vm.ui.value.language.toEnglish
+        Log.i(TranslateViewModel.TAG, "extras autoload=${i.getBooleanExtra("autoload", false)} play=$play dir=${dir.tag} record=${i.getStringExtra("record")} mt_backend=${i.getStringExtra("mt_backend")} pair=${vm.ui.value.language.tag}")
         when {
             play != null -> {
                 val f = File(play).takeIf { it.isAbsolute } ?: File(getExternalFilesDir(null), play)
@@ -110,6 +113,6 @@ class MainActivity : ComponentActivity() {
     }
 
     private companion object {
-        val SCRIPT_EXTRAS = listOf("autoload", "play", "record", "start_rms", "floor_rms", "mt_backend")
+        val SCRIPT_EXTRAS = listOf("autoload", "play", "record", "start_rms", "floor_rms", "mt_backend", "pair")
     }
 }

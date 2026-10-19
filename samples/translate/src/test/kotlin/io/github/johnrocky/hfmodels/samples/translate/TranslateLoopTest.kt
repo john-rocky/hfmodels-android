@@ -106,6 +106,27 @@ class TranslateLoopTest {
         assertTrue(result(r).startsWith("English speech to Spanish text in "))
     }
 
+    @Test fun frenchIsSaidInEnglishAndEnglishBecomesFrenchText() = runBlocking {
+        val targets = ArrayList<String>()
+        val recording: (String, String, (Double) -> Unit) -> Flow<String> = { _, target, created ->
+            targets += target
+            flow { created(0.2); emit(if (target == "English") "That's eighteen euros." else "Excusez-moi.") }
+        }
+        val speaker = FakeSpeaker()
+        val loop = TranslateLoop(heard("Ça fait dix-huit euros."), recording, speaker, FakePlayer())
+        val said = (loop.turn(Direction.FR_EN, voice, System.nanoTime(), 800, "file").toList().last() as Event.Done).record
+        assertEquals("That's eighteen euros.", said.translation)
+        assertEquals(1, speaker.said.size)
+        assertTrue(speaker.said[0], speaker.said[0].startsWith("That's eighteen euros"))
+        assertTrue(result(said).startsWith("French speech to English voice in "))
+        val written = (loop.turn(Direction.EN_FR, voice, System.nanoTime(), 800, "mic").toList().last() as Event.Done).record
+        assertEquals("Excusez-moi.", written.translation)
+        assertEquals(listOf("English", "French"), targets)
+        assertEquals(1, speaker.said.size)
+        assertNull(written.firstAudioMs)
+        assertTrue(result(written).startsWith("English speech to French text in "))
+    }
+
     @Test fun silenceIsNothingHeardAndNotTranscribed() = runBlocking {
         var heardCalls = 0
         val loop = TranslateLoop({ heardCalls++; ParakeetResult("x", 1, 0.0, 0.0, 0.0, 0, 0.0) }, streamed("x"), FakeSpeaker(), FakePlayer())

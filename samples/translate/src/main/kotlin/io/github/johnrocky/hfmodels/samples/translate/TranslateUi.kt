@@ -11,12 +11,14 @@ data class ModelLine(val name: String, val backend: String, val loadMs: Double?,
 /**
  * What the screen shows. [on] folds a turn's events into it: what was heard, the translation as it streams, and at the
  * end the seconds from the end of speech to the English voice (Spanish to English) or to the whole Spanish text
- * (English to Spanish), with their parts.
+ * (English to Spanish), with their parts. The same for French when [language] is French.
  */
 data class TranslateUi(
     val status: String = "Not loaded",
     val loading: Boolean = false,
     val ready: Boolean = false,
+    /** The other person's language: the choice at the top, which gives the two buttons. */
+    val language: Language = Language.DEFAULT,
     /** The button whose microphone is open, or null. */
     val listening: Direction? = null,
     /** The direction of the turn on the screen (running or last). */
@@ -36,6 +38,14 @@ data class TranslateUi(
 
 fun TranslateUi.startTurn(direction: Direction): TranslateUi =
     copy(busy = true, turn = direction, heard = "", translation = "", result = "", breakdown = "", error = null, status = "Hearing…")
+
+/** Another language: its buttons, and the last turn's texts and seconds cleared. Unchanged while a microphone is open or a turn runs. */
+fun TranslateUi.withLanguage(l: Language): TranslateUi =
+    if (listening != null || busy || l == language) this
+    else copy(language = l, turn = null, heard = "", translation = "", result = "", breakdown = "")
+
+/** The line under the header: what the two buttons do for [l]. */
+fun intro(l: Language): String = "No network, no account: ${l.label} speech becomes an English voice, English becomes ${l.label} text."
 
 fun TranslateUi.on(e: Event): TranslateUi = when (e) {
     is Event.NothingHeard -> copy(status = "Nothing heard", error = null)

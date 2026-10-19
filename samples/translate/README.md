@@ -2,6 +2,8 @@
 
 No network and no translation account: someone speaks Spanish to you, the phone says it in English; you answer in English, the phone shows it in Spanish in large type for them to read. One tap per person: **Habla español** (the Spanish speaker's button) and **Speak English** (yours). A tap opens the microphone for one utterance; 800 ms of silence ends it (or a second tap). The screen shows what was heard, the translation, and the seconds from the end of speech to the first English sound (Spanish to English) or to the whole Spanish text (English to Spanish), with their parts.
 
+French works the same way: **They speak: French** at the top of the screen (Spanish by default) makes the buttons **Parlez français** (French speech becomes an English voice) and **Speak English** (English becomes French text in large type), with the same three models.
+
 Draft (2026-10-19): built and unit-tested on a Mac; not run on a phone yet. The numbers and the "What it did" section come from the first phone run.
 
 ## Three models
@@ -52,7 +54,8 @@ Debug builds only: a release build ignores them.
 | extra | what it does |
 |---|---|
 | `--ez autoload true` | load the three models now |
-| `--es play <wav>` | this WAV (16 kHz mono 16-bit; a path, or a name in the external files dir) as one press of the button of `--es dir` (`es-en`, the default, or `en-es`), through the endpointer in real time (`--ez realtime false`: at once) |
+| `--es pair es\|fr` | the other person's language, as the choice at the top (default `es`, Spanish) |
+| `--es play <wav>` | this WAV (16 kHz mono 16-bit; a path, or a name in the external files dir) as one press of the button of `--es dir` (`es-en`, `en-es`, `fr-en` or `en-fr`; the default is the other person's button of the chosen language), through the endpointer in real time (`--ez realtime false`: at once) |
 | `--es record <name>` | each turn under `<external files>/record/<name>/<turn>/`: `utterance.wav` (16 kHz, what was heard), `reply.wav` (24 kHz, the English as played), `events.json` (every event on the phone's clocks, each English chunk's write) |
 | `--ef start_rms 0.01` | the endpointer's start level (default 0.02, a voice toward the phone; a loudspeaker across a desk needs less) |
 | `--ef floor_rms 0.005` | the input gate's RMS floor: below it, or with less than 250 ms of voice, an utterance is "Nothing heard" |
@@ -70,7 +73,7 @@ With any of these extras the screen shows over the keyguard, turns the display o
 
 ## Device check
 
-`src/androidTest/kotlin/io/github/johnrocky/hfmodels/check/TranslateDeviceCheck.kt`: in the app's own process, the three loads from the store, the ten fixed sentences through the endpointer and the turn twice (20 turns, the transcripts beside the Mac's), and the failure paths: silence and quiet noise (nothing heard), the input gate on the noise, 35 s of speech (cut at the 30 s window), French into both buttons (recorded), a model file the store does not have (the screen's words), Stop in the middle of a turn and the next turn, the memory, the release. It prints `RESULT` lines under `adb logcat -s hfmodels-check` and a summary with the median from the end of speech to the first English sound. The fixtures (16 kHz mono 16-bit WAVs, `sentences.tsv`, `mac_asr_30s.tsv`) go to `/data/local/tmp/translate/` (argument `fixtures`).
+`src/androidTest/kotlin/io/github/johnrocky/hfmodels/check/TranslateDeviceCheck.kt`: in the app's own process, the three loads from the store, the ten fixed sentences through the endpointer and the turn twice (20 turns, the transcripts beside the Mac's), and the failure paths: silence and quiet noise (nothing heard), the input gate on the noise, 35 s of speech (cut at the 30 s window), French into both buttons (recorded), a model file the store does not have (the screen's words), Stop in the middle of a turn and the next turn, the memory, the release. It prints `RESULT` lines under `adb logcat -s hfmodels-check` and a summary with the median from the end of speech to the first English sound. The fixtures (16 kHz mono 16-bit WAVs, `sentences.tsv`, `mac_asr_30s.tsv`) go to `/data/local/tmp/translate/` (argument `fixtures`). The rows' directions give the pair: with French rows (`fr-en`, `en-fr`) the same steps run on the French buttons, and Spanish (`es_input.wav`) goes into both.
 
 ```sh
 ./gradlew :samples:translate:connectedDebugAndroidTest -Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true \

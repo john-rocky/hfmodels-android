@@ -29,10 +29,10 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 
 /**
- * The three models ([TranslateModels]), the turn loop over them, and the two microphone buttons. A press opens the
- * microphone for one utterance: the endpointer cuts it after 800 ms of silence (or a second press ends it), the turn
- * hears, translates and, for Spanish, speaks the English. [ui] is what the screen draws; every turn writes one TURN line
- * under the log tag [TAG].
+ * The three models ([TranslateModels]), the turn loop over them, the language choice and the two microphone buttons. A
+ * press opens the microphone for one utterance: the endpointer cuts it after 800 ms of silence (or a second press ends
+ * it), the turn hears, translates and, for Spanish or French heard, speaks the English. [ui] is what the screen draws;
+ * every turn writes one TURN line under the log tag [TAG].
  */
 class TranslateViewModel(private val app: Application) : AndroidViewModel(app) {
     private val models = TranslateModels(app)
@@ -159,14 +159,23 @@ class TranslateViewModel(private val app: Application) : AndroidViewModel(app) {
         }
     }
 
+    /** The other person's language (the choice at the top): its two buttons. Not while a microphone is open or a turn runs. */
+    fun chooseLanguage(language: Language) {
+        if (listenJob?.isCompleted == false || turnJob?.isCompleted == false) return
+        _ui.update { it.withLanguage(language) }
+        Log.i(TAG, "language ${_ui.value.language.tag}")
+    }
+
     /**
      * A WAV (16 kHz mono 16-bit) as one press of [direction]'s button: its audio goes through the endpointer as the
      * microphone's would, in real time when [realTime] (the screen and the clock then look as they do for a voice), and
-     * its first utterance makes the turn. For recordings and checks; the user's own path is [press].
+     * its first utterance makes the turn. For recordings and checks; the user's own path is [press]. A direction of the
+     * other language switches the screen to that language first.
      */
     fun play(file: File, direction: Direction, realTime: Boolean = true) {
         val l = loop ?: return load { play(file, direction, realTime) }
         if (listenJob?.isCompleted == false || turnJob?.isCompleted == false) return
+        if (direction.language != _ui.value.language) chooseLanguage(direction.language)
         listenJob = viewModelScope.launch(Dispatchers.Default) {
             val (pcm, rate) = try { Wav.read(file) } catch (e: Exception) {
                 _ui.update { it.copy(error = "${file.name}: ${e.message}") }
