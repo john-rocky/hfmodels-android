@@ -20,7 +20,7 @@ import io.github.johnrocky.hfmodels.samples.translate.EarlyTurn
 import io.github.johnrocky.hfmodels.samples.translate.Gate
 import io.github.johnrocky.hfmodels.samples.translate.InputGate
 import io.github.johnrocky.hfmodels.samples.translate.Language
-import io.github.johnrocky.hfmodels.samples.translate.ParakeetGraphTask
+import io.github.johnrocky.hfmodels.samples.translate.Qwen3AsrTask
 import io.github.johnrocky.hfmodels.samples.translate.TranslateLoop
 import io.github.johnrocky.hfmodels.samples.translate.TranslateLoop.Event
 import io.github.johnrocky.hfmodels.samples.translate.TranslateModels
@@ -71,11 +71,12 @@ import org.junit.runner.RunWith
  *
  * The fixtures (not in this repository: the ten sentences read by macOS voices and the failure-path files, 16 kHz mono
  * 16-bit) in `<fixtures>` (default /data/local/tmp/translate): `sentences.tsv` (id, dir, src, ref, sec, checks),
- * `mac_asr_30s.tsv` (the Mac host's transcripts, id<TAB>text), `wav/<id>.wav` for every row, `silence_5s.wav`,
- * `noise_5s.wav`, `long_35s.wav`, one sentence in the other language (`fr_input.wav` for the Spanish pair, rows es-en /
- * en-es; `es_input.wav` for the French pair, rows fr-en / en-fr), and `pause_resume.wav` with `pause_resume.tsv` (dir,
- * src with `|` at the pause, the words the transcript must hold, the words the translation must hold: `;` between the
- * halves, `|` between alternatives). The rows' `dir` gives the pair; the failure paths use its buttons.
+ * `mac_asr.tsv` (the same recognizer's transcripts on a Mac, id<TAB>text), `wav/<id>.wav` for every row,
+ * `silence_5s.wav`, `noise_5s.wav`, `long_35s.wav` (three utterances in the 15 s window), one sentence in the other
+ * language (`fr_input.wav` for the Spanish pair, rows es-en / en-es; `es_input.wav` for the French pair, rows fr-en /
+ * en-fr), and `pause_resume.wav` with `pause_resume.tsv` (dir, src with `|` at the pause, the words the transcript must
+ * hold, the words the translation must hold: `;` between the halves, `|` between alternatives). The rows' `dir` gives
+ * the pair; the failure paths use its buttons.
  *
  * Steps: load / turn (x20) / nothing_heard_silence / nothing_heard_noise / gate_noise / long_35s / french (both buttons,
  * behaviour recorded; spanish for the French pair) / missing_file (a load of a file the store does not have, offline:
@@ -153,9 +154,9 @@ class TranslateDeviceCheck {
         // Every hearing call counted, and the ones a cancel ended (the pause_resume step's early turn).
         val hearCalls = AtomicInteger()
         val hearCancelled = AtomicInteger()
-        val loop = TranslateLoop({ pcm ->
+        val loop = TranslateLoop({ pcm, d ->
             hearCalls.incrementAndGet()
-            try { t.transcribeDetailed(pcm) } catch (e: CancellationException) { hearCancelled.incrementAndGet(); throw e }
+            try { t.transcribe(pcm, d.heard) } catch (e: CancellationException) { hearCancelled.incrementAndGet(); throw e }
         }, { text, target, created -> tr.translate(text, target, created) }, speaker, p?.asPlayer())
         val backends = "asr:cpu,mt:${models.mtBackend.lowercase()},tts:${if (speaker != null) "cpu" else "none"}"
         fun logTurn(r: TurnRecord?) { if (r != null) Log.i(TAG, turnLine(r, backends, TranslateModels.network(ctx), TranslateModels.vmHwmKb())) }
@@ -181,7 +182,7 @@ class TranslateDeviceCheck {
         // The pair of the rows (Spanish: es-en / en-es, French: fr-en / en-fr): the failure paths use its buttons.
         val language = rows.firstNotNullOfOrNull { Direction.of(it[1])?.language } ?: Language.DEFAULT
         val other = Language.entries.first { it != language }
-        val mac = File(dir, "mac_asr_30s.tsv").takeIf { it.canRead() }?.readLines()?.filter { it.isNotBlank() }?.associate { it.substringBefore('\t') to it.substringAfter('\t') }.orEmpty()
+        val mac = File(dir, "mac_asr.tsv").takeIf { it.canRead() }?.readLines()?.filter { it.isNotBlank() }?.associate { it.substringBefore('\t') to it.substringAfter('\t') }.orEmpty()
         val hwmLoaded = TranslateModels.vmHwmKb()
         val spoken = ArrayList<TurnRecord>()
         val written = ArrayList<TurnRecord>()
@@ -203,7 +204,7 @@ class TranslateDeviceCheck {
         Log.i(TAG, "RESULT step=summary ok=true turns=${spoken.size + written.size} ${toEnglish}_turns=${spoken.size} ${fromEnglish}_turns=${written.size} " +
             "early_turns=${spoken.count { it.early }} spec_ms=${EarlyEndpointer.EARLY_MS} " +
             "l1_median_ms_end_of_speech_to_sound=${f(median(spoken.mapNotNull { it.endOfSpeechToSoundMs }))} " +
-            "median_ms_transcribe=${f(median(spoken.mapNotNull { it.transcribeMs }))} median_asr_encode_ms=${f(median(spoken.mapNotNull { it.asr?.encodeMs }))} " +
+            "median_ms_transcribe=${f(median(spoken.mapNotNull { it.transcribeMs }))} median_asr_first_chunk_ms=${f(median(spoken.mapNotNull { it.asr?.firstChunkMs }))} " +
             "median_asr_decode_ms=${f(median(spoken.mapNotNull { it.asr?.decodeMs }))} median_ms_translate_create=${f1(median(spoken.mapNotNull { it.translateCreateMs }))} " +
             "median_ms_translate_first_token=${f(median(spoken.mapNotNull { it.translateFirstTokenMs }))} median_ms_first_chunk=${f(median(spoken.mapNotNull { it.firstChunkMs }))} " +
             "median_ms_first_sentence=${f(median(spoken.mapNotNull { it.firstSentenceMs }))} median_ms_first_synth=${f(median(spoken.mapNotNull { it.firstSynthMs }))} " +
@@ -222,12 +223,12 @@ class TranslateDeviceCheck {
         step("gate_noise", gateEvents.any { it is Event.NothingHeard } && gateRecord?.heard.isNullOrEmpty(),
             "reason=${q(gateRecord?.nothingHeard.orEmpty())} rms=${String.format(Locale.US, "%.4f", gateRecord?.rms ?: 0.0)} floor=${InputGate.DEFAULT_FLOOR_RMS}")
 
-        // 4. 35 s of speech: the endpointer cuts it at the window; each part is a turn.
+        // 4. 35 s of speech: the endpointer cuts it at the 15 s window (three utterances); each part is a turn.
         val long = cutsOf("long_35s")
         val parts = long.map { u -> turn(language.toEnglish, u, "file:long_35s").second }
-        step("long_35s", long.size >= 2 && parts.all { it != null && it.heard.isNotEmpty() },
+        step("long_35s", long.size == 3 && parts.all { it != null && it.heard.isNotEmpty() },
             "utterances=${long.size} seconds=${long.joinToString(",", "[", "]") { String.format(Locale.US, "%.2f", it.pcm.size / 16000.0) }} early=${long.joinToString(",", "[", "]") { it.early.toString() }} " +
-                "heard=${parts.joinToString(" | ") { q(it?.heard.orEmpty()) }} pieces=${parts.joinToString(",", "[", "]") { (it?.asr?.pieces ?: 0).toString() }} " +
+                "heard=${parts.joinToString(" | ") { q(it?.heard.orEmpty()) }} asr_chunks=${parts.joinToString(",", "[", "]") { (it?.asr?.chunks ?: 0).toString() }} " +
                 "ms_end_of_speech_to_sound=${parts.joinToString(",", "[", "]") { f(it?.endOfSpeechToSoundMs) }}")
 
         // 5. The other language into both buttons (French for the Spanish pair, Spanish for the French pair): what happens
@@ -318,12 +319,12 @@ class TranslateDeviceCheck {
 
     /** A load of a file the store does not have, with no network: the SDK's OFFLINE_CACHE_MISS and the app's words for it. */
     private suspend fun missingFile(step: (String, Boolean, String) -> Unit) {
-        val real = ctx.assets.open("descriptors/${TranslateModels.GRAPH_DESCRIPTOR}").use { it.readBytes().toString(Charsets.UTF_8) }
-        val missing = real.replace("parakeet_tdt_0.6b_v3_30s_i8_stateful.tflite", "parakeet_missing.tflite")
-            .replace("378935f8897f0c713ad2aa97d939c73c44e9f26546e12c1cd6af9c76f386f06a", "0".repeat(64))
+        val real = ctx.assets.open("descriptors/${TranslateModels.ASR_DESCRIPTOR}").use { it.readBytes().toString(Charsets.UTF_8) }
+        val missing = real.replace(TranslateModels.ASR_FILE, "Qwen3-ASR-missing.litertlm").replace(TranslateModels.ASR_SHA256, "0".repeat(64))
+        check(missing != real) { "the descriptor names neither ${TranslateModels.ASR_FILE} nor its sha256" }
         val client = HfModels(ctx)
         try {
-            client.fromPretrained(ModelRef(TranslateModels.GRAPH_ID, revision = TranslateModels.GRAPH_COMMIT), ParakeetGraphTask, LoadOptions(networkPolicy = NetworkPolicy.Offline, descriptorJson = missing))
+            client.fromPretrained(ModelRef(TranslateModels.ASR_ID, revision = TranslateModels.ASR_COMMIT), Qwen3AsrTask, LoadOptions(networkPolicy = NetworkPolicy.Offline, descriptorJson = missing))
             step("missing_file", false, "reason=\"a missing file loaded\"")
         } catch (e: ModelException) {
             val words = TranslateModels.explain(e)
@@ -341,7 +342,8 @@ class TranslateDeviceCheck {
 
     private companion object {
         const val TAG = "hfmodels-check"
-        const val WINDOW_MS = 30_000
+        /** Qwen3-ASR's window, as the app's endpointer cuts (TranslateViewModel.WINDOW_MS). */
+        const val WINDOW_MS = 15_000
         const val HANGOVER_MS = 800
         const val TURN_TIMEOUT_MS = 120_000L
     }

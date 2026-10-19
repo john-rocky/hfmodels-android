@@ -29,7 +29,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** One turn through [TranslateLoop] with fakes for parakeet, Hy-MT2, Kitten and the loudspeaker. */
+/** One turn through [TranslateLoop] with fakes for Qwen3-ASR, Hy-MT2, Kitten and the loudspeaker. */
 class TranslateLoopTest {
     private val info = PreparedModelInfo(
         repoId = "fake/speaker", commit = "0".repeat(40), descriptorSha256 = "", descriptorOrigin = DescriptorOrigin("fake", "none", "-"),
@@ -66,7 +66,10 @@ class TranslateLoopTest {
 
     private val voice = FloatArray(16000) { (0.1 * sin(2.0 * PI * 300.0 * it / 16000.0)).toFloat() }
 
-    private fun heard(text: String): suspend (FloatArray) -> ParakeetResult = { delay(10); ParakeetResult(text, 1, 1.0, 5.0, 4.0, 30, 10.0) }
+    private fun asr(text: String) = AsrResult(text, text, 0.5, 0.5, 5.0, 4.0, 12, 10.0)
+
+    /** The fake recognizer: [text] after 10 ms; [languages] gets each call's language (the button's). */
+    private fun heard(text: String, languages: MutableList<String>? = null): suspend (FloatArray, Direction) -> AsrResult = { _, d -> languages?.add(d.heard); delay(10); asr(text) }
 
     private fun streamed(vararg deltas: String): (String, String, (Double) -> Unit) -> Flow<String> = { _, _, created -> flow { created(0.5); for (d in deltas) { delay(3); emit(d) } } }
 
@@ -113,7 +116,8 @@ class TranslateLoopTest {
             flow { created(0.2); emit(if (target == "English") "That's eighteen euros." else "Excusez-moi.") }
         }
         val speaker = FakeSpeaker()
-        val loop = TranslateLoop(heard("Ça fait dix-huit euros."), recording, speaker, FakePlayer())
+        val languages = ArrayList<String>()
+        val loop = TranslateLoop(heard("Ça fait dix-huit euros.", languages), recording, speaker, FakePlayer())
         val said = (loop.turn(Direction.FR_EN, voice, System.nanoTime(), 800, "file").toList().last() as Event.Done).record
         assertEquals("That's eighteen euros.", said.translation)
         assertEquals(1, speaker.said.size)
@@ -122,6 +126,8 @@ class TranslateLoopTest {
         val written = (loop.turn(Direction.EN_FR, voice, System.nanoTime(), 800, "mic").toList().last() as Event.Done).record
         assertEquals("Excusez-moi.", written.translation)
         assertEquals(listOf("English", "French"), targets)
+        // The recognizer heard each turn in the language of its button: French, then English.
+        assertEquals(listOf("French", "English"), languages)
         assertEquals(1, speaker.said.size)
         assertNull(written.firstAudioMs)
         assertTrue(result(written).startsWith("English speech to French text in "))
@@ -129,7 +135,7 @@ class TranslateLoopTest {
 
     @Test fun silenceIsNothingHeardAndNotTranscribed() = runBlocking {
         var heardCalls = 0
-        val loop = TranslateLoop({ heardCalls++; ParakeetResult("x", 1, 0.0, 0.0, 0.0, 0, 0.0) }, streamed("x"), FakeSpeaker(), FakePlayer())
+        val loop = TranslateLoop({ _, _ -> heardCalls++; asr("x") }, streamed("x"), FakeSpeaker(), FakePlayer())
         val events = loop.turn(Direction.ES_EN, FloatArray(32000), System.nanoTime(), 800, "file").toList()
         assertEquals(2, events.size)
         assertEquals("too short (0 ms of voice)", (events[0] as Event.NothingHeard).reason)

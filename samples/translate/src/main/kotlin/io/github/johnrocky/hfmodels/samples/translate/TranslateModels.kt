@@ -27,8 +27,9 @@ import kotlinx.coroutines.withContext
 
 /**
  * The three models of the sample, each in its own hfmodels client (one client holds one native model; the clients share
- * the store), loaded in the order parakeet (its vocabulary, then the graph), Hy-MT2, Kitten:
- *  - parakeet-tdt-0.6b-v3 from the sample's descriptors (`assets/descriptors/`, [ParakeetGraphTask] / [ParakeetVocabTask]), CPU;
+ * the store), loaded in the order Qwen3-ASR, Hy-MT2, Kitten:
+ *  - Qwen3-ASR-1.7B (the 15 s file) from the sample's descriptor (`assets/descriptors/`, [Qwen3AsrTask]), the language
+ *    model and the audio encoder on the CPU;
  *  - Hy-MT2-1.8B by id from the SDK's bundled catalog, on the GPU after [OutputCheck] passes, else on the CPU. A failed
  *    load or check is kept under the phone's build, the LiteRT-LM version and the model's commit, and the next start goes
  *    to the CPU directly; so is a GPU attempt that never finished (the process ended inside it). `--es mt_backend gpu`
@@ -37,12 +38,11 @@ import kotlinx.coroutines.withContext
  * Every load is pinned to a commit, so a phone without a network loads from the app's store.
  */
 class TranslateModels(private val context: Context) {
-    private val vocabModels = HfModels(context)
     private val asrModels = HfModels(context)
     private val mtModels = HfModels(context)
     private val ttsModels = HfModels(context)
 
-    @Volatile var transcriber: ParakeetTranscriber? = null; private set
+    @Volatile var transcriber: Qwen3Asr? = null; private set
     @Volatile var translator: Translator? = null; private set
     @Volatile var speaker: Speaker? = null; private set
     /** The English voice's load failure, when the rest loaded. */
@@ -57,7 +57,7 @@ class TranslateModels(private val context: Context) {
 
     /**
      * Loads what is not loaded yet. [mtPreference] null = the GPU unless this phone's check failed before; CPU or GPU =
-     * that backend only. [onStatus]: one line per stage, for the screen. Throws [Failure] for parakeet or Hy-MT2; a
+     * that backend only. [onStatus]: one line per stage, for the screen. Throws [Failure] for Qwen3-ASR or Hy-MT2; a
      * Kitten failure only sets [speakerFailure].
      */
     suspend fun load(network: NetworkPolicy, mtPreference: BackendKind? = null, onStatus: (String) -> Unit = {}) {
@@ -65,15 +65,8 @@ class TranslateModels(private val context: Context) {
         val lines = ArrayList<ModelLine>()
         if (transcriber == null) {
             val t0 = SystemClock.elapsedRealtime()
-            val vocab = load("Speech recognition", vocabModels, ParakeetVocabTask, ModelRef(VOCAB_ID, revision = VOCAB_COMMIT), LoadOptions(networkPolicy = network, descriptorJson = asset(VOCAB_DESCRIPTOR)), onStatus)
-            val graph = try {
-                load("Speech recognition", asrModels, ParakeetGraphTask, ModelRef(GRAPH_ID, revision = GRAPH_COMMIT), LoadOptions(networkPolicy = network, descriptorJson = asset(GRAPH_DESCRIPTOR)), onStatus)
-            } catch (t: Throwable) {
-                withContext(NonCancellable) { vocab.closeAndJoin() }
-                throw t
-            }
-            transcriber = ParakeetTranscriber(graph, vocab)
-            lines += ModelLine("parakeet-tdt-0.6b-v3", "CPU", (SystemClock.elapsedRealtime() - t0).toDouble())
+            transcriber = load("Speech recognition", asrModels, Qwen3AsrTask, ModelRef(ASR_ID, revision = ASR_COMMIT), LoadOptions(networkPolicy = network, descriptorJson = asset(ASR_DESCRIPTOR)), onStatus)
+            lines += ModelLine("Qwen3-ASR-1.7B", "CPU", (SystemClock.elapsedRealtime() - t0).toDouble())
         }
         if (translator == null) {
             val t0 = SystemClock.elapsedRealtime()
@@ -162,7 +155,7 @@ class TranslateModels(private val context: Context) {
         runCatching { s?.closeAndJoin() }
         runCatching { t?.chat?.closeAndJoin() }
         runCatching { a?.closeAndJoin() }
-        for (m in listOf(ttsModels, mtModels, asrModels, vocabModels)) runCatching { m.closeAndJoin() }
+        for (m in listOf(ttsModels, mtModels, asrModels)) runCatching { m.closeAndJoin() }
     }
 
     private fun asset(name: String): String = context.assets.open("descriptors/$name").use { it.readBytes().toString(Charsets.UTF_8) }
@@ -172,17 +165,17 @@ class TranslateModels(private val context: Context) {
     private fun gpuKey(commit: String?) = "${Build.FINGERPRINT}|${BuildConfig.LITERTLM_VERSION}|$commit"
 
     companion object {
-        const val GRAPH_ID = "mlboydaisuke/Parakeet-TDT-0.6B-v3-LiteRT"
-        const val GRAPH_COMMIT = "af580dff28a80150057d54bb33a0e01025ce4bce"
-        const val GRAPH_DESCRIPTOR = "mlboydaisuke__Parakeet-TDT-0.6B-v3-LiteRT.json"
-        const val VOCAB_ID = "nvidia/parakeet-tdt-0.6b-v3"
-        const val VOCAB_COMMIT = "541d1f99c6b0c3cd0b11a95167540bb8edefd82b"
-        const val VOCAB_DESCRIPTOR = "nvidia__parakeet-tdt-0.6b-v3.json"
+        const val ASR_ID = "litert-community/Qwen3-ASR-1.7B"
+        const val ASR_COMMIT = "184ec0f1ef8c8b5254100e95ec713b5557fb91de"
+        const val ASR_DESCRIPTOR = "litert-community__Qwen3-ASR-1.7B.json"
+        /** The descriptor's file (the device check names it to load a file the store does not have). */
+        const val ASR_FILE = "Qwen3-ASR-1.7B-15s.litertlm"
+        const val ASR_SHA256 = "fbec6d126627d9de449ba9a4f0dc0a541ab850d710c7aebae2dc65f62736d6bf"
         const val MT_ID = "litert-community/Hy-MT2-1.8B"
         const val TTS_ID = "litert-community/kitten-tts-nano-0.8"
         const val PREF_GPU_FAILED = "mt_gpu_failed"
         const val PREF_GPU_ATTEMPT = "mt_gpu_attempt"
-        private val ORDER = listOf("parakeet-tdt-0.6b-v3", "Hy-MT2-1.8B", "Kitten TTS nano 0.8")
+        private val ORDER = listOf("Qwen3-ASR-1.7B", "Hy-MT2-1.8B", "Kitten TTS nano 0.8")
 
         fun describe(e: LoadEvent): String = when (e) {
             is LoadEvent.Resolving -> "resolving"

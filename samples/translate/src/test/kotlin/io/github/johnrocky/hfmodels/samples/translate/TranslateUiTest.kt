@@ -69,6 +69,14 @@ class TranslateUiTest {
         assertNull(r.endOfSpeechToSoundMs)
     }
 
+    @Test fun theTurnLineCarriesTheRecognizersParts() {
+        val r = spoken().apply { asr = AsrResult("Son 23 euros en total.", "Son 23 euros en total.", 1.2, 0.6, 712.4, 905.3, 21, 1619.5) }
+        val line = turnLine(r, "asr:cpu,mt:gpu,tts:cpu", "none", null)
+        for (key in listOf("asr_wav_ms=1", "asr_create_ms=1", "asr_first_chunk_ms=712", "asr_decode_ms=905", "asr_chunks=21")) assertTrue("$key in $line", line.contains(key))
+        val none = turnLine(TurnRecord(Direction.ES_EN, "mic", hangoverMs = 800, audioMs = 1200.0), "asr:cpu,mt:gpu,tts:cpu", "none", null)
+        assertTrue(none, none.contains("asr_first_chunk_ms=none") && none.contains("asr_chunks=none"))
+    }
+
     @Test fun nothingHeardShowsNoSeconds() {
         val r = TurnRecord(Direction.ES_EN, "mic", hangoverMs = 800, audioMs = 1200.0).apply { nothingHeard = "too short (40 ms of voice)" }
         assertEquals("", result(r))
@@ -111,7 +119,7 @@ class TranslateUiTest {
     }
 
     @Test fun modelLines() {
-        assertEquals("parakeet-tdt-0.6b-v3 · CPU · loaded in 2.1 s", ModelLine("parakeet-tdt-0.6b-v3", "CPU", 2140.0).text)
+        assertEquals("Qwen3-ASR-1.7B · CPU · loaded in 2.1 s", ModelLine("Qwen3-ASR-1.7B", "CPU", 2140.0).text)
         assertEquals("Kitten TTS nano 0.8 · not loaded · OFFLINE", ModelLine("Kitten TTS nano 0.8", "not loaded", null, "OFFLINE").text)
         assertEquals(Direction.ES_EN, Direction.of("es-en"))
         assertNull(Direction.of("de-en"))

@@ -117,7 +117,7 @@ fun turnLine(r: TurnRecord, backends: String, network: String, vmHwmKb: Long?): 
         "ms_first_audio=${f(r.firstAudioMs)} ms_end_of_speech_to_sound=${f(r.endOfSpeechToSoundMs)} " +
         "l1=${q(r.firstAudioMs?.let { "${r.hangoverMs}+${f(it)}" } ?: "none")} " +
         "ms_end_of_speech_to_text=${f(r.endOfSpeechToTextMs)} ms_transcribe=${f(r.transcribeMs)} " +
-        "asr_feature_ms=${f(a?.featureMs)} asr_encode_ms=${f(a?.encodeMs)} asr_decode_ms=${f(a?.decodeMs)} asr_steps=${a?.steps ?: "none"} asr_pieces=${a?.pieces ?: "none"} " +
+        "asr_wav_ms=${f(a?.wavMs)} asr_create_ms=${f(a?.createMs)} asr_first_chunk_ms=${f(a?.firstChunkMs)} asr_decode_ms=${f(a?.decodeMs)} asr_chunks=${a?.chunks ?: "none"} " +
         "ms_translate_create=${f1(r.translateCreateMs)} ms_translate_first_token=${f(r.translateFirstTokenMs)} ms_translate_done=${f(r.translateDoneMs)} " +
         "ms_first_chunk=${f(r.firstChunkMs)} first_chunk=${q(r.firstChunk)} ms_first_sentence=${f(r.firstSentenceMs)} ms_first_synth=${f(r.firstSynthMs)} " +
         "ms_audio_ready=${f(r.audioReadyMs)} ms_total=${f(r.totalMs)} tokens=${r.tokens} " +

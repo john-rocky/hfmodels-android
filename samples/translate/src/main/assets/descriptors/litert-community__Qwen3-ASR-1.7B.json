@@ -1,0 +1,67 @@
+{
+  "$comment": "The sample's descriptor for a repo without hfmodels.json (passed as LoadOptions.descriptorJson, with the sample's own handler, Qwen3Asr.kt). File bytes and sha256 from the Hub's listing at the pinned commit 184ec0f1 (2026-10-19). The 15 s file: the audio encoder takes 15 s windows (195 audio tokens), the language model has prefill signatures for 128 and 256 tokens; it ran on litert-lm-api 0.16.1 on a Mac CPU (52 clips, 2026-10-19).",
+  "schema_version": 1,
+  "model_id": "litert-community/Qwen3-ASR-1.7B",
+  "tasks": [
+    "transcribe"
+  ],
+  "default_variant": "15s",
+  "license": {
+    "id": "apache-2.0",
+    "url": "https://www.apache.org/licenses/LICENSE-2.0"
+  },
+  "variants": [
+    {
+      "id": "15s",
+      "runtime": "litert_lm",
+      "handler": {
+        "id": "sample.qwen3_asr",
+        "abi": 1
+      },
+      "runtime_range": {
+        "min_inclusive": "0.16.1",
+        "max_exclusive": "0.16.2"
+      },
+      "inputs": [
+        "audio"
+      ],
+      "files": [
+        {
+          "id": "model",
+          "role": "model",
+          "path": "Qwen3-ASR-1.7B-15s.litertlm",
+          "bytes": 2701438880,
+          "sha256": "fbec6d126627d9de449ba9a4f0dc0a541ab850d710c7aebae2dc65f62736d6bf"
+        }
+      ],
+      "default_profile": "cpu",
+      "profiles": [
+        {
+          "id": "cpu",
+          "priority": 50,
+          "files": [
+            "model"
+          ],
+          "enabled_inputs": [
+            "audio"
+          ],
+          "components": {
+            "language": "cpu",
+            "audio": "cpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "fallback_profiles": [],
+          "default_selectable": true
+        }
+      ],
+      "handler_config": {
+        "cpu_threads": 4
+      }
+    }
+  ]
+}

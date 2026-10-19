@@ -73,7 +73,7 @@ fun TranslateScreen(ui: TranslateUi, onPress: (Direction) -> Unit, onLoad: () ->
             }
             Column(Modifier.padding(top = 10.dp)) {
                 for (m in ui.models) Text(m.text, color = DIM, fontSize = 12.sp, fontFamily = FontFamily.Monospace)
-                Text("Speech recognition: NVIDIA parakeet-tdt-0.6b-v3, CC-BY-4.0", color = DIM, fontSize = 11.sp, modifier = Modifier.padding(top = 2.dp))
+                Text("Speech recognition: Qwen3-ASR-1.7B (Qwen), Apache-2.0", color = DIM, fontSize = 11.sp, modifier = Modifier.padding(top = 2.dp))
             }
             Box(Modifier.fillMaxWidth().padding(top = 14.dp), contentAlignment = Alignment.Center) {
                 if (ui.ready) {

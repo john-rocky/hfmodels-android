@@ -71,7 +71,7 @@ class TranslateViewModel(private val app: Application) : AndroidViewModel(app) {
                 val p = s?.let { SpeechPlayer(it.sampleRate) }.also { player = it }
                 val t = models.transcriber!!
                 val tr = models.translator!!
-                loop = TranslateLoop({ t.transcribeDetailed(it) }, { text, target, created -> tr.translate(text, target, created) }, s, p?.asPlayer(), config)
+                loop = TranslateLoop({ pcm, d -> t.transcribe(pcm, d.heard) }, { text, target, created -> tr.translate(text, target, created) }, s, p?.asPlayer(), config)
                 val ms = SystemClock.elapsedRealtime() - t0
                 Log.i(TAG, "READY asr=${t.info.repoId}@${t.info.commit.take(8)}/${t.info.variantId}/cpu mt=${tr.chat.info.repoId}@${tr.chat.info.commit.take(8)}/${tr.chat.info.profileId} " +
                     "mt_backend=${models.mtBackend} gpu_check=${q(models.gpuCheck)} tts=${s?.info?.let { "${it.repoId}@${it.commit.take(8)}/${it.variantId}/${it.profileId}" } ?: "none"} " +
@@ -167,7 +167,7 @@ class TranslateViewModel(private val app: Application) : AndroidViewModel(app) {
                 _ui.update { it.copy(error = "${file.name}: ${e.message}") }
                 return@launch
             }
-            if (rate != ParakeetFrontEnd.RATE) { _ui.update { it.copy(error = "${file.name}: $rate Hz, expected ${ParakeetFrontEnd.RATE}") }; return@launch }
+            if (rate != SAMPLE_RATE) { _ui.update { it.copy(error = "${file.name}: $rate Hz, expected $SAMPLE_RATE") }; return@launch }
             recorder?.begin("Listening", direction)
             _ui.update { it.copy(listening = direction, turn = direction, status = "Listening (${direction.heard})…", error = null) }
             val ep = EarlyEndpointer(Endpointer(startRms = config.startRms, maxUtteranceMs = WINDOW_MS))
@@ -262,7 +262,7 @@ class TranslateViewModel(private val app: Application) : AndroidViewModel(app) {
         val t = models.transcriber ?: return
         val tr = models.translator ?: return
         if (listenJob?.isCompleted == false || turnJob?.isCompleted == false) stop()
-        loop = TranslateLoop({ t.transcribeDetailed(it) }, { text, target, created -> tr.translate(text, target, created) }, models.speaker, player?.asPlayer(), config)
+        loop = TranslateLoop({ pcm, d -> t.transcribe(pcm, d.heard) }, { text, target, created -> tr.translate(text, target, created) }, models.speaker, player?.asPlayer(), config)
     }
 
     override fun onCleared() {
@@ -286,8 +286,8 @@ class TranslateViewModel(private val app: Application) : AndroidViewModel(app) {
 
     companion object {
         const val TAG = "translate"
-        /** The parakeet graph's window: the endpointer cuts an utterance there. */
-        const val WINDOW_MS = 30_000
+        /** Qwen3-ASR's window (the 15 s file): the endpointer cuts an utterance there, so one message is one window. */
+        const val WINDOW_MS = 15_000
         /** A press with no speech start in this time ends as "Nothing heard". */
         const val NO_SPEECH_MS = 8_000L
     }

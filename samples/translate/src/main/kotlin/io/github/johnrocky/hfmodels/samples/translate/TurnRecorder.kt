@@ -8,7 +8,7 @@ import org.json.JSONObject
 
 /**
  * A turn's sound and events for a screen recording, under `<root>/<turn>/` (samples/voice's form, which the clip tools
- * read): `utterance.wav` (16 kHz, what parakeet heard), `reply.wav` (24 kHz, the English chunks as played, back to back)
+ * read): `utterance.wav` (16 kHz, what the speech recognizer heard), `reply.wav` (24 kHz, the English chunks as played, back to back)
  * and `events.json` (every event with `System.nanoTime`, `SystemClock.elapsedRealtimeNanos` and the wall clock read
  * together; the utterance's start and end and each English chunk's write on the same clocks).
  */
@@ -43,9 +43,9 @@ class TurnRecorder(val root: File) {
         val dir = File(root, "%03d".format(next++)).apply { mkdirs() }
         val out = JSONObject().put("dir", r.direction.tag).put("input", r.input)
         if (utterance != null) {
-            Wav.write(File(dir, "utterance.wav"), utterance, ParakeetFrontEnd.RATE)
-            out.put("utterance", JSONObject().put("file", "utterance.wav").put("samples", utterance.size).put("sample_rate", ParakeetFrontEnd.RATE)
-                .put("end_elapsed_nanos", cutElapsedNanos).put("start_elapsed_nanos", cutElapsedNanos - utterance.size * 1_000_000_000L / ParakeetFrontEnd.RATE))
+            Wav.write(File(dir, "utterance.wav"), utterance, SAMPLE_RATE)
+            out.put("utterance", JSONObject().put("file", "utterance.wav").put("samples", utterance.size).put("sample_rate", SAMPLE_RATE)
+                .put("end_elapsed_nanos", cutElapsedNanos).put("start_elapsed_nanos", cutElapsedNanos - utterance.size * 1_000_000_000L / SAMPLE_RATE))
         }
         // System.nanoTime -> elapsedRealtimeNanos, read together now (both are monotonic; their gap is the time asleep).
         val offset = SystemClock.elapsedRealtimeNanos() - System.nanoTime()

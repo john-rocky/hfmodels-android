@@ -6,7 +6,10 @@ import java.io.RandomAccessFile
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
-/** 16-bit mono PCM WAV files: the fixtures in, a recording's tracks out. */
+/** The microphone's and the speech recognizer's rate: 16 kHz mono. */
+const val SAMPLE_RATE = 16000
+
+/** 16-bit mono PCM WAV files: the fixtures in, the utterance the speech recognizer reads, a recording's tracks out. */
 object Wav {
     /** The samples (in [-1, 1]) and the rate of a 16-bit PCM WAV; the first channel of a stereo file. Walks the RIFF chunks. */
     fun read(f: File): Pair<FloatArray, Int> {

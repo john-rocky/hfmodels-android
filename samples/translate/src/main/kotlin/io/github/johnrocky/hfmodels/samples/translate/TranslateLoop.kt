@@ -33,8 +33,8 @@ fun SpeechPlayer.asPlayer(): Player = object : Player {
 }
 
 /**
- * One utterance through the chain, as [turn]'s events: the input gate ([InputGate]), hearing ([hear]: parakeet),
- * translating ([translate]: Hy-MT2, streamed), and for [Direction.spoken] the English said piece by piece while the
+ * One utterance through the chain, as [turn]'s events: the input gate ([InputGate]), hearing ([hear]: Qwen3-ASR, the
+ * language the button gives), translating ([translate]: Hy-MT2, streamed), and for [Direction.spoken] the English said piece by piece while the
  * rest is still being translated: the first piece at the first clause mark after four words ([SpeechCutter]), then each
  * finished sentence, rewritten for the speaker ([EnglishSpeech]), cut into the speaker's chunks
  * (`SentenceSplitter.split`), synthesized on one coroutine and played on another. Nothing is played before the turn's
@@ -46,7 +46,7 @@ fun SpeechPlayer.asPlayer(): Player = object : Player {
  * `hangoverMs + firstAudioMs` after they stop talking ([TurnRecord.endOfSpeechToSoundMs]).
  */
 class TranslateLoop(
-    private val hear: suspend (FloatArray) -> ParakeetResult,
+    private val hear: suspend (pcm: FloatArray, direction: Direction) -> AsrResult,
     private val translate: (text: String, target: String, onCreated: (Double) -> Unit) -> Flow<String>,
     private val speaker: Speaker?,
     private val player: Player?,
@@ -82,7 +82,7 @@ class TranslateLoop(
         gate: Gate = Gate.opened(cutAtNanos), early: Boolean = false, discardedEarly: Int = 0, specMs: Int = 0,
     ): Flow<Event> = channelFlow {
         lock.withLock {
-            val r = TurnRecord(direction, input, hangoverMs, pcm.size * 1000.0 / ParakeetFrontEnd.RATE, early, discardedEarly, specMs, cutAtNanos, gate)
+            val r = TurnRecord(direction, input, hangoverMs, pcm.size * 1000.0 / SAMPLE_RATE, early, discardedEarly, specMs, cutAtNanos, gate)
             run(direction, pcm, cutAtNanos, r)
         }
     }
@@ -102,7 +102,7 @@ class TranslateLoop(
     /** The turn up to its end; returns early when nothing was heard or hearing failed ([run] sends Done either way). */
     private suspend fun ProducerScope<Event>.steps(direction: Direction, pcm: FloatArray, t0: Long, r: TurnRecord) {
         fun since(at: Long) = (at - t0) / 1e6
-        val level = InputGate.check(pcm, ParakeetFrontEnd.RATE, config.startRms, config.floorRms)
+        val level = InputGate.check(pcm, SAMPLE_RATE, config.startRms, config.floorRms)
         r.rms = level.rms
         r.voicedMs = level.voicedMs
         if (!level.heard) {
@@ -111,7 +111,7 @@ class TranslateLoop(
             return
         }
         val heard = try {
-            hear(pcm)
+            hear(pcm, direction)
         } catch (e: ModelException) {
             r.errors += "hearing: ${e.code}: ${e.reason}"
             send(Event.Error("hearing", "${e.code}: ${e.reason}"))
@@ -276,7 +276,7 @@ class TurnRecord(
     val errors = ArrayList<String>()
     var rms: Double = 0.0
     var voicedMs: Int = 0
-    var asr: ParakeetResult? = null
+    var asr: AsrResult? = null
     var transcribeMs: Double? = null
     var translateCreateMs: Double? = null
     var translateFirstTokenMs: Double? = null
