@@ -3,7 +3,7 @@
   "catalog_id": "hfmodels-bundled",
   "origin": {
     "repo": "john-rocky/hfmodels-android",
-    "commit": "5e221fcfbd74453f7588fa3578ef8c0845aa5f75"
+    "commit": "46fc01b116d28e05182dd5d7012ef4d6fa46283b"
   },
   "entries": [
     {
@@ -1320,7 +1320,7 @@
       "model_id": "litert-community/Hy-MT2-1.8B",
       "model_commit": "0d2c5681276f71b61c4f2a14fbb9791341b28017",
       "path": "catalog/entries/litert-community__Hy-MT2-1.8B.json",
-      "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json (cpu and gpu, cpu the default; gpu recommended for Android flagships). A translation model, not open chat: one conversation per message with the card's prompt, 'Translate the following text into <language>. Note that you should **only output the translated result without any additional explanation**:' then an empty line and the text, as the user message (no system instruction). A second message in the same conversation fails (the template's else branch, LiteRT-LM #3166): measured on litert-lm-api 0.16.1 and 0.17.1 on a Mac CPU on 2026-10-19, and by the card on 0.17.1 and 0.18.0. The file is the 2026-10-06 GPU graph rewrite with the signature input param_tensor; on 2026-10-19 litert-lm-api 0.16.1 (the SDK's pin) and 0.17.1 translated the same ten sentences on a Mac CPU with greedy sampling, near-identical. runtime_range is the one version this file ran on that the SDK links (0.17.0 was not run; 0.17.1 is outside the SDK's pin). No device has run the gpu profile on 0.16.x: the card's GPU numbers come from LiteRT-LM main builds of 2026-09-18 and adac974b, so the default profile is cpu and gpu loads only when asked for.",
+      "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json (cpu and gpu, cpu the default; gpu recommended for Android flagships). A translation model, not open chat: one conversation per message with the card's prompt, 'Translate the following text into <language>. Note that you should **only output the translated result without any additional explanation**:' then an empty line and the text, as the user message (no system instruction). A second message in the same conversation fails (the template's else branch, LiteRT-LM #3166): measured on litert-lm-api 0.16.1 and 0.17.1 on a Mac CPU on 2026-10-19, and by the card on 0.17.1 and 0.18.0. The file is the 2026-10-06 GPU graph rewrite with the signature input param_tensor; on 2026-10-19 litert-lm-api 0.16.1 (the SDK's pin) and 0.17.1 translated the same ten sentences on a Mac CPU with greedy sampling, near-identical. runtime_range is the one version this file ran on that the SDK links (0.17.0 was not run; 0.17.1 is outside the SDK's pin). The gpu profile has no gate run and no verification record. On 2026-10-20 a Galaxy S26 (Android 16) ran it on 0.16.1 in samples/translate at this repository's commit 86c26d2, which loads it with Require(GPU) and checks its output at load (two fixed Spanish sentences must come back as English about a station and a thank-you): the check passed at all seven of those GPU loads. The card's GPU numbers come from LiteRT-LM main builds of 2026-09-18 and adac974b. The default profile stays cpu, and gpu loads only when asked for.",
       "descriptor": {
         "schema_version": 1,
         "model_id": "litert-community/Hy-MT2-1.8B",
