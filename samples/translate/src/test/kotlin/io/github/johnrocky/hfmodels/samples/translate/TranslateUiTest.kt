@@ -6,7 +6,10 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** The prompt, the seconds as the screen writes them, the TURN line, the output check, the two pairs and the language choice. */
+/**
+ * The prompt, the seconds as the screen writes them, the TURN line, the output check, the two pairs, the language choice
+ * and the order of a turn's cards.
+ */
 class TranslateUiTest {
     @Test fun thePromptIsTheCardsWordForWord() {
         // litert-community/Hy-MT2-1.8B's card, "Usage" (lines 95-97 at 0d2c5681), with its Japanese example.
@@ -174,6 +177,32 @@ class TranslateUiTest {
         assertEquals(running, running.withLanguage(Language.FRENCH))
         val listening = TranslateUi(ready = true, listening = Direction.ES_EN)
         assertEquals(listening, listening.withLanguage(Language.FRENCH))
+    }
+
+    @Test fun aFinishedTurnShowsItsTranslationFirst() {
+        // The translation keeps the top of the scrolling part in both directions; the seconds and the models are under that
+        // part, so a finished turn shows the three together.
+        val started = TranslateUi(ready = true, language = Language.FRENCH).startTurn(Direction.FR_EN)
+        assertEquals(emptyList<TurnCard>(), started.cards())
+        val heard = started.on(Event.Heard("L'hôtel Bellevue est à cinq minutes à pied, juste à côté de la pharmacie.", 4420.0, 1900.0))
+        assertEquals(listOf(TurnCard.HEARD), heard.cards())
+        val said = heard.on(Event.Translation("The Bellevue Hotel")).on(Event.Done(TurnRecord(Direction.FR_EN, "file:f05.wav", hangoverMs = 300, audioMs = 4420.0).apply {
+            this.heard = "L'hôtel Bellevue est à cinq minutes à pied, juste à côté de la pharmacie."
+            translation = "The Bellevue Hotel is five minutes' walk away, right next to the pharmacy."
+            transcribeMs = 1900.0; firstChunkMs = 2600.0; firstAudioMs = 2880.0
+        }))
+        assertEquals(listOf(TurnCard.TRANSLATION, TurnCard.HEARD), said.cards())
+        assertEquals("The Bellevue Hotel is five minutes' walk away, right next to the pharmacy.", said.translation)
+        assertEquals("French speech to English voice in 3.2 s", said.result)
+        val written = TranslateUi(ready = true, language = Language.FRENCH).startTurn(Direction.EN_FR)
+            .on(Event.Heard("There are three of us.", 2000.0, 900.0)).on(Event.Translation("Nous sommes trois."))
+            .on(Event.Done(TurnRecord(Direction.EN_FR, "file:m02.wav", hangoverMs = 300, audioMs = 2000.0).apply {
+                this.heard = "There are three of us."; translation = "Nous sommes trois."; transcribeMs = 900.0; translateDoneMs = 1400.0
+            }))
+        assertEquals(listOf(TurnCard.TRANSLATION, TurnCard.HEARD), written.cards())
+        val nothing = TranslateUi(ready = true).startTurn(Direction.ES_EN).on(Event.NothingHeard("too short (40 ms of voice)"))
+        assertEquals(emptyList<TurnCard>(), nothing.cards())
+        assertEquals(emptyList<TurnCard>(), TranslateUi(ready = true).cards())
     }
 
     @Test fun frenchCountsAsSpanishDoes() {

@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,41 +40,49 @@ private val RED = Color(0xFFF85149)
 private val LIVE = Color(0xFFE5484D)
 
 /**
- * The one screen, top to bottom: the other person's language (Spanish or French), what the app does, the status, what
- * was heard, the translation (into their language in large type, for them to read), the seconds from the end of speech
- * with their parts, the three models with where they run, the speech model's license, and the two buttons.
+ * The one screen, top to bottom: the other person's language (Spanish or French), what the app does, the status, the turn
+ * (its translation first: into their language in large type for them to read, or the English that is said; then what
+ * was heard), the seconds from the end of speech with their parts, the three models with where they run, the speech
+ * model's license, and the two buttons. Only the turn scrolls ([cards]), so a finished turn shows its translation, the
+ * seconds and the models together; a new turn starts at the top. The small lines set their own line height (the theme's
+ * is 24 sp whatever the size).
  */
 @Composable
 fun TranslateScreen(ui: TranslateUi, onPress: (Direction) -> Unit, onLoad: () -> Unit, onLanguage: (Language) -> Unit) {
     MaterialTheme(colorScheme = darkColorScheme(background = BG, surface = CARD, primary = ACCENT)) {
         Column(Modifier.fillMaxSize().background(BG).safeDrawingPadding().padding(horizontal = 20.dp, vertical = 14.dp)) {
-            Text("ON-DEVICE · LiteRT · NETWORK: ${ui.network.ifEmpty { "?" }.uppercase()}", color = DIM, fontSize = 11.sp, letterSpacing = 1.6.sp)
-            Row(Modifier.padding(top = 10.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+            Text("ON-DEVICE · LiteRT · NETWORK: ${ui.network.ifEmpty { "?" }.uppercase()}", color = DIM, fontSize = 11.sp, lineHeight = 15.sp, letterSpacing = 1.6.sp)
+            Row(Modifier.padding(top = 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text("They speak", color = DIM, fontSize = 13.sp)
                 for (l in Language.entries) LanguageChoice(l, ui, onLanguage)
             }
-            Text(intro(ui.language), color = FG, fontSize = 14.sp, modifier = Modifier.padding(top = 8.dp))
-            Text(ui.status, color = DIM, fontSize = 14.sp, modifier = Modifier.padding(top = 8.dp))
-            Column(Modifier.weight(1f).fillMaxWidth().padding(top = 12.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Text(intro(ui.language), color = FG, fontSize = 13.sp, lineHeight = 18.sp, modifier = Modifier.padding(top = 6.dp))
+            Text(ui.status, color = DIM, fontSize = 13.sp, lineHeight = 18.sp, modifier = Modifier.padding(top = 6.dp))
+            val scroll = rememberScrollState()
+            // A new turn starts at the top of the scrolling part, where its translation comes.
+            LaunchedEffect(ui.busy) { if (ui.busy) scroll.scrollTo(0) }
+            Column(Modifier.weight(1f).fillMaxWidth().padding(top = 10.dp).verticalScroll(scroll), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 val d = ui.turn
-                if (d != null && ui.heard.isNotEmpty()) Card {
-                    Text("Heard · ${d.heard}", color = DIM, fontSize = 12.sp)
-                    Text(ui.heard, color = FG, fontSize = 19.sp)
+                if (d != null) for (card in ui.cards()) when (card) {
+                    TurnCard.TRANSLATION -> Card {
+                        Label(d.target)
+                        if (d.spoken) Text(ui.translation, color = ACCENT, fontSize = 22.sp, lineHeight = 28.sp, fontWeight = FontWeight.Medium)
+                        else Text(ui.translation, color = OTHER, fontSize = 28.sp, lineHeight = 34.sp, fontWeight = FontWeight.Bold)
+                    }
+                    TurnCard.HEARD -> Card {
+                        Label("Heard · ${d.heard}")
+                        Text(ui.heard, color = FG, fontSize = 15.sp, lineHeight = 20.sp)
+                    }
                 }
-                if (d != null && ui.translation.isNotEmpty()) Card {
-                    Text(d.target, color = DIM, fontSize = 12.sp)
-                    if (d.spoken) Text(ui.translation, color = ACCENT, fontSize = 22.sp, fontWeight = FontWeight.Medium)
-                    else Text(ui.translation, color = OTHER, fontSize = 32.sp, fontWeight = FontWeight.Bold, lineHeight = 38.sp)
-                }
-                ui.error?.let { Text(it, color = RED, fontSize = 13.sp) }
+                ui.error?.let { Text(it, color = RED, fontSize = 13.sp, lineHeight = 18.sp) }
             }
             if (ui.result.isNotEmpty()) {
-                Text(ui.result, color = ACCENT, fontSize = 24.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace, modifier = Modifier.padding(top = 8.dp))
-                Text(ui.breakdown, color = DIM, fontSize = 12.sp, fontFamily = FontFamily.Monospace)
+                Text(ui.result, color = ACCENT, fontSize = 20.sp, lineHeight = 24.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 8.dp))
+                Text(ui.breakdown, color = DIM, fontSize = 11.sp, lineHeight = 14.sp, fontFamily = FontFamily.Monospace)
             }
-            Column(Modifier.padding(top = 10.dp)) {
-                for (m in ui.models) Text(m.text, color = DIM, fontSize = 12.sp, fontFamily = FontFamily.Monospace)
-                Text("Speech recognition: Qwen3-ASR-1.7B (Qwen), Apache-2.0", color = DIM, fontSize = 11.sp, modifier = Modifier.padding(top = 2.dp))
+            Column(Modifier.padding(top = 8.dp)) {
+                for (m in ui.models) Text(m.text, color = DIM, fontSize = 11.sp, lineHeight = 14.sp, fontFamily = FontFamily.Monospace, letterSpacing = 0.sp)
+                Text("Speech recognition: Qwen3-ASR-1.7B (Qwen), Apache-2.0", color = DIM, fontSize = 10.sp, lineHeight = 13.sp, modifier = Modifier.padding(top = 2.dp))
             }
             Box(Modifier.fillMaxWidth().padding(top = 14.dp), contentAlignment = Alignment.Center) {
                 if (ui.ready) {
@@ -121,4 +130,10 @@ private fun LanguageChoice(l: Language, ui: TranslateUi, onLanguage: (Language) 
 @Composable
 private fun Card(content: @Composable () -> Unit) {
     Column(Modifier.fillMaxWidth().background(CARD, RoundedCornerShape(18.dp)).padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) { content() }
+}
+
+/** A card's first line: what its text is, in which language. */
+@Composable
+private fun Label(text: String) {
+    Text(text, color = DIM, fontSize = 12.sp, lineHeight = 16.sp)
 }

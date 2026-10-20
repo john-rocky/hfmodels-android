@@ -47,6 +47,22 @@ fun TranslateUi.withLanguage(l: Language): TranslateUi =
 /** The line under the header: what the two buttons do for [l]. */
 fun intro(l: Language): String = "No network, no account: ${l.label} speech becomes an English voice, English becomes ${l.label} text."
 
+/** A card of the turn on the screen. */
+enum class TurnCard { TRANSLATION, HEARD }
+
+/**
+ * The turn's cards, top to bottom: the translation first, since it is what the other person reads (or the English that
+ * is said). It keeps the top of the scrolling part, so a long one shows its head and the rest scrolls; what was heard
+ * comes under it. The seconds, their parts and the three models stay under the scrolling part, so a finished turn shows
+ * the translation, the seconds and the models together.
+ */
+fun TranslateUi.cards(): List<TurnCard> =
+    if (turn == null) emptyList()
+    else buildList {
+        if (translation.isNotEmpty()) add(TurnCard.TRANSLATION)
+        if (heard.isNotEmpty()) add(TurnCard.HEARD)
+    }
+
 fun TranslateUi.on(e: Event): TranslateUi = when (e) {
     is Event.NothingHeard -> copy(status = "Nothing heard", error = null)
     is Event.Heard -> copy(heard = e.text, status = if (e.text.isBlank()) "Nothing heard" else "Translating…")
