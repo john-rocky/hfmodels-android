@@ -69,7 +69,7 @@ fun TranslateUi.on(e: Event): TranslateUi = when (e) {
     is Event.Translation -> copy(translation = e.text)
     is Event.Speaking -> copy(status = "Speaking…")
     is Event.Error -> copy(error = "${stageName(e.stage)} failed: ${e.message}")
-    is Event.Done -> copy(busy = false, status = "Ready", translation = e.record.translation.ifEmpty { translation }, result = result(e.record), breakdown = breakdown(e.record))
+    is Event.Done -> copy(busy = false, status = if (e.record.nothingHeard != null) "Nothing heard" else "Ready", translation = e.record.translation.ifEmpty { translation }, result = result(e.record), breakdown = breakdown(e.record))
 }
 
 private fun stageName(stage: String) = when (stage) {

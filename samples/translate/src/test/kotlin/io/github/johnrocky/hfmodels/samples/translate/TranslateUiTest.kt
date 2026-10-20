@@ -7,8 +7,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * The prompt, the seconds as the screen writes them, the TURN line, the output check, the two pairs, the language choice
- * and the order of a turn's cards.
+ * The prompt, the seconds as the screen writes them, the TURN line, the output check, the two pairs, the language choice,
+ * the order of a turn's cards and the status a turn ends on.
  */
 class TranslateUiTest {
     @Test fun thePromptIsTheCardsWordForWord() {
@@ -203,6 +203,24 @@ class TranslateUiTest {
         val nothing = TranslateUi(ready = true).startTurn(Direction.ES_EN).on(Event.NothingHeard("too short (40 ms of voice)"))
         assertEquals(emptyList<TurnCard>(), nothing.cards())
         assertEquals(emptyList<TurnCard>(), TranslateUi(ready = true).cards())
+    }
+
+    @Test fun aTurnThatHeardNothingEndsOnNothingHeard() {
+        // The input gate and an empty transcript both end the turn with Done: the status stays "Nothing heard", with no card
+        // and no seconds. A turn that was heard ends on "Ready".
+        val quiet = TranslateUi(ready = true, language = Language.FRENCH).startTurn(Direction.FR_EN).on(Event.NothingHeard("too quiet (rms 0.1735)"))
+            .on(Event.Done(TurnRecord(Direction.FR_EN, "file:f05.wav", hangoverMs = 300, audioMs = 4440.0).apply { nothingHeard = "too quiet (rms 0.1735)" }))
+        val empty = TranslateUi(ready = true, language = Language.FRENCH).startTurn(Direction.EN_FR)
+            .on(Event.Heard("", 2000.0, 900.0)).on(Event.NothingHeard("no words in the audio"))
+            .on(Event.Done(TurnRecord(Direction.EN_FR, "mic", hangoverMs = 300, audioMs = 2000.0).apply { transcribeMs = 900.0; nothingHeard = "no words in the audio" }))
+        for (ui in listOf(quiet, empty)) {
+            assertEquals("Nothing heard", ui.status)
+            assertEquals(emptyList<TurnCard>(), ui.cards())
+            assertEquals("", ui.result)
+            assertEquals(false, ui.busy)
+        }
+        val heard = TranslateUi(ready = true).startTurn(Direction.ES_EN).on(Event.Heard("Son 23 euros en total.", 5080.0, 700.0)).on(Event.Done(spoken()))
+        assertEquals("Ready", heard.status)
     }
 
     @Test fun frenchCountsAsSpanishDoes() {
