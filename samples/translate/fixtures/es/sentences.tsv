@@ -1,0 +1,11 @@
+id	dir	src	ref	sec	checks
+e01	es-en	Para llegar a la Plaza Mayor, siga recto dos calles y luego gire a la izquierda.	To get to the Plaza Mayor, go straight for two blocks and then turn left.	4.53	proper:Plaza Mayor (Main Square ok); number:two; direction:left
+e02	es-en	El tren a Toledo sale del andén 4 a las tres y cuarto, así que tiene tiempo para un café.	The train to Toledo leaves from platform 4 at a quarter past three, so you have time for a coffee.	5.35	proper:Toledo; number:4; time:3:15
+e03	es-en	Lo siento, aquí no aceptamos tarjetas de crédito, solo efectivo, pero hay un cajero en la esquina.	I'm sorry, we don't accept credit cards here, only cash, but there is an ATM on the corner.	5.80	negation; cash only
+e04	es-en	Son veintitrés euros en total. ¿Quiere una bolsa para llevarlo?	That's twenty-three euros in total. Would you like a bag to carry it?	3.86	number:23 euros
+e05	es-en	El hotel Miramar está a diez minutos andando, justo al lado del banco.	The Miramar Hotel is a ten-minute walk away, right next to the bank.	4.13	proper:Miramar; number:10 minutes
+n01	en-es	Excuse me, how much is a return ticket to Seville, and which platform does it leave from?	Disculpe, ¿cuánto cuesta un billete de ida y vuelta a Sevilla y de qué andén sale?	6.00	proper:Seville/Sevilla; return ticket
+n02	en-es	There are four of us, and we have a reservation for nine o'clock under the name Smith.	Somos cuatro y tenemos una reserva para las nueve a nombre de Smith.	5.32	proper:Smith; number:4; time:9
+n03	en-es	I don't eat meat or fish, so could you tell me which dishes on the menu are vegetarian?	No como carne ni pescado, así que ¿podría decirme qué platos del menú son vegetarianos?	5.51	negation
+n04	en-es	Could you call a taxi to take us to Atocha station at seven tomorrow morning?	¿Podría llamar a un taxi para que nos lleve a la estación de Atocha mañana a las siete de la mañana?	5.13	proper:Atocha; time:7 tomorrow morning
+n05	en-es	My phone battery is almost dead. Is there somewhere near here where I can charge it?	La batería de mi teléfono está casi agotada. ¿Hay algún sitio cerca de aquí donde pueda cargarlo?	5.66	battery almost dead; place to charge
