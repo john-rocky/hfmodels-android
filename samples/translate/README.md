@@ -1,88 +1,128 @@
-# samples/translate: Spanish speech to an English voice, English speech to Spanish text, on the phone
+# samples/translate: French or Spanish speech to an English voice, English speech to French or Spanish text, on the phone
 
-No network and no translation account: someone speaks Spanish to you, the phone says it in English; you answer in English, the phone shows it in Spanish in large type for them to read. One tap per person: **Habla español** (the Spanish speaker's button) and **Speak English** (yours). A tap opens the microphone for one utterance; 800 ms of silence ends it (or a second tap). The screen shows what was heard, the translation, and the seconds from the end of speech to the first English sound (Spanish to English) or to the whole Spanish text (English to Spanish), with their parts.
+With no network and no translation account, someone who speaks only English can be spoken to in French or Spanish: the phone says it in English seconds after they stop, and shows their English answer in French or Spanish, in large type, for the other person to read.
 
-French works the same way: **They speak: French** at the top of the screen (Spanish by default) makes the buttons **Parlez français** (French speech becomes an English voice) and **Speak English** (English becomes French text in large type), with the same three models.
+**They speak** at the top chooses the other person's language: **Spanish** (the default) or **French**. Each person has a button: **Parlez français** (or **Habla español**) for them, **Speak English** for you. A tap opens the microphone for one utterance; with no speech in 8 s it ends as "Nothing heard". The turn starts once the voice has stopped for 300 ms and stands when the silence reaches 800 ms; nothing is shown or said before that, and voice coming back first cancels that start while the utterance goes on. French or Spanish becomes an English voice; English becomes French or Spanish text. The screen shows the translation, what was heard, and the seconds from the end of speech to the first English sound (or to the whole French or Spanish text), with their parts.
 
-Draft (2026-10-19): built and unit-tested on a Mac; not run on a phone yet. The numbers and the "What it did" section come from the first phone run.
+## What it did
+
+Galaxy S26 (SM-S942Q), Android 16, build BP4A.251205.006.S942QOPS1AZH9, airplane mode, the debug build of commit 86c26d2, 2026-10-20. The speech is macOS voices (French: Amélie, English: Samantha; Spanish: Flo, English: Eddy) played into the app as files: by `--es play` in real time, or through the endpointer at once by the device check. The app on the screen and the device check (instrumentation) are two processes, and their numbers are not compared with each other. Next to each run are the phone's CPU frequency caps (`scaling_max_freq` of its two CPU policies), which were not the same from run to run.
+
+The app on the screen, French speech to the first English sound:
+
+| what | seconds | CPU caps |
+|---|---|---|
+| "L'hôtel Bellevue est à cinq minutes à pied, juste à côté de la pharmacie." | 2.9 s: 300 ms end of speech + 1.6 s hearing + 722 ms translating + 251 ms voice | 3.63 / 4.74 GHz |
+| the five French sentences of `fixtures/fr`, twice | median 3,491.5 ms | 2.90 / 2.88 GHz before, 2.75 / 2.67 GHz after |
+
+Over those ten turns, the parts (medians, counted from the early cut): hearing 2,049.5 ms, the translation's first token at 2,361.5 ms, the first piece to the speaker at 2,838.5 ms, its first sound at 3,191.5 ms. The first turn after a start spent longer hearing (3.1 s for f01, against 1.8 to 2.6 s for the other nine).
+
+The device check (instrumentation), the same ten turns: median 3,785 ms, above 3.5 s, the target set before the runs. Its CPU caps were not read right before it: 3.63 / 4.61 GHz four minutes before, 2.00 / 1.98 GHz right after. Its parts, medians from the early cut: hearing 2,345 ms (within it the audio encoder with the prefill and the first step 1,146 ms, the decoding 1,148 ms), the translation's first token at 2,678 ms, the first piece to the speaker at 3,108 ms, its first sound at 3,485 ms. English to French text: median 3,759 ms.
+
+- Hearing (the check, French rows): character error rate 2.2 % in French (8 of 363 characters), 0 % in English (0 of 333), with case, punctuation and digits normalized.
+- Translations (the check): 9 of the 10 keep their numbers, names, negations and times. The miss: "platform" became "plateforme" (quai or voie expected).
+- The failure paths (the check): all 12 steps passed: a model file the phone does not have (`OFFLINE_CACHE_MISS` and the screen's words), silence and quiet noise (nothing heard), the input gate on noise, 35 s of speech (three parts at the 15 s window), Spanish into both French buttons, Stop in the middle of a turn and the next turn, a 500 ms pause inside a sentence, memory, release.
+- Memory (the check): peak resident set (VmHWM) 231,152 kB before the load, 1,951,000 kB after it, 4,512,864 kB after the 20 turns; `dumpsys meminfo` TOTAL PSS up to 7,164,087 kB.
+- Load (the app on the screen; CPU caps 3.63 / 4.74 GHz, read 2.6 minutes before): 18.7 s (`load_ms` 18,650) for the first load, which imports the pushed copies and writes the runtimes' caches; 5.5 s (5,509 ms) for a later one: Qwen3-ASR 0.9 s, Hy-MT2 on the GPU 4.0 s with its output check, Kitten 0.6 s; peak resident set 1,912,588 kB after it.
+- Storage: 4,519,030 kB for the model files in the app's store and 2,938,612 kB of runtime caches (Qwen3-ASR's two CPU weight caches, 1,729,166,056 and 1,270,175,264 bytes, and Hy-MT2's GPU program cache, 6,906,224 bytes); Hy-MT2 on the CPU (`--es mt_backend cpu`) writes a CPU weight cache of its own, 1,799,900,824 bytes.
+- Spanish (the device check, Spanish rows; CPU caps 3.19 / 3.13 GHz): end of speech to the first English sound, median 3,713.5 ms; English to Spanish text, median 3,760 ms. Character error rate 4.0 % in Spanish (13 of 321), 0.6 % in English (2 of 333). 8 of the 10 translations keep their numbers, names, negations and times: "23 euros" was heard without the 23, and "Atocha station" as "a Taché station"; "next to the bank" also became "next to the park". All 12 failure steps passed, with French into both Spanish buttons.
+
+Speech longer than 15 s is cut at 15 s (the speech model's window), and each part is a turn. Such a turn's seconds count from the cut at the window, plus the 800 ms of the endpointer, not from the end of speech: 5.2 s on the screen for the first 15 s of a 35 s French recording (the app on the screen; CPU caps not read right before it).
 
 ## Three models
 
 | role | id @ commit | file | size | where it runs | license |
 |---|---|---|---|---|---|
-| hearing, both languages | `litert-community/Qwen3-ASR-1.7B` @ 184ec0f1 | `Qwen3-ASR-1.7B-15s.litertlm` | 2.70 GB | CPU, LiteRT-LM (the language model and the audio encoder, 4 threads) | Apache-2.0 (Qwen Qwen3-ASR-1.7B) |
-| translation | `litert-community/Hy-MT2-1.8B` @ 0d2c5681 | `Hy-MT2-1.8B_int8.litertlm` | 1.83 GB | GPU after an output check at load, else CPU (LiteRT-LM through `Tasks.Chat`) | Apache-2.0 (Tencent Hy-MT2-1.8B) |
-| English voice | `litert-community/kitten-tts-nano-0.8` @ 2c5b198f | `fp32`: 8 files | 94 MB | CPU (`Speak`) | Apache-2.0 (KittenML) |
+| hearing, both languages | `litert-community/Qwen3-ASR-1.7B` @ 184ec0f1 | `Qwen3-ASR-1.7B-15s.litertlm` | 2.70 GB | CPU, LiteRT-LM 0.16.1 (the language model and the audio encoder, 4 threads each) | Apache-2.0 (from `Qwen/Qwen3-ASR-1.7B-hf`) |
+| translation | `litert-community/Hy-MT2-1.8B` @ 0d2c5681 | `Hy-MT2-1.8B_int8.litertlm` | 1.83 GB | GPU after an output check at load, else CPU (LiteRT-LM 0.16.1 through `Tasks.Chat`) | Apache-2.0 (from `tencent/Hy-MT2-1.8B`) |
+| English voice | `litert-community/kitten-tts-nano-0.8` @ 2c5b198f | `fp32`: 8 files | 94 MB | CPU, LiteRT 2.2.0 (`Speak`) | Apache-2.0 (from `KittenML/kitten-tts-nano-0.8-fp32`) |
 
-- **Qwen3-ASR-1.7B** (Qwen, 30 languages) in its 15 s file: one message holds one utterance of up to 15 s (the endpointer cuts there), and the button fixes the language (`language French<asr_text>` in the same message as the audio, the model card's form; the answer is then the transcript alone). The repo has no `hfmodels.json`: the sample passes a descriptor of its own (`src/main/assets/descriptors/`, `LoadOptions.descriptorJson`) with its own handler (`Qwen3Asr.kt`), so the SDK still downloads with resume, checks the sha256, imports a pushed copy and loads offline. hfmodels' `Tasks.Chat` takes no audio in this release, so the handler builds LiteRT-LM's `Engine` itself (the runtime the SDK links, 0.16.1): the language model and the audio encoder on the CPU, a new conversation per utterance, the first load writing about 3 GB of CPU weight caches into the app's cache dir.
-- **Hy-MT2-1.8B** (Tencent, 33 languages, a translation model, not a chat model) by id from the SDK's bundled catalog, which pins it at 0d2c5681 for LiteRT-LM 0.16.1. One request, one new conversation with the model card's prompt (`Translate the following text into English. Note that you should **only output the translated result without any additional explanation**:` then an empty line and the text): a second message in the same conversation fails (LiteRT-LM #3166). Greedy. On the GPU, two fixed Spanish sentences are translated at load and must come back as English about a station and a thank-you; otherwise the model is loaded on the CPU, and the failure is remembered for this phone build, runtime and model (`--es mt_backend gpu` tries again).
-- **Kitten TTS nano 0.8** says the English sentence by sentence while the rest is still being translated. Before it, the English is rewritten into what its front-end can say (`EnglishSpeech.kt`: "I’m" -> "I'm", "3:15 p.m." -> "three fifteen PM", "€23.50" -> "23 euros 50", "21st", "Mr.", accents). There is no Spanish voice: no fast Spanish text-to-speech runs from Kotlin on this stack yet, so English to Spanish is text.
+- **Qwen3-ASR-1.7B** in its 15 s file: one message holds one utterance of up to 15 s, and the button fixes the language (`language French<asr_text>` in the same message as the audio, the model card's form; the answer is then the transcript). The repo has no `hfmodels.json`: the sample passes a descriptor of its own (`src/main/assets/descriptors/`, `LoadOptions.descriptorJson`) with its own handler (`Qwen3Asr.kt`), so the SDK still checks the sha256, imports a pushed copy and loads offline. hfmodels' `Tasks.Chat` takes no audio in this release, so the handler builds LiteRT-LM's `Engine` itself, on the runtime the SDK links. The first load writes the CPU weight caches into the app's cache dir.
+- **Hy-MT2-1.8B** (a translation model, not a chat model) by id from the SDK's bundled catalog, which pins it at 0d2c5681 for LiteRT-LM 0.16.1. One request, one new conversation with the model card's prompt (`Translate the following text into English. Note that you should **only output the translated result without any additional explanation**:`, an empty line, the text): a second message in the same conversation fails (LiteRT-LM #3166). Greedy. On the GPU, two fixed Spanish sentences are translated at load and must come back as English about a station and a thank-you; otherwise the model loads on the CPU, and the failure is kept for this phone build, runtime and model. On the Galaxy S26 the check passed at every load.
+- **Kitten TTS nano 0.8** says the English piece by piece while the rest is still being translated: the first piece ends at the first comma, semicolon or colon after four words, the next ones at sentence ends. Before that the English is rewritten into what its front-end can say (`EnglishSpeech.kt`: "I’m" -> "I'm", "3:15 p.m." -> "three fifteen PM", "€23.50" -> "23 euros 50", "21st", "Mr.", accents). There is no French or Spanish voice: no fast text-to-speech for them runs from Kotlin on this stack yet, so English to French or Spanish is text.
 
-## Build and permissions
+## Build and install
 
 ```sh
-./gradlew :samples:translate:installDebug
+./gradlew :samples:translate:assembleDebug
+adb install -r samples/translate/build/outputs/apk/debug/translate-debug.apk
 adb shell pm grant io.github.johnrocky.hfmodels.samples.translate android.permission.RECORD_AUDIO
 ```
 
-Without the grant the app asks on its first start.
-
 ## Model files
 
-The first load downloads the files (4.62 GB) into the app's private storage and checks each sha256; later loads, with or without a network, use the store. Development shortcut: copies in the app's external files dir are hashed and imported instead of downloaded (`adb logcat -s hfmodels` prints `side-loaded <file> … (sha256 verified)`); they can go after that load. The copies must belong to the app (a copy made by `adb shell` is unreadable to it on a Galaxy S26), so they go in through `run-as`:
+The app loads the three models from its own storage (`files/hfmodels`). Before it downloads anything, a load looks in the app's external files dir for a copy of each file with the right name and size, and hashes and imports it instead (`HfModels.download` → `sideLoadAll`, with or without a network); `adb logcat -s hfmodels` prints `side-loaded <file> from <path> (sha256 verified)` for each. On the Galaxy S26 this ran offline, in airplane mode. Online, the first load downloads the files it has no copy of (4.62 GB in all) on any network, mobile data included (`NetworkPolicy.Any`); not run on a phone with this sample: the Galaxy S26 here had no Wi-Fi. Offline with no copy, the load stops with `OFFLINE_CACHE_MISS` and the screen says so. The copies have to belong to the app, so they go in through `run-as`:
 
 ```sh
 P=io.github.johnrocky.hfmodels.samples.translate
 hf download litert-community/Qwen3-ASR-1.7B Qwen3-ASR-1.7B-15s.litertlm --revision 184ec0f1ef8c8b5254100e95ec713b5557fb91de --local-dir m
 hf download litert-community/Hy-MT2-1.8B Hy-MT2-1.8B_int8.litertlm --revision 0d2c5681276f71b61c4f2a14fbb9791341b28017 --local-dir m
 hf download litert-community/kitten-tts-nano-0.8 kitten_predictor.tflite kitten_prosody.tflite kitten_vocoder.tflite voices.npz g2p/dp_g2p_matcha_fp16.tflite g2p/g2p_dict.txt.gz g2p/g2p_meta.json g2p/symbols.json --revision 2c5b198f36e0b40a098585da7601bd752ff432d5 --local-dir m
-adb shell am start -n $P/.MainActivity      # makes the external files dir; close it again
+adb shell am start -n $P/.MainActivity      # makes the app's external files dir
+adb shell am force-stop $P
 adb shell mkdir -p /data/local/tmp/translate-models
 adb push m/*.tflite m/*.litertlm m/voices.npz m/g2p/* /data/local/tmp/translate-models/
 adb shell "run-as $P sh -c 'cp /data/local/tmp/translate-models/* /sdcard/Android/data/$P/files/'"
 adb shell rm -r /data/local/tmp/translate-models
+adb shell am start -n $P/.MainActivity --ez autoload true
 ```
 
-The side-load matches file names, so the files go flat (Kitten's `g2p/` files too).
+The side-load matches file names, so the files go flat (Kitten's `g2p/` files too). While they are imported the phone holds them twice, with the caches the first load writes: 11,976,626 kB on the Galaxy S26 (the copies 4,518,952 kB, the store 4,519,038 kB, the caches 2,938,636 kB). Once the screen says Ready, the copies can go:
+
+```sh
+adb shell "run-as $P sh -c 'cd /sdcard/Android/data/$P/files && rm *.litertlm *.tflite voices.npz g2p_* symbols.json'"
+```
 
 ## Launch extras
 
-Debug builds only: a release build ignores them.
+For scripted runs of the debug build (`adb shell am start -n $P/.MainActivity <extras>`); the person at the phone uses the buttons.
 
 | extra | what it does |
 |---|---|
-| `--ez autoload true` | load the three models now |
-| `--es pair es\|fr` | the other person's language, as the choice at the top (default `es`, Spanish) |
-| `--es play <wav>` | this WAV (16 kHz mono 16-bit; a path, or a name in the external files dir) as one press of the button of `--es dir` (`es-en`, `en-es`, `fr-en` or `en-fr`; the default is the other person's button of the chosen language), through the endpointer in real time (`--ez realtime false`: at once) |
-| `--es record <name>` | each turn under `<external files>/record/<name>/<turn>/`: `utterance.wav` (16 kHz, what was heard), `reply.wav` (24 kHz, the English as played), `events.json` (every event on the phone's clocks, each English chunk's write) |
-| `--ef start_rms 0.01` | the endpointer's start level (default 0.02, a voice toward the phone; a loudspeaker across a desk needs less) |
-| `--ef floor_rms 0.005` | the input gate's RMS floor: below it, or with less than 250 ms of voice, an utterance is "Nothing heard" |
-| `--es mt_backend gpu\|cpu` | where Hy-MT2 runs (default: the GPU after its output check, unless it failed on this phone before) |
-
-With any of these extras the screen shows over the keyguard, turns the display on and keeps it on (scripted mode). While the screen is not visible, the microphone and any turn in progress stop.
+| `--ez autoload true` | loads the three models now (`READY …` when done) |
+| `--es pair fr\|es` | the other person's language, as the choice at the top (`language fr`) |
+| `--es play <wav>` | plays this WAV (16 kHz mono 16-bit, a path on the phone) as one press of a button, through the endpointer in real time, so the turn starts at the early cut as for a voice (`early=true hangover_ms=300`); with `--ez realtime false` the WAV goes in at once and the turn starts at the endpointer's cut (`early=false hangover_ms=800`) |
+| `--es dir fr-en\|en-fr\|es-en\|en-es` | the button the play presses (without it, the other person's); a direction of the other language switches the screen to it |
+| `--es record <name>` | writes each turn under `<external files>/record/<name>/<turn>/`: `utterance.wav` (16 kHz, what was heard), `reply.wav` (24 kHz, the English as it was played), `events.json` (every event on the phone's clocks) |
+| `--ef start_rms 0.01` | the endpointer's start level (default 0.02) (`levels start_rms=0.01 floor_rms=0.005`) |
+| `--ef floor_rms 0.005` | the input gate's RMS floor: an utterance below it is not heard (with 0.5 the sentence above gave `nothing_heard="too quiet (rms 0.1735)"`, no translation and no seconds; the screen went back to Ready) |
+| `--es mt_backend gpu\|cpu` | where Hy-MT2 runs, read at the load: `cpu` gives `mt_backend=CPU`; `gpu` loads it on the GPU after its output check (`gpu_check="pass"`) |
 
 ## Logs
 
 `adb logcat -s translate`:
-- `READY …` once the three models are loaded: each one's id, commit and backend, the output check, the load seconds, the runtimes, the network, the process's peak memory (`vmhwm_kb`).
+- `extras …` for a start with extras (the values it read), then `language …`, `record …` or `levels …` when an extra sets them.
+- `READY …` once the three models are loaded: each one's id, commit and backend, the output check, the load milliseconds, the runtimes, the network, the process's peak memory (`vmhwm_kb`).
 - `LOAD FAILED model="…" code=… reason="…"` when one did not load (the screen says the same).
-- `TURN …` per turn: `dir`, `input` (`mic`, `mic-press` when a tap ended it, `file:<name>`), `heard`, `translation`, `spoken`, then milliseconds from the cut of the utterance: `ms_transcribe` (with `asr_feature_ms`, `asr_encode_ms`, `asr_decode_ms`, `asr_steps`), `ms_translate_create` (the new conversation), `ms_translate_first_token`, `ms_translate_done`, `ms_first_sentence` (the first English sentence finished), `ms_first_synth`, `ms_first_audio` (the loudspeaker's first write); `hangover_ms` (the endpointer's 800 ms of silence) and the two totals, `ms_end_of_speech_to_sound` = `hangover_ms` + `ms_first_audio` (the screen's "Spanish speech to English voice in N.N s") and `ms_end_of_speech_to_text` = `hangover_ms` + `ms_translate_done` ("English speech to Spanish text"); `tokens`, `backend`, `rms`, `voiced_ms`, `nothing_heard`, `errors`, `network` (none in airplane mode), `vmhwm_kb`.
-- `mic_level …` once a second while a button listens: the second's RMS and its loudest 20 ms, for the input gate's floor.
+- `TURN …` per turn: `dir`, `input` (`mic`, `file:<name>`), `heard`, `translation`, `spoken`; `spec_ms` (the early cut's 300 ms), `early` (the turn started at the early cut), `discarded_early`, `hangover_ms` (300 for an early turn, else 800); milliseconds from that cut: `ms_gate` (the utterance stood), `ms_transcribe` (with the recognizer's `asr_wav_ms`, `asr_create_ms`, `asr_first_chunk_ms`, `asr_decode_ms`, `asr_chunks`), `ms_translate_create`, `ms_translate_first_token`, `ms_translate_done`, `ms_first_chunk` (the first piece to the speaker, `first_chunk`), `ms_first_sentence`, `ms_first_synth`, `ms_audio_ready`, `ms_first_audio` (the loudspeaker's first write), `ms_total`; the two totals, `ms_end_of_speech_to_sound` = `hangover_ms` + `ms_first_audio` (`l1` writes the sum; the screen's "French speech to English voice in N.N s") and `ms_end_of_speech_to_text` ("English speech to French text"); `tokens`, `backend`, `audio_ms`, `rms`, `voiced_ms`, `nothing_heard`, `errors`, `network` (none in airplane mode), `vmhwm_kb`.
+- `recorded <dir>` after a turn when `--es record` is on.
+- `mic_level …` once a second while a button listens: the second's RMS and its loudest 20 ms.
+
+`adb logcat -s hfmodels`: `side-loaded …` per imported file and `qwen3-asr ready: …` (the threads, the initialize and first-conversation milliseconds, the cache dir).
 
 ## Device check
 
-`src/androidTest/kotlin/io/github/johnrocky/hfmodels/check/TranslateDeviceCheck.kt`: in the app's own process, the three loads from the store, the ten fixed sentences through the endpointer and the turn twice (20 turns, the transcripts beside the Mac's), and the failure paths: silence and quiet noise (nothing heard), the input gate on the noise, 35 s of speech (cut at the 30 s window), French into both buttons (recorded), a model file the store does not have (the screen's words), Stop in the middle of a turn and the next turn, the memory, the release. It prints `RESULT` lines under `adb logcat -s hfmodels-check` and a summary with the median from the end of speech to the first English sound. The fixtures (16 kHz mono 16-bit WAVs, `sentences.tsv`, `mac_asr_30s.tsv`) go to `/data/local/tmp/translate/` (argument `fixtures`). The rows' directions give the pair: with French rows (`fr-en`, `en-fr`) the same steps run on the French buttons, and Spanish (`es_input.wav`) goes into both.
+`src/androidTest/kotlin/io/github/johnrocky/hfmodels/check/TranslateDeviceCheck.kt`, in the app's own process: the three loads from the app's store (offline when the phone has no network), the ten fixed sentences through the endpointer and the turn twice (20 turns, each starting at the early cut with the wait to 800 ms), and the failure paths above. It prints `RESULT` lines under the tag `hfmodels-check`, the last one `RESULT ok=true` when every step passed, and a summary with the median from the end of speech to the first English sound. The rows' directions give the pair: with `fixtures/fr` the steps run on the French buttons and Spanish goes into both; with `fixtures/es` on the Spanish buttons, with French into both. The model files go in first (above).
+
+The fixtures are made on a Mac by `fixtures/make_fixtures.sh` (macOS `say` voices, ffmpeg, python3): for each pair the ten sentences of `sentences.tsv`, silence, quiet noise, 35 s of speech, a sentence in the other language and `pause_resume.wav`, 16 kHz mono 16-bit, next to `sentences.tsv` and `pause_resume.tsv`. On the Mac that made the fixtures the device checks used (macOS 27.0, ffmpeg 9.0.1), the script gives the same 30 WAVs, byte for byte (`fixtures/SHA256SUMS`). The check also reads `mac_asr.tsv` (id, a transcript to print beside the phone's) when it is there; it is not needed.
 
 ```sh
-./gradlew :samples:translate:connectedDebugAndroidTest -Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true \
-  -Pandroid.testInstrumentationRunnerArguments.class=io.github.johnrocky.hfmodels.check.TranslateDeviceCheck
+./gradlew :samples:translate:assembleDebug :samples:translate:assembleDebugAndroidTest
+adb install -r samples/translate/build/outputs/apk/debug/translate-debug.apk
+adb install -r samples/translate/build/outputs/apk/androidTest/debug/translate-debug-androidTest.apk
+bash samples/translate/fixtures/make_fixtures.sh fx
+adb shell mkdir -p /data/local/tmp/translate
+adb push fx/es /data/local/tmp/translate/
+adb shell am instrument -w -e class io.github.johnrocky.hfmodels.check.TranslateDeviceCheck -e fixtures /data/local/tmp/translate/es io.github.johnrocky.hfmodels.samples.translate.test/androidx.test.runner.AndroidJUnitRunner
 adb logcat -d -s hfmodels-check | grep RESULT
 ```
 
+For the French rows: `adb push fx/fr /data/local/tmp/translate/` and `-e fixtures /data/local/tmp/translate/fr`.
+
 ## JVM tests
 
-`./gradlew :samples:translate:testDebugUnitTest`: the prompt against the card word for word, the front-end against librosa's filterbank and the Python host's features of a synthetic sweep (`src/test/resources/parakeet/`), the greedy loop on a scripted joint, the vocabulary, the cuts, the input gate, the English rewrite and the sentence cutter, the screen's seconds and the TURN line, and a whole turn with fakes. With `TRANSLATE_FIXTURES_ROOT` (the fixture WAVs and the Python host's dumps; not in this repository) and `TRANSLATE_PARAKEET_ROOT` (a dir with the model's `tokenizer.json` as `parakeet_tokenizer.json`) three more compare the twelve fixture utterances with the Python host: the endpointer's cut, the 5 s pieces, the features (largest difference 2.4e-7) and the stop frames, and the text of the host's token ids; without them those three are skipped and say so.
+`./gradlew :samples:translate:testDebugUnitTest`: 53 tests in 6 classes, none skipped: the prompt against the card word for word, the language each button fixes and the transcript in the recognizer's answer, the endpointer's early cut and its 800 ms on scripted audio, a press at the microphone's pace, the 15 s window, the input gate, the English rewrite and the sentence and clause cuts, no sound before the utterance stands, a whole turn with fakes, the screen's seconds, the TURN line and the order of the cards.
 
 ## License
 
-The sample is Apache-2.0 like the SDK. Speech recognition: Qwen Qwen3-ASR-1.7B, Apache-2.0. Translation: Tencent Hy-MT2-1.8B, Apache-2.0. Voice: KittenML kitten-tts-nano-0.8, Apache-2.0. Model files are never in the APK.
+The sample is Apache-2.0 like the SDK. Speech recognition: Qwen3-ASR-1.7B (Qwen), Apache-2.0. Translation: Hy-MT2-1.8B (Tencent), Apache-2.0. Voice: kitten-tts-nano-0.8 (KittenML), Apache-2.0. Model files are never in the APK; the fixture WAVs are made by the script and are not in this repository.
