@@ -1,0 +1,143 @@
+{
+  "model_id": "litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B",
+  "model_commit": "61cb6bbe177d134fdbc215cf5b81f592f434ad08",
+  "gated": false,
+  "path": "catalog/entries/litert-community__NVIDIA-Nemotron-Labs-Dory1.0-4B.json",
+  "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json. A looped normalized-GPT reasoning model (NVIDIA's Dory1.0-4B; its 20 recurrent attention/MLP pairs run twice per token): the bundle declares the thought channel (<think> / </think>) and its generation prompt opens it (<think> then a newline), so the model reasons from its first token; with thinking off the template closes the block at once (<think></think>). handler_config.channels spells the bundle's channel and thinking_default is true. The bundle's KV budget is 2,048 tokens for prompt and reply together. int4 is the GPU file and int8 the CPU file, as the card says (on a CPU the int4 file is the wrong choice): int4 has a gpu profile only and int8 a cpu profile only, so a phone whose GPU path does not load the model (none of the GPU builds fitted the 8 GB Pixel 8a, the card) loads variant int8 by name. Both files declare runtime 0.18.0 or newer in the repo's manifest (min_runtime_version, the version of the builder that packed them); runtime_range starts at 0.16.1, the runtime this SDK links. Neither profile has a gate run or a verification record.",
+  "descriptor": {
+    "schema_version": 1,
+    "model_id": "litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B",
+    "tasks": [
+      "chat"
+    ],
+    "default_variant": "int4",
+    "license": {
+      "id": "openmdw-1.1",
+      "url": "https://openmdw.ai/license/1-1/"
+    },
+    "variants": [
+      {
+        "id": "int4",
+        "runtime": "litert_lm",
+        "handler": {
+          "id": "litertlm.conversation",
+          "abi": 1
+        },
+        "runtime_range": {
+          "min_inclusive": "0.16.1",
+          "max_exclusive": "0.19.0"
+        },
+        "inputs": [
+          "text"
+        ],
+        "files": [
+          {
+            "id": "weights",
+            "role": "model",
+            "path": "NVIDIA-Nemotron-Labs-Dory1.0-4B_int4.litertlm",
+            "bytes": 2403851584,
+            "sha256": "220daaa90b3b32cdfdec393f71253dcf68467eb16ff67bcc027e2371253a21da"
+          }
+        ],
+        "default_profile": "gpu",
+        "profiles": [
+          {
+            "id": "gpu",
+            "priority": 100,
+            "files": [
+              "weights"
+            ],
+            "enabled_inputs": [
+              "text"
+            ],
+            "components": {
+              "language": "gpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "fallback_profiles": [],
+            "default_selectable": true
+          }
+        ],
+        "handler_config": {
+          "metadata_source": "litertlm_manifest",
+          "channels": [
+            {
+              "name": "thought",
+              "start": "<think>",
+              "end": "</think>"
+            }
+          ],
+          "thinking_default": true,
+          "context_tokens": 2048,
+          "manifest_min_runtime_version": "0.18.0"
+        }
+      },
+      {
+        "id": "int8",
+        "runtime": "litert_lm",
+        "handler": {
+          "id": "litertlm.conversation",
+          "abi": 1
+        },
+        "runtime_range": {
+          "min_inclusive": "0.16.1",
+          "max_exclusive": "0.19.0"
+        },
+        "inputs": [
+          "text"
+        ],
+        "files": [
+          {
+            "id": "weights",
+            "role": "model",
+            "path": "NVIDIA-Nemotron-Labs-Dory1.0-4B_int8.litertlm",
+            "bytes": 4046675264,
+            "sha256": "25632f91399cf7408d546c1c0531290d1c9ca1b7d4e9b75826600bfc2f9f6083"
+          }
+        ],
+        "default_profile": "cpu",
+        "profiles": [
+          {
+            "id": "cpu",
+            "priority": 50,
+            "files": [
+              "weights"
+            ],
+            "enabled_inputs": [
+              "text"
+            ],
+            "components": {
+              "language": "cpu"
+            },
+            "requirements": {
+              "min_android_api": 31,
+              "abis": [
+                "arm64-v8a"
+              ]
+            },
+            "fallback_profiles": [],
+            "default_selectable": true
+          }
+        ],
+        "handler_config": {
+          "metadata_source": "litertlm_manifest",
+          "channels": [
+            {
+              "name": "thought",
+              "start": "<think>",
+              "end": "</think>"
+            }
+          ],
+          "thinking_default": true,
+          "context_tokens": 2048,
+          "manifest_min_runtime_version": "0.18.0"
+        }
+      }
+    ]
+  }
+}
