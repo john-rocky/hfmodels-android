@@ -1,0 +1,81 @@
+# hfmodels on litertlm-android 0.16.1 (at commit 5e497ba): samples/chat's ChatDeviceCheck with litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B (int4 gpu: 17 + 25, then the model card's question; int8 cpu: 17 + 25), log_thought=true
+# serial=RFGL80R6A6H device=SM-S942Q (Galaxy S26) build=BP4A.251205.006.S942QOPS1AZH9 android=16; chat-debug.apk sha256 6178de70…, chat-debug-androidTest.apk sha256 2345a28b…; each leg: its start / end line (uptime, MemAvailable, thermal status, free /data), its log lines, and the runtime's delegate lines
+# 56 lmkd lines (other apps the phone stopped to free memory during the run) are left out of this copy.
+# leg x1 :: x1 check litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B gpu :: start=2026-10-22 23:37:59 uptime_s=607813.08 memavail_kb=6339116 thermal=0 free_data_kb=109869088
+10-22 23:37:59.649  8515  8515 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-22 23:37:59.653  8515  8515 I AndroidRuntime: Using default boot image
+10-22 23:37:59.653  8515  8515 I AndroidRuntime: Leaving lock profiling enabled
+10-22 23:37:59.653  8515  8515 D AndroidRuntime: addProductProperty not brand or 7
+10-22 23:37:59.708  8515  8515 D AndroidRuntime: Calling main entry com.android.commands.am.Am
+10-22 23:38:00.567  8529  8544 I hfmodels: resolve litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B: commit=61cb6bbe via RESOLVED_BRANCH, descriptor=john-rocky/hfmodels-android@1db6c03d/catalog/entries/litert-community__NVIDIA-Nemotron-Labs-Dory1.0-4B.json sha=ca7a357b
+10-22 23:38:00.584  8529  8544 I hfmodels: download NVIDIA-Nemotron-Labs-Dory1.0-4B_int4.litertlm <- https://huggingface.co/litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B/resolve/61cb6bbe177d134fdbc215cf5b81f592f434ad08/NVIDIA-Nemotron-Labs-Dory1.0-4B_int4.litertlm
+10-22 23:43:32.051  8529  8544 I hfmodels: downloaded NVIDIA-Nemotron-Labs-Dory1.0-4B_int4.litertlm: 2403851584 bytes, sha256 ok
+10-22 23:43:52.993  8529  8541 I hfmodels: ready litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B@61cb6bbe variant=int4 profile=gpu language=GPU prepare_ms=20939
+10-22 23:43:52.994  8529  8541 I hfmodels-check: RESULT step=load ok=true model=litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B variant=int4 profile=gpu initialized=[language=GPU] thinking=descriptor load_ms=353028 last_event=Ready
+10-22 23:44:02.789  8529  8541 I hfmodels-check: RESULT step=answer ok=true model=litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B expect="42" chunks=95 thought_chunks=93 first_chunk_ms=1060 total_ms=9792 state=READY thought_chars=369 reply="42"
+10-22 23:44:02.791  8529  8541 I hfmodels-check: THOUGHT part=1 text=The user asks: "What is 17 + 25? Answer briefly." Need to answer with the sum. 17+25 = 42. Need to answer briefly. The system says I am a helpful assistant. The user wants a brief answer. So final should be just "42" or maybe "42." Probably just "42". Need to ensure no extra fluff. The instruction: "Answer briefly." So final should be concise. I'll respond with "42".
+10-22 23:44:04.501  8529  8541 I hfmodels-check: RESULT step=stop ok=true model=litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B chunks_at_stop=5 state=INVALID
+10-22 23:44:05.177  8529  8541 I hfmodels-check: RESULT step=release ok=true model=litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B close_ms=675
+10-22 23:44:05.177  8529  8541 I hfmodels-check: RESULT ok=true model=litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B failed=[] sdk=0.2.1-SNAPSHOT runtime=litert_lm 0.16.1 device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZH9
+10-22 23:44:05.194  8515  8515 I AndroidRuntime: VM exiting with result code 0.
+10-22 23:43:33.174  8529  8544 I tflite  : Replacing 6259 out of 6259 node(s) with delegate (LITERT_CL) node, yielding 1 partitions for subgraph 0 (prefill_128).
+10-22 23:43:45.327  8529  8544 I tflite  : Replacing 6259 out of 6259 node(s) with delegate (LITERT_CL) node, yielding 1 partitions for subgraph 1 (prefill_512).
+10-22 23:43:47.126  8529  8544 I tflite  : Replacing 6259 out of 6259 node(s) with delegate (LITERT_CL) node, yielding 1 partitions for subgraph 2 (prefill_1024).
+10-22 23:43:49.005  8529  8544 I tflite  : Replacing 5620 out of 5620 node(s) with delegate (LITERT_CL) node, yielding 1 partitions for subgraph 3 (decode).
+10-22 23:43:52.973  8529  8544 I tflite  : Replacing 1 out of 4 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 2 partitions for subgraph 0 (decode_embedder).
+10-22 23:43:52.973  8529  8544 I tflite  : Replacing 1 out of 4 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 2 partitions for subgraph 1 (prefill_embedder_128).
+10-22 23:43:52.973  8529  8544 I tflite  : Replacing 1 out of 4 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 2 partitions for subgraph 2 (prefill_embedder_512).
+10-22 23:43:52.973  8529  8544 I tflite  : Replacing 1 out of 4 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 2 partitions for subgraph 3 (prefill_embedder_1024).
+# leg x1 rc=0 end=2026-10-22 23:44:07 uptime_s=608180.82 memavail_kb=7419104 thermal=0 free_data_kb=107490364
+# leg x2 :: x2 check litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B gpu - May_17 Extract the dates from: The meeting moved from May 3 to May 17. :: start=2026-10-22 23:44:07 uptime_s=608181.17 memavail_kb=7410812 thermal=0 free_data_kb=107490364
+10-22 23:44:07.766  8932  8932 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-22 23:44:07.772  8932  8932 I AndroidRuntime: Using default boot image
+10-22 23:44:07.772  8932  8932 I AndroidRuntime: Leaving lock profiling enabled
+10-22 23:44:07.773  8932  8932 D AndroidRuntime: addProductProperty not brand or 7
+10-22 23:44:07.871  8932  8932 D AndroidRuntime: Calling main entry com.android.commands.am.Am
+10-22 23:44:08.455  8949  8965 I hfmodels: resolve litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B: commit=61cb6bbe via SAVED_BINDING, descriptor=john-rocky/hfmodels-android@1db6c03d/catalog/entries/litert-community__NVIDIA-Nemotron-Labs-Dory1.0-4B.json sha=ca7a357b
+10-22 23:44:25.943  8949  8963 I hfmodels: ready litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B@61cb6bbe variant=int4 profile=gpu language=GPU prepare_ms=17479
+10-22 23:44:25.946  8949  8963 I hfmodels-check: RESULT step=load ok=true model=litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B variant=int4 profile=gpu initialized=[language=GPU] thinking=descriptor load_ms=17810 last_event=Ready
+10-22 23:45:20.961  8949  8963 I hfmodels-check: RESULT step=answer ok=true model=litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B expect="May 17" chunks=453 thought_chunks=448 first_chunk_ms=1088 total_ms=55012 state=READY thought_chars=1939 reply="May 3, May 17"
+10-22 23:45:20.962  8949  8963 I hfmodels-check: THOUGHT part=1 text=The user asks: "Extract the dates from: The meeting moved from May 3 to May 17." They want the dates extracted. Likely they want the dates as output. Need to respond with the dates: May 3 and May 17. Should we include them as a list? The instruction: "Extract the dates from: The meeting moved from May 3 to May 17." So we need to provide the extracted dates. Probably answer with "May 3" and "May 17". Could be in a sentence or just the dates. Since they ask to extract, likely they want just the dates. We should provide them clearly. Maybe: May 3, May 17. Or "May 3 and May 17". Need to be concise. The user likely expects the dates only. We can respond with the two dates separated by commas or line breaks. Let's produce: May 3, May 17. Or "May 3; May 17". Better to present as: May 3 and May 17
+10-22 23:45:20.962  8949  8963 I hfmodels-check: THOUGHT part=2 text=. But to be safe, provide both dates explicitly. The prompt is simple; answer should be just the extracted dates. I'll output: May 3, May 17. Maybe include them as bullet points? The user didn't specify format. I'll give a concise answer: "May 3 and May 17". But to be precise, maybe "May 3, May 17". I'll respond with the dates separated by "and". Let's think: The user might be testing extraction ability. The correct extraction: "May 3" and "May 17". I'll answer: May 3, May 17. Ensure no extra fluff. The system says "You are a helpful assistant." We can be brief. I'll produce: May 3 and May 17. Or "May 3; May 17". I'll go with: May 3, May 17. Probably acceptable. Let's just give the two dates clearly: "May 3" and "May 17". I'll format as two lines? The user likely wants just the extracted d
+10-22 23:45:20.962  8949  8963 I hfmodels-check: THOUGHT part=3 text=ates. I'll respond with:\n\nMay 3\nMay 17\n\nBut maybe they want a single line? The instruction "Extract the dates from: ..." suggests they want the dates extracted from the sentence. I'll provide them as a list: May 3, May 17. I'll keep it simple: "May 3 and May 17". I'll answer: May 3, May 17. Let's do: "May 3, May 17". That should satisfy.
+10-22 23:45:23.053  8949  8963 I hfmodels-check: RESULT step=stop ok=true model=litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B chunks_at_stop=5 state=INVALID
+10-22 23:45:23.873  8949  8963 I hfmodels-check: RESULT step=release ok=true model=litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B close_ms=819
+10-22 23:45:23.873  8949  8963 I hfmodels-check: RESULT ok=true model=litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B failed=[] sdk=0.2.1-SNAPSHOT runtime=litert_lm 0.16.1 device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZH9
+10-22 23:45:23.888  8932  8932 I AndroidRuntime: VM exiting with result code 0.
+10-22 23:44:09.715  8949  8965 I tflite  : Replacing 6259 out of 6259 node(s) with delegate (LITERT_CL) node, yielding 1 partitions for subgraph 0 (prefill_128).
+10-22 23:44:21.472  8949  8965 I tflite  : Replacing 6259 out of 6259 node(s) with delegate (LITERT_CL) node, yielding 1 partitions for subgraph 1 (prefill_512).
+10-22 23:44:22.281  8949  8965 I tflite  : Replacing 6259 out of 6259 node(s) with delegate (LITERT_CL) node, yielding 1 partitions for subgraph 2 (prefill_1024).
+10-22 23:44:23.095  8949  8965 I tflite  : Replacing 5620 out of 5620 node(s) with delegate (LITERT_CL) node, yielding 1 partitions for subgraph 3 (decode).
+10-22 23:44:25.927  8949  8965 I tflite  : Replacing 1 out of 4 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 2 partitions for subgraph 0 (decode_embedder).
+10-22 23:44:25.927  8949  8965 I tflite  : Replacing 1 out of 4 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 2 partitions for subgraph 1 (prefill_embedder_128).
+10-22 23:44:25.927  8949  8965 I tflite  : Replacing 1 out of 4 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 2 partitions for subgraph 2 (prefill_embedder_512).
+10-22 23:44:25.927  8949  8965 I tflite  : Replacing 1 out of 4 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 2 partitions for subgraph 3 (prefill_embedder_1024).
+# leg x2 rc=0 end=2026-10-22 23:45:26 uptime_s=608259.81 memavail_kb=7369012 thermal=0 free_data_kb=107490344
+# leg x3 :: x3 check litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B cpu int8 :: start=2026-10-22 23:45:26 uptime_s=608260.09 memavail_kb=7355524 thermal=0 free_data_kb=107490344
+10-22 23:45:26.828  9087  9087 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-22 23:45:26.837  9087  9087 I AndroidRuntime: Using default boot image
+10-22 23:45:26.837  9087  9087 I AndroidRuntime: Leaving lock profiling enabled
+10-22 23:45:26.838  9087  9087 D AndroidRuntime: addProductProperty not brand or 7
+10-22 23:45:26.971  9087  9087 D AndroidRuntime: Calling main entry com.android.commands.am.Am
+10-22 23:45:27.659  9101  9116 I hfmodels: resolve litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B: commit=61cb6bbe via SAVED_BINDING, descriptor=john-rocky/hfmodels-android@1db6c03d/catalog/entries/litert-community__NVIDIA-Nemotron-Labs-Dory1.0-4B.json sha=ca7a357b
+10-22 23:45:27.668  9101  9116 I hfmodels: download NVIDIA-Nemotron-Labs-Dory1.0-4B_int8.litertlm <- https://huggingface.co/litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B/resolve/61cb6bbe177d134fdbc215cf5b81f592f434ad08/NVIDIA-Nemotron-Labs-Dory1.0-4B_int8.litertlm
+10-22 23:52:42.402  9101  9116 I hfmodels: downloaded NVIDIA-Nemotron-Labs-Dory1.0-4B_int8.litertlm: 4046675264 bytes, sha256 ok
+10-22 23:52:49.847  9101  9114 I hfmodels: ready litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B@61cb6bbe variant=int8 profile=cpu language=CPU prepare_ms=7442
+10-22 23:52:49.848  9101  9114 I hfmodels-check: RESULT step=load ok=true model=litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B variant=int8 profile=cpu initialized=[language=CPU] thinking=descriptor load_ms=442489 last_event=Ready
+10-22 23:53:23.565  9101  9114 I hfmodels-check: RESULT step=answer ok=true model=litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B expect="42" chunks=119 thought_chunks=117 first_chunk_ms=2837 total_ms=33715 state=READY thought_chars=480 reply="42"
+10-22 23:53:23.566  9101  9114 I hfmodels-check: THOUGHT part=1 text=The user asks: "What is 17 + 25? Answer briefly." Need to answer with the sum. 17+25 = 42. Need to answer briefly. Should be concise. Probably just "42". The instruction: Answer briefly. So final should be just "42" or maybe "42." Need to consider if any extra text is allowed. The user asks "What is 17 + 25? Answer briefly." So best to respond with just "42". No extra explanation. Ensure it's brief. The final answer should be only the number? Probably yes. Let's produce "42".
+10-22 23:53:28.209  9101  9114 I hfmodels-check: RESULT step=stop ok=true model=litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B chunks_at_stop=5 state=INVALID
+10-22 23:53:28.558  9101  9114 I hfmodels-check: RESULT step=release ok=true model=litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B close_ms=348
+10-22 23:53:28.559  9101  9114 I hfmodels-check: RESULT ok=true model=litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B failed=[] sdk=0.2.1-SNAPSHOT runtime=litert_lm 0.16.1 device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZH9
+10-22 23:53:28.574  9087  9087 I AndroidRuntime: VM exiting with result code 0.
+10-22 23:52:43.454  9101  9116 I tflite  : Replacing 6082 out of 6207 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 113 partitions for subgraph 0 (prefill_128).
+10-22 23:52:48.788  9101  9116 I tflite  : Replacing 6082 out of 6207 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 113 partitions for subgraph 1 (prefill_512).
+10-22 23:52:48.812  9101  9116 I tflite  : Replacing 6082 out of 6207 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 113 partitions for subgraph 2 (prefill_1024).
+10-22 23:52:48.835  9101  9116 I tflite  : Replacing 5442 out of 5566 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 114 partitions for subgraph 3 (decode).
+10-22 23:52:49.836  9101  9116 I tflite  : Replacing 1 out of 4 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 2 partitions for subgraph 0 (decode_embedder).
+10-22 23:52:49.836  9101  9116 I tflite  : Replacing 1 out of 4 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 2 partitions for subgraph 1 (prefill_embedder_128).
+10-22 23:52:49.836  9101  9116 I tflite  : Replacing 1 out of 4 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 2 partitions for subgraph 2 (prefill_embedder_512).
+10-22 23:52:49.836  9101  9116 I tflite  : Replacing 1 out of 4 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 2 partitions for subgraph 3 (prefill_embedder_1024).
+# leg x3 rc=0 end=2026-10-22 23:53:29 uptime_s=608743.17 memavail_kb=7346092 thermal=0 free_data_kb=99962232
