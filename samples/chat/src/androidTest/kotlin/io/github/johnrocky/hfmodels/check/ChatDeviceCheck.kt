@@ -44,7 +44,8 @@ import org.junit.runner.RunWith
  *          -Pandroid.testInstrumentationRunnerArguments.model=litert-community/gemma-4-E2B-it-litert-lm
  *        adb logcat -d -s hfmodels-check | grep RESULT
  *   The last line is `RESULT ok=true ...` when every step passed; the gradle task fails otherwise.
- *   Other arguments: backend=cpu|gpu (default: the descriptor's default profile), prompt, expect.
+ *   Other arguments: backend=cpu|gpu (default: the descriptor's default profile), variant (default: the descriptor's
+ *   default variant), prompt, expect, log_thought=true (the answer's reasoning, in `THOUGHT` lines of up to 800 characters).
  * The model file lands in the app's private files dir, where the app's own load will find it.
  */
 @RunWith(AndroidJUnit4::class)
@@ -52,8 +53,10 @@ class ChatDeviceCheck {
     private val ctx = InstrumentationRegistry.getInstrumentation().targetContext
     private val args = InstrumentationRegistry.getArguments()
     private val modelId = args.getString("model") ?: "litert-community/LFM2.5-1.2B-Instruct"
+    private val variant: String? = args.getString("variant")
     private val prompt = args.getString("prompt") ?: "What is 17 + 25? Answer briefly."
     private val expect = args.getString("expect") ?: "42"
+    private val logThought = args.getString("log_thought") == "true"
     private val policy = when (args.getString("backend")) { "cpu" -> BackendPolicy.Require(BackendKind.CPU); "gpu" -> BackendPolicy.Require(BackendKind.GPU); else -> BackendPolicy.Auto }
 
     @Test fun loadAnswerStopRelease(): Unit = runBlocking {
@@ -66,8 +69,8 @@ class ChatDeviceCheck {
         val t0 = SystemClock.elapsedRealtime()
         val model = try {
             var last: LoadEvent? = null
-            models.fromPretrained(ModelRef(modelId), Tasks.Chat, LoadOptions(backendPolicy = policy)) { last = it }.also {
-                step("load", true, "profile=${it.info.profileId} initialized=${it.info.components.map { c -> "${c.key}=${c.value.initialized}" }} thinking=${it.thinking.source} load_ms=${SystemClock.elapsedRealtime() - t0} last_event=${last?.javaClass?.simpleName}")
+            models.fromPretrained(ModelRef(modelId, variant = variant), Tasks.Chat, LoadOptions(backendPolicy = policy)) { last = it }.also {
+                step("load", true, "variant=${it.info.variantId} profile=${it.info.profileId} initialized=${it.info.components.map { c -> "${c.key}=${c.value.initialized}" }} thinking=${it.thinking.source} load_ms=${SystemClock.elapsedRealtime() - t0} last_event=${last?.javaClass?.simpleName}")
             }
         } catch (e: ModelException) {
             step("load", false, "error=${e.code} reason=${q(e.reason)} load_ms=${SystemClock.elapsedRealtime() - t0}")
@@ -78,13 +81,14 @@ class ChatDeviceCheck {
         try {
             // One turn: the answer must contain `expect`; a thinking model's reasoning must stay out of the text.
             val s = model.createConversation(ConversationConfig(systemInstruction = Contents.of("You are a helpful assistant.")))
-            val sb = StringBuilder(); val thought = StringBuilder(); var chunks = 0; var first = -1L
+            val sb = StringBuilder(); val thought = StringBuilder(); var chunks = 0; var thoughtChunks = 0; var first = -1L
             val t1 = SystemClock.elapsedRealtime()
             try {
-                withTimeout(600_000) { s.stream(Contents.of(prompt)).collect { m -> if (chunks == 0) first = SystemClock.elapsedRealtime() - t1; sb.append(m.text); m.channels.values.firstOrNull()?.let { thought.append(it) }; chunks++ } }
+                withTimeout(600_000) { s.stream(Contents.of(prompt)).collect { m -> if (chunks == 0) first = SystemClock.elapsedRealtime() - t1; sb.append(m.text); m.channels.values.firstOrNull()?.let { thought.append(it); thoughtChunks++ }; chunks++ } }
                 val markers = model.thinking.channels.flatMap { listOf(it.start, it.end) }.map { it.trim() }.filter { it.isNotEmpty() }
                 val ok = sb.contains(expect) && chunks > 1 && markers.none { sb.contains(it) } && (!model.thinking.reasonsByDefault || thought.isNotBlank())
-                step("answer", ok, "expect=${q(expect)} chunks=$chunks first_chunk_ms=$first total_ms=${SystemClock.elapsedRealtime() - t1} state=${s.state} thought_chars=${thought.length} reply=${q(sb.toString())}")
+                step("answer", ok, "expect=${q(expect)} chunks=$chunks thought_chunks=$thoughtChunks first_chunk_ms=$first total_ms=${SystemClock.elapsedRealtime() - t1} state=${s.state} thought_chars=${thought.length} reply=${q(sb.toString())}")
+                if (logThought) thought.toString().chunked(800).forEachIndexed { i, part -> Log.i(TAG, "THOUGHT part=${i + 1} text=${part.replace("\\", "\\\\").replace("\n", "\\n")}") }
             } catch (e: ModelException) {
                 step("answer", false, "error=${e.code} reason=${q(e.reason)}")
             }
