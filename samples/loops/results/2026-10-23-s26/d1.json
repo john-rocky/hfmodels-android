@@ -1,0 +1,76 @@
+{
+  "app": "samples\/loops",
+  "model": "litert-community\/NVIDIA-Nemotron-Labs-Dory1.0-4B@ff0f6e323fe38ad2bc988ac3f0c7820877937a3f",
+  "spec": {
+    "loops": [
+      "int4_1loop",
+      "int4"
+    ],
+    "questions": [
+      {
+        "id": "own",
+        "text": "A book has 380 pages. If I read 25 pages a day, how many days do I need to finish it?"
+      }
+    ],
+    "think": false,
+    "offline": true,
+    "stop_after_mb": null
+  },
+  "answers": [
+    {
+      "loop": 1,
+      "variant": "int4_1loop",
+      "question_index": 0,
+      "question_id": "own",
+      "question": "A book has 380 pages. If I read 25 pages a day, how many days do I need to finish it?",
+      "text": "You will need **15.2 days** to finish the book.\n\nHere is the breakdown:\n*   **Total pages:** 380\n*   **Pages per day:** 25\n*   **Calculation:** 380 ÷ 25 = 15.2\n\nSince you cannot read a fraction of a day in this context, you would need **16 full days** if you want to finish the book by the end of the day",
+      "thought_chars": 0,
+      "chunks": 87,
+      "first_token_ms": 697.3,
+      "first_text_ms": 697.3,
+      "tok_s": 13.21,
+      "total_ms": 7343.5,
+      "load_ms": 12621,
+      "backend": "GPU",
+      "thermal_before": 1,
+      "thermal_after": 1
+    }
+  ],
+  "events": [
+    {
+      "kind": "failed",
+      "loop": 2,
+      "variant": "int4",
+      "question_index": 0,
+      "question_id": "own",
+      "sentence": "The 2 loops file is not on this phone and downloads are off. Tick Download missing files (2.40 GB from Hugging Face), or push the file with adb (README).",
+      "partial_chunks": 87,
+      "download_bytes": null,
+      "download_total": null,
+      "resumed_from": null
+    }
+  ],
+  "loads": [
+    {
+      "loop": 1,
+      "variant": "int4_1loop",
+      "load_ms": 12621,
+      "download_bytes": null,
+      "resumed_from": null,
+      "profile": "gpu",
+      "initialized": "language=GPU",
+      "commit": "ff0f6e323fe38ad2bc988ac3f0c7820877937a3f"
+    }
+  ],
+  "stopped": false,
+  "sdk_version": "0.2.1-SNAPSHOT",
+  "runtime_version": null,
+  "device": {
+    "model": "SM-S942Q",
+    "display": "BP4A.251205.006.S942QOPS1AZH9"
+  },
+  "started_epoch_ms": 1792746965077,
+  "total_s": 20.2,
+  "thermal_start": 1,
+  "thermal_end": 1
+}

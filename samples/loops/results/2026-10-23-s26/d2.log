@@ -1,0 +1,14 @@
+10-23 18:16:28.952 28921 28960 I hfmodels: resolve litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B: commit=ff0f6e32 via EXPLICIT_REVISION, descriptor=john-rocky/hfmodels-android@63d6bd40/catalog/entries/litert-community__NVIDIA-Nemotron-Labs-Dory1.0-4B.json sha=35ec8a84
+10-23 18:16:28.957 28921 28960 I hfmodels: resolve litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B: commit=ff0f6e32 via EXPLICIT_REVISION, descriptor=john-rocky/hfmodels-android@63d6bd40/catalog/entries/litert-community__NVIDIA-Nemotron-Labs-Dory1.0-4B.json sha=35ec8a84
+10-23 18:16:28.958 28921 28921 I loops   : FILES int4_1loop=OnPhone int4=Missing
+10-23 18:16:30.966 28921 28921 I loops   : RUN loops=int4 questions=1 think=false offline=false stop_after_mb=100 thermal=1
+10-23 18:16:30.968 28921 28921 I loops   : load int4 Preparing the file
+10-23 18:16:31.257 28921 28960 I hfmodels: resolve litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B: commit=ff0f6e32 via EXPLICIT_REVISION, descriptor=john-rocky/hfmodels-android@63d6bd40/catalog/entries/litert-community__NVIDIA-Nemotron-Labs-Dory1.0-4B.json sha=35ec8a84
+10-23 18:16:31.259 28921 28921 I loops   : load int4 Downloading 2,292 MB
+10-23 18:16:31.264 28921 28960 I hfmodels: download NVIDIA-Nemotron-Labs-Dory1.0-4B_int4.litertlm <- https://huggingface.co/litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B/resolve/ff0f6e323fe38ad2bc988ac3f0c7820877937a3f/NVIDIA-Nemotron-Labs-Dory1.0-4B_int4.litertlm
+10-23 18:16:36.654 28921 28921 I loops   : HARNESS stop at 105110383 bytes
+10-23 18:16:36.656 28921 28921 I loops   : STOPPED loop=2 q=own sentence="Download stopped at 100 of 2,292 MB. The part stays on the phone; the next run continues from it."
+10-23 18:16:36.659 28921 28921 I loops   : DONE phase=STOPPED answers=0 events=1 json=/storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.loops/files/loops-run-1792746996.json
+10-23 18:16:36.660 28921 28960 I hfmodels: resolve litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B: commit=ff0f6e32 via EXPLICIT_REVISION, descriptor=john-rocky/hfmodels-android@63d6bd40/catalog/entries/litert-community__NVIDIA-Nemotron-Labs-Dory1.0-4B.json sha=35ec8a84
+10-23 18:16:36.663 28921 28960 I hfmodels: resolve litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B: commit=ff0f6e32 via EXPLICIT_REVISION, descriptor=john-rocky/hfmodels-android@63d6bd40/catalog/entries/litert-community__NVIDIA-Nemotron-Labs-Dory1.0-4B.json sha=35ec8a84
+10-23 18:16:36.663 28921 28921 I loops   : FILES int4_1loop=OnPhone int4=Missing

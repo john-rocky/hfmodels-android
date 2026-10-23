@@ -1,0 +1,45 @@
+{
+  "app": "samples\/loops",
+  "model": "litert-community\/NVIDIA-Nemotron-Labs-Dory1.0-4B@ff0f6e323fe38ad2bc988ac3f0c7820877937a3f",
+  "spec": {
+    "loops": [
+      "int4"
+    ],
+    "questions": [
+      {
+        "id": "own",
+        "text": "A book has 380 pages. If I read 25 pages a day, how many days do I need to finish it?"
+      }
+    ],
+    "think": false,
+    "offline": false,
+    "stop_after_mb": 100
+  },
+  "answers": [],
+  "events": [
+    {
+      "kind": "stopped",
+      "loop": 2,
+      "variant": "int4",
+      "question_index": 0,
+      "question_id": "own",
+      "sentence": "Download stopped at 100 of 2,292 MB. The part stays on the phone; the next run continues from it.",
+      "partial_chunks": 0,
+      "download_bytes": 105110383,
+      "download_total": 2403851584,
+      "resumed_from": 0
+    }
+  ],
+  "loads": [],
+  "stopped": true,
+  "sdk_version": "0.2.1-SNAPSHOT",
+  "runtime_version": null,
+  "device": {
+    "model": "SM-S942Q",
+    "display": "BP4A.251205.006.S942QOPS1AZH9"
+  },
+  "started_epoch_ms": 1792746990964,
+  "total_s": 5.7,
+  "thermal_start": 1,
+  "thermal_end": 1
+}

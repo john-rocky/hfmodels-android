@@ -1,0 +1,35 @@
+10-23 18:16:03.027 28511 28545 I hfmodels: resolve litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B: commit=ff0f6e32 via EXPLICIT_REVISION, descriptor=john-rocky/hfmodels-android@63d6bd40/catalog/entries/litert-community__NVIDIA-Nemotron-Labs-Dory1.0-4B.json sha=35ec8a84
+10-23 18:16:03.068 28511 28545 I hfmodels: resolve litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B: commit=ff0f6e32 via EXPLICIT_REVISION, descriptor=john-rocky/hfmodels-android@63d6bd40/catalog/entries/litert-community__NVIDIA-Nemotron-Labs-Dory1.0-4B.json sha=35ec8a84
+10-23 18:16:03.069 28511 28511 I loops   : FILES int4_1loop=Pushed int4=Missing
+10-23 18:16:05.081 28511 28511 I loops   : RUN loops=int4_1loop,int4 questions=1 think=false offline=true stop_after_mb=null thermal=1
+10-23 18:16:05.083 28511 28511 I loops   : load int4_1loop Preparing the file
+10-23 18:16:05.085 28511 28545 I hfmodels: resolve litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B: commit=ff0f6e32 via EXPLICIT_REVISION, descriptor=john-rocky/hfmodels-android@63d6bd40/catalog/entries/litert-community__NVIDIA-Nemotron-Labs-Dory1.0-4B.json sha=35ec8a84
+10-23 18:16:06.733 28511 28545 I hfmodels: imported NVIDIA-Nemotron-Labs-Dory1.0-4B_int4_1loop.litertlm: 2400558400 bytes, sha256 ok, from /storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.loops/files/NVIDIA-Nemotron-Labs-Dory1.0-4B_int4_1loop.litertlm
+10-23 18:16:06.733 28511 28511 I hfmodels: side-loaded NVIDIA-Nemotron-Labs-Dory1.0-4B_int4_1loop.litertlm from /storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.loops/files/NVIDIA-Nemotron-Labs-Dory1.0-4B_int4_1loop.litertlm (sha256 verified)
+10-23 18:16:06.737 28511 28511 I loops   : load int4_1loop Checking the file's sha256
+10-23 18:16:06.740 28511 28511 I loops   : load int4_1loop Starting the engine (gpu)
+10-23 18:16:17.701 28511 28511 I hfmodels: ready litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B@ff0f6e32 variant=int4_1loop profile=gpu language=GPU prepare_ms=10962
+10-23 18:16:17.702 28511 28511 I loops   : load int4_1loop Loaded
+10-23 18:16:25.061 28511 28511 I loops   : ANSWER loop=1 variant=int4_1loop q=own first_token_ms=697.3 tok_s=13.21 total_ms=7343.5 chunks=87 thought_chars=0 load_ms=12621 backend=GPU mark=none text="You will need **15.2 days** to finish the book.\n\nHere is the breakdown:\n*   **Total pages:** 380\n*   **Pages per day:** 25\n*   **Calculation:** 380 ÷ 25 = 15.2\n\nSince you cannot read a fraction of a day in this context, you would need **16 full days** if you want to finish the book by the end of the day"
+10-23 18:16:25.299 28511 28511 I loops   : load int4 Preparing the file
+10-23 18:16:25.303 28511 28545 I hfmodels: resolve litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B: commit=ff0f6e32 via EXPLICIT_REVISION, descriptor=john-rocky/hfmodels-android@63d6bd40/catalog/entries/litert-community__NVIDIA-Nemotron-Labs-Dory1.0-4B.json sha=35ec8a84
+10-23 18:16:25.311 28511 28511 W loops   : FAILED loop=2 q=own sentence="The 2 loops file is not on this phone and downloads are off. Tick Download missing files (2.40 GB from Hugging Face), or push the file with adb (README)."
+10-23 18:16:25.311 28511 28511 W loops   : ModelException(OFFLINE_CACHE_MISS, retryable=false, details={files=NVIDIA-Nemotron-Labs-Dory1.0-4B_int4.litertlm}): 1 file(s) of litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B are not cached and the network policy is Offline
+10-23 18:16:25.311 28511 28511 W loops   : 	at io.github.johnrocky.hfmodels.HfModels.download(HfModels.kt:96)
+10-23 18:16:25.311 28511 28511 W loops   : 	at io.github.johnrocky.hfmodels.HfModels.fromPretrained(HfModels.kt:166)
+10-23 18:16:25.311 28511 28511 W loops   : 	at io.github.johnrocky.hfmodels.HfModels$fromPretrained$1.invokeSuspend(HfModels.kt:18)
+10-23 18:16:25.311 28511 28511 W loops   : 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
+10-23 18:16:25.311 28511 28511 W loops   : 	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:100)
+10-23 18:16:25.311 28511 28511 W loops   : 	at android.os.Handler.handleCallback(Handler.java:1070)
+10-23 18:16:25.311 28511 28511 W loops   : 	at android.os.Handler.dispatchMessage(Handler.java:125)
+10-23 18:16:25.311 28511 28511 W loops   : 	at android.os.Looper.dispatchMessage(Looper.java:358)
+10-23 18:16:25.311 28511 28511 W loops   : 	at android.os.Looper.loopOnce(Looper.java:288)
+10-23 18:16:25.311 28511 28511 W loops   : 	at android.os.Looper.loop(Looper.java:392)
+10-23 18:16:25.311 28511 28511 W loops   : 	at android.app.ActivityThread.main(ActivityThread.java:10343)
+10-23 18:16:25.311 28511 28511 W loops   : 	at java.lang.reflect.Method.invoke(Native Method)
+10-23 18:16:25.311 28511 28511 W loops   : 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:605)
+10-23 18:16:25.311 28511 28511 W loops   : 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:972)
+10-23 18:16:25.314 28511 28511 I loops   : DONE phase=DONE answers=1 events=1 json=/storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.loops/files/loops-run-1792746985.json
+10-23 18:16:25.316 28511 28545 I hfmodels: resolve litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B: commit=ff0f6e32 via EXPLICIT_REVISION, descriptor=john-rocky/hfmodels-android@63d6bd40/catalog/entries/litert-community__NVIDIA-Nemotron-Labs-Dory1.0-4B.json sha=35ec8a84
+10-23 18:16:25.318 28511 28545 I hfmodels: resolve litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B: commit=ff0f6e32 via EXPLICIT_REVISION, descriptor=john-rocky/hfmodels-android@63d6bd40/catalog/entries/litert-community__NVIDIA-Nemotron-Labs-Dory1.0-4B.json sha=35ec8a84
+10-23 18:16:25.319 28511 28511 I loops   : FILES int4_1loop=OnPhone int4=Missing

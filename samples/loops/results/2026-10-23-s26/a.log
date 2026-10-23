@@ -1,0 +1,22 @@
+10-23 18:08:40.711 24766 24894 I hfmodels: resolve litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B: commit=ff0f6e32 via EXPLICIT_REVISION, descriptor=john-rocky/hfmodels-android@63d6bd40/catalog/entries/litert-community__NVIDIA-Nemotron-Labs-Dory1.0-4B.json sha=35ec8a84
+10-23 18:08:40.719 24766 24894 I hfmodels: resolve litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B: commit=ff0f6e32 via EXPLICIT_REVISION, descriptor=john-rocky/hfmodels-android@63d6bd40/catalog/entries/litert-community__NVIDIA-Nemotron-Labs-Dory1.0-4B.json sha=35ec8a84
+10-23 18:08:40.722 24766 24766 I loops   : FILES int4_1loop=OnPhone int4=OnPhone
+10-23 18:08:54.254 24766 24766 I loops   : RUN loops=int4_1loop,int4 questions=1 think=false offline=false stop_after_mb=null thermal=3
+10-23 18:08:54.256 24766 24766 I loops   : load int4_1loop Preparing the file
+10-23 18:08:54.583 24766 24894 I hfmodels: resolve litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B: commit=ff0f6e32 via EXPLICIT_REVISION, descriptor=john-rocky/hfmodels-android@63d6bd40/catalog/entries/litert-community__NVIDIA-Nemotron-Labs-Dory1.0-4B.json sha=35ec8a84
+10-23 18:08:54.595 24766 24766 I loops   : load int4_1loop Checking the file's sha256
+10-23 18:08:54.601 24766 24766 I loops   : load int4_1loop Starting the engine (gpu)
+10-23 18:09:13.095 24766 24766 I hfmodels: ready litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B@ff0f6e32 variant=int4_1loop profile=gpu language=GPU prepare_ms=18499
+10-23 18:09:13.096 24766 24766 I loops   : load int4_1loop Loaded
+10-23 18:09:19.456 24766 24766 I loops   : ANSWER loop=1 variant=int4_1loop q=own first_token_ms=791.5 tok_s=15.85 total_ms=6331.7 chunks=87 thought_chars=0 load_ms=18843 backend=GPU mark=none text="You will need **15.2 days** to finish the book.\n\nHere is the breakdown:\n*   **Total pages:** 380\n*   **Pages per day:** 25\n*   **Calculation:** 380 ÷ 25 = 15.2\n\nSince you cannot read a fraction of a day in this context, you would need **16 full days** if you want to finish the book by the end of the day"
+10-23 18:09:19.806 24766 24766 I loops   : load int4 Preparing the file
+10-23 18:09:20.086 24766 24894 I hfmodels: resolve litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B: commit=ff0f6e32 via EXPLICIT_REVISION, descriptor=john-rocky/hfmodels-android@63d6bd40/catalog/entries/litert-community__NVIDIA-Nemotron-Labs-Dory1.0-4B.json sha=35ec8a84
+10-23 18:09:20.098 24766 24766 I loops   : load int4 Checking the file's sha256
+10-23 18:09:20.103 24766 24766 I loops   : load int4 Starting the engine (gpu)
+10-23 18:09:40.165 24766 24766 I hfmodels: ready litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B@ff0f6e32 variant=int4 profile=gpu language=GPU prepare_ms=20065
+10-23 18:09:40.166 24766 24766 I loops   : load int4 Loaded
+10-23 18:09:49.784 24766 24766 I loops   : ANSWER loop=2 variant=int4 q=own first_token_ms=1015.0 tok_s=11.06 total_ms=9599.3 chunks=95 thought_chars=0 load_ms=20363 backend=GPU mark=none text="To find out how many days it will take to finish the book, you divide the total number of pages by the number of pages you read each day:\n\n380 pages ÷ 25 pages per day = **15.2 days**\n\nSince you cannot read a fraction of a day in practical terms, you would need **16 days** to finish the book (you would finish on the 15th day and read the final 15 pages on the 16th day)."
+10-23 18:09:49.790 24766 24766 I loops   : DONE phase=DONE answers=2 events=0 json=/storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.loops/files/loops-run-1792746589.json
+10-23 18:09:49.792 24766 24894 I hfmodels: resolve litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B: commit=ff0f6e32 via EXPLICIT_REVISION, descriptor=john-rocky/hfmodels-android@63d6bd40/catalog/entries/litert-community__NVIDIA-Nemotron-Labs-Dory1.0-4B.json sha=35ec8a84
+10-23 18:09:49.796 24766 24894 I hfmodels: resolve litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B: commit=ff0f6e32 via EXPLICIT_REVISION, descriptor=john-rocky/hfmodels-android@63d6bd40/catalog/entries/litert-community__NVIDIA-Nemotron-Labs-Dory1.0-4B.json sha=35ec8a84
+10-23 18:09:49.798 24766 24766 I loops   : FILES int4_1loop=OnPhone int4=OnPhone

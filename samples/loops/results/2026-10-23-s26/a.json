@@ -1,0 +1,91 @@
+{
+  "app": "samples\/loops",
+  "model": "litert-community\/NVIDIA-Nemotron-Labs-Dory1.0-4B@ff0f6e323fe38ad2bc988ac3f0c7820877937a3f",
+  "spec": {
+    "loops": [
+      "int4_1loop",
+      "int4"
+    ],
+    "questions": [
+      {
+        "id": "own",
+        "text": "A book has 380 pages. If I read 25 pages a day, how many days do I need to finish it?"
+      }
+    ],
+    "think": false,
+    "offline": false,
+    "stop_after_mb": null
+  },
+  "answers": [
+    {
+      "loop": 1,
+      "variant": "int4_1loop",
+      "question_index": 0,
+      "question_id": "own",
+      "question": "A book has 380 pages. If I read 25 pages a day, how many days do I need to finish it?",
+      "text": "You will need **15.2 days** to finish the book.\n\nHere is the breakdown:\n*   **Total pages:** 380\n*   **Pages per day:** 25\n*   **Calculation:** 380 ÷ 25 = 15.2\n\nSince you cannot read a fraction of a day in this context, you would need **16 full days** if you want to finish the book by the end of the day",
+      "thought_chars": 0,
+      "chunks": 87,
+      "first_token_ms": 791.5,
+      "first_text_ms": 791.5,
+      "tok_s": 15.85,
+      "total_ms": 6331.7,
+      "load_ms": 18843,
+      "backend": "GPU",
+      "thermal_before": 3,
+      "thermal_after": 3
+    },
+    {
+      "loop": 2,
+      "variant": "int4",
+      "question_index": 0,
+      "question_id": "own",
+      "question": "A book has 380 pages. If I read 25 pages a day, how many days do I need to finish it?",
+      "text": "To find out how many days it will take to finish the book, you divide the total number of pages by the number of pages you read each day:\n\n380 pages ÷ 25 pages per day = **15.2 days**\n\nSince you cannot read a fraction of a day in practical terms, you would need **16 days** to finish the book (you would finish on the 15th day and read the final 15 pages on the 16th day).",
+      "thought_chars": 0,
+      "chunks": 95,
+      "first_token_ms": 1015,
+      "first_text_ms": 1015,
+      "tok_s": 11.06,
+      "total_ms": 9599.3,
+      "load_ms": 20363,
+      "backend": "GPU",
+      "thermal_before": 3,
+      "thermal_after": 3
+    }
+  ],
+  "events": [],
+  "loads": [
+    {
+      "loop": 1,
+      "variant": "int4_1loop",
+      "load_ms": 18843,
+      "download_bytes": null,
+      "resumed_from": null,
+      "profile": "gpu",
+      "initialized": "language=GPU",
+      "commit": "ff0f6e323fe38ad2bc988ac3f0c7820877937a3f"
+    },
+    {
+      "loop": 2,
+      "variant": "int4",
+      "load_ms": 20363,
+      "download_bytes": null,
+      "resumed_from": null,
+      "profile": "gpu",
+      "initialized": "language=GPU",
+      "commit": "ff0f6e323fe38ad2bc988ac3f0c7820877937a3f"
+    }
+  ],
+  "stopped": false,
+  "sdk_version": "0.2.1-SNAPSHOT",
+  "runtime_version": "0.16.1",
+  "device": {
+    "model": "SM-S942Q",
+    "display": "BP4A.251205.006.S942QOPS1AZH9"
+  },
+  "started_epoch_ms": 1792746534253,
+  "total_s": 55.5,
+  "thermal_start": 3,
+  "thermal_end": 3
+}

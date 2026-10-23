@@ -109,3 +109,40 @@ The last line is `RESULT ok=true …` when every step passed.
 ## Tests
 
 `./gradlew :samples:loops:testDebugUnitTest` checks what needs no phone: the times from the chunks' arrival, the `####` line and its number against a known answer, the run a launch asks for, and the shipped examples (unique ids, the GSM8K instruction, ASCII for `adb`).
+
+## Numbers
+
+### 2026-10-23: Galaxy S26
+
+Measured on one Galaxy S26 (SM-S942Q, Android 16, build BP4A.251205.006.S942QOPS1AZH9) with litertlm-android 0.16.1 and this sample built at commit edc8fbf, both files pushed with adb (the SDK checked their sha256 and imported them). The records are in [`results/2026-10-23-s26/`](results/2026-10-23-s26/).
+
+The eight examples ran twice in recording mode, thinking off: once with the 1 loop file first and once with the 2 loops file first, after the phone had cooled back to thermal status 0. Every answer's text was the same in both runs. Each file's times below are from the run in which it went first, from thermal status 0 (one loop stayed at 0 over its eight answers, two loops reached 2); the records hold the other run's.
+
+| example | 1 loop: answer | s | tok/s | 2 loops: answer | s | tok/s |
+|---|---|---|---|---|---|---|
+| `dates` | May 3, May 17 | 1.1 | 10.9 | May 3 / May 17 (on two lines) | 1.6 | 9.3 |
+| `recipe` | 450 g (300 g × 1.5) | 4.1 | 15.2 | 450 g (75 g per person × 6) | 10.5 | 9.7 |
+| `arrive` | 9:15 | 1.0 | 17.3 | 10:15 | 2.2 | 8.1 |
+| `reply` | I can't wait to see you! What should I bring | 1.1 | 17.3 | I'd love to come! What should I bring | 2.4 | 7.6 |
+| `gsm8k-69` | `#### 60` = GSM8K's | 7.9 | 16.2 | `#### 60` = GSM8K's | 15.6 | 7.4 |
+| `gsm8k-54` | `#### 55` (GSM8K's is 40) | 19.2 | 16.5 | `#### 40` = GSM8K's | 28.0 | 10.9 |
+| `gsm8k-98` | `#### 5` = GSM8K's | 19.7 | 15.0 | `#### 5` = GSM8K's | 23.4 | 10.8 |
+| `gsm8k-88` | `#### 8000` = GSM8K's | 8.3 | 14.2 | `#### 8000` = GSM8K's | 19.1 | 10.2 |
+
+The median of the eight rates is 15.68 tok/s for one loop and 9.48 for two: 0.905 and 0.856 of the model card's 17.32 and 11.08, a ratio of 1.65 against the card's 1.56. In the other run, where each file went second, the medians were 14.82 and 9.59. The first token came after 0.45 to 0.89 s with one loop and 0.71 to 2.30 s with two. In these runs a load took 12.9 to 20.4 s, the first load of a pushed copy included.
+
+The rates count streamed chunks as tokens. On these answers the model's tokenizer gives 1.09 to 1.60 times as many tokens as chunks for the same text (median 1.11; `May 3, May 17` is 8 tokens and came in 5 chunks), so counted in tokens the medians above are 18.6 and 11.2 tok/s.
+
+On the phone one loop gave GSM8K's answer on 69, 98 and 88, two of which (69 and 98) it had missed in the model card's Mac run; two loops gave it on all four, 88 included, which it had missed on the Mac. Of the everyday questions, two loops answered the arrival time wrong (10:15 for 8:40 plus 35 minutes) and one loop right. Greedy answers to single questions show where the two files part, not which one is better; the card's 100 GSM8K questions are that measure (86 for one loop, 90 for two).
+
+Your own question, typed into the box through `adb shell input text` right after these runs (thermal status 3): "A book has 380 pages. If I read 25 pages a day, how many days do I need to finish it?" One loop: 15.2 days, so 16 full days (6.3 s, 15.9 tok/s, first token 0.79 s). Two loops: 15.2 days, so 16 days (9.6 s, 11.1 tok/s, first token 1.01 s).
+
+The failure paths, through the app with only the 1 loop file on the phone:
+
+- downloads off (`--es network offline`): the 1 loop column answered (7.3 s); the 2 loops column said "The 2 loops file is not on this phone and downloads are off. Tick Download missing files (2.40 GB from Hugging Face), or push the file with adb (README)."
+- downloads on, the app's Stop at 100 MB: the 2 loops file came from the Hub at about 19 MB/s, then "Download stopped at 100 of 2,292 MB. The part stays on the phone; the next run continues from it."
+- the next run: the SDK continued from the part (`download … resume from 105257839` in its log) until the Stop at 160 MB, with the same sentence.
+
+In each the app stayed up and showed the sentence in the column, and Run was available again (the state line read DONE after the first, STOPPED after the other two). The device check passed every step (`results/2026-10-23-s26/check.log`): both files on the GPU, 42 with Think off and on (688 characters of reasoning first), the same text from a new conversation, `Stopped after 5 tokens.` with `1, 2, 3` kept, release in 0.9 s, and the int8 stand-in's sentences, its continued download (from 17,503,495 bytes) and its removal.
+
+One phone, one day; not a benchmark.
