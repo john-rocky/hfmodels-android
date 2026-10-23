@@ -1,0 +1,30 @@
+# hfmodels on litertlm-android 0.16.1 (at commit edc8fbf): samples/chat's ChatDeviceCheck with litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B, variant int4_1loop on gpu (17 + 25), log_thought=true
+# serial=RFGL80R6A6H device=SM-S942Q (Galaxy S26) build=BP4A.251205.006.S942QOPS1AZH9 android=16; chat-debug.apk sha256 d5af1b25…, chat-debug-androidTest.apk sha256 2345a28b…; the int4_1loop file pushed with adb into the app's external files dir before the check (the SDK checked its sha256 and imported it); the leg's start / end line (uptime, MemAvailable, thermal status, free /data)
+# 14 lmkd lines (other apps the phone stopped to free memory during the run) are left out of this copy.
+# leg s1 :: check litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B gpu int4_1loop :: start=2026-10-23 18:14:34 uptime_s=674807.73 memavail_kb=6986676 thermal=1 free_data_kb=107773552
+10-23 18:14:34.664 27492 27492 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-23 18:14:34.670 27492 27492 I AndroidRuntime: Using default boot image
+10-23 18:14:34.670 27492 27492 I AndroidRuntime: Leaving lock profiling enabled
+10-23 18:14:34.671 27492 27492 D AndroidRuntime: addProductProperty not brand or 7
+10-23 18:14:34.750 27492 27492 D AndroidRuntime: Calling main entry com.android.commands.am.Am
+10-23 18:14:35.444 27504 27520 I hfmodels: resolve litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B: commit=ff0f6e32 via RESOLVED_BRANCH, descriptor=john-rocky/hfmodels-android@63d6bd40/catalog/entries/litert-community__NVIDIA-Nemotron-Labs-Dory1.0-4B.json sha=35ec8a84
+10-23 18:14:37.637 27504 27520 I hfmodels: imported NVIDIA-Nemotron-Labs-Dory1.0-4B_int4_1loop.litertlm: 2400558400 bytes, sha256 ok, from /storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.chat/files/NVIDIA-Nemotron-Labs-Dory1.0-4B_int4_1loop.litertlm
+10-23 18:14:37.637 27504 27517 I hfmodels: side-loaded NVIDIA-Nemotron-Labs-Dory1.0-4B_int4_1loop.litertlm from /storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.chat/files/NVIDIA-Nemotron-Labs-Dory1.0-4B_int4_1loop.litertlm (sha256 verified)
+10-23 18:14:50.817 20152 20152 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+10-23 18:14:53.896 27504 27517 I hfmodels: ready litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B@ff0f6e32 variant=int4_1loop profile=gpu language=GPU prepare_ms=16253
+10-23 18:14:53.897 27504 27517 I hfmodels-check: RESULT step=load ok=true model=litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B variant=int4_1loop profile=gpu initialized=[language=GPU] thinking=descriptor load_ms=18939 last_event=Ready
+10-23 18:15:01.156 27504 27517 I hfmodels-check: RESULT step=answer ok=true model=litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B expect="42" chunks=108 thought_chunks=106 first_chunk_ms=775 total_ms=7256 state=READY thought_chars=453 reply="42"
+10-23 18:15:01.157 27504 27517 I hfmodels-check: THOUGHT part=1 text=The user asks: "What is 17 + 25? Answer briefly." They want a brief answer. The correct sum is 42. Need to respond with just the answer? They said "Answer briefly." So likely just "42". Need to be concise. Should I include any extra? Probably just "42". The system says be a helpful assistant. The user wants brief answer. So final should be "42". Ensure no extra text? The instruction: "Answer briefly." So final should be just "42". I'll produce "42".
+10-23 18:15:02.477 27504 27517 I hfmodels-check: RESULT step=stop ok=true model=litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B chunks_at_stop=5 state=INVALID
+10-23 18:15:02.847 27504 27517 I hfmodels-check: RESULT step=release ok=true model=litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B close_ms=367
+10-23 18:15:02.847 27504 27517 I hfmodels-check: RESULT ok=true model=litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B failed=[] sdk=0.2.1-SNAPSHOT runtime=litert_lm 0.16.1 device=SM-S942Q build=BP4A.251205.006.S942QOPS1AZH9
+10-23 18:15:02.856 27492 27492 I AndroidRuntime: VM exiting with result code 0.
+10-23 18:14:38.191 27504 27520 I tflite  : Replacing 3998 out of 3998 node(s) with delegate (LITERT_CL) node, yielding 1 partitions for subgraph 0 (prefill_128).
+10-23 18:14:49.237 27504 27520 I tflite  : Replacing 3998 out of 3998 node(s) with delegate (LITERT_CL) node, yielding 1 partitions for subgraph 1 (prefill_512).
+10-23 18:14:50.272 27504 27520 I tflite  : Replacing 3998 out of 3998 node(s) with delegate (LITERT_CL) node, yielding 1 partitions for subgraph 2 (prefill_1024).
+10-23 18:14:51.071 27504 27520 I tflite  : Replacing 3621 out of 3621 node(s) with delegate (LITERT_CL) node, yielding 1 partitions for subgraph 3 (decode).
+10-23 18:14:53.883 27504 27520 I tflite  : Replacing 1 out of 4 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 2 partitions for subgraph 0 (decode_embedder).
+10-23 18:14:53.883 27504 27520 I tflite  : Replacing 1 out of 4 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 2 partitions for subgraph 1 (prefill_embedder_128).
+10-23 18:14:53.883 27504 27520 I tflite  : Replacing 1 out of 4 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 2 partitions for subgraph 2 (prefill_embedder_512).
+10-23 18:14:53.883 27504 27520 I tflite  : Replacing 1 out of 4 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 2 partitions for subgraph 3 (prefill_embedder_1024).
+# leg s1 rc=0 end=2026-10-23 18:15:03 uptime_s=674836.67 memavail_kb=7139528 thermal=1 free_data_kb=105407084
