@@ -38,6 +38,7 @@ The times are the stream's own clock: the first token from calling `stream` to t
 - Every question gets a conversation of its own, with no system prompt (`ConversationConfig()`), and the conversation is closed after the answer. The SDK sets no sampler; the runtime's default applies.
 - **Think** is off by default: the chat template's no-think form (the prompt ends with `<think></think>`), the form of the model card's GSM8K run. With **Think** on, the model reasons first; its reasoning streams in the thought channel, not in the answer, and the column shows its length.
 - The bundle holds 2,048 tokens, question and answer together.
+- An answer that ends in a word comes without its final period, from both files (`You will have $120 after 8 weeks`); one that ends in a bold value keeps it (`You will arrive at **9:15**.`). The files' LiteRT-LM metadata lists 16 stop sequences, 13 of them a single mark (`.` `,` `?` `!` `:` `;` `"` `'` `*` `)` `]` `}` or a space) followed by `<|im_end|>` and a newline, so an answer whose last token is a bare period ends on one of them. That reading fits every answer on this page; it comes from the outputs, not from the runtime's code. It is a property of the model files, not of this app.
 
 `Loops.kt` is the whole model side (load, answer, release, the sentences below); `MainActivity.kt` drives the screen; the device check drives `Loops.kt` too.
 
