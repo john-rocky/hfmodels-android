@@ -8,7 +8,10 @@ import android.os.PowerManager
 import android.os.SystemClock
 import android.text.InputFilter
 import android.text.InputType
+import android.text.SpannableStringBuilder
+import android.text.Spanned
 import android.text.TextUtils
+import android.text.style.StyleSpan
 import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
@@ -183,8 +186,8 @@ class MainActivity : ComponentActivity() {
     private fun fileLine(loop: Loop, s: FileState?): String {
         val where = when (s) {
             is FileState.OnPhone -> "on the phone"
-            is FileState.Pushed -> "pushed copy, checked at its first run"
-            is FileState.Missing -> "not on the phone: ${Loops.gb(s.bytes)} to download"
+            is FileState.Pushed -> "pushed copy"
+            is FileState.Missing -> "to download"
             null -> "not checked"
         }
         return "${loop.variant} · ${s?.let { Loops.gb(it.bytes) } ?: "?"} · $where"
@@ -347,6 +350,8 @@ class MainActivity : ComponentActivity() {
     private fun fail(reason: String) {
         Log.e(TAG, "FAILED $reason")
         phase = Phase.FAILED; detail = reason
+        // The state line has one line; the columns show the whole sentence.
+        for (p in panes.values) p.failed(reason)
         render()
     }
 
@@ -356,7 +361,7 @@ class MainActivity : ComponentActivity() {
         val row = JSONObject()
             .put("loop", a.loop.passes).put("variant", a.loop.variant)
             .put("question_index", k).put("question_id", q.example?.id ?: "own").put("question", q.text)
-            .put("text", a.text).put("thought_chars", a.thought.length)
+            .put("text", a.text).put("text_shown", AnswerText.render(a.text).text).put("thought_chars", a.thought.length)
             .put("chunks", a.timing.chunks)
             .put("first_token_ms", a.timing.firstTokenMs?.let { round1(it) } ?: JSONObject.NULL)
             .put("first_text_ms", a.firstTextMs?.let { round1(it) } ?: JSONObject.NULL)
@@ -415,8 +420,10 @@ class MainActivity : ComponentActivity() {
             setPadding(px(10f).toInt(), px(8f).toInt(), px(10f).toInt(), px(8f).toInt())
         }
         val title = label(19f, ACCENT.getValue(loop), bold = true).apply { text = loop.label }
-        val file = label(11f, DIM).apply { maxLines = 2; ellipsize = TextUtils.TruncateAt.END }
-        val status = label(12f, DIM).apply { maxLines = 4; ellipsize = TextUtils.TruncateAt.END; id = if (loop == Loop.ONE) R.id.status_1 else R.id.status_2 }
+        // One line: the size steps down from 11 to 8 units rather than wrap.
+        val file = label(11f, DIM).apply { setAutoSizeTextTypeUniformWithConfiguration(px(8f).toInt(), px(11f).toInt(), 1, TypedValue.COMPLEX_UNIT_PX) }
+        // Every line of it: a failure's sentence says in full what to do.
+        val status = label(12f, DIM).apply { maxLines = Int.MAX_VALUE; ellipsize = null; id = if (loop == Loop.ONE) R.id.status_1 else R.id.status_2 }
         val scroll = ScrollView(this@MainActivity)
         val answer = TextView(this@MainActivity).apply {
             setTextSize(TypedValue.COMPLEX_UNIT_PX, px(13f)); setTextColor(WHITE)
@@ -431,7 +438,7 @@ class MainActivity : ComponentActivity() {
         init {
             scroll.addView(answer, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
             root.addView(title, wrapParams())
-            root.addView(file, wrapParams(top = 2f))
+            root.addView(file, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, px(14f).toInt()).apply { topMargin = px(2f).toInt() })
             root.addView(status, wrapParams(top = 4f))
             root.addView(scroll, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f).apply { topMargin = px(6f).toInt() })
             root.addView(mark, wrapParams(top = 6f))
@@ -448,14 +455,14 @@ class MainActivity : ComponentActivity() {
         /** While the model writes: the answer so far, at the bottom of the column; the reasoning's length while it reasons. */
         fun streaming(text: String, thoughtChars: Int) {
             if (thoughtChars > 0) status.text = if (text.isEmpty()) "Reasoning: $thoughtChars characters" else "Answering after $thoughtChars characters of reasoning"
-            answer.text = text
+            answer.text = styled(AnswerText.render(text, partial = true))
             scroll.post { scroll.fullScroll(ScrollView.FOCUS_DOWN) }
         }
 
         fun show(a: Answer, example: Example?) {
             status.setTextColor(DIM)
             status.text = if (a.thought.isNotEmpty()) "${a.thought.length} characters of reasoning kept out of the answer · ${a.backend}" else "Answered on the ${a.backend}"
-            answer.text = a.text
+            answer.text = styled(AnswerText.render(a.text))
             scroll.post { scroll.fullScroll(ScrollView.FOCUS_DOWN) }
             val gold = example?.gold
             if (gold == null) {
@@ -473,12 +480,20 @@ class MainActivity : ComponentActivity() {
 
         fun stopped(sentence: String, partial: String) {
             status.setTextColor(WHITE); status.text = sentence
-            answer.text = partial
+            answer.text = styled(AnswerText.render(partial))
         }
 
         fun failed(sentence: String) {
             status.setTextColor(MISMATCH); status.text = sentence
         }
+    }
+
+    /** [AnswerText]'s text with its bold parts in bold. */
+    private fun styled(shown: AnswerText.Shown): CharSequence {
+        if (shown.bold.isEmpty()) return shown.text
+        val s = SpannableStringBuilder(shown.text)
+        for (r in shown.bold) s.setSpan(StyleSpan(Typeface.BOLD), r.first, r.last + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        return s
     }
 
     private fun px(v: Float) = v * u

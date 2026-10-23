@@ -21,12 +21,14 @@ The model files are not in the APK. The app loads `ModelRef("litert-community/NV
 
 Top to bottom: the state (READY, LOADING, ANSWERING, DONE, STOPPED, FAILED) and what is happening; the question box; **Examples**; **1 loop**, **2 loops** or **Both**, and **Think**; **Download missing files**, **Run** and **Stop**; the two columns, 1 loop on the left; the model, its commit, the variant and backend that loaded, the phone, the runtime and SDK versions.
 
-Each column shows its file (variant, size, and whether it is on the phone, a pushed copy not yet checked, or still to download), what the file is doing (loading, downloading with its MB, answering), the answer as it streams, and under it:
+Each column shows its file on one line (variant, size, and whether it is on the phone, a pushed copy not yet checked, or still to download), what the file is doing (loading, downloading with its MB, answering, or a failure's whole sentence), the answer as it streams, and under it:
 
 - the whole answer's time and the tokens per second, e.g. `9.6 s · 17.1 tok/s`;
 - `first token 0.42 s · 160 tokens`;
 - the load the answer waited for, or `already loaded`;
 - for a GSM8K example, the answer's last `#### <number>` line against GSM8K's answer (green when equal).
+
+The model writes Markdown and, when it works a sum, LaTeX. The column shows both as text (`AnswerText.kt`): bold in bold, bullets as `•`, and the math in plain symbols, so `\[ H = \frac{88{,}000}{11} \]` reads `H = 88,000/11` and `$75\text{ g} \times 6$` reads `75 g × 6`. A `$` stays a dollar sign unless it pairs with another around math (`$5 per week × 8 weeks = $40` is left as written). The run's record keeps what the model wrote.
 
 The times are the stream's own clock: the first token from calling `stream` to the first chunk (the prompt's prefill and the first token); the rate as (chunks − 1) / (time from the first chunk to the last), counting each streamed chunk as a token, as `samples/chat` does; the whole answer from calling `stream` to its end. The load is not in them.
 
@@ -80,7 +82,7 @@ adb logcat -s loops
 
 Recording mode runs one spec on its own, over the lock screen with the screen kept on and the system bars hidden. The extras: `question` (your text; `adb shell` passes ASCII), `example` (one id), `examples` (`all`, or ids separated by commas), `run` (`both`, `1` or `2`), `order` (`12` or `21`: which file goes first), `think`, `network` (`any`, or `offline` for no request at all), `stop_after_mb` (the app presses its own Stop once that many MB of a download are on the phone), `delay` (seconds before the run). With several questions, every question runs on the first file, then every question on the second (one load per file). `--ez record true` alone shows the screen over the lock screen and keeps it on, for a run driven by taps; the views carry ids (`question`, `run_both`, `run`, `stop`, `answer_1`, `timing_2`, …) that a `uiautomator dump` names.
 
-Every run, from Run or from the harness, writes `loops-run-<epoch s>.json` to `/sdcard/Android/data/io.github.johnrocky.hfmodels.samples.loops/files/`: per answer the file, the question, the text, the reasoning's length, the chunks, `first_token_ms`, `first_text_ms` (the first chunk of answer text, after any reasoning), `tok_s`, `total_ms`, the load it waited for, the backend, the thermal status before and after and, for a GSM8K example, `final_value` and `mark`; per load its time, profile, backend and commit; per stop or failure the column's sentence and the download's bytes; the device and the versions. Logcat tag `loops`: `FILES …`, `RUN …`, one `ANSWER loop=… q=… first_token_ms=… tok_s=… total_ms=… chunks=… mark=… text=…` per answer, `STOPPED …` / `FAILED …` with the sentence, `DONE … json=<path>`.
+Every run, from Run or from the harness, writes `loops-run-<epoch s>.json` to `/sdcard/Android/data/io.github.johnrocky.hfmodels.samples.loops/files/`: per answer the file, the question, the text (and `text_shown`, as the column showed it), the reasoning's length, the chunks, `first_token_ms`, `first_text_ms` (the first chunk of answer text, after any reasoning), `tok_s`, `total_ms`, the load it waited for, the backend, the thermal status before and after and, for a GSM8K example, `final_value` and `mark`; per load its time, profile, backend and commit; per stop or failure the column's sentence and the download's bytes; the device and the versions. Logcat tag `loops`: `FILES …`, `RUN …`, one `ANSWER loop=… q=… first_token_ms=… tok_s=… total_ms=… chunks=… mark=… text=…` per answer, `STOPPED …` / `FAILED …` with the sentence, `DONE … json=<path>`.
 
 ## The device check
 
@@ -108,7 +110,7 @@ The last line is `RESULT ok=true …` when every step passed.
 
 ## Tests
 
-`./gradlew :samples:loops:testDebugUnitTest` checks what needs no phone: the times from the chunks' arrival, the `####` line and its number against a known answer, the run a launch asks for, and the shipped examples (unique ids, the GSM8K instruction, ASCII for `adb`).
+`./gradlew :samples:loops:testDebugUnitTest` checks what needs no phone: the times from the chunks' arrival, the `####` line and its number against a known answer, the run a launch asks for, the shipped examples (unique ids, the GSM8K instruction, ASCII for `adb`), and the answers as a column shows them, while they stream and at the end (the phone's answers under Numbers and lines of the model card's GSM8K run, byte for byte).
 
 ## Numbers
 
