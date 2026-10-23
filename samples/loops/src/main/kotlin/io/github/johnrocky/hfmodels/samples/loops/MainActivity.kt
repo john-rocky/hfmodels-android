@@ -17,6 +17,7 @@ import android.view.ViewGroup
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
@@ -195,6 +196,9 @@ class MainActivity : ComponentActivity() {
         if (job?.isActive == true) return
         Loops.refusal(questionBox.text.toString())?.let { r -> detail = r; phase = Phase.READY; render(); Log.i(TAG, "REFUSED $r"); return }
         val spec = RunSpec(listOf(RunSpec.question(questionBox.text.toString())), chosenLoops(), think.isChecked, offline = !download.isChecked)
+        // The keyboard goes away so both columns have the room while they answer.
+        getSystemService(InputMethodManager::class.java).hideSoftInputFromWindow(questionBox.windowToken, 0)
+        questionBox.clearFocus()
         startJob { runSpec(spec) }
     }
 
