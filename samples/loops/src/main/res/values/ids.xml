@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The views the screen builds in code get these ids, so a uiautomator dump names them (README, "Recording mode"). -->
+<resources>
+    <item name="state" type="id" />
+    <item name="question" type="id" />
+    <item name="examples" type="id" />
+    <item name="run_1" type="id" />
+    <item name="run_2" type="id" />
+    <item name="run_both" type="id" />
+    <item name="think" type="id" />
+    <item name="download" type="id" />
+    <item name="run" type="id" />
+    <item name="stop" type="id" />
+    <item name="status_1" type="id" />
+    <item name="status_2" type="id" />
+    <item name="answer_1" type="id" />
+    <item name="answer_2" type="id" />
+    <item name="timing_1" type="id" />
+    <item name="timing_2" type="id" />
+</resources>
