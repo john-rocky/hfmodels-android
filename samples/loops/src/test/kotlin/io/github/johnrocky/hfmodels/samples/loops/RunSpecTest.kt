@@ -40,10 +40,19 @@ class RunSpecTest {
     fun theShippedExamples() {
         assertEquals(Examples.ALL.size, Examples.ALL.map { it.id }.toSet().size)
         val gsm = Examples.ALL.filter { it.id.startsWith("gsm8k-") }
-        assertEquals(listOf("60", "40", "5", "8000"), gsm.map { it.gold })
+        assertEquals(listOf("60", "60", "5", "8000"), gsm.map { it.gold })
         for (g in gsm) assertTrue(g.id, g.text.endsWith(Examples.GSM8K_INSTRUCTION) && g.text.all { it.code < 128 })
         for (e in Examples.ALL - gsm.toSet()) assertNull(e.id, e.gold)
         assertEquals("Type a question first, or pick an example.", Loops.refusal(" \n "))
         assertNull(Loops.refusal("Hi"))
+    }
+
+    @Test
+    fun gsm8k75IsTheCardRunsPrompt() {
+        // The user turn of the model card's GSM8K run for test question 75, word for word: the question, then the instruction.
+        val card = "Luke is spending time at the beach building sandcastles. He eventually notices that each level of a sandcastle will have half the square footage as the level below it. If he makes a 4 leveled sandcastle where the top level has a square footage of 16, what is the average square footage of a level?\n\nSolve this step by step. After your reasoning, write the final answer on its own line in the exact form:\n#### <number>"
+        val e = Examples.byId("gsm8k-75")!!
+        assertEquals(card, e.text)
+        assertEquals("60", e.gold)
     }
 }

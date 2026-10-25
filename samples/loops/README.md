@@ -51,11 +51,11 @@ The times are the stream's own clock: the first token from calling `stream` to t
 | `arrive` | I leave home at 8:40 and the trip takes 35 minutes. What time do I arrive? | written for this app | |
 | `reply` | Write a two-sentence reply to a friend who invited me to dinner on Friday: I can come, and I ask what I should bring. | written for this app | |
 | `gsm8k-69` | Bailey starts with a certain amount of money. … how much money did Bailey start with? | GSM8K test question 69 | 60 |
-| `gsm8k-54` | The Doubtfire sisters are driving home with 7 kittens … How many kittens does the Doubtfire family now have? | GSM8K test question 54 | 40 |
+| `gsm8k-75` | Luke is spending time at the beach building sandcastles. … what is the average square footage of a level? | GSM8K test question 75 | 60 |
 | `gsm8k-98` | Cars have lined up on the motorway. … how many cars drove through the traffic jam in the first 15 minutes? | GSM8K test question 98 | 5 |
 | `gsm8k-88` | Marilyn's first record sold 10 times as many copies as Harald's. … how many copies did Harald sell? | GSM8K test question 88 | 8000 |
 
-The GSM8K questions ([openai/gsm8k](https://huggingface.co/datasets/openai/gsm8k), MIT) are word for word, each followed by the instruction the model card's GSM8K run used (`Examples.GSM8K_INSTRUCTION`: solve step by step, then the final answer on its own line as `#### <number>`). They are four of the ten questions, of the card's 100, that the two files answered differently in that run (Mac GPU, thinking off): on 69, 54 and 98 two loops gave the known answer and one loop did not (25, 55 and 2.5), and on 88 one loop did and two loops did not (5,867). The other six: 7, 37, 75 and 95 for two loops; 4 and 12 for one loop. What the phone answered is under Numbers.
+The GSM8K questions ([openai/gsm8k](https://huggingface.co/datasets/openai/gsm8k), MIT) are word for word, each followed by the instruction the model card's GSM8K run used (`Examples.GSM8K_INSTRUCTION`: solve step by step, then the final answer on its own line as `#### <number>`). They are four of the ten questions, of the card's 100, that the two files answered differently in that run (Mac GPU, thinking off): on 69, 75 and 98 two loops gave the known answer and one loop did not (25, 7 and 2.5), and on 88 one loop did and two loops did not (5,867). The other six: 7, 37, 54 and 95 for two loops; 4 and 12 for one loop. What the phone answered is under Numbers.
 
 ## When it does not answer
 
@@ -111,7 +111,7 @@ The last line is `RESULT ok=true …` when every step passed.
 
 ## Tests
 
-`./gradlew :samples:loops:testDebugUnitTest` checks what needs no phone: the times from the chunks' arrival, the `####` line and its number against a known answer, the run a launch asks for, the shipped examples (unique ids, the GSM8K instruction, ASCII for `adb`), and the answers as a column shows them, while they stream and at the end (the phone's answers under Numbers and lines of the model card's GSM8K run, byte for byte).
+`./gradlew :samples:loops:testDebugUnitTest` checks what needs no phone: the times from the chunks' arrival, the `####` line and its number against a known answer, the run a launch asks for, the shipped examples (unique ids, the GSM8K instruction, ASCII for `adb`, `gsm8k-75` word for word as the model card's GSM8K run asked it), and the answers as a column shows them, while they stream and at the end (the phone's answers under Numbers and lines of the model card's GSM8K run, byte for byte).
 
 ## Numbers
 
