@@ -4,5 +4,6 @@ The records behind "2026-10-26: Galaxy S26" in [`samples/loops/README.md`](../..
 
 - `b1.json`, `b1.log`: every example on both files, thinking off, the 1 loop file first (`--ez autostart true --es examples all --es run both --es order 12 --ez think false`). The phone had just come out of a long benchmark: thermal status 0 when the run started, 2 at its end.
 - `b2.json`, `b2.log`: the same with the 2 loops file first (`--es order 21`), after 240 s of rest: thermal status 1 when the run started, 2 at its end.
+- `t1.json`, `t1.log`: the run recorded for a short demo clip: gsm8k-75 alone with Both, picked from the Examples list and run by taps on the screen (`--ez record true`), the first model run after the app and both files had been put on the phone again and it had rested 330 s: thermal status 0 when the run started, 2 at its end. `t1.log` also holds the `AndroidRuntime` lines of the five `uiautomator dump` calls made before and after the recording (the dump tool, started from the shell).
 
-The phone's uptime ran on from 914,747 s to 915,841 s across both (no restart); its thermal status never reached 4.
+The phone's uptime ran on from 914,747 s to 920,056 s across these runs (no restart); its thermal status never reached 4.

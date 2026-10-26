@@ -1,0 +1,59 @@
+10-26 14:19:45.585 23666 23703 I hfmodels: resolve litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B: commit=ff0f6e32 via EXPLICIT_REVISION, descriptor=john-rocky/hfmodels-android@67640c6c/catalog/entries/litert-community__NVIDIA-Nemotron-Labs-Dory1.0-4B.json sha=35ec8a84
+10-26 14:19:45.589 23666 23703 I hfmodels: resolve litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B: commit=ff0f6e32 via EXPLICIT_REVISION, descriptor=john-rocky/hfmodels-android@67640c6c/catalog/entries/litert-community__NVIDIA-Nemotron-Labs-Dory1.0-4B.json sha=35ec8a84
+10-26 14:19:45.590 23666 23666 I loops   : FILES int4_1loop=Pushed int4=Pushed
+10-26 14:19:49.710 23723 23723 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-26 14:19:49.715 23723 23723 I AndroidRuntime: Using default boot image
+10-26 14:19:49.715 23723 23723 I AndroidRuntime: Leaving lock profiling enabled
+10-26 14:19:49.716 23723 23723 D AndroidRuntime: addProductProperty not brand or 7
+10-26 14:19:49.765 23723 23723 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+10-26 14:19:50.801 23723 23723 D AndroidRuntime: Shutting down VM
+10-26 14:19:53.726 23763 23763 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-26 14:19:53.728 23763 23763 I AndroidRuntime: Using default boot image
+10-26 14:19:53.728 23763 23763 I AndroidRuntime: Leaving lock profiling enabled
+10-26 14:19:53.728 23763 23763 D AndroidRuntime: addProductProperty not brand or 7
+10-26 14:19:53.765 23763 23763 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+10-26 14:19:54.786 23763 23763 D AndroidRuntime: Shutting down VM
+10-26 14:19:57.102 23903 23903 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-26 14:19:57.104 23903 23903 I AndroidRuntime: Using default boot image
+10-26 14:19:57.104 23903 23903 I AndroidRuntime: Leaving lock profiling enabled
+10-26 14:19:57.104 23903 23903 D AndroidRuntime: addProductProperty not brand or 7
+10-26 14:19:57.145 23903 23903 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+10-26 14:19:58.158 23903 23903 D AndroidRuntime: Shutting down VM
+10-26 14:19:59.549 23967 24003 I hfmodels: resolve litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B: commit=ff0f6e32 via EXPLICIT_REVISION, descriptor=john-rocky/hfmodels-android@67640c6c/catalog/entries/litert-community__NVIDIA-Nemotron-Labs-Dory1.0-4B.json sha=35ec8a84
+10-26 14:19:59.552 23967 24003 I hfmodels: resolve litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B: commit=ff0f6e32 via EXPLICIT_REVISION, descriptor=john-rocky/hfmodels-android@67640c6c/catalog/entries/litert-community__NVIDIA-Nemotron-Labs-Dory1.0-4B.json sha=35ec8a84
+10-26 14:19:59.552 23967 23967 I loops   : FILES int4_1loop=Pushed int4=Pushed
+10-26 14:20:03.680 24024 24024 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-26 14:20:03.682 24024 24024 I AndroidRuntime: Using default boot image
+10-26 14:20:03.682 24024 24024 I AndroidRuntime: Leaving lock profiling enabled
+10-26 14:20:03.683 24024 24024 D AndroidRuntime: addProductProperty not brand or 7
+10-26 14:20:03.720 24024 24024 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+10-26 14:20:04.744 24024 24024 D AndroidRuntime: Shutting down VM
+10-26 14:20:09.769 23967 23967 I loops   : RUN loops=int4_1loop,int4 questions=1 think=false offline=false stop_after_mb=null thermal=0
+10-26 14:20:09.771 23967 23967 I loops   : load int4_1loop Preparing the file
+10-26 14:20:10.407 23967 24003 I hfmodels: resolve litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B: commit=ff0f6e32 via EXPLICIT_REVISION, descriptor=john-rocky/hfmodels-android@67640c6c/catalog/entries/litert-community__NVIDIA-Nemotron-Labs-Dory1.0-4B.json sha=35ec8a84
+10-26 14:20:13.566 23967 24003 I hfmodels: imported NVIDIA-Nemotron-Labs-Dory1.0-4B_int4_1loop.litertlm: 2400558400 bytes, sha256 ok, from /storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.loops/files/NVIDIA-Nemotron-Labs-Dory1.0-4B_int4_1loop.litertlm
+10-26 14:20:13.566 23967 23967 I hfmodels: side-loaded NVIDIA-Nemotron-Labs-Dory1.0-4B_int4_1loop.litertlm from /storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.loops/files/NVIDIA-Nemotron-Labs-Dory1.0-4B_int4_1loop.litertlm (sha256 verified)
+10-26 14:20:13.570 23967 23967 I loops   : load int4_1loop Checking the file's sha256
+10-26 14:20:13.574 23967 23967 I loops   : load int4_1loop Starting the engine (gpu)
+10-26 14:20:24.809 23967 23967 I hfmodels: ready litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B@ff0f6e32 variant=int4_1loop profile=gpu language=GPU prepare_ms=11237
+10-26 14:20:24.810 23967 23967 I loops   : load int4_1loop Loaded
+10-26 14:20:43.377 23967 23967 I loops   : ANSWER loop=1 variant=int4_1loop q=gsm8k-75 first_token_ms=725.6 tok_s=14.81 total_ms=18544.0 chunks=264 thought_chars=0 load_ms=15041 backend=GPU mark=mismatch text="To find the average square footage of a level in Luke's sandcastle, we need to determine the square footage of each level and then calculate the average.\n\n**Step 1: Identify the square footage of each level.**\nThe problem states that each level has half the square footage of the level below it. The top level (Level 4) has a square footage of 16.\n*   **Level 4 (Top):** 16 sq ft\n*   **Level 3:** Since Level 3 is half the size of Level 4, it is $16 \\div 2 = 8$ sq ft.\n*   **Level 2:** Since Level 2 is half the size of Level 3, it is $8 \\div 2 = 4$ sq ft.\n*   **Level 1 (Bottom):** Since Level 1 is half the size of Level 2, it is $4 \\div 2 = 2$ sq ft.\n\n**Step 2: Calculate the total square footage.**\nTo find the average, we first sum the square footage of all four levels:\n$16 + 8 + 4 + 2 = 30$ sq ft.\n\n**Step 3: Calculate the average square footage.**\nThe average is the total sum divided by the number of levels (which is 4):\n$\\text{Average} = \\frac{30}{4}$\n$\\text{Average} = 7.5$ sq ft.\n\n#### 7.5"
+10-26 14:20:43.712 23967 23967 I loops   : load int4 Preparing the file
+10-26 14:20:44.422 23967 24003 I hfmodels: resolve litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B: commit=ff0f6e32 via EXPLICIT_REVISION, descriptor=john-rocky/hfmodels-android@67640c6c/catalog/entries/litert-community__NVIDIA-Nemotron-Labs-Dory1.0-4B.json sha=35ec8a84
+10-26 14:20:47.718 23967 24003 I hfmodels: imported NVIDIA-Nemotron-Labs-Dory1.0-4B_int4.litertlm: 2403851584 bytes, sha256 ok, from /storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.loops/files/NVIDIA-Nemotron-Labs-Dory1.0-4B_int4.litertlm
+10-26 14:20:47.718 23967 23967 I hfmodels: side-loaded NVIDIA-Nemotron-Labs-Dory1.0-4B_int4.litertlm from /storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.loops/files/NVIDIA-Nemotron-Labs-Dory1.0-4B_int4.litertlm (sha256 verified)
+10-26 14:20:47.720 23967 23967 I loops   : load int4 Checking the file's sha256
+10-26 14:20:47.723 23967 23967 I loops   : load int4 Starting the engine (gpu)
+10-26 14:21:01.831 23967 23967 I hfmodels: ready litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B@ff0f6e32 variant=int4 profile=gpu language=GPU prepare_ms=14108
+10-26 14:21:01.832 23967 23967 I loops   : load int4 Loaded
+10-26 14:21:48.277 23967 23967 I loops   : ANSWER loop=2 variant=int4 q=gsm8k-75 first_token_ms=1307.2 tok_s=7.09 total_ms=46424.0 chunks=320 thought_chars=0 load_ms=18122 backend=GPU mark=match text="To find the average square footage of a level in Luke's sandcastle, we need to determine the square footage of each level and then calculate the average.\n\n**Step 1: Identify the square footage of each level.**\nThe problem states that each level has half the square footage of the level below it. We are told the top level (Level 4) has a square footage of 16.\n\n*   **Level 4 (Top):** 16 square feet\n*   **Level 3:** Since Level 4 is half of Level 3, Level 3 must be double Level 4.\n    $16 \\times 2 = 32$ square feet\n*   **Level 2:** Since Level 3 is half of Level 2, Level 2 must be double Level 3.\n    $32 \\times 2 = 64$ square feet\n*   **Level 1 (Bottom):** Since Level 2 is half of Level 1, Level 1 must be double Level 2.\n    $64 \\times 2 = 128$ square feet\n\n**Step 2: Calculate the total square footage.**\nNow, we sum the square footage of all four levels:\nTotal = Level 1 + Level 2 + Level 3 + Level 4\nTotal = $128 + 64 + 32 + 16$\nTotal = $240$ square feet\n\n**Step 3: Calculate the average square footage.**\nTo find the average, divide the total square footage by the number of levels (which is 4).\nAverage = Total \/ Number of Levels\nAverage = $240 \/ 4$\nAverage = $60$\n\nThe average square footage of a level is 60.\n\n#### 60"
+10-26 14:21:48.281 23967 23967 I loops   : DONE phase=DONE answers=2 events=0 json=/storage/emulated/0/Android/data/io.github.johnrocky.hfmodels.samples.loops/files/loops-run-1792992108.json
+10-26 14:21:48.283 23967 24003 I hfmodels: resolve litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B: commit=ff0f6e32 via EXPLICIT_REVISION, descriptor=john-rocky/hfmodels-android@67640c6c/catalog/entries/litert-community__NVIDIA-Nemotron-Labs-Dory1.0-4B.json sha=35ec8a84
+10-26 14:21:48.286 23967 24003 I hfmodels: resolve litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B: commit=ff0f6e32 via EXPLICIT_REVISION, descriptor=john-rocky/hfmodels-android@67640c6c/catalog/entries/litert-community__NVIDIA-Nemotron-Labs-Dory1.0-4B.json sha=35ec8a84
+10-26 14:21:48.287 23967 23967 I loops   : FILES int4_1loop=OnPhone int4=OnPhone
+10-26 14:21:59.559 25230 25230 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-26 14:21:59.566 25230 25230 I AndroidRuntime: Using default boot image
+10-26 14:21:59.566 25230 25230 I AndroidRuntime: Leaving lock profiling enabled
+10-26 14:21:59.567 25230 25230 D AndroidRuntime: addProductProperty not brand or 7
+10-26 14:21:59.641 25230 25230 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+10-26 14:22:00.681 25230 25230 D AndroidRuntime: Shutting down VM
