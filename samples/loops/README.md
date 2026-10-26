@@ -115,9 +115,30 @@ The last line is `RESULT ok=true …` when every step passed.
 
 ## Numbers
 
+### 2026-10-26: Galaxy S26
+
+Measured on the same Galaxy S26 (SM-S942Q, Android 16, build BP4A.251205.006.S942QOPS1AZH9) with litertlm-android 0.16.1 and this sample built at commit b4ab57f, the one that ships GSM8K test question 75 in place of 54, both files pushed with adb as on 2026-10-23. The records are in [`results/2026-10-26-s26/`](results/2026-10-26-s26/).
+
+The eight examples ran twice in recording mode, thinking off: once with the 1 loop file first and once with the 2 loops file first. Every answer's text was the same in both runs, and on the seven examples kept from 2026-10-23 it was the same as that day's, byte for byte. Each file's times below are from the run in which it went first; the records hold the other run's. The phone had just come out of a long benchmark and ran warmer than on 2026-10-23: over its eight answers one loop went from thermal status 0 to 2, two loops from 1 to 2.
+
+| example | 1 loop: answer | s | tok/s | 2 loops: answer | s | tok/s |
+|---|---|---|---|---|---|---|
+| `dates` | May 3, May 17 | 1.3 | 8.8 | May 3 / May 17 (on two lines) | 1.6 | 9.0 |
+| `recipe` | 450 g (300 g × 1.5) | 5.2 | 12.0 | 450 g (75 g per person × 6) | 9.2 | 11.2 |
+| `arrive` | 9:15 | 1.2 | 13.6 | 10:15 | 2.3 | 8.0 |
+| `reply` | I can't wait to see you! What should I bring | 1.5 | 13.2 | I'd love to come! What should I bring | 2.3 | 8.0 |
+| `gsm8k-69` | `#### 60` = GSM8K's | 9.8 | 13.0 | `#### 60` = GSM8K's | 15.3 | 7.5 |
+| `gsm8k-75` | `#### 7.5` (GSM8K's is 60) | 22.9 | 11.8 | `#### 60` = GSM8K's | 53.7 | 6.1 |
+| `gsm8k-98` | `#### 5` = GSM8K's | 22.9 | 13.1 | `#### 5` = GSM8K's | 40.8 | 6.3 |
+| `gsm8k-88` | `#### 8000` = GSM8K's | 8.8 | 13.4 | `#### 8000` = GSM8K's | 31.7 | 6.2 |
+
+The median of the eight rates is 13.06 tok/s for one loop and 7.77 for two, a ratio of 1.68; on the cooler phone of 2026-10-23 they were 15.68 and 9.49 (1.65). In the other run, where each file went second, the medians were 9.24 and 8.22. In the runs where each file went first, the first token came after 0.54 to 1.30 s with one loop and 0.69 to 2.80 s with two. In these runs a load took 12.4 to 26.8 s, the first load of a pushed copy included.
+
+On the phone one loop gave GSM8K's answer on 69, 98 and 88 and not on 75, where it wrote `#### 7.5` (the model card's Mac run had 7); two loops gave it on all four. As on 2026-10-23, two loops answered the arrival time wrong (10:15) and one loop right. With one answer per question from each file (the default sampler, above), single questions show where the two files part, not which one is better; the card's 100 GSM8K questions are that measure (86 for one loop, 90 for two).
+
 ### 2026-10-23: Galaxy S26
 
-Measured on one Galaxy S26 (SM-S942Q, Android 16, build BP4A.251205.006.S942QOPS1AZH9) with litertlm-android 0.16.1 and this sample built at commit edc8fbf, both files pushed with adb (the SDK checked their sha256 and imported them). The records are in [`results/2026-10-23-s26/`](results/2026-10-23-s26/).
+Measured on one Galaxy S26 (SM-S942Q, Android 16, build BP4A.251205.006.S942QOPS1AZH9) with litertlm-android 0.16.1 and this sample built at commit edc8fbf, both files pushed with adb (the SDK checked their sha256 and imported them). The records are in [`results/2026-10-23-s26/`](results/2026-10-23-s26/). The app then shipped GSM8K test question 54 (The Doubtfire sisters … How many kittens does the Doubtfire family now have?, known answer 40) where it now ships 75.
 
 The eight examples ran twice in recording mode, thinking off: once with the 1 loop file first and once with the 2 loops file first, after the phone had cooled back to thermal status 0. Every answer's text was the same in both runs. Each file's times below are from the run in which it went first, from thermal status 0 (one loop stayed at 0 over its eight answers, two loops reached 2); the records hold the other run's.
 
@@ -148,4 +169,4 @@ The failure paths, through the app with only the 1 loop file on the phone:
 
 In each the app stayed up and showed the sentence in the column, and Run was available again (the state line read DONE after the first, STOPPED after the other two). The device check passed every step (`results/2026-10-23-s26/check.log`): both files on the GPU, 42 with Think off and on (688 characters of reasoning first), the same text from a new conversation, `Stopped after 5 tokens.` with `1, 2, 3` kept, release in 0.9 s, and the int8 stand-in's sentences, its continued download (from 17,503,495 bytes) and its removal.
 
-One phone, one day; not a benchmark.
+One phone, two days; not a benchmark.
