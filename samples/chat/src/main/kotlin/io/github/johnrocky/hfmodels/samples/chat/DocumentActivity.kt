@@ -144,7 +144,7 @@ class DocumentActivity : ComponentActivity() {
     }
 
     private fun showDocumentSize() {
-        documentSize.text = String.format(Locale.US, "%,d characters · the model holds 4,096 tokens, the answer included", document.text.length)
+        documentSize.text = String.format(Locale.US, "%,d characters · the model holds 4,096 tokens in all", document.text.length)
     }
 
     private fun examples() = JSONArray(assets.open("examples.json").bufferedReader().use { it.readText() })
