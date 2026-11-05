@@ -19,6 +19,8 @@ The model file needs LiteRT-LM 0.19.0, above the 0.16.1 the SDK modules pin, so 
 
 Under each answer: the document's read time and token count, then the tokens written (reasoning included) and their rate, both from the runtime's own counts (`ChatSession.benchmarkInfo()`). Every question gets a conversation of its own with no system prompt, and the conversation is closed after the answer. The app sets no sampler; the file declares none, so the runtime's default applies.
 
+On a Galaxy S26 (GPU, Wi-Fi, 2026-11-05) the first load took 118 s (download, sha256, engine), a later load about 5 s, and the coffee machine example at **low** 18.6 s from **Ask** to the answer.
+
 `descriptor/spark-x2.6-1.7b.spec.json` is the source of the descriptor in the app's assets (`tools/hfmodels_descriptor.py`, then the entry's `descriptor`). The repo carries no `hfmodels.json` and the SDK's catalog has no entry for it, so the screen passes the descriptor as `LoadOptions.descriptorJson`.
 
 A debug build also takes the recording entry at the end of `DocumentActivity.kt`: an intent that drives the same fields and buttons a finger does and writes one JSON per question under `files/runs/`.
