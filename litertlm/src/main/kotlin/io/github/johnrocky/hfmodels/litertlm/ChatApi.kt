@@ -1,5 +1,6 @@
 package io.github.johnrocky.hfmodels.litertlm
 
+import com.google.ai.edge.litertlm.BenchmarkInfo
 import com.google.ai.edge.litertlm.Channel
 import com.google.ai.edge.litertlm.Contents
 import com.google.ai.edge.litertlm.ConversationConfig
@@ -100,6 +101,15 @@ interface ChatSession {
      * in [Message.toolCalls]; answer them once the flow has completed.
      */
     fun stream(message: Message, options: GenerationOptions = GenerationOptions()): Flow<Message>
+
+    /**
+     * The runtime's token counts and rates for this session's last turn, read after its stream has completed. null while
+     * a generation runs, after a cancel or close, and when the engine was created without `ExperimentalFlags.enableBenchmark`
+     * (set it before the load: the runtime keeps no numbers otherwise). A streamed chunk is not a token: a chunk can carry
+     * several. `lastPrefill*` is the turn's last prefill: with `ExperimentalFlags.filterChannelContentFromKvCache` at its
+     * default, a reply that reasoned runs a second prefill after the answer, and these two fields describe that one.
+     */
+    suspend fun benchmarkInfo(): BenchmarkInfo? = null
 
     /** Stop the generation in flight (no-op when idle). The flow completes with the chunks delivered so far. */
     fun cancel()

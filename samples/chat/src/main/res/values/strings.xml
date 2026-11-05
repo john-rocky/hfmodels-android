@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">hfmodels chat</string>
+    <string name="document_name">Ask a document</string>
 </resources>

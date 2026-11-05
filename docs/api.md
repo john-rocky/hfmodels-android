@@ -34,6 +34,7 @@ import com.google.ai.edge.litertlm.Contents
 import com.google.ai.edge.litertlm.Content
 import com.google.ai.edge.litertlm.ConversationConfig
 import com.google.ai.edge.litertlm.Message
+import com.google.ai.edge.litertlm.BenchmarkInfo             // ChatSession.benchmarkInfo()
 import com.google.ai.edge.litertlm.Channel                   // 0.1.1: only if you set ConversationConfig.channels yourself
 import com.google.ai.edge.litertlm.ToolCall                  // 0.2.0: tools on Chat (also OpenApiTool and the tool() function)
 ```
@@ -113,6 +114,7 @@ interface ChatSession {
     val state: SessionState                             // READY -> GENERATING -> READY; cancel: GENERATING -> CANCELLING -> INVALID; close: CLOSING -> CLOSED
     fun stream(contents: Contents, options: GenerationOptions = GenerationOptions()): Flow<Message>   // cold; collect ONCE; cancelling the collector cancels the native generation
     fun stream(message: Message, options: GenerationOptions = GenerationOptions()): Flow<Message>     // 0.2.0: a message of any role; stream(contents) is stream(Message.user(contents)); Message.tool(...) answers tool calls
+    suspend fun benchmarkInfo(): BenchmarkInfo?         // the runtime's token counts and rates for the last turn; null while generating, after a cancel or close, or without ExperimentalFlags.enableBenchmark set before the load
     fun cancel()                                        // same as cancelling the collector; no-op when idle
     fun close()
     suspend fun closeAndJoin()

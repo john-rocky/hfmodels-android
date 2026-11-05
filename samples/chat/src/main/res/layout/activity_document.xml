@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent" android:background="#FFFFFF">
+
+    <LinearLayout android:id="@+id/column" android:layout_width="match_parent" android:layout_height="match_parent"
+        android:orientation="vertical" android:paddingHorizontal="12dp" android:paddingVertical="8dp"
+        android:focusable="true" android:focusableInTouchMode="true" android:defaultFocusHighlightEnabled="false">
+
+        <TextView android:id="@+id/title" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:textColor="#111111" android:textSize="16sp" android:textStyle="bold" />
+
+        <TextView android:id="@+id/status" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:textColor="#444444" android:textSize="13sp" />
+
+        <EditText android:id="@+id/document" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="2"
+            android:gravity="top|start" android:hint="Paste a document" android:importantForAutofill="no"
+            android:inputType="textMultiLine|textNoSuggestions" android:scrollbars="vertical" android:textColor="#111111" android:textSize="11sp" />
+
+        <TextView android:id="@+id/document_size" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:textColor="#666666" android:textSize="11sp" />
+
+        <EditText android:id="@+id/question" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:hint="Ask one question" android:importantForAutofill="no" android:inputType="textCapSentences|textMultiLine"
+            android:maxLines="3" android:textColor="#111111" android:textSize="14sp" />
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="8dp"
+                android:text="Thinking" android:textColor="#111111" android:textSize="14sp" />
+            <RadioGroup android:id="@+id/level" android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
+                <RadioButton android:id="@+id/level_none" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="none" />
+                <RadioButton android:id="@+id/level_low" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true" android:text="low" />
+                <RadioButton android:id="@+id/level_high" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="high" />
+            </RadioGroup>
+        </LinearLayout>
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+            <Button android:id="@+id/load" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:minWidth="0dp" android:text="Load" />
+            <Button android:id="@+id/examples" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:minWidth="0dp" android:text="Examples" />
+            <Button android:id="@+id/ask" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:enabled="false" android:minWidth="0dp" android:text="Ask" />
+            <Button android:id="@+id/stop" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:enabled="false" android:minWidth="0dp" android:text="Stop" />
+        </LinearLayout>
+
+        <ScrollView android:id="@+id/reply_scroll" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="3">
+            <LinearLayout android:id="@+id/reply_column" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+                <TextView android:id="@+id/thought" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:textColor="#777777" android:textIsSelectable="true" android:textSize="12sp" />
+                <TextView android:id="@+id/answer" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:textColor="#111111" android:textIsSelectable="true" android:textSize="22sp" android:textStyle="bold" />
+                <TextView android:id="@+id/stats" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp" android:textColor="#444444" android:textSize="13sp" />
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+    <!-- The recording entry's one moving pixel: screenrecord writes no frame for a still screen. -->
+    <View android:id="@+id/tick" android:layout_width="1px" android:layout_height="1px" android:layout_gravity="bottom|end" android:visibility="gone" />
+</FrameLayout>

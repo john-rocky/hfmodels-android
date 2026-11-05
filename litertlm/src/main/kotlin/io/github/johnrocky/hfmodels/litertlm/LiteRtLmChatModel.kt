@@ -1,10 +1,12 @@
 package io.github.johnrocky.hfmodels.litertlm
 
 import android.graphics.BitmapFactory
+import com.google.ai.edge.litertlm.BenchmarkInfo
 import com.google.ai.edge.litertlm.Content
 import com.google.ai.edge.litertlm.Conversation
 import com.google.ai.edge.litertlm.ConversationConfig
 import com.google.ai.edge.litertlm.Engine
+import com.google.ai.edge.litertlm.ExperimentalApi
 import com.google.ai.edge.litertlm.Message
 import com.google.ai.edge.litertlm.MessageCallback
 import com.google.ai.edge.litertlm.Role
@@ -264,6 +266,12 @@ internal class LiteRtLmChatModel(
             cancelRequested = true
             if (state == SessionState.GENERATING) state = SessionState.CANCELLING
             runCatching { conv.cancelProcess() }.onFailure { host.log.w("cancelProcess ($why): ${it.message}") }
+        }
+
+        @OptIn(ExperimentalApi::class)
+        override suspend fun benchmarkInfo(): BenchmarkInfo? {
+            if (state != SessionState.READY) return null
+            return withContext(nativeDispatcher) { runCatching { conv.getBenchmarkInfo() }.getOrNull() }
         }
 
         override fun cancel() {

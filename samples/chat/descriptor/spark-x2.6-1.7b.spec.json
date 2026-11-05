@@ -1,0 +1,95 @@
+{
+  "model_id": "litert-community/Spark-X2.6-1.7B",
+  "revision": "127d3acbd0088c1e7fe792d5afc86c5131231fda",
+  "tasks": [
+    "chat"
+  ],
+  "default_variant": "int4_mlp",
+  "license": {
+    "id": "apache-2.0",
+    "url": "https://huggingface.co/litert-community/Spark-X2.6-1.7B/blob/main/LICENSE"
+  },
+  "provenance": "Source of samples/chat/src/main/assets/spark-x2.6-1.7b.hfmodels.json, which DocumentActivity passes as LoadOptions.descriptorJson: tools/hfmodels_descriptor.py writes a catalog entry and the asset is its \"descriptor\". Not in the bundled catalog: the file's runtime floor (0.19.0, the repo's litertlm_manifest.json) is above the SDK's pin (0.16.1). Backends and context come from that manifest. A thinking model: the bundle declares the <think> channel and its template opens it when thinking is on.",
+  "variants": [
+    {
+      "id": "int4_mlp",
+      "runtime": "litert_lm",
+      "handler": {
+        "id": "litertlm.conversation",
+        "abi": 1
+      },
+      "runtime_range": {
+        "min_inclusive": "0.19.0",
+        "max_exclusive": "0.20.0"
+      },
+      "inputs": [
+        "text"
+      ],
+      "files": [
+        {
+          "id": "weights",
+          "role": "model",
+          "path": "Spark-X2.6-1.7B_int4-mlp.litertlm"
+        }
+      ],
+      "default_profile": "gpu",
+      "profiles": [
+        {
+          "id": "gpu",
+          "priority": 100,
+          "files": [
+            "weights"
+          ],
+          "enabled_inputs": [
+            "text"
+          ],
+          "components": {
+            "language": "gpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "fallback_profiles": [
+            "cpu"
+          ],
+          "default_selectable": true
+        },
+        {
+          "id": "cpu",
+          "priority": 50,
+          "files": [
+            "weights"
+          ],
+          "enabled_inputs": [
+            "text"
+          ],
+          "components": {
+            "language": "cpu"
+          },
+          "requirements": {
+            "min_android_api": 31,
+            "abis": [
+              "arm64-v8a"
+            ]
+          },
+          "fallback_profiles": [],
+          "default_selectable": true
+        }
+      ],
+      "handler_config": {
+        "metadata_source": "litertlm_manifest",
+        "channels": [
+          {
+            "name": "thought",
+            "start": "<think>",
+            "end": "</think>"
+          }
+        ],
+        "thinking_default": true
+      }
+    }
+  ]
+}

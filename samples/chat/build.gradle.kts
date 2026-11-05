@@ -28,6 +28,11 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+    // The same switch as litertlm/build.gradle.kts: "Ask a document" loads a file whose runtime floor is LiteRT-LM 0.19.0
+    // (README.md), whose Kotlin 2.4 metadata the Kotlin built into AGP 9.3.1 refuses.
+    if (providers.gradleProperty("skipKotlinMetadataCheck").isPresent) {
+        kotlin { compilerOptions { freeCompilerArgs.add("-Xskip-metadata-version-check") } }
+    }
 }
 
 dependencies {
