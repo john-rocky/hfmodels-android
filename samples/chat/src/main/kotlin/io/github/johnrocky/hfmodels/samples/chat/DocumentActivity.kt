@@ -274,6 +274,8 @@ class DocumentActivity : ComponentActivity() {
                     m.text.takeIf { it.isNotEmpty() }?.let { answer.append(it); answerText.append(it); phase = "Answering" }
                 }
                 info = session.benchmarkInfo()
+                // When the file's memory is full the runtime ends the stream with no error, in the middle of a sentence.
+                info?.let { if (it.lastPrefillTokenCount + it.lastDecodeTokenCount >= CONTEXT_TOKENS) failure = RAN_OUT }
             } catch (e: CancellationException) {
                 stopped = true
                 throw e
@@ -314,8 +316,7 @@ class DocumentActivity : ComponentActivity() {
     /** The two ways a long document ends, in the words a reader can act on; the runtime's own sentence for anything else. */
     private fun failureLine(e: ModelException) = when {
         "too long" in e.reason -> "This document is too long: the model holds 4,096 tokens, the answer included."
-        "kv-cache size reached" in e.reason || "Max number of tokens reached" in e.reason ->
-            "The model's 4,096 tokens ran out before the answer finished. Try another thinking level or a shorter document."
+        "kv-cache size reached" in e.reason || "Max number of tokens reached" in e.reason -> RAN_OUT
         else -> "${e.code}: ${e.reason}"
     }
 
@@ -389,6 +390,8 @@ class DocumentActivity : ComponentActivity() {
 
     private companion object {
         const val TAG = "document"
+        const val CONTEXT_TOKENS = 4096
+        const val RAN_OUT = "The model's 4,096 tokens ran out before the answer finished. Try another thinking level or a shorter document."
         const val MODEL_NAME = "Spark-X2.6-1.7B"
         const val MODEL_ID = "litert-community/Spark-X2.6-1.7B"
         const val MODEL_COMMIT = "127d3acbd0088c1e7fe792d5afc86c5131231fda"
