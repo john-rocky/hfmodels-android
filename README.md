@@ -25,7 +25,7 @@ withContext(NonCancellable) { chat.closeAndJoin() }
 
 The SDK runs on LiteRT-LM, Google's on-device runtime. It downloads the model at a fixed commit, resumes a broken download and checks each file's sha256. Then it picks a backend the device can run. Cancelling the stream stops the model, and `closeAndJoin()` waits for the native side to finish.
 
-The current release is 0.3.0, and the API may still change before 1.0. I verified chat on a Pixel 8a, and typed decisions and voice on a Galaxy S26.
+The current release is 0.3.0, and the API may still change before 1.0. I verified chat on a Pixel 8a while building 0.1.0 and 0.1.1, typed decisions on a Galaxy S26 while building 0.1.2 and 0.2.0, and voice on the same phone while building 0.2.0. With 0.3.0's runtime, LiteRT-LM 0.19.1, I ran chat and voice on a Pixel 11 Pro and a vision-language model on a Pixel 8a ([tested-runtime-matrix.json](tested-runtime-matrix.json)).
 
 ## Add it
 
@@ -50,7 +50,7 @@ The first example downloads Gemma 4, which is 2.6 GB. [The walkthrough](docs/get
 
 ## Models
 
-The SDK can load a model if its repo has an `hfmodels.json` file or its own catalog lists it. These are good first picks, and all four ran on a Pixel 8a:
+The SDK can load a model if its repo has an `hfmodels.json` file or its own catalog lists it. These are good first picks, and all four ran on a Pixel 8a with LiteRT-LM 0.16.1 and on a Pixel 11 Pro with LiteRT-LM 0.19.1:
 
 | Model id | Download | Input | Ran on |
 |---|---|---|---|
@@ -103,7 +103,7 @@ val loop = VoiceLoop(asr, chat, tts, PhoneTools.all(app), VoiceLoopConfig(player
 loop.listen(MicSource().chunks()).collect { e -> show(e) }
 ```
 
-On a Galaxy S26 in airplane mode, the first sound came 1.8 s after the end of a recorded command. The recordings are synthetic, and I have not measured the loop with a person's voice.
+On a Galaxy S26 in airplane mode, with LiteRT-LM 0.16.1, the first sound came 2.6 s after the end of a recorded command in one run and 3.0 s in another. Of that, 0.8 s is the silence the loop waits for to know the command has ended. The recordings are synthetic, and I have not measured the loop with a person's voice.
 
 ## Samples
 
