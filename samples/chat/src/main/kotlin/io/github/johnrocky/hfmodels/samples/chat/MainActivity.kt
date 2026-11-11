@@ -43,7 +43,7 @@ import kotlinx.coroutines.withContext
 
 /**
  * The whole app: an id -> a chat. Everything model-related goes through [HfModels]; this file only
- * drives a UI. Compare with a hand-rolled version (download, hash, engine, cancel, release) in the README.
+ * drives a UI. Compare with a hand-rolled version (download, hash, engine, cancel, release) in docs/why.md.
  */
 class MainActivity : ComponentActivity() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
