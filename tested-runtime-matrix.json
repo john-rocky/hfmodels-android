@@ -280,6 +280,20 @@
         "voice_VoiceLoopDeviceTest": "PASS, 7 of 10 commands"
       },
       "evidence": "the logs of this run are not in this repository"
+    },
+    {
+      "device": "Pixel 8a",
+      "serial_note": "one unit, Tensor G3",
+      "os": "Android 16",
+      "build": "CP1A.260505.005",
+      "date": "2026-11-11",
+      "harness": "samples/look's LookDeviceCheck from the debug APKs: -e variant vl_int8vis -e backend cpu -e network offline, the file pushed into the app's files dir",
+      "litertlm_android": "0.19.1",
+      "model": "litert-community/MiniCPM-V-4.7-1B@8298b1bd MiniCPM-V-4.7-1B-VL_int8vis.litertlm (20c73b5a…)",
+      "sdk_checks": {
+        "samples_look": "CPU PASS with vl_int8vis, the file the app picks under 10 GiB of RAM (one run: every step and the six failure paths)"
+      },
+      "evidence": "the logs of this run are not in this repository"
     }
   ],
   "typed_decisions": {
