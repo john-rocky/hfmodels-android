@@ -32,7 +32,7 @@
             },
             "runtime_range": {
               "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text"
@@ -79,6 +79,14 @@
                     "result": "PASS",
                     "date": "2026-09-08",
                     "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                  },
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
                   }
                 ]
               },
@@ -111,6 +119,14 @@
                     "result": "PASS",
                     "date": "2026-09-08",
                     "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                  },
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
                   }
                 ]
               }
@@ -133,9 +149,9 @@
     },
     {
       "model_id": "litert-community/Falcon-H1-1.5B-Instruct",
-      "model_commit": "972bf1777202caf538af00aeac605dde823f3c16",
+      "model_commit": "660a12bf59f28ee41e0f94064c854b804da311cd",
       "path": "catalog/entries/litert-community__Falcon-H1-1.5B-Instruct.json",
-      "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json. A hybrid attention / Mamba-2 model: the bundle declares fp32 activations for the GPU, and the manifest lists gpu and cpu as verified to generate. On the Pixel 8a (8 GB) the gpu profile ended the test process before any result (the same signature as the Qwen3.5 int8 bundles: fp32 activations declared for the GPU); cpu answered. The gpu profile stays in the descriptor with that FAIL record, so Auto never picks it and the default profile is cpu.",
+      "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json. A hybrid attention / Mamba-2 model: the bundle declares fp32 activations for the GPU, and the manifest lists gpu and cpu as verified to generate. On the Pixel 8a (8 GB), at commit 972bf177 on LiteRT-LM 0.16.1, the gpu profile ended the test process before any result (the same signature as the Qwen3.5 int8 bundles: fp32 activations declared for the GPU); cpu answered. The default profile is cpu.",
       "descriptor": {
         "schema_version": 1,
         "model_id": "litert-community/Falcon-H1-1.5B-Instruct",
@@ -156,8 +172,8 @@
               "abi": 1
             },
             "runtime_range": {
-              "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
+              "min_inclusive": "0.19.0",
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text"
@@ -167,8 +183,8 @@
                 "id": "weights",
                 "role": "model",
                 "path": "Falcon-H1-1.5B-Instruct_int8.litertlm",
-                "bytes": 1725449600,
-                "sha256": "f499623a4d6fb6df8c2cf6ce388a0d460bcb81f416fd5c69e4281906f48fb931"
+                "bytes": 1725583360,
+                "sha256": "a37aea1d73360a1c6aeb112939e9fa8b514f21ce2ef8ceb188da9e45fbd397ec"
               }
             ],
             "default_profile": "cpu",
@@ -198,12 +214,11 @@
                 "verification": [
                   {
                     "level": "MAINTAINER_TESTED",
-                    "device": "Pixel 8a",
-                    "os_build": "CP1A.260505.005",
-                    "runtime": "litert_lm 0.16.1",
-                    "result": "FAIL",
-                    "date": "2026-09-08",
-                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate-deaths.log"
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
                   }
                 ]
               },
@@ -230,12 +245,11 @@
                 "verification": [
                   {
                     "level": "MAINTAINER_TESTED",
-                    "device": "Pixel 8a",
-                    "os_build": "CP1A.260505.005",
-                    "runtime": "litert_lm 0.16.1",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
                     "result": "PASS",
-                    "date": "2026-09-08",
-                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-regate-<entry>_cpu.log"
+                    "date": "2026-11-11"
                   }
                 ]
               }
@@ -243,7 +257,7 @@
             "handler_config": {
               "metadata_source": "litertlm_manifest",
               "context_tokens": 4096,
-              "manifest_min_runtime_version": "0.15"
+              "manifest_min_runtime_version": "0.19.0"
             }
           }
         ]
@@ -1320,7 +1334,7 @@
       "model_id": "litert-community/Hy-MT2-1.8B",
       "model_commit": "0d2c5681276f71b61c4f2a14fbb9791341b28017",
       "path": "catalog/entries/litert-community__Hy-MT2-1.8B.json",
-      "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json (cpu and gpu, cpu the default; gpu recommended for Android flagships). A translation model, not open chat: one conversation per message with the card's prompt, 'Translate the following text into <language>. Note that you should **only output the translated result without any additional explanation**:' then an empty line and the text, as the user message (no system instruction). A second message in the same conversation fails (the template's else branch, LiteRT-LM #3166): measured on litert-lm-api 0.16.1 and 0.17.1 on a Mac CPU on 2026-10-19, and by the card on 0.17.1 and 0.18.0. The file is the 2026-10-06 GPU graph rewrite with the signature input param_tensor; on 2026-10-19 litert-lm-api 0.16.1 (the SDK's pin) and 0.17.1 translated the same ten sentences on a Mac CPU with greedy sampling, near-identical. runtime_range is the one version this file ran on that the SDK links (0.17.0 was not run; 0.17.1 is outside the SDK's pin). The gpu profile has no gate run and no verification record. On 2026-10-20 a Galaxy S26 (Android 16) ran it on 0.16.1 in samples/translate at this repository's commit 86c26d2, which loads it with Require(GPU) and checks its output at load (two fixed Spanish sentences must come back as English about a station and a thank-you): the check passed at all seven of those GPU loads. The card's GPU numbers come from LiteRT-LM main builds of 2026-09-18 and adac974b. The default profile stays cpu, and gpu loads only when asked for.",
+      "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json (cpu and gpu, cpu the default; gpu recommended for Android flagships). A translation model, not open chat: one conversation per message with the card's prompt, 'Translate the following text into <language>. Note that you should **only output the translated result without any additional explanation**:' then an empty line and the text, as the user message (no system instruction). A second message in the same conversation fails (the template's else branch, LiteRT-LM #3166): measured on litert-lm-api 0.16.1 and 0.17.1 on a Mac CPU on 2026-10-19, and by the card on 0.17.1 and 0.18.0. The file is the 2026-10-06 GPU graph rewrite with the signature input param_tensor; on 2026-10-19 litert-lm-api 0.16.1 and 0.17.1 translated the same ten sentences on a Mac CPU with greedy sampling, near-identical. runtime_range starts at 0.16.1, the lowest version this file ran on; on 2026-11-11 a Pixel 11 Pro answered on both profiles on LiteRT-LM 0.19.1 in the catalog gate. On 2026-10-20 a Galaxy S26 (Android 16) ran it on 0.16.1 in samples/translate at this repository's commit 86c26d2, which loads it with Require(GPU) and checks its output at load (two fixed Spanish sentences must come back as English about a station and a thank-you): the check passed at all seven of those GPU loads. The card's GPU numbers come from LiteRT-LM main builds of 2026-09-18 and adac974b. The default profile stays cpu, and gpu loads only when asked for.",
       "descriptor": {
         "schema_version": 1,
         "model_id": "litert-community/Hy-MT2-1.8B",
@@ -1341,7 +1355,7 @@
             },
             "runtime_range": {
               "min_inclusive": "0.16.1",
-              "max_exclusive": "0.16.2"
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text"
@@ -1378,7 +1392,17 @@
                 "fallback_profiles": [
                   "cpu"
                 ],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
+                  }
+                ]
               },
               {
                 "id": "cpu",
@@ -1399,7 +1423,17 @@
                   ]
                 },
                 "fallback_profiles": [],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
+                  }
+                ]
               }
             ],
             "handler_config": {
@@ -1728,7 +1762,7 @@
     },
     {
       "model_id": "litert-community/LFM2.5-1.2B-Instruct",
-      "model_commit": "c412baa473f5e27afe3d3255caee1bf818d0f095",
+      "model_commit": "8dde2fe485d2127f2a3861c3184cc882ba3764eb",
       "path": "catalog/entries/litert-community__LFM2.5-1.2B-Instruct.json",
       "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json; the bundle declares a <think> channel in its template, which the runtime handles; the SDK does not enable thinking.",
       "descriptor": {
@@ -1752,7 +1786,7 @@
             },
             "runtime_range": {
               "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text"
@@ -1763,7 +1797,7 @@
                 "role": "model",
                 "path": "LFM2.5-1.2B-Instruct_int4_gpu.litertlm",
                 "bytes": 736220768,
-                "sha256": "36f7f0221bcc42c75291da1d7e3422901024a5b06b9bfa3c02d7feface04f70a"
+                "sha256": "8d3a4d73e121166ad377e9c51148d38ee383c223661f4219e01f22a0fe1d4a1a"
               }
             ],
             "default_profile": "gpu",
@@ -1793,21 +1827,11 @@
                 "verification": [
                   {
                     "level": "MAINTAINER_TESTED",
-                    "device": "Pixel 8a",
-                    "os_build": "CP1A.260505.005",
-                    "runtime": "litert_lm 0.16.1",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
                     "result": "PASS",
-                    "date": "2026-09-07",
-                    "evidence": "litertlm/results/2026-09-07-4C131JEKB15210-0.16.1-a3-gate.log"
-                  },
-                  {
-                    "level": "MAINTAINER_TESTED",
-                    "device": "Pixel 8a",
-                    "os_build": "CP1A.260505.005",
-                    "runtime": "litert_lm 0.16.1",
-                    "result": "PASS",
-                    "date": "2026-09-08",
-                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate-release.log"
+                    "date": "2026-11-11"
                   }
                 ]
               },
@@ -1834,21 +1858,11 @@
                 "verification": [
                   {
                     "level": "MAINTAINER_TESTED",
-                    "device": "Pixel 8a",
-                    "os_build": "CP1A.260505.005",
-                    "runtime": "litert_lm 0.16.1",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
                     "result": "PASS",
-                    "date": "2026-09-07",
-                    "evidence": "litertlm/results/2026-09-07-4C131JEKB15210-0.16.1-a3-gate.log"
-                  },
-                  {
-                    "level": "MAINTAINER_TESTED",
-                    "device": "Pixel 8a",
-                    "os_build": "CP1A.260505.005",
-                    "runtime": "litert_lm 0.16.1",
-                    "result": "PASS",
-                    "date": "2026-09-08",
-                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate-release.log"
+                    "date": "2026-11-11"
                   }
                 ]
               }
@@ -1875,7 +1889,7 @@
             },
             "runtime_range": {
               "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text"
@@ -1886,7 +1900,7 @@
                 "role": "model",
                 "path": "LFM2.5-1.2B-Instruct_int4.litertlm",
                 "bytes": 736015744,
-                "sha256": "a28b5c59ac204e2e51c1f98d2d6db6982f0e12da59a268fe498edcb33237e906"
+                "sha256": "e904729a8a8a0160658cb7cd22992e270a0547c05cc45b08c47ece5c0e29425b"
               }
             ],
             "default_profile": "cpu",
@@ -1910,7 +1924,17 @@
                   ]
                 },
                 "fallback_profiles": [],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
+                  }
+                ]
               }
             ],
             "handler_config": {
@@ -1935,7 +1959,7 @@
             },
             "runtime_range": {
               "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text"
@@ -1946,7 +1970,7 @@
                 "role": "model",
                 "path": "LFM2.5-1.2B-Instruct_int8.litertlm",
                 "bytes": 1247091440,
-                "sha256": "e002a91545cec6328be2a86e9b8b4fccb2dd9dde7e6c8b29d730f915a0a697fe"
+                "sha256": "ed8201f88a1a116218bf03cf7cc5c33accdc2f6f502aa8d682f616beea1ec870"
               }
             ],
             "default_profile": "cpu",
@@ -1970,7 +1994,17 @@
                   ]
                 },
                 "fallback_profiles": [],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
+                  }
+                ]
               }
             ],
             "handler_config": {
@@ -1991,7 +2025,7 @@
     },
     {
       "model_id": "litert-community/LFM2.5-1.2B-Thinking",
-      "model_commit": "b7d18a2f8de7697cecb0f31b9319c6ba739e5e01",
+      "model_commit": "997fdabc1449bd069a66f80c03acb1b3365d0ad1",
       "path": "catalog/entries/litert-community__LFM2.5-1.2B-Thinking.json",
       "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json. A thinking model: the bundle declares the <think> channel and its generation prompt ends bare, so the model emits the opener itself; handler_config.channels spells the same channel so the SDK applies it to every conversation and reports the reasoning in Message.channels.",
       "descriptor": {
@@ -2014,8 +2048,8 @@
               "abi": 1
             },
             "runtime_range": {
-              "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
+              "min_inclusive": "0.19.0",
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text"
@@ -2025,8 +2059,8 @@
                 "id": "weights",
                 "role": "model",
                 "path": "LFM2.5-1.2B-Thinking_int4_gpu.litertlm",
-                "bytes": 736220768,
-                "sha256": "75408d4047f15f054403e3d29826b2324c4b8709648c99221daab571f70a6bfd"
+                "bytes": 736280576,
+                "sha256": "9d4515508027cbf2b3db38e2f14c326676439d00ad2d3096bd51f68de6fced8e"
               }
             ],
             "default_profile": "gpu",
@@ -2056,12 +2090,11 @@
                 "verification": [
                   {
                     "level": "MAINTAINER_TESTED",
-                    "device": "Pixel 8a",
-                    "os_build": "CP1A.260505.005",
-                    "runtime": "litert_lm 0.16.1",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
                     "result": "PASS",
-                    "date": "2026-09-08",
-                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                    "date": "2026-11-11"
                   }
                 ]
               },
@@ -2088,12 +2121,11 @@
                 "verification": [
                   {
                     "level": "MAINTAINER_TESTED",
-                    "device": "Pixel 8a",
-                    "os_build": "CP1A.260505.005",
-                    "runtime": "litert_lm 0.16.1",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
                     "result": "PASS",
-                    "date": "2026-09-08",
-                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                    "date": "2026-11-11"
                   }
                 ]
               }
@@ -2109,7 +2141,7 @@
               ],
               "thinking_default": true,
               "context_tokens": 4096,
-              "manifest_min_runtime_version": "0.16.0"
+              "manifest_min_runtime_version": "0.19.0"
             }
           },
           {
@@ -2120,8 +2152,8 @@
               "abi": 1
             },
             "runtime_range": {
-              "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
+              "min_inclusive": "0.19.0",
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text"
@@ -2131,8 +2163,8 @@
                 "id": "weights",
                 "role": "model",
                 "path": "LFM2.5-1.2B-Thinking_int4.litertlm",
-                "bytes": 736015744,
-                "sha256": "f4f091503ef33c9ad70e2a58f9cbad03a71b3d4d9fe4266b684e8889ec371669"
+                "bytes": 736083968,
+                "sha256": "d5e0491428e225027d79c4790443e5cbb3551f6898fb8b03b965da0c0ff2329b"
               }
             ],
             "default_profile": "cpu",
@@ -2156,7 +2188,17 @@
                   ]
                 },
                 "fallback_profiles": [],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
+                  }
+                ]
               }
             ],
             "handler_config": {
@@ -2170,7 +2212,7 @@
               ],
               "thinking_default": true,
               "context_tokens": 4096,
-              "manifest_min_runtime_version": "0.14.0"
+              "manifest_min_runtime_version": "0.19.0"
             }
           },
           {
@@ -2181,8 +2223,8 @@
               "abi": 1
             },
             "runtime_range": {
-              "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
+              "min_inclusive": "0.19.0",
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text"
@@ -2192,8 +2234,8 @@
                 "id": "weights",
                 "role": "model",
                 "path": "LFM2.5-1.2B-Thinking_int8_gpu.litertlm",
-                "bytes": 1244763648,
-                "sha256": "11faec13dca0699dae1a43da30f0b5d57c64627edf6c4a6fa16b45b716db1a92"
+                "bytes": 1244823552,
+                "sha256": "d7169bb801340048557177d3e31d151bda5fdc63feabe71628738bf27b0d2dc6"
               }
             ],
             "default_profile": "gpu",
@@ -2219,7 +2261,17 @@
                 "fallback_profiles": [
                   "cpu"
                 ],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
+                  }
+                ]
               },
               {
                 "id": "cpu",
@@ -2240,7 +2292,17 @@
                   ]
                 },
                 "fallback_profiles": [],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
+                  }
+                ]
               }
             ],
             "handler_config": {
@@ -2254,7 +2316,7 @@
               ],
               "thinking_default": true,
               "context_tokens": 4096,
-              "manifest_min_runtime_version": "0.16.0"
+              "manifest_min_runtime_version": "0.19.0"
             }
           },
           {
@@ -2265,8 +2327,8 @@
               "abi": 1
             },
             "runtime_range": {
-              "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
+              "min_inclusive": "0.19.0",
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text"
@@ -2276,8 +2338,8 @@
                 "id": "weights",
                 "role": "model",
                 "path": "LFM2.5-1.2B-Thinking_int8.litertlm",
-                "bytes": 1244594224,
-                "sha256": "91c044a117066c16e4e318ffc0ac0b2976b4a0af7fbd464054589c34e9220b28"
+                "bytes": 1244659712,
+                "sha256": "97129cb622ef2f9c1c64f62501a6789f2b2b2757922da9dce57c141269f46db5"
               }
             ],
             "default_profile": "cpu",
@@ -2301,7 +2363,17 @@
                   ]
                 },
                 "fallback_profiles": [],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
+                  }
+                ]
               }
             ],
             "handler_config": {
@@ -2315,7 +2387,7 @@
               ],
               "thinking_default": true,
               "context_tokens": 4096,
-              "manifest_min_runtime_version": "0.14.0"
+              "manifest_min_runtime_version": "0.19.0"
             }
           }
         ]
@@ -2347,7 +2419,7 @@
             },
             "runtime_range": {
               "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text",
@@ -2406,6 +2478,14 @@
                     "result": "PASS",
                     "date": "2026-09-08",
                     "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate-release.log"
+                  },
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
                   }
                 ]
               },
@@ -2449,6 +2529,14 @@
                     "result": "PASS",
                     "date": "2026-09-08",
                     "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate-release.log"
+                  },
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
                   }
                 ]
               }
@@ -2468,7 +2556,7 @@
             },
             "runtime_range": {
               "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text",
@@ -2508,7 +2596,17 @@
                 "fallback_profiles": [
                   "cpu"
                 ],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
+                  }
+                ]
               },
               {
                 "id": "cpu",
@@ -2531,7 +2629,17 @@
                   ]
                 },
                 "fallback_profiles": [],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
+                  }
+                ]
               }
             ],
             "handler_config": {
@@ -2569,7 +2677,7 @@
             },
             "runtime_range": {
               "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text",
@@ -2619,6 +2727,14 @@
                     "result": "PASS",
                     "date": "2026-09-08",
                     "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                  },
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
                   }
                 ]
               },
@@ -2653,6 +2769,14 @@
                     "result": "PASS",
                     "date": "2026-09-08",
                     "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                  },
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
                   }
                 ]
               }
@@ -2672,7 +2796,7 @@
             },
             "runtime_range": {
               "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text",
@@ -2712,7 +2836,17 @@
                 "fallback_profiles": [
                   "cpu"
                 ],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
+                  }
+                ]
               },
               {
                 "id": "cpu",
@@ -2735,7 +2869,17 @@
                   ]
                 },
                 "fallback_profiles": [],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
+                  }
+                ]
               }
             ],
             "handler_config": {
@@ -2773,7 +2917,7 @@
             },
             "runtime_range": {
               "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text",
@@ -2823,6 +2967,14 @@
                     "result": "PASS",
                     "date": "2026-09-08",
                     "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                  },
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
                   }
                 ]
               },
@@ -2857,6 +3009,14 @@
                     "result": "PASS",
                     "date": "2026-09-08",
                     "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                  },
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
                   }
                 ]
               }
@@ -2876,7 +3036,7 @@
             },
             "runtime_range": {
               "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text",
@@ -2916,7 +3076,17 @@
                 "fallback_profiles": [
                   "cpu"
                 ],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
+                  }
+                ]
               },
               {
                 "id": "cpu",
@@ -2939,7 +3109,17 @@
                   ]
                 },
                 "fallback_profiles": [],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
+                  }
+                ]
               }
             ],
             "handler_config": {
@@ -2953,7 +3133,7 @@
     },
     {
       "model_id": "litert-community/Ministral-3-3B-Instruct-2512",
-      "model_commit": "a8417ad4845100a19bf9e60d9af6aaeaadadfbf1",
+      "model_commit": "25b2dfaf6c306eb69c69888053f84959e0d0975f",
       "path": "catalog/entries/litert-community__Ministral-3-3B-Instruct-2512.json",
       "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json; one int4 (block 32) file with a 4096-token context.",
       "descriptor": {
@@ -2976,8 +3156,8 @@
               "abi": 1
             },
             "runtime_range": {
-              "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
+              "min_inclusive": "0.19.0",
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text"
@@ -2987,8 +3167,8 @@
                 "id": "weights",
                 "role": "model",
                 "path": "Ministral-3-3B-Instruct-2512_q4_block32_ekv4096.litertlm",
-                "bytes": 2340982768,
-                "sha256": "df5f84608e8db475edb74cac2549eb03727e4941b65980c1d95e310bad996ada"
+                "bytes": 2342895616,
+                "sha256": "2e01bdbef438c1a57da21cfc9c040b271b563c0f77b8b7d1907a6154f962d0f1"
               }
             ],
             "default_profile": "gpu",
@@ -3018,12 +3198,11 @@
                 "verification": [
                   {
                     "level": "MAINTAINER_TESTED",
-                    "device": "Pixel 8a",
-                    "os_build": "CP1A.260505.005",
-                    "runtime": "litert_lm 0.16.1",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
                     "result": "PASS",
-                    "date": "2026-09-08",
-                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                    "date": "2026-11-11"
                   }
                 ]
               },
@@ -3050,12 +3229,11 @@
                 "verification": [
                   {
                     "level": "MAINTAINER_TESTED",
-                    "device": "Pixel 8a",
-                    "os_build": "CP1A.260505.005",
-                    "runtime": "litert_lm 0.16.1",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
                     "result": "PASS",
-                    "date": "2026-09-08",
-                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                    "date": "2026-11-11"
                   }
                 ]
               }
@@ -3063,7 +3241,7 @@
             "handler_config": {
               "metadata_source": "litertlm_manifest",
               "context_tokens": 4096,
-              "manifest_min_runtime_version": null
+              "manifest_min_runtime_version": "0.19.0"
             }
           }
         ]
@@ -3073,7 +3251,7 @@
       "model_id": "litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B",
       "model_commit": "ff0f6e323fe38ad2bc988ac3f0c7820877937a3f",
       "path": "catalog/entries/litert-community__NVIDIA-Nemotron-Labs-Dory1.0-4B.json",
-      "provenance": "Repo-local descriptor (the publisher's own repo). Context and the allowed backends come from the repo's litertlm_manifest.json (it lists gpu and cpu for the int4 and int4_1loop files and cpu for the int8 file; the int4 and int4_1loop variants get a gpu profile only, see below). A looped normalized-GPT reasoning model (NVIDIA's Dory1.0-4B; its 20 recurrent attention/MLP pairs run twice per token in the int4 and int8 files and once in the int4_1loop file): the bundle declares the thought channel (<think> / </think>) and its generation prompt opens it (<think> then a newline), so the model reasons from its first token; with thinking off the template closes the block at once (<think></think>). handler_config.channels spells the bundle's channel and thinking_default is true. The bundle's KV budget is 2,048 tokens for prompt and reply together. int4 is the GPU file and int8 the CPU file, as the card says (on a CPU the int4 file is the wrong choice): int4 has a gpu profile only and int8 a cpu profile only, so on a phone whose GPU path does not load the model (none of the GPU builds the publisher ran fitted the 8 GB Pixel 8a, and the int4 file itself was not run there, the card) the app requests variant int8 itself, ModelRef(id, variant = \"int8\"): Auto never switches variants. int4_1loop is the trade NVIDIA's card describes (how many times the shared block runs trades compute for accuracy, with no retraining and no model swap): the int4 file's weights, embedding, tokenizer and LlmMetadata section byte for byte, in a graph that runs the 20 pairs once per token (36 KV caches instead of 56). The publisher measured it on one Galaxy S26's GPU at 17.32 tok/s decode and 439.6 prefill against the int4 file's 11.08 and 274.5, in runs that alternated the two (LiteRT-LM v0.18.0, 2026-10-23), and on GSM8K (Mac GPU, thinking off) at 86 of 100 against the int4 file's 90 (the card). Like int4 it has a gpu profile only; an app asks for it with ModelRef(id, variant = \"int4_1loop\"). The pin is ff0f6e32 (main on 2026-10-23), the last of the three commits that added the int4_1loop file, its card section and its manifest entry; the int4 and int8 files are the same bytes as at 61cb6bbe, the previous pin. The repo's manifest sets min_runtime_version 0.18.0 for all three files: the earliest runtime the publisher verified them on (they were also packed with that builder version), not a floor the runtime enforces. runtime_range starts at 0.16.1, the runtime this SDK links; the runs below show that runtime loading and answering with all three files. On 2026-10-22 a Galaxy S26 (SM-S942Q, Android 16) ran the int4 and int8 variants on litertlm-android 0.16.1 in samples/chat's ChatDeviceCheck at this repository's commit 5e497ba, the files downloaded from the Hub (at 61cb6bbe) on the phone: int4 on the GPU answered 17 + 25 with \"42\" and the model card's \"Extract the dates from: The meeting moved from May 3 to May 17.\" with \"May 3, May 17\" (thinking on, each thought closed, after 369 and 1,939 characters of reasoning, 107 and 565 tokens by the model's tokenizer; the runtime put every node of the prefill and decode graphs on its GPU delegate), and int8 on the CPU answered \"42\" (480 characters of thought, 137 tokens). On 2026-10-23 the same phone ran int4_1loop on litertlm-android 0.16.1 in samples/chat's ChatDeviceCheck at this repository's commit edc8fbf, the file pushed into the app with adb (the SDK checked its sha256 and imported it): on the GPU it answered 17 + 25 with \"42\" (thinking on, the thought closed after 453 characters of reasoning, 120 tokens by the model's tokenizer; the runtime put every node of the prefill and decode graphs on its GPU delegate), with the log in litertlm/results/2026-10-23-RFGL80R6A6H-litertlm0.16.1-dory-1loop-chat-check.log; samples/loops ran int4_1loop and int4 there the same day (its README, Numbers). No profile has a gate run or a verification record.",
+      "provenance": "Repo-local descriptor (the publisher's own repo). Context and the allowed backends come from the repo's litertlm_manifest.json (it lists gpu and cpu for the int4 and int4_1loop files and cpu for the int8 file; the int4 and int4_1loop variants get a gpu profile only, see below). A looped normalized-GPT reasoning model (NVIDIA's Dory1.0-4B; its 20 recurrent attention/MLP pairs run twice per token in the int4 and int8 files and once in the int4_1loop file): the bundle declares the thought channel (<think> / </think>) and its generation prompt opens it (<think> then a newline), so the model reasons from its first token; with thinking off the template closes the block at once (<think></think>). handler_config.channels spells the bundle's channel and thinking_default is true. The bundle's KV budget is 2,048 tokens for prompt and reply together. int4 is the GPU file and int8 the CPU file, as the card says (on a CPU the int4 file is the wrong choice): int4 has a gpu profile only and int8 a cpu profile only, so on a phone whose GPU path does not load the model (none of the GPU builds the publisher ran fitted the 8 GB Pixel 8a, and the int4 file itself was not run there, the card) the app requests variant int8 itself, ModelRef(id, variant = \"int8\"): Auto never switches variants. int4_1loop is the trade NVIDIA's card describes (how many times the shared block runs trades compute for accuracy, with no retraining and no model swap): the int4 file's weights, embedding, tokenizer and LlmMetadata section byte for byte, in a graph that runs the 20 pairs once per token (36 KV caches instead of 56). The publisher measured it on one Galaxy S26's GPU at 17.32 tok/s decode and 439.6 prefill against the int4 file's 11.08 and 274.5, in runs that alternated the two (LiteRT-LM v0.18.0, 2026-10-23), and on GSM8K (Mac GPU, thinking off) at 86 of 100 against the int4 file's 90 (the card). Like int4 it has a gpu profile only; an app asks for it with ModelRef(id, variant = \"int4_1loop\"). The pin is ff0f6e32 (main on 2026-10-23), the last of the three commits that added the int4_1loop file, its card section and its manifest entry; the int4 and int8 files are the same bytes as at 61cb6bbe, the previous pin. The repo's manifest sets min_runtime_version 0.18.0 for all three files: the earliest runtime the publisher verified them on (they were also packed with that builder version), not a floor the runtime enforces. runtime_range starts at 0.16.1, the runtime this SDK linked then; the runs below show that runtime loading and answering with all three files. On 2026-10-22 a Galaxy S26 (SM-S942Q, Android 16) ran the int4 and int8 variants on litertlm-android 0.16.1 in samples/chat's ChatDeviceCheck at this repository's commit 5e497ba, the files downloaded from the Hub (at 61cb6bbe) on the phone: int4 on the GPU answered 17 + 25 with \"42\" and the model card's \"Extract the dates from: The meeting moved from May 3 to May 17.\" with \"May 3, May 17\" (thinking on, each thought closed, after 369 and 1,939 characters of reasoning, 107 and 565 tokens by the model's tokenizer; the runtime put every node of the prefill and decode graphs on its GPU delegate), and int8 on the CPU answered \"42\" (480 characters of thought, 137 tokens). On 2026-10-23 the same phone ran int4_1loop on litertlm-android 0.16.1 in samples/chat's ChatDeviceCheck at this repository's commit edc8fbf, the file pushed into the app with adb (the SDK checked its sha256 and imported it): on the GPU it answered 17 + 25 with \"42\" (thinking on, the thought closed after 453 characters of reasoning, 120 tokens by the model's tokenizer; the runtime put every node of the prefill and decode graphs on its GPU delegate), with the log in litertlm/results/2026-10-23-RFGL80R6A6H-litertlm0.16.1-dory-1loop-chat-check.log; samples/loops ran int4_1loop and int4 there the same day (its README, Numbers). On 2026-11-11 a Pixel 11 Pro answered on all three variants on LiteRT-LM 0.19.1 in the catalog gate.",
       "descriptor": {
         "schema_version": 1,
         "model_id": "litert-community/NVIDIA-Nemotron-Labs-Dory1.0-4B",
@@ -3095,7 +3273,7 @@
             },
             "runtime_range": {
               "min_inclusive": "0.16.1",
-              "max_exclusive": "0.19.0"
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text"
@@ -3130,7 +3308,17 @@
                   ]
                 },
                 "fallback_profiles": [],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
+                  }
+                ]
               }
             ],
             "handler_config": {
@@ -3156,7 +3344,7 @@
             },
             "runtime_range": {
               "min_inclusive": "0.16.1",
-              "max_exclusive": "0.19.0"
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text"
@@ -3191,7 +3379,17 @@
                   ]
                 },
                 "fallback_profiles": [],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
+                  }
+                ]
               }
             ],
             "handler_config": {
@@ -3217,7 +3415,7 @@
             },
             "runtime_range": {
               "min_inclusive": "0.16.1",
-              "max_exclusive": "0.19.0"
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text"
@@ -3252,7 +3450,17 @@
                   ]
                 },
                 "fallback_profiles": [],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
+                  }
+                ]
               }
             ],
             "handler_config": {
@@ -3298,7 +3506,7 @@
             },
             "runtime_range": {
               "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text"
@@ -3335,7 +3543,17 @@
                 "fallback_profiles": [
                   "cpu"
                 ],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "FAIL",
+                    "date": "2026-11-11"
+                  }
+                ]
               },
               {
                 "id": "cpu",
@@ -3356,7 +3574,17 @@
                   ]
                 },
                 "fallback_profiles": [],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
+                  }
+                ]
               }
             ],
             "handler_config": {
@@ -3789,9 +4017,9 @@
     },
     {
       "model_id": "litert-community/Qwen2.5-1.5B-Instruct",
-      "model_commit": "19edb84c69a0212f29a6ef17ba0d6f278b6a1614",
+      "model_commit": "60257f9f1d00ca1f24cc5ce3b829b4139be1ca2b",
       "path": "catalog/entries/litert-community__Qwen2.5-1.5B-Instruct.json",
-      "provenance": "External descriptor for a Google-published bundle (litert-community/Qwen2.5-1.5B-Instruct, ungated). The q8 / 4096-token file is the one on-device-recipes verified on a Pixel 8a (LiteRT-LM 0.16.1, 2026-09-05); the f32 file (6.2 GB) is left out on purpose.",
+      "provenance": "External descriptor for a Google-published bundle (litert-community/Qwen2.5-1.5B-Instruct, ungated). The q8 / 4096-token file is the one on-device-recipes verified on a Pixel 8a (LiteRT-LM 0.16.1, 2026-09-05), with the chat template for LiteRT-LM 0.18.0 and later put in on 2026-10-11; the f32 file (6.2 GB) is left out on purpose.",
       "descriptor": {
         "schema_version": 1,
         "model_id": "litert-community/Qwen2.5-1.5B-Instruct",
@@ -3812,8 +4040,8 @@
               "abi": 1
             },
             "runtime_range": {
-              "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
+              "min_inclusive": "0.19.0",
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text"
@@ -3823,8 +4051,8 @@
                 "id": "weights",
                 "role": "model",
                 "path": "Qwen2.5-1.5B-Instruct_multi-prefill-seq_q8_ekv4096.litertlm",
-                "bytes": 1597931520,
-                "sha256": "faa60663b333290c1496c499828b21d3e3254a788cacd8cce917ce0f761a2dc9"
+                "bytes": 1597922856,
+                "sha256": "c4a9b7289365ab80fe599b844b77ad253eb3c53fb0e5d963d699146a6f01255e"
               }
             ],
             "default_profile": "cpu",
@@ -3853,21 +4081,11 @@
                 "verification": [
                   {
                     "level": "MAINTAINER_TESTED",
-                    "device": "Pixel 8a",
-                    "os_build": "CP1A.260505.005",
-                    "runtime": "litert_lm 0.16.1",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
                     "result": "PASS",
-                    "date": "2026-09-07",
-                    "evidence": "litertlm/results/2026-09-07-4C131JEKB15210-0.16.1-a3-gate.log"
-                  },
-                  {
-                    "level": "MAINTAINER_TESTED",
-                    "device": "Pixel 8a",
-                    "os_build": "CP1A.260505.005",
-                    "runtime": "litert_lm 0.16.1",
-                    "result": "PASS",
-                    "date": "2026-09-08",
-                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate-release.log"
+                    "date": "2026-11-11"
                   }
                 ]
               },
@@ -3897,21 +4115,11 @@
                 "verification": [
                   {
                     "level": "MAINTAINER_TESTED",
-                    "device": "Pixel 8a",
-                    "os_build": "CP1A.260505.005",
-                    "runtime": "litert_lm 0.16.1",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
                     "result": "PASS",
-                    "date": "2026-09-07",
-                    "evidence": "litertlm/results/2026-09-07-4C131JEKB15210-0.16.1-a3-gate.log"
-                  },
-                  {
-                    "level": "MAINTAINER_TESTED",
-                    "device": "Pixel 8a",
-                    "os_build": "CP1A.260505.005",
-                    "runtime": "litert_lm 0.16.1",
-                    "result": "PASS",
-                    "date": "2026-09-08",
-                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate-release.log"
+                    "date": "2026-11-11"
                   }
                 ]
               }
@@ -3926,9 +4134,9 @@
     },
     {
       "model_id": "litert-community/Qwen3-0.6B",
-      "model_commit": "8414150f2e9dcc82449bcc9c5abc404b399a4d06",
+      "model_commit": "8768ea43e6d801ee0d353e5036007e6790a2ba05",
       "path": "catalog/entries/litert-community__Qwen3-0.6B.json",
-      "provenance": "External descriptor for a mixed repo (litert-community/Qwen3-0.6B, ungated, no litertlm_manifest.json): backends are declared here and verified by the catalog gate. Qwen3 thinks by default (its template renders the no-think variant only when enable_thinking is false). The int4 file declares the thought channel in its own header; the mixed_int4 file does not, so handler_config.channels spells it for both.",
+      "provenance": "External descriptor for a mixed repo (litert-community/Qwen3-0.6B, ungated, no litertlm_manifest.json): backends are declared here and verified by the catalog gate. Qwen3 thinks by default (its template renders the no-think variant only when enable_thinking is false). handler_config.channels spells the thought channel.",
       "descriptor": {
         "schema_version": 1,
         "model_id": "litert-community/Qwen3-0.6B",
@@ -3949,8 +4157,8 @@
               "abi": 1
             },
             "runtime_range": {
-              "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
+              "min_inclusive": "0.19.0",
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text"
@@ -3960,8 +4168,8 @@
                 "id": "weights",
                 "role": "model",
                 "path": "Qwen3-0.6B_dynamic_wi4b32_afp32.litertlm",
-                "bytes": 344437808,
-                "sha256": "e3e290109da4388d65a17510a0c66af91c8039f52d2c465868dbc43c09a776cf"
+                "bytes": 343490560,
+                "sha256": "bf1aba9ce8d963124407353c6aa4cbf72eba78db21ae133de983eac672ce83e0"
               }
             ],
             "default_profile": "gpu",
@@ -3991,12 +4199,11 @@
                 "verification": [
                   {
                     "level": "MAINTAINER_TESTED",
-                    "device": "Pixel 8a",
-                    "os_build": "CP1A.260505.005",
-                    "runtime": "litert_lm 0.16.1",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
                     "result": "PASS",
-                    "date": "2026-09-08",
-                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                    "date": "2026-11-11"
                   }
                 ]
               },
@@ -4023,96 +4230,13 @@
                 "verification": [
                   {
                     "level": "MAINTAINER_TESTED",
-                    "device": "Pixel 8a",
-                    "os_build": "CP1A.260505.005",
-                    "runtime": "litert_lm 0.16.1",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
                     "result": "PASS",
-                    "date": "2026-09-08",
-                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                    "date": "2026-11-11"
                   }
                 ]
-              }
-            ],
-            "handler_config": {
-              "metadata_source": "publisher_declared",
-              "channels": [
-                {
-                  "name": "thought",
-                  "start": "<think>\n",
-                  "end": "\n</think>"
-                }
-              ],
-              "thinking_default": true
-            }
-          },
-          {
-            "id": "mixed_int4",
-            "runtime": "litert_lm",
-            "handler": {
-              "id": "litertlm.conversation",
-              "abi": 1
-            },
-            "runtime_range": {
-              "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
-            },
-            "inputs": [
-              "text"
-            ],
-            "files": [
-              {
-                "id": "weights",
-                "role": "model",
-                "path": "qwen3_0_6b_mixed_int4.litertlm",
-                "bytes": 497664000,
-                "sha256": "b1baab462f6be49d70eada79d715c2c52cd9ece0cad00bddf6a2c097d23498e9"
-              }
-            ],
-            "default_profile": "gpu",
-            "profiles": [
-              {
-                "id": "gpu",
-                "priority": 100,
-                "files": [
-                  "weights"
-                ],
-                "enabled_inputs": [
-                  "text"
-                ],
-                "components": {
-                  "language": "gpu"
-                },
-                "requirements": {
-                  "min_android_api": 31,
-                  "abis": [
-                    "arm64-v8a"
-                  ]
-                },
-                "fallback_profiles": [
-                  "cpu"
-                ],
-                "default_selectable": true
-              },
-              {
-                "id": "cpu",
-                "priority": 50,
-                "files": [
-                  "weights"
-                ],
-                "enabled_inputs": [
-                  "text"
-                ],
-                "components": {
-                  "language": "cpu"
-                },
-                "requirements": {
-                  "min_android_api": 31,
-                  "abis": [
-                    "arm64-v8a"
-                  ]
-                },
-                "fallback_profiles": [],
-                "default_selectable": true
               }
             ],
             "handler_config": {
@@ -4132,9 +4256,9 @@
     },
     {
       "model_id": "litert-community/Qwen3-1.7B",
-      "model_commit": "73fbc3fe8271c162a603ee66f6e7ed25b6211195",
+      "model_commit": "c421cc3775575372ac2ca4aa1bebc97300ae36b6",
       "path": "catalog/entries/litert-community__Qwen3-1.7B.json",
-      "provenance": "External descriptor for a mixed repo (litert-community/Qwen3-1.7B, ungated, no litertlm_manifest.json): backends are declared here and verified by the catalog gate. Qwen3 thinks by default. The int4 file declares the thought channel in its own header; the int8 file does not, so handler_config.channels spells it for both.",
+      "provenance": "External descriptor for a mixed repo (litert-community/Qwen3-1.7B, ungated, no litertlm_manifest.json): backends are declared here and verified by the catalog gate. Qwen3 thinks by default. handler_config.channels spells the thought channel for both files.",
       "descriptor": {
         "schema_version": 1,
         "model_id": "litert-community/Qwen3-1.7B",
@@ -4155,8 +4279,8 @@
               "abi": 1
             },
             "runtime_range": {
-              "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
+              "min_inclusive": "0.19.0",
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text"
@@ -4167,7 +4291,7 @@
                 "role": "model",
                 "path": "Qwen3-1.7B_dynamic_wi4b32_afp32.litertlm",
                 "bytes": 977184032,
-                "sha256": "2eeffef7b51bc3e1225ea69fe7aa5f417397934b56a5b6c20cc068d6fd2c918b"
+                "sha256": "2a72330b504a6596d53a2c00923c57173b10f1b83e6a541213ffec08d1fc5de8"
               }
             ],
             "default_profile": "gpu",
@@ -4197,12 +4321,11 @@
                 "verification": [
                   {
                     "level": "MAINTAINER_TESTED",
-                    "device": "Pixel 8a",
-                    "os_build": "CP1A.260505.005",
-                    "runtime": "litert_lm 0.16.1",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
                     "result": "PASS",
-                    "date": "2026-09-08",
-                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                    "date": "2026-11-11"
                   }
                 ]
               },
@@ -4229,12 +4352,11 @@
                 "verification": [
                   {
                     "level": "MAINTAINER_TESTED",
-                    "device": "Pixel 8a",
-                    "os_build": "CP1A.260505.005",
-                    "runtime": "litert_lm 0.16.1",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
                     "result": "PASS",
-                    "date": "2026-09-08",
-                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                    "date": "2026-11-11"
                   }
                 ]
               }
@@ -4259,8 +4381,8 @@
               "abi": 1
             },
             "runtime_range": {
-              "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
+              "min_inclusive": "0.19.0",
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text"
@@ -4270,8 +4392,8 @@
                 "id": "weights",
                 "role": "model",
                 "path": "Qwen3_1.7B.litertlm",
-                "bytes": 2056729520,
-                "sha256": "66064a4e9269cb693e124c4e3040bcb8a446b10bca42663896329495add3861c"
+                "bytes": 1754890240,
+                "sha256": "e40599625f3e446d6522674586a40566d6a3a117af608f6e9ea46ac86d326461"
               }
             ],
             "default_profile": "gpu",
@@ -4297,7 +4419,17 @@
                 "fallback_profiles": [
                   "cpu"
                 ],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
+                  }
+                ]
               },
               {
                 "id": "cpu",
@@ -4318,7 +4450,17 @@
                   ]
                 },
                 "fallback_profiles": [],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
+                  }
+                ]
               }
             ],
             "handler_config": {
@@ -4340,7 +4482,7 @@
       "model_id": "litert-community/Qwen3-4B-Instruct-2507",
       "model_commit": "4d409771b414d86b270ca54d27ffc45032a81142",
       "path": "catalog/entries/litert-community__Qwen3-4B-Instruct-2507.json",
-      "provenance": "External descriptor for a Google-published bundle (litert-community/Qwen3-4B-Instruct-2507, ungated). The repo ships no litertlm_manifest.json, so backends are declared here and verified by the catalog gate; the bundle's own header declares no channel and its template has no think block (an instruct model).",
+      "provenance": "External descriptor for a Google-published bundle (litert-community/Qwen3-4B-Instruct-2507, ungated). The repo ships no litertlm_manifest.json, so backends are declared here and verified by the catalog gate; the bundle's own header declares no channel and its template has no think block (an instruct model). runtime_range ends below 0.18.0. On LiteRT-LM 0.19.1 the file does not run: that runtime hands a message's content to the template as a list of parts, and this bundle's template cannot read that (on 2026-11-11 a Pixel 11 Pro failed with 'Failed to apply template', on both profiles). The repo's head holds the same file.",
       "descriptor": {
         "schema_version": 1,
         "model_id": "litert-community/Qwen3-4B-Instruct-2507",
@@ -4454,9 +4596,9 @@
     },
     {
       "model_id": "litert-community/Qwen3-4B",
-      "model_commit": "84cc5a35c9c65cd18fcd65bb1f3a7d77a4acfe6e",
+      "model_commit": "0c8dd5465e2a88e1aa5fca7873e56c4165162ada",
       "path": "catalog/entries/litert-community__Qwen3-4B.json",
-      "provenance": "External descriptor for a Google-published bundle (litert-community/Qwen3-4B, ungated, no litertlm_manifest.json): backends are declared here and verified by the catalog gate. Qwen3 thinks by default and the bundle declares no channel, so handler_config.channels spells it. The 5.7 GB int8 file is left out: it does not fit the 8 GB phone the gate runs on.",
+      "provenance": "External descriptor for a Google-published bundle (litert-community/Qwen3-4B, ungated, no litertlm_manifest.json): backends are declared here and verified by the catalog gate. Qwen3 thinks by default; handler_config.channels spells the thought channel. The 5.7 GB int8 file is left out: it does not fit the 8 GB phone the gate runs on.",
       "descriptor": {
         "schema_version": 1,
         "model_id": "litert-community/Qwen3-4B",
@@ -4477,8 +4619,8 @@
               "abi": 1
             },
             "runtime_range": {
-              "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
+              "min_inclusive": "0.19.0",
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text"
@@ -4488,8 +4630,8 @@
                 "id": "weights",
                 "role": "model",
                 "path": "qwen3_4b_mixed_int4.litertlm",
-                "bytes": 2659057664,
-                "sha256": "f0794bc77efeaaf4f7af815f04c483b19b8f2ae4a102cef1b7b760a25848a18e"
+                "bytes": 2272935936,
+                "sha256": "4877b236f09c0b519958612afeb3c6fc6575c7ce56080d0d3a5406150e0ff9ce"
               }
             ],
             "default_profile": "gpu",
@@ -4519,12 +4661,11 @@
                 "verification": [
                   {
                     "level": "MAINTAINER_TESTED",
-                    "device": "Pixel 8a",
-                    "os_build": "CP1A.260505.005",
-                    "runtime": "litert_lm 0.16.1",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
                     "result": "PASS",
-                    "date": "2026-09-08",
-                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                    "date": "2026-11-11"
                   }
                 ]
               },
@@ -4551,12 +4692,11 @@
                 "verification": [
                   {
                     "level": "MAINTAINER_TESTED",
-                    "device": "Pixel 8a",
-                    "os_build": "CP1A.260505.005",
-                    "runtime": "litert_lm 0.16.1",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
                     "result": "PASS",
-                    "date": "2026-09-08",
-                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                    "date": "2026-11-11"
                   }
                 ]
               }
@@ -4578,9 +4718,9 @@
     },
     {
       "model_id": "litert-community/Qwen3.5-0.8B",
-      "model_commit": "4170d2bdf04cea39fea276a986325628d7794e23",
+      "model_commit": "658b849e745b6ba2a0e4b52a3a23e2a3892221e7",
       "path": "catalog/entries/litert-community__Qwen3.5-0.8B.json",
-      "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json. The packaged chat template closes the think block in the generation prompt, so the model answers without reasoning and no channel is declared; the vl_int8 variant adds the vision encoder (fp16) with the encoder kept on the CPU until a GPU run is verified. On the Pixel 8a (8 GB) the gpu profile killed the test process during Engine.initialize (lowmemorykiller, 5.1 GB rss + 2.9 GB swap: the bundle declares fp32 activations); cpu answered. The gpu profile stays in the descriptor with that FAIL record, so Auto never picks it and the default profile is cpu.",
+      "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json. The packaged chat template closes the think block in the generation prompt, so the model answers without reasoning and no channel is declared; the vl_int8 variant adds the vision encoder (fp16) with the encoder kept on the CPU until a GPU run is verified. On the Pixel 8a (8 GB), at commit 4170d2bd on LiteRT-LM 0.16.1, the gpu profile killed the test process during Engine.initialize (lowmemorykiller, 5.1 GB rss + 2.9 GB swap: the bundle declares fp32 activations); cpu answered. The default profile is cpu.",
       "descriptor": {
         "schema_version": 1,
         "model_id": "litert-community/Qwen3.5-0.8B",
@@ -4601,8 +4741,8 @@
               "abi": 1
             },
             "runtime_range": {
-              "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
+              "min_inclusive": "0.19.0",
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text"
@@ -4612,8 +4752,8 @@
                 "id": "weights",
                 "role": "model",
                 "path": "Qwen3.5-0.8B_int8.litertlm",
-                "bytes": 963184864,
-                "sha256": "684d4d34adf7176eb47f6026ff65c33d42584737254e5524a8d1ad62edc21b98"
+                "bytes": 964657152,
+                "sha256": "d6702088983b3a997db5299558a37d2fd924a94daf2b09bd42c4e618c6f694a4"
               }
             ],
             "default_profile": "cpu",
@@ -4643,12 +4783,11 @@
                 "verification": [
                   {
                     "level": "MAINTAINER_TESTED",
-                    "device": "Pixel 8a",
-                    "os_build": "CP1A.260505.005",
-                    "runtime": "litert_lm 0.16.1",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
                     "result": "FAIL",
-                    "date": "2026-09-08",
-                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate-deaths.log"
+                    "date": "2026-11-11"
                   }
                 ]
               },
@@ -4675,12 +4814,11 @@
                 "verification": [
                   {
                     "level": "MAINTAINER_TESTED",
-                    "device": "Pixel 8a",
-                    "os_build": "CP1A.260505.005",
-                    "runtime": "litert_lm 0.16.1",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
                     "result": "PASS",
-                    "date": "2026-09-08",
-                    "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-regate-<entry>_cpu.log"
+                    "date": "2026-11-11"
                   }
                 ]
               }
@@ -4688,7 +4826,7 @@
             "handler_config": {
               "metadata_source": "litertlm_manifest",
               "context_tokens": 4096,
-              "manifest_min_runtime_version": "0.15.0"
+              "manifest_min_runtime_version": "0.19.0"
             }
           },
           {
@@ -4699,8 +4837,8 @@
               "abi": 1
             },
             "runtime_range": {
-              "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
+              "min_inclusive": "0.19.0",
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text",
@@ -4711,8 +4849,8 @@
                 "id": "weights",
                 "role": "model",
                 "path": "Qwen3.5-0.8B-VL_int8.litertlm",
-                "bytes": 1302262448,
-                "sha256": "e3360b658c929ff35ab740a21f5e4b688096a72e351b8d347e26ccda314121b7"
+                "bytes": 1303724032,
+                "sha256": "7413f51eafb82e7cf0b707fa506eddfc76c10433b26fa8f0dc2f051970d2feb5"
               }
             ],
             "default_profile": "cpu",
@@ -4740,7 +4878,17 @@
                 "fallback_profiles": [
                   "cpu"
                 ],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
+                  }
+                ]
               },
               {
                 "id": "cpu",
@@ -4763,13 +4911,23 @@
                   ]
                 },
                 "fallback_profiles": [],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
+                  }
+                ]
               }
             ],
             "handler_config": {
               "metadata_source": "litertlm_manifest",
               "context_tokens": 4096,
-              "manifest_min_runtime_version": "0.15.0"
+              "manifest_min_runtime_version": "0.19.0"
             }
           }
         ]
@@ -5053,7 +5211,7 @@
             },
             "runtime_range": {
               "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text",
@@ -5093,7 +5251,17 @@
                 "fallback_profiles": [
                   "cpu"
                 ],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
+                  }
+                ]
               },
               {
                 "id": "cpu",
@@ -5116,7 +5284,17 @@
                   ]
                 },
                 "fallback_profiles": [],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
+                  }
+                ]
               }
             ],
             "handler_config": {
@@ -5154,7 +5332,7 @@
             },
             "runtime_range": {
               "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text",
@@ -5214,6 +5392,14 @@
                     "result": "PASS",
                     "date": "2026-09-08",
                     "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate-release.log"
+                  },
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
                   }
                 ]
               },
@@ -5259,6 +5445,14 @@
                     "result": "PASS",
                     "date": "2026-09-08",
                     "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate-release.log"
+                  },
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
                   }
                 ]
               },
@@ -5302,6 +5496,14 @@
                     "result": "PASS",
                     "date": "2026-09-08",
                     "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate-release.log"
+                  },
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
                   }
                 ]
               }
@@ -5346,7 +5548,7 @@
             },
             "runtime_range": {
               "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text",
@@ -5406,6 +5608,14 @@
                     "result": "PASS",
                     "date": "2026-09-08",
                     "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate-release.log"
+                  },
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
                   }
                 ]
               },
@@ -5451,6 +5661,14 @@
                     "result": "PASS",
                     "date": "2026-09-08",
                     "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate-release.log"
+                  },
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
                   }
                 ]
               },
@@ -5494,6 +5712,14 @@
                     "result": "PASS",
                     "date": "2026-09-08",
                     "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate-release.log"
+                  },
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
                   }
                 ]
               }
@@ -5538,7 +5764,7 @@
             },
             "runtime_range": {
               "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text"
@@ -5585,6 +5811,14 @@
                     "result": "PASS",
                     "date": "2026-09-08",
                     "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                  },
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
                   }
                 ]
               },
@@ -5617,6 +5851,14 @@
                     "result": "PASS",
                     "date": "2026-09-08",
                     "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                  },
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
                   }
                 ]
               }
@@ -5636,7 +5878,7 @@
             },
             "runtime_range": {
               "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text"
@@ -5673,7 +5915,17 @@
                 "fallback_profiles": [
                   "cpu"
                 ],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
+                  }
+                ]
               },
               {
                 "id": "cpu",
@@ -5694,7 +5946,17 @@
                   ]
                 },
                 "fallback_profiles": [],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
+                  }
+                ]
               }
             ],
             "handler_config": {
@@ -6074,7 +6336,7 @@
             },
             "runtime_range": {
               "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text"
@@ -6121,6 +6383,14 @@
                     "result": "PASS",
                     "date": "2026-09-08",
                     "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                  },
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
                   }
                 ]
               },
@@ -6153,6 +6423,14 @@
                     "result": "PASS",
                     "date": "2026-09-08",
                     "evidence": "litertlm/results/2026-09-08-4C131JEKB15210-0.16.1-a3-gate.log"
+                  },
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
                   }
                 ]
               }
@@ -6172,7 +6450,7 @@
             },
             "runtime_range": {
               "min_inclusive": "0.16.0",
-              "max_exclusive": "0.18.0"
+              "max_exclusive": "0.20.0"
             },
             "inputs": [
               "text"
@@ -6209,7 +6487,17 @@
                 "fallback_profiles": [
                   "cpu"
                 ],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
+                  }
+                ]
               },
               {
                 "id": "cpu",
@@ -6230,7 +6518,17 @@
                   ]
                 },
                 "fallback_profiles": [],
-                "default_selectable": true
+                "default_selectable": true,
+                "verification": [
+                  {
+                    "level": "MAINTAINER_TESTED",
+                    "device": "Pixel 11 Pro",
+                    "os_build": "CD1A.260905.001.B1",
+                    "runtime": "litert_lm 0.19.1",
+                    "result": "PASS",
+                    "date": "2026-11-11"
+                  }
+                ]
               }
             ],
             "handler_config": {

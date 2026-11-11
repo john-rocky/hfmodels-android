@@ -44,7 +44,7 @@ import kotlinx.coroutines.withTimeoutOrNull
  * the sample passes a descriptor of its own (`assets/descriptors/`, `LoadOptions.descriptorJson`) and brings the handler
  * here; the SDK still resolves the commit, downloads with resume, checks the sha256, imports a copy pushed into the app's
  * external files dir, and loads offline from its store. hfmodels' `Tasks.Chat` takes no audio in this release
- * (UNSUPPORTED_INPUT), so the handler builds the LiteRT-LM Engine itself, on the runtime the SDK links (0.16.1): the
+ * (UNSUPPORTED_INPUT), so the handler builds the LiteRT-LM Engine itself, on the runtime the SDK links: the
  * language model and the audio encoder on the CPU (4 threads; the model card: the GPU delegate does not take the audio
  * encoder), the runtime's CPU weight caches (about 3 GB, written by the first load) in the SDK's LiteRT-LM cache dir.
  */

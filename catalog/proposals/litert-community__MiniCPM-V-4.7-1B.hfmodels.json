@@ -19,7 +19,7 @@
       },
       "runtime_range": {
         "min_inclusive": "0.16.0",
-        "max_exclusive": "0.18.0"
+        "max_exclusive": "0.20.0"
       },
       "inputs": [
         "text",
@@ -126,7 +126,7 @@
       },
       "runtime_range": {
         "min_inclusive": "0.16.0",
-        "max_exclusive": "0.18.0"
+        "max_exclusive": "0.20.0"
       },
       "inputs": [
         "text",

@@ -9,7 +9,7 @@
     "id": "apache-2.0",
     "url": "https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507/blob/main/LICENSE"
   },
-  "provenance": "External descriptor for a Google-published bundle (litert-community/Qwen3-4B-Instruct-2507, ungated). The repo ships no litertlm_manifest.json, so backends are declared here and verified by the catalog gate; the bundle's own header declares no channel and its template has no think block (an instruct model).",
+  "provenance": "External descriptor for a Google-published bundle (litert-community/Qwen3-4B-Instruct-2507, ungated). The repo ships no litertlm_manifest.json, so backends are declared here and verified by the catalog gate; the bundle's own header declares no channel and its template has no think block (an instruct model). runtime_range ends below 0.18.0. On LiteRT-LM 0.19.1 the file does not run: that runtime hands a message's content to the template as a list of parts, and this bundle's template cannot read that (on 2026-11-11 a Pixel 11 Pro failed with 'Failed to apply template', on both profiles). The repo's head holds the same file.",
   "variants": [
     {
       "id": "mixed_int4",

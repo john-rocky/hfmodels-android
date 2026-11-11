@@ -1,6 +1,6 @@
 {
   "model_id": "litert-community/Ministral-3-3B-Instruct-2512",
-  "model_commit": "a8417ad4845100a19bf9e60d9af6aaeaadadfbf1",
+  "model_commit": "25b2dfaf6c306eb69c69888053f84959e0d0975f",
   "gated": false,
   "path": "catalog/entries/litert-community__Ministral-3-3B-Instruct-2512.json",
   "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json; one int4 (block 32) file with a 4096-token context.",
@@ -24,8 +24,8 @@
           "abi": 1
         },
         "runtime_range": {
-          "min_inclusive": "0.16.0",
-          "max_exclusive": "0.18.0"
+          "min_inclusive": "0.19.0",
+          "max_exclusive": "0.20.0"
         },
         "inputs": [
           "text"
@@ -35,8 +35,8 @@
             "id": "weights",
             "role": "model",
             "path": "Ministral-3-3B-Instruct-2512_q4_block32_ekv4096.litertlm",
-            "bytes": 2340982768,
-            "sha256": "df5f84608e8db475edb74cac2549eb03727e4941b65980c1d95e310bad996ada"
+            "bytes": 2342895616,
+            "sha256": "2e01bdbef438c1a57da21cfc9c040b271b563c0f77b8b7d1907a6154f962d0f1"
           }
         ],
         "default_profile": "gpu",
@@ -89,7 +89,7 @@
         "handler_config": {
           "metadata_source": "litertlm_manifest",
           "context_tokens": 4096,
-          "manifest_min_runtime_version": null
+          "manifest_min_runtime_version": "0.19.0"
         }
       }
     ]

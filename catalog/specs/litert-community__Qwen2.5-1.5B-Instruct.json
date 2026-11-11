@@ -1,6 +1,6 @@
 {
   "model_id": "litert-community/Qwen2.5-1.5B-Instruct",
-  "revision": "19edb84c69a0212f29a6ef17ba0d6f278b6a1614",
+  "revision": "60257f9f1d00ca1f24cc5ce3b829b4139be1ca2b",
   "tasks": [
     "chat"
   ],
@@ -9,7 +9,7 @@
     "id": "apache-2.0",
     "url": "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct/blob/main/LICENSE"
   },
-  "provenance": "External descriptor for a Google-published bundle (litert-community/Qwen2.5-1.5B-Instruct, ungated). The q8 / 4096-token file is the one on-device-recipes verified on a Pixel 8a (LiteRT-LM 0.16.1, 2026-09-05); the f32 file (6.2 GB) is left out on purpose.",
+  "provenance": "External descriptor for a Google-published bundle (litert-community/Qwen2.5-1.5B-Instruct, ungated). The q8 / 4096-token file is the one on-device-recipes verified on a Pixel 8a (LiteRT-LM 0.16.1, 2026-09-05), with the chat template for LiteRT-LM 0.18.0 and later put in on 2026-10-11; the f32 file (6.2 GB) is left out on purpose.",
   "variants": [
     {
       "id": "q8",
@@ -19,8 +19,8 @@
         "abi": 1
       },
       "runtime_range": {
-        "min_inclusive": "0.16.0",
-        "max_exclusive": "0.18.0"
+        "min_inclusive": "0.19.0",
+        "max_exclusive": "0.20.0"
       },
       "inputs": [
         "text"

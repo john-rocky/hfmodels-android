@@ -2,7 +2,7 @@
 
 Hold the button, say what is in one of your photos ("a red bicycle leaning on a tree"), and that photo comes up first. EmbeddingGemma 2 740M turns the spoken clip and every photo into vectors in one 768-dimensional space on the phone and ranks the album by cosine; nothing is transcribed and nothing leaves the phone. On a Galaxy S26 on 2026-10-09 a spoken query became a vector in 150 to 174 ms in the device check below (114 to 139 ms on the app's own screen for the same clips), and a 36-photo album was indexed in 9.1 s (253 ms a photo).
 
-This sample calls LiteRT-LM's `EmbeddingEngine` directly; it is not an SDK task. hfmodels 0.2.0 has no embedding task, and `EmbeddingEngine` came with LiteRT-LM 0.18.0, which `build.gradle.kts` names (the SDK modules pin 0.16.1). The module compiles with `-Xskip-metadata-version-check`, because the Kotlin of this build (the one AGP 9.3.1 brings) refuses the Kotlin 2.4 metadata of litertlm-android 0.18.0; the SDK modules are left as they are. An app built with Kotlin 2.4 or newer does not need the flag.
+This sample calls LiteRT-LM's `EmbeddingEngine` directly; it is not an SDK task, and hfmodels has no embedding task. This module builds against the same LiteRT-LM as the SDK modules (`litertlmVersion` in `gradle.properties`). An app that copies it needs Kotlin 2.3.0 or newer: litertlm-android carries Kotlin 2.4 metadata.
 
 ## Run it
 

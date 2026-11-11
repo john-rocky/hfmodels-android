@@ -1,9 +1,9 @@
 {
   "model_id": "litert-community/Qwen3-1.7B",
-  "model_commit": "73fbc3fe8271c162a603ee66f6e7ed25b6211195",
+  "model_commit": "c421cc3775575372ac2ca4aa1bebc97300ae36b6",
   "gated": false,
   "path": "catalog/entries/litert-community__Qwen3-1.7B.json",
-  "provenance": "External descriptor for a mixed repo (litert-community/Qwen3-1.7B, ungated, no litertlm_manifest.json): backends are declared here and verified by the catalog gate. Qwen3 thinks by default. The int4 file declares the thought channel in its own header; the int8 file does not, so handler_config.channels spells it for both.",
+  "provenance": "External descriptor for a mixed repo (litert-community/Qwen3-1.7B, ungated, no litertlm_manifest.json): backends are declared here and verified by the catalog gate. Qwen3 thinks by default. handler_config.channels spells the thought channel for both files.",
   "descriptor": {
     "schema_version": 1,
     "model_id": "litert-community/Qwen3-1.7B",
@@ -24,8 +24,8 @@
           "abi": 1
         },
         "runtime_range": {
-          "min_inclusive": "0.16.0",
-          "max_exclusive": "0.18.0"
+          "min_inclusive": "0.19.0",
+          "max_exclusive": "0.20.0"
         },
         "inputs": [
           "text"
@@ -36,7 +36,7 @@
             "role": "model",
             "path": "Qwen3-1.7B_dynamic_wi4b32_afp32.litertlm",
             "bytes": 977184032,
-            "sha256": "2eeffef7b51bc3e1225ea69fe7aa5f417397934b56a5b6c20cc068d6fd2c918b"
+            "sha256": "2a72330b504a6596d53a2c00923c57173b10f1b83e6a541213ffec08d1fc5de8"
           }
         ],
         "default_profile": "gpu",
@@ -106,8 +106,8 @@
           "abi": 1
         },
         "runtime_range": {
-          "min_inclusive": "0.16.0",
-          "max_exclusive": "0.18.0"
+          "min_inclusive": "0.19.0",
+          "max_exclusive": "0.20.0"
         },
         "inputs": [
           "text"
@@ -117,8 +117,8 @@
             "id": "weights",
             "role": "model",
             "path": "Qwen3_1.7B.litertlm",
-            "bytes": 2056729520,
-            "sha256": "66064a4e9269cb693e124c4e3040bcb8a446b10bca42663896329495add3861c"
+            "bytes": 1754890240,
+            "sha256": "e40599625f3e446d6522674586a40566d6a3a117af608f6e9ea46ac86d326461"
           }
         ],
         "default_profile": "gpu",

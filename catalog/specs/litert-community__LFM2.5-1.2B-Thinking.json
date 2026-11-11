@@ -1,6 +1,6 @@
 {
   "model_id": "litert-community/LFM2.5-1.2B-Thinking",
-  "revision": "b7d18a2f8de7697cecb0f31b9319c6ba739e5e01",
+  "revision": "997fdabc1449bd069a66f80c03acb1b3365d0ad1",
   "tasks": [
     "chat"
   ],
@@ -19,8 +19,8 @@
         "abi": 1
       },
       "runtime_range": {
-        "min_inclusive": "0.16.0",
-        "max_exclusive": "0.18.0"
+        "min_inclusive": "0.19.0",
+        "max_exclusive": "0.20.0"
       },
       "inputs": [
         "text"
@@ -99,8 +99,8 @@
         "abi": 1
       },
       "runtime_range": {
-        "min_inclusive": "0.16.0",
-        "max_exclusive": "0.18.0"
+        "min_inclusive": "0.19.0",
+        "max_exclusive": "0.20.0"
       },
       "inputs": [
         "text"
@@ -156,8 +156,8 @@
         "abi": 1
       },
       "runtime_range": {
-        "min_inclusive": "0.16.0",
-        "max_exclusive": "0.18.0"
+        "min_inclusive": "0.19.0",
+        "max_exclusive": "0.20.0"
       },
       "inputs": [
         "text"
@@ -236,8 +236,8 @@
         "abi": 1
       },
       "runtime_range": {
-        "min_inclusive": "0.16.0",
-        "max_exclusive": "0.18.0"
+        "min_inclusive": "0.19.0",
+        "max_exclusive": "0.20.0"
       },
       "inputs": [
         "text"

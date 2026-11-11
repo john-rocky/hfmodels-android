@@ -6,13 +6,13 @@
     "compileSdk": 36,
     "minSdk": 31,
     "jdk": "17 (temurin-17.0.16)",
-    "kotlin": "built into AGP 9.3.1 (2.2.x); the standalone org.jetbrains.kotlin.android plugin must not be applied",
+    "kotlin": "2.3.21 on the root buildscript's classpath (AGP 9.3.1's built-in Kotlin is 2.2.10, which refuses the 2.4 metadata of litertlm-android 0.19.1); the standalone org.jetbrains.kotlin.android plugin must not be applied",
     "gradle_properties": {
       "android.uniquePackageNames": "false (litert 2.2.0 and litert-api 2.2.0 both declare namespace com.google.ai.edge.litert; AGP 9 rejects that by default, measured 2026-09-07)"
     }
   },
   "pins": {
-    "com.google.ai.edge.litertlm:litertlm-android": "0.16.1",
+    "com.google.ai.edge.litertlm:litertlm-android": "0.19.1",
     "org.jetbrains.kotlinx:kotlinx-coroutines-android": "1.11.0",
     "com.google.ai.edge.litert:litert": "2.2.0",
     "com.google.ai.edge.litert:litert-api": "2.2.0 (transitive from litert)"
@@ -99,6 +99,49 @@
         "engine_config": "same constructor as 0.16.1",
         "conversation_config": "same constructor as 0.16.1",
         "kotlin_metadata": "2.4.0; the Kotlin built into AGP 9.3.1 refuses it ('binary version of its metadata is 2.4.0, expected version is 2.2.0'); -Xskip-metadata-version-check compiles it (re-gate only, not a supported configuration)"
+      },
+      "0.19.1": {
+        "source": "https://dl.google.com/android/maven2/com/google/ai/edge/litertlm/litertlm-android/0.19.1/litertlm-android-0.19.1.aar",
+        "aar_bytes": 21200360,
+        "github_tag": "v0.19.1 (2026-11-05)",
+        "min_sdk": 24,
+        "pom_deps": {
+          "gson": "2.14.0",
+          "kotlin-reflect": "2.4.0",
+          "kotlinx-coroutines-android": "1.11.0"
+        },
+        "jni": {
+          "arm64-v8a": "liblitertlm_jni.so 22692856 bytes"
+        },
+        "jni_findclass": [
+          "InputData$Audio",
+          "InputData$Image",
+          "InputData$Text",
+          "LiteRtLmJniException",
+          "BenchmarkInfo",
+          "EmbeddingResponse"
+        ],
+        "proguard_txt": false,
+        "capabilities_api": [
+          "hasSpeculativeDecodingSupport()",
+          "supportsThinking()",
+          "supportsFunctionCalling()",
+          "defaultSamplerParams(): SamplerParameters",
+          "isDynamicContext()",
+          "maxVisionTokenBudget()",
+          "visionSignatureSelection()"
+        ],
+        "model_info_api": "ModelInfo.from(path): getModelType(), inputModalities(), maxVisionTokenBudget(), maxContextTokens(), isDynamicContext(), visionSignatureSelection(), minRuntimeVersion(), supportedBackends(modality), npuBrand(modality), socName(modality)",
+        "engine_config": "EngineConfig(modelPath, backend, visionBackend, audioBackend, maxNumTokens, maxNumImages, cacheDir, activationDataType, speculativeDecodingConfig)",
+        "conversation_config": "ConversationConfig(systemInstruction, initialMessages, tools, samplerConfig, automaticToolCalling, channels, extraContext, loraConfig, prefillPrefaceOnInit, maxOutputToken, thinkingConfig, enableResponseFormat, enableSpeculativeDecoding, chatTemplate, speculativeDecodingConfig)",
+        "cancel": "Conversation.cancelProcess()",
+        "backends": [
+          "CPU(threadCount, numOfThreads)",
+          "GPU()",
+          "NPU(nativeLibraryDir)",
+          "GOOGLE_TENSOR()"
+        ],
+        "kotlin_metadata": "2.4.0; the Kotlin 2.2.10 built into AGP 9.3.1 refuses it on Gradle's default compiler execution strategy ('binary version of its metadata is 2.4.0, expected version is 2.2.0'); Kotlin 2.3.21 on the buildscript classpath compiles it with no flag"
       }
     },
     "litert": {
@@ -202,6 +245,41 @@
       },
       "caveat": "compiled with -Xskip-metadata-version-check because the AAR carries Kotlin 2.4.0 metadata; not the pinned configuration",
       "evidence": "probes/coexist/results/2026-09-07-4C131JEKB15210-0.17.0-keepwork-keepjni.log"
+    },
+    {
+      "device": "Pixel 11 Pro",
+      "serial_note": "one unit, Tensor G6",
+      "os": "Android 17",
+      "build": "CD1A.260905.001.B1",
+      "date": "2026-11-11",
+      "harness": "probes/coexist/run.sh keepwork-keepjni (release APK, R8 with proguard-android-optimize.txt, litertlm/consumer-rules.pro + probes/coexist/proguard-work.pro)",
+      "litertlm_android": "0.19.1",
+      "litert": "2.2.0",
+      "kotlinx_coroutines": "1.11.0",
+      "model": "litert-community/Qwen2.5-1.5B-Instruct q8 (c4a9b728…) via /data/local/tmp; litert-community/yolox-nano-litert@50af9253 yolox_nano.tflite",
+      "checks": {
+        "litertlm_cpu": "PASS (load 8992 ms, 11 decode tokens, one-shot)",
+        "litert_gpu_yolox": "PASS (1 detection)",
+        "litertlm_gpu": "PASS (first load 142060 ms)",
+        "litert_cpu_yolox": "PASS",
+        "both_open_gpu": "PASS",
+        "litertlm_stream_cpu": "PASS (10 chunks)"
+      },
+      "catalog_gate": "the 65 litert_lm variants and profiles of the bundled catalog whose runtime range includes 0.19.1 (all but the two of Qwen3-4B-Instruct-2507), 63 answered: verification/2026-11-11-pixel11pro-CD1A.260905.001.B1.json",
+      "sdk_checks": {
+        "ChatModelDeviceTest": "7 of 9 passed. i_toolCallsComeBackInToolCallsAndTheAppAnswersThem fails on FunctionGemma (no tool call) on 0.19.1 and on 0.16.1, and passes on Gemma 4 E2B on 0.19.1. f_closeDuringGenerationReleasesAndPrepareAgainWorks ends some runs INVALID instead of CLOSED: run alone five times it passed 3 on 0.19.1 and 1 on 0.16.1",
+        "ChatDeviceCheck": "PASS (litert-community/LFM2.5-1.2B-Instruct by id)",
+        "runtime_range_refusal": "litert-community/Qwen3-4B-Instruct-2507 is refused at load with RUNTIME_VERSION_MISMATCH",
+        "samples_translate": "PASS (fixtures/es, each sentence once: 10 turns)",
+        "samples_loops": "PASS",
+        "samples_eg2search": "PASS on GPU and CPU",
+        "samples_voice": "PASS with no network",
+        "samples_ask": "CPU PASS. On GPU Android ended the process (MemoryLimiter:AnonSwap) after the first answer, on 0.19.1 and on 0.16.1",
+        "samples_look": "CPU PASS. On GPU Android ended the process (MemoryLimiter:AnonSwap) at the first photo in 2 of 2 runs on 0.19.1 and 2 of 2 on 0.16.1 (the four alternated), and in two earlier 0.19.1 runs before a photo was sent",
+        "voice_ToolsDeviceTest": "FAIL at the load step only; 9 of 10 commands. The load step fails because its stand-in RecordingTools still declares location as required (PhoneTools made it optional in fe8eeb0), which does not depend on the runtime",
+        "voice_VoiceLoopDeviceTest": "PASS, 7 of 10 commands"
+      },
+      "evidence": "the logs of this run are not in this repository"
     }
   ],
   "typed_decisions": {

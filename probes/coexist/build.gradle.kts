@@ -5,7 +5,7 @@
 //   probes/coexist/run.sh nokeep                     # R8 on, no keep rules
 //   probes/coexist/run.sh keepwork                   # + Room keep for litert-api's transitive WorkManager
 //   probes/coexist/run.sh keepwork-keepjni           # + litertlm/consumer-rules.pro
-//   probes/coexist/run.sh keepwork-keepjni 0.17.0    # re-gate on another LiteRT-LM (adds -PskipKotlinMetadataCheck)
+//   probes/coexist/run.sh keepwork-keepjni 0.17.0    # re-gate on another LiteRT-LM
 plugins {
     id("com.android.application")
 }
@@ -47,9 +47,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-    }
-    if (providers.gradleProperty("skipKotlinMetadataCheck").isPresent) {
-        kotlin { compilerOptions { freeCompilerArgs.add("-Xskip-metadata-version-check") } }
     }
 }
 

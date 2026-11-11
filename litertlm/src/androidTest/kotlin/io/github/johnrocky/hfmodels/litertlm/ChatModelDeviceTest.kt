@@ -323,16 +323,16 @@ class ChatModelDeviceTest {
         const val FG_DESCRIPTOR = "litert-community__functiongemma-270m-ft-mobile-actions.hfmodels.json"
         const val TOOL_PROMPT = "Set an alarm for 7:30 in the morning."
         const val ALARM_TOOL = """{"name": "set_alarm", "description": "Sets an alarm on this phone.", "parameters": {"type": "object", "properties": {"hour": {"type": "integer", "description": "Hour in 24-hour time (0-23)."}, "minute": {"type": "integer", "description": "Minute (0-59)."}}, "required": ["hour", "minute"]}}"""
-        val REF = ModelRef("litert-community/Qwen2.5-1.5B-Instruct", revision = "19edb84c0000000000000000000000000000000000".take(40).padEnd(40, '0'))
-        // The q8 bundle as published (sha256 / bytes from the Hub's LFS metadata, 2026-09-05). The commit is a placeholder for
+        val REF = ModelRef("litert-community/Qwen2.5-1.5B-Instruct", revision = "60257f9f0000000000000000000000000000000000".take(40).padEnd(40, '0'))
+        // The q8 bundle as published (sha256 / bytes from the Hub's LFS metadata, 2026-11-11). The commit is a placeholder for
         // this offline test; A3 generates the real descriptor with the real commit.
         val DESCRIPTOR = """
         {"schema_version": 1, "model_id": "litert-community/Qwen2.5-1.5B-Instruct", "tasks": ["chat"], "default_variant": "q8",
          "license": {"id": "apache-2.0", "url": "https://huggingface.co/litert-community/Qwen2.5-1.5B-Instruct"},
          "variants": [{"id": "q8", "runtime": "litert_lm", "handler": {"id": "litertlm.conversation", "abi": 1},
-           "runtime_range": {"min_inclusive": "0.16.0", "max_exclusive": "0.18.0"}, "inputs": ["text"],
-           "files": [{"id": "weights", "role": "model", "path": "Qwen2.5-1.5B-Instruct_multi-prefill-seq_q8_ekv4096.litertlm", "bytes": 1597931520,
-                      "sha256": "faa60663b333290c1496c499828b21d3e3254a788cacd8cce917ce0f761a2dc9"}],
+           "runtime_range": {"min_inclusive": "0.19.0", "max_exclusive": "0.20.0"}, "inputs": ["text"],
+           "files": [{"id": "weights", "role": "model", "path": "Qwen2.5-1.5B-Instruct_multi-prefill-seq_q8_ekv4096.litertlm", "bytes": 1597922856,
+                      "sha256": "c4a9b7289365ab80fe599b844b77ad253eb3c53fb0e5d963d699146a6f01255e"}],
            "default_profile": "cpu",
            "profiles": [
              {"id": "cpu", "priority": 50, "files": ["weights"], "enabled_inputs": ["text"], "components": {"language": "cpu"}, "context_tokens": 4096},

@@ -1,9 +1,9 @@
 {
   "model_id": "litert-community/Falcon-H1-1.5B-Instruct",
-  "model_commit": "972bf1777202caf538af00aeac605dde823f3c16",
+  "model_commit": "660a12bf59f28ee41e0f94064c854b804da311cd",
   "gated": false,
   "path": "catalog/entries/litert-community__Falcon-H1-1.5B-Instruct.json",
-  "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json. A hybrid attention / Mamba-2 model: the bundle declares fp32 activations for the GPU, and the manifest lists gpu and cpu as verified to generate. On the Pixel 8a (8 GB) the gpu profile ended the test process before any result (the same signature as the Qwen3.5 int8 bundles: fp32 activations declared for the GPU); cpu answered. The gpu profile stays in the descriptor with that FAIL record, so Auto never picks it and the default profile is cpu.",
+  "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json. A hybrid attention / Mamba-2 model: the bundle declares fp32 activations for the GPU, and the manifest lists gpu and cpu as verified to generate. On the Pixel 8a (8 GB), at commit 972bf177 on LiteRT-LM 0.16.1, the gpu profile ended the test process before any result (the same signature as the Qwen3.5 int8 bundles: fp32 activations declared for the GPU); cpu answered. The default profile is cpu.",
   "descriptor": {
     "schema_version": 1,
     "model_id": "litert-community/Falcon-H1-1.5B-Instruct",
@@ -24,8 +24,8 @@
           "abi": 1
         },
         "runtime_range": {
-          "min_inclusive": "0.16.0",
-          "max_exclusive": "0.18.0"
+          "min_inclusive": "0.19.0",
+          "max_exclusive": "0.20.0"
         },
         "inputs": [
           "text"
@@ -35,8 +35,8 @@
             "id": "weights",
             "role": "model",
             "path": "Falcon-H1-1.5B-Instruct_int8.litertlm",
-            "bytes": 1725449600,
-            "sha256": "f499623a4d6fb6df8c2cf6ce388a0d460bcb81f416fd5c69e4281906f48fb931"
+            "bytes": 1725583360,
+            "sha256": "a37aea1d73360a1c6aeb112939e9fa8b514f21ce2ef8ceb188da9e45fbd397ec"
           }
         ],
         "default_profile": "cpu",
@@ -89,7 +89,7 @@
         "handler_config": {
           "metadata_source": "litertlm_manifest",
           "context_tokens": 4096,
-          "manifest_min_runtime_version": "0.15"
+          "manifest_min_runtime_version": "0.19.0"
         }
       }
     ]

@@ -1,6 +1,6 @@
 {
   "model_id": "litert-community/LFM2.5-1.2B-Instruct",
-  "revision": "c412baa473f5e27afe3d3255caee1bf818d0f095",
+  "revision": "8dde2fe485d2127f2a3861c3184cc882ba3764eb",
   "tasks": [
     "chat"
   ],
@@ -20,7 +20,7 @@
       },
       "runtime_range": {
         "min_inclusive": "0.16.0",
-        "max_exclusive": "0.18.0"
+        "max_exclusive": "0.20.0"
       },
       "inputs": [
         "text"
@@ -99,7 +99,7 @@
       },
       "runtime_range": {
         "min_inclusive": "0.16.0",
-        "max_exclusive": "0.18.0"
+        "max_exclusive": "0.20.0"
       },
       "inputs": [
         "text"
@@ -155,7 +155,7 @@
       },
       "runtime_range": {
         "min_inclusive": "0.16.0",
-        "max_exclusive": "0.18.0"
+        "max_exclusive": "0.20.0"
       },
       "inputs": [
         "text"

@@ -1,5 +1,5 @@
 {
-  "$comment": "The sample's descriptor for a repo without hfmodels.json (passed as LoadOptions.descriptorJson, with the sample's own handler, Qwen3Asr.kt). File bytes and sha256 from the Hub's listing at the pinned commit 184ec0f1 (2026-10-19). The 15 s file: the audio encoder takes 15 s windows (195 audio tokens), the language model has prefill signatures for 128 and 256 tokens; it ran on litert-lm-api 0.16.1 on a Mac CPU (52 clips, 2026-10-19).",
+  "$comment": "The sample's descriptor for a repo without hfmodels.json (passed as LoadOptions.descriptorJson, with the sample's own handler, Qwen3Asr.kt). File bytes and sha256 from the Hub's listing at the pinned commit 184ec0f1 (2026-10-19). The 15 s file: the audio encoder takes 15 s windows (195 audio tokens), the language model has prefill signatures for 128 and 256 tokens; it ran on litert-lm-api 0.16.1 on a Mac CPU (52 clips, 2026-10-19) and on LiteRT-LM 0.19.1 on a Pixel 11 Pro (this sample's device check, 2026-11-11).",
   "schema_version": 1,
   "model_id": "litert-community/Qwen3-ASR-1.7B",
   "tasks": [
@@ -20,7 +20,7 @@
       },
       "runtime_range": {
         "min_inclusive": "0.16.1",
-        "max_exclusive": "0.16.2"
+        "max_exclusive": "0.20.0"
       },
       "inputs": [
         "audio"

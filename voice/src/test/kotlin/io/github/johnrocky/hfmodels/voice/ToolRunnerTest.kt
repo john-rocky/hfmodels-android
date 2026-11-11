@@ -26,7 +26,7 @@ import org.junit.Assume.assumeTrue
 import org.junit.Test
 
 /**
- * The loop on a scripted model: what the runner sends, runs and streams. LiteRT-LM 0.16.1 ships Java 21
+ * The loop on a scripted model: what the runner sends, runs and streams. LiteRT-LM 0.19.1 ships Java 21
  * class files, so the scenarios (which build its Message and ToolCall) run on a Java 21 test JVM and are
  * skipped on an older one; this class itself names none of its types, so JUnit can list it anywhere.
  */
@@ -66,9 +66,9 @@ class ToolRunnerTest {
     }
 }
 
-/** LiteRT-LM 0.16.1's classes are Java 21 bytecode (class file 65); a Java 17 test JVM cannot load them. */
+/** LiteRT-LM 0.19.1's classes are Java 21 bytecode (class file 65); a Java 17 test JVM cannot load them. */
 internal fun assumeLiteRtLmClasses() = assumeTrue(
-    "LiteRT-LM 0.16.1 ships Java 21 class files; run on a Java 21 test JVM (-Dorg.gradle.java.home=<jdk 21>)",
+    "LiteRT-LM 0.19.1 ships Java 21 class files; run on a Java 21 test JVM (-Dorg.gradle.java.home=<jdk 21>)",
     (System.getProperty("java.specification.version")?.toIntOrNull() ?: 0) >= 21,
 )
 

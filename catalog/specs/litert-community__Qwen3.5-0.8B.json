@@ -1,6 +1,6 @@
 {
   "model_id": "litert-community/Qwen3.5-0.8B",
-  "revision": "4170d2bdf04cea39fea276a986325628d7794e23",
+  "revision": "658b849e745b6ba2a0e4b52a3a23e2a3892221e7",
   "tasks": [
     "chat"
   ],
@@ -9,7 +9,7 @@
     "id": "apache-2.0",
     "url": "https://huggingface.co/Qwen/Qwen3.5-0.8B/blob/main/LICENSE"
   },
-  "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json. The packaged chat template closes the think block in the generation prompt, so the model answers without reasoning and no channel is declared; the vl_int8 variant adds the vision encoder (fp16) with the encoder kept on the CPU until a GPU run is verified. On the Pixel 8a (8 GB) the gpu profile killed the test process during Engine.initialize (lowmemorykiller, 5.1 GB rss + 2.9 GB swap: the bundle declares fp32 activations); cpu answered. The gpu profile stays in the descriptor with that FAIL record, so Auto never picks it and the default profile is cpu.",
+  "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json. The packaged chat template closes the think block in the generation prompt, so the model answers without reasoning and no channel is declared; the vl_int8 variant adds the vision encoder (fp16) with the encoder kept on the CPU until a GPU run is verified. On the Pixel 8a (8 GB), at commit 4170d2bd on LiteRT-LM 0.16.1, the gpu profile killed the test process during Engine.initialize (lowmemorykiller, 5.1 GB rss + 2.9 GB swap: the bundle declares fp32 activations); cpu answered. The default profile is cpu.",
   "variants": [
     {
       "id": "int8",
@@ -19,8 +19,8 @@
         "abi": 1
       },
       "runtime_range": {
-        "min_inclusive": "0.16.0",
-        "max_exclusive": "0.18.0"
+        "min_inclusive": "0.19.0",
+        "max_exclusive": "0.20.0"
       },
       "inputs": [
         "text"
@@ -91,8 +91,8 @@
         "abi": 1
       },
       "runtime_range": {
-        "min_inclusive": "0.16.0",
-        "max_exclusive": "0.18.0"
+        "min_inclusive": "0.19.0",
+        "max_exclusive": "0.20.0"
       },
       "inputs": [
         "text",

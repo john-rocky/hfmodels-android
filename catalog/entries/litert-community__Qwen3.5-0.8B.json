@@ -1,9 +1,9 @@
 {
   "model_id": "litert-community/Qwen3.5-0.8B",
-  "model_commit": "4170d2bdf04cea39fea276a986325628d7794e23",
+  "model_commit": "658b849e745b6ba2a0e4b52a3a23e2a3892221e7",
   "gated": false,
   "path": "catalog/entries/litert-community__Qwen3.5-0.8B.json",
-  "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json. The packaged chat template closes the think block in the generation prompt, so the model answers without reasoning and no channel is declared; the vl_int8 variant adds the vision encoder (fp16) with the encoder kept on the CPU until a GPU run is verified. On the Pixel 8a (8 GB) the gpu profile killed the test process during Engine.initialize (lowmemorykiller, 5.1 GB rss + 2.9 GB swap: the bundle declares fp32 activations); cpu answered. The gpu profile stays in the descriptor with that FAIL record, so Auto never picks it and the default profile is cpu.",
+  "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json. The packaged chat template closes the think block in the generation prompt, so the model answers without reasoning and no channel is declared; the vl_int8 variant adds the vision encoder (fp16) with the encoder kept on the CPU until a GPU run is verified. On the Pixel 8a (8 GB), at commit 4170d2bd on LiteRT-LM 0.16.1, the gpu profile killed the test process during Engine.initialize (lowmemorykiller, 5.1 GB rss + 2.9 GB swap: the bundle declares fp32 activations); cpu answered. The default profile is cpu.",
   "descriptor": {
     "schema_version": 1,
     "model_id": "litert-community/Qwen3.5-0.8B",
@@ -24,8 +24,8 @@
           "abi": 1
         },
         "runtime_range": {
-          "min_inclusive": "0.16.0",
-          "max_exclusive": "0.18.0"
+          "min_inclusive": "0.19.0",
+          "max_exclusive": "0.20.0"
         },
         "inputs": [
           "text"
@@ -35,8 +35,8 @@
             "id": "weights",
             "role": "model",
             "path": "Qwen3.5-0.8B_int8.litertlm",
-            "bytes": 963184864,
-            "sha256": "684d4d34adf7176eb47f6026ff65c33d42584737254e5524a8d1ad62edc21b98"
+            "bytes": 964657152,
+            "sha256": "d6702088983b3a997db5299558a37d2fd924a94daf2b09bd42c4e618c6f694a4"
           }
         ],
         "default_profile": "cpu",
@@ -89,7 +89,7 @@
         "handler_config": {
           "metadata_source": "litertlm_manifest",
           "context_tokens": 4096,
-          "manifest_min_runtime_version": "0.15.0"
+          "manifest_min_runtime_version": "0.19.0"
         }
       },
       {
@@ -100,8 +100,8 @@
           "abi": 1
         },
         "runtime_range": {
-          "min_inclusive": "0.16.0",
-          "max_exclusive": "0.18.0"
+          "min_inclusive": "0.19.0",
+          "max_exclusive": "0.20.0"
         },
         "inputs": [
           "text",
@@ -112,8 +112,8 @@
             "id": "weights",
             "role": "model",
             "path": "Qwen3.5-0.8B-VL_int8.litertlm",
-            "bytes": 1302262448,
-            "sha256": "e3360b658c929ff35ab740a21f5e4b688096a72e351b8d347e26ccda314121b7"
+            "bytes": 1303724032,
+            "sha256": "7413f51eafb82e7cf0b707fa506eddfc76c10433b26fa8f0dc2f051970d2feb5"
           }
         ],
         "default_profile": "cpu",
@@ -170,7 +170,7 @@
         "handler_config": {
           "metadata_source": "litertlm_manifest",
           "context_tokens": 4096,
-          "manifest_min_runtime_version": "0.15.0"
+          "manifest_min_runtime_version": "0.19.0"
         }
       }
     ]

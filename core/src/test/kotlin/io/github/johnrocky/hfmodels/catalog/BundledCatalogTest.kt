@@ -40,7 +40,9 @@ class BundledCatalogTest {
             val v = e.descriptor.variant(null)!!
             assertTrue(v.files.all { it.bytes > 0 && it.sha256.length == 64 })
             // Each entry is checked against the version its runtime is pinned to (gradle.properties).
-            assertTrue(v.runtimeRange.contains(mapOf("litert_lm" to "0.16.1", "litert" to "2.2.0").getValue(v.runtime)))
+            // The one exception's file cannot run on that version, so its range refuses it (the entry's provenance says why).
+            val pinned = mapOf("litert_lm" to "0.19.1", "litert" to "2.2.0").getValue(v.runtime)
+            assertEquals(e.modelId != "litert-community/Qwen3-4B-Instruct-2507", v.runtimeRange.contains(pinned))
             // A transcriber reads audio; every other task reads text.
             assertTrue(v.profile(v.defaultProfile)!!.enabledInputs.contains(if ("transcribe" in e.descriptor.tasks) InputKind.AUDIO else InputKind.TEXT))
         }

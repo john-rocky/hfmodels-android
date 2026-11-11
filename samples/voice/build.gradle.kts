@@ -3,8 +3,8 @@
 // of the utterance to the first sound on the screen. Model files are never in the APK (README.md).
 plugins {
     id("com.android.application")
-    // AGP 9.3.1 builds Kotlin itself with Kotlin 2.2.10; the Compose compiler plugin must be the same version.
-    id("org.jetbrains.kotlin.plugin.compose") version "2.2.10"
+    // The Compose compiler plugin must be the same version as the build's Kotlin (build.gradle.kts).
+    id("org.jetbrains.kotlin.plugin.compose") version "2.3.21"
 }
 
 android {

@@ -1,6 +1,6 @@
 {
   "model_id": "litert-community/LFM2.5-1.2B-Thinking",
-  "model_commit": "b7d18a2f8de7697cecb0f31b9319c6ba739e5e01",
+  "model_commit": "997fdabc1449bd069a66f80c03acb1b3365d0ad1",
   "gated": false,
   "path": "catalog/entries/litert-community__LFM2.5-1.2B-Thinking.json",
   "provenance": "Repo-local descriptor (the publisher's own repo). Backends and context come from the repo's litertlm_manifest.json. A thinking model: the bundle declares the <think> channel and its generation prompt ends bare, so the model emits the opener itself; handler_config.channels spells the same channel so the SDK applies it to every conversation and reports the reasoning in Message.channels.",
@@ -24,8 +24,8 @@
           "abi": 1
         },
         "runtime_range": {
-          "min_inclusive": "0.16.0",
-          "max_exclusive": "0.18.0"
+          "min_inclusive": "0.19.0",
+          "max_exclusive": "0.20.0"
         },
         "inputs": [
           "text"
@@ -35,8 +35,8 @@
             "id": "weights",
             "role": "model",
             "path": "LFM2.5-1.2B-Thinking_int4_gpu.litertlm",
-            "bytes": 736220768,
-            "sha256": "75408d4047f15f054403e3d29826b2324c4b8709648c99221daab571f70a6bfd"
+            "bytes": 736280576,
+            "sha256": "9d4515508027cbf2b3db38e2f14c326676439d00ad2d3096bd51f68de6fced8e"
           }
         ],
         "default_profile": "gpu",
@@ -97,7 +97,7 @@
           ],
           "thinking_default": true,
           "context_tokens": 4096,
-          "manifest_min_runtime_version": "0.16.0"
+          "manifest_min_runtime_version": "0.19.0"
         }
       },
       {
@@ -108,8 +108,8 @@
           "abi": 1
         },
         "runtime_range": {
-          "min_inclusive": "0.16.0",
-          "max_exclusive": "0.18.0"
+          "min_inclusive": "0.19.0",
+          "max_exclusive": "0.20.0"
         },
         "inputs": [
           "text"
@@ -119,8 +119,8 @@
             "id": "weights",
             "role": "model",
             "path": "LFM2.5-1.2B-Thinking_int4.litertlm",
-            "bytes": 736015744,
-            "sha256": "f4f091503ef33c9ad70e2a58f9cbad03a71b3d4d9fe4266b684e8889ec371669"
+            "bytes": 736083968,
+            "sha256": "d5e0491428e225027d79c4790443e5cbb3551f6898fb8b03b965da0c0ff2329b"
           }
         ],
         "default_profile": "cpu",
@@ -158,7 +158,7 @@
           ],
           "thinking_default": true,
           "context_tokens": 4096,
-          "manifest_min_runtime_version": "0.14.0"
+          "manifest_min_runtime_version": "0.19.0"
         }
       },
       {
@@ -169,8 +169,8 @@
           "abi": 1
         },
         "runtime_range": {
-          "min_inclusive": "0.16.0",
-          "max_exclusive": "0.18.0"
+          "min_inclusive": "0.19.0",
+          "max_exclusive": "0.20.0"
         },
         "inputs": [
           "text"
@@ -180,8 +180,8 @@
             "id": "weights",
             "role": "model",
             "path": "LFM2.5-1.2B-Thinking_int8_gpu.litertlm",
-            "bytes": 1244763648,
-            "sha256": "11faec13dca0699dae1a43da30f0b5d57c64627edf6c4a6fa16b45b716db1a92"
+            "bytes": 1244823552,
+            "sha256": "d7169bb801340048557177d3e31d151bda5fdc63feabe71628738bf27b0d2dc6"
           }
         ],
         "default_profile": "gpu",
@@ -242,7 +242,7 @@
           ],
           "thinking_default": true,
           "context_tokens": 4096,
-          "manifest_min_runtime_version": "0.16.0"
+          "manifest_min_runtime_version": "0.19.0"
         }
       },
       {
@@ -253,8 +253,8 @@
           "abi": 1
         },
         "runtime_range": {
-          "min_inclusive": "0.16.0",
-          "max_exclusive": "0.18.0"
+          "min_inclusive": "0.19.0",
+          "max_exclusive": "0.20.0"
         },
         "inputs": [
           "text"
@@ -264,8 +264,8 @@
             "id": "weights",
             "role": "model",
             "path": "LFM2.5-1.2B-Thinking_int8.litertlm",
-            "bytes": 1244594224,
-            "sha256": "91c044a117066c16e4e318ffc0ac0b2976b4a0af7fbd464054589c34e9220b28"
+            "bytes": 1244659712,
+            "sha256": "97129cb622ef2f9c1c64f62501a6789f2b2b2757922da9dce57c141269f46db5"
           }
         ],
         "default_profile": "cpu",
@@ -303,7 +303,7 @@
           ],
           "thinking_default": true,
           "context_tokens": 4096,
-          "manifest_min_runtime_version": "0.14.0"
+          "manifest_min_runtime_version": "0.19.0"
         }
       }
     ]

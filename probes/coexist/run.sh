@@ -13,7 +13,7 @@ case "$CFG" in
   keepwork-keepjni) PROPS+=(-PkeepWork=true -PkeepJni=true) ;;
   *) echo "unknown config $CFG"; exit 2 ;;
 esac
-[ -n "$VER" ] && PROPS+=(-PlitertlmVersion="$VER" -PskipKotlinMetadataCheck=true)
+[ -n "$VER" ] && PROPS+=(-PlitertlmVersion="$VER")
 PKG=io.github.johnrocky.hfmodels.probe.coexist
 OUT="$HERE/results"; mkdir -p "$OUT"
 LOG="$OUT/$(date +%Y-%m-%d)-$ANDROID_SERIAL-${VER:-$(grep '^litertlmVersion=' "$ROOT/gradle.properties" | cut -d= -f2)}-$CFG.log"

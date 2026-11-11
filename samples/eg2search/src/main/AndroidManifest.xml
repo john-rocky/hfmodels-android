@@ -14,7 +14,7 @@
         <uses-native-library android:name="libOpenCL-pixel.so" android:required="false" />
         <uses-native-library android:name="libvndksupport.so" android:required="false" />
         <!-- The Qualcomm NPU's FastRPC transport, for an APK that carries the NPU libraries (README.md, NPU): the
-             litertlm-android 0.18.0 AAR declares no vendor library. -->
+             litertlm-android 0.19.1 AAR declares no vendor library. -->
         <uses-native-library android:name="libcdsprpc.so" android:required="false" />
         <!-- singleTask: the recording tools' starts with extras reach the running screen (onNewIntent) instead of a second
              copy that would load the model again. -->

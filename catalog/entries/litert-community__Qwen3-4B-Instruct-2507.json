@@ -3,7 +3,7 @@
   "model_commit": "4d409771b414d86b270ca54d27ffc45032a81142",
   "gated": false,
   "path": "catalog/entries/litert-community__Qwen3-4B-Instruct-2507.json",
-  "provenance": "External descriptor for a Google-published bundle (litert-community/Qwen3-4B-Instruct-2507, ungated). The repo ships no litertlm_manifest.json, so backends are declared here and verified by the catalog gate; the bundle's own header declares no channel and its template has no think block (an instruct model).",
+  "provenance": "External descriptor for a Google-published bundle (litert-community/Qwen3-4B-Instruct-2507, ungated). The repo ships no litertlm_manifest.json, so backends are declared here and verified by the catalog gate; the bundle's own header declares no channel and its template has no think block (an instruct model). runtime_range ends below 0.18.0. On LiteRT-LM 0.19.1 the file does not run: that runtime hands a message's content to the template as a list of parts, and this bundle's template cannot read that (on 2026-11-11 a Pixel 11 Pro failed with 'Failed to apply template', on both profiles). The repo's head holds the same file.",
   "descriptor": {
     "schema_version": 1,
     "model_id": "litert-community/Qwen3-4B-Instruct-2507",
