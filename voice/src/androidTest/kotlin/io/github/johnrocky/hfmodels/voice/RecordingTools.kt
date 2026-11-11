@@ -43,8 +43,11 @@ class RecordingTools {
             ToolParam("title", "string", "Event title."),
             ToolParam("start", "string", "Start time as YYYY-MM-DD HH:MM."),
             ToolParam("end", "string", "End time as YYYY-MM-DD HH:MM."),
-            ToolParam("location", "string", "Where the event takes place."),
-        ), isAction = true) { a -> "Event '${ToolArgs.string(a, "title")}' added: ${ToolArgs.string(a, "start")} to ${ToolArgs.stringOrNull(a, "end") ?: "?"} at ${ToolArgs.stringOrNull(a, "location") ?: ""}" },
+            ToolParam("location", "string", "Where the event takes place.", required = false),
+        ), isAction = true) { a ->
+            "Event '${ToolArgs.string(a, "title")}' added: ${ToolArgs.string(a, "start")} to ${ToolArgs.stringOrNull(a, "end") ?: "?"}" +
+                (ToolArgs.stringOrNull(a, "location")?.takeIf { it.isNotBlank() }?.let { " at $it" } ?: "")
+        },
         tool("set_timer", "Starts a countdown timer on this phone.", listOf(
             ToolParam("minutes", "integer", "Length of the timer in minutes."),
             ToolParam("label", "string", "Short label shown with the timer."),
