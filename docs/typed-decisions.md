@@ -3,7 +3,7 @@
 The second thing the SDK runs: a decision model that answers typed questions about a state without generating text. One forward per question (one per request on a family that packs a request's questions); the answer is a probability per option, not a sentence to parse. The request and answer forms are the `/v1/systemone` ones (`state`, `questions` with `type` / `instructions` / `criteria`; answers with `choice` / `score` / `noul`, `probabilities`, `confidence`), so a request written for a server is handed to the phone unchanged.
 
 ```kotlin
-// implementation("io.github.john-rocky.hfmodels:hfmodels-litert:0.2.0")   (+ android.uniquePackageNames=false, see docs/api.md)
+// implementation("io.github.john-rocky.hfmodels:hfmodels-litert:0.3.0")   (+ android.uniquePackageNames=false, see docs/api.md)
 val model = models.fromPretrained(ModelRef("<owner>/<name>"), EncoderDecisions)
 val d = model.decide(
     mapOf("subject" to "Duplicate charge", "body" to "Please refund the duplicate charge."),

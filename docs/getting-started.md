@@ -2,8 +2,9 @@
 
 **First model: [LFM2.5-1.2B-Instruct](https://huggingface.co/litert-community/LFM2.5-1.2B-Instruct).**
 This walkthrough was checked with the published **0.1.1** SDK ("Verification" below); the
-Gradle line names the current release, **0.2.0**. Start on a physical **Pixel 8a
-(8 GB RAM), Android 16 / API 36, build CP1A.260505.005**, the configuration verified below.
+Gradle line names the current release, **0.3.0**. Start on a physical **Pixel 8a
+(8 GB RAM), Android 16 / API 36, build CP1A.260505.005**, the configuration verified below
+for 0.1.1; with LiteRT-LM 0.19.1 the same steps ran on a Pixel 11 Pro.
 The SDK's installation floor is Android 12 / API 31, `arm64-v8a`; other devices and OS
 versions are outside this walkthrough's device verification.
 
@@ -25,10 +26,10 @@ android {
         ndk { abiFilters += "arm64-v8a" }
     }
 }
-dependencies { implementation("io.github.john-rocky.hfmodels:hfmodels-litertlm:0.2.0") }
+dependencies { implementation("io.github.john-rocky.hfmodels:hfmodels-litertlm:0.3.0") }
 ```
 
-That one line brings `hfmodels-core`, `litertlm-android` and `kotlinx-coroutines-android 1.11.0` (the version the runtime's bytecode needs; its POM understates it). Toolchain this was built with: AGP 9.3.1, Gradle 9.7.0, compileSdk 36, JDK 17, Kotlin built into AGP (do not apply the standalone Kotlin plugin). The SDK's manifest declares the GPU's `uses-native-library` entries and `INTERNET` (the first download only); its consumer R8 rules keep what the runtime's JNI looks up by name — with `minifyEnabled true` and nothing else, generation works.
+That one line brings `hfmodels-core`, `litertlm-android` and `kotlinx-coroutines-android 1.11.0` (the version the runtime's bytecode needs). Toolchain this was built with: AGP 9.3.1, Gradle 9.7.0, compileSdk 36, JDK 17, Kotlin 2.3.21 on the root buildscript's classpath (`classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.3.21")`). An app that applies `org.jetbrains.kotlin.plugin.compose` gives it the same version. An app needs Kotlin 2.3.0 or newer: `litertlm-android` carries Kotlin 2.4 metadata, and AGP 9.3.1's built-in Kotlin, 2.2.10, refuses it. Do not apply the standalone `org.jetbrains.kotlin.android` plugin. The SDK's manifest declares the GPU's `uses-native-library` entries and `INTERNET` (the first download only); its consumer R8 rules keep what the runtime's JNI looks up by name — with `minifyEnabled true` and nothing else, generation works.
 
 Check the resolved versions in an existing app before running it:
 
@@ -38,7 +39,8 @@ Check the resolved versions in an existing app before running it:
 
 This walkthrough was checked with `hfmodels-core` **0.1.1**, `hfmodels-litertlm` **0.1.1**,
 `litertlm-android` **0.16.1** and `kotlinx-coroutines-android` / `core-jvm` **1.11.0**.
-If the report selects other `litertlm-android` or coroutines versions, reconcile the app's existing pins first.
+Version 0.3.0 brings `litertlm-android` **0.19.1**, the same coroutines version, and Kotlin stdlib / reflect **2.4.0**.
+If the report selects other versions than your release brings, reconcile the app's existing pins first.
 These versions come from the [published SDK POM](https://repo1.maven.org/maven2/io/github/john-rocky/hfmodels/hfmodels-litertlm/0.1.1/hfmodels-litertlm-0.1.1.pom)
 and AAR, checked on 2026-09-09. The sample's Maven dependency graph also resolves
 Gson **2.13.2**, Kotlin reflect / stdlib **2.2.21**, and AndroidX Activity **1.10.1**.
@@ -73,7 +75,7 @@ suspend fun firstReply(context: Context) {
         val chat = models.fromPretrained(
             ModelRef(
                 "litert-community/LFM2.5-1.2B-Instruct",
-                revision = "f45d8d8abe93bff4026efee20fa483150ce8e687",
+                revision = "8dde2fe485d2127f2a3861c3184cc882ba3764eb",
                 variant = "int4_gpu",
             ),
             Tasks.Chat,
@@ -97,12 +99,12 @@ suspend fun firstReply(context: Context) {
 }
 ```
 
-The pinned repo's [`hfmodels.json`](https://huggingface.co/litert-community/LFM2.5-1.2B-Instruct/blob/f45d8d8abe93bff4026efee20fa483150ce8e687/hfmodels.json)
+The pinned repo's [`hfmodels.json`](https://huggingface.co/litert-community/LFM2.5-1.2B-Instruct/blob/8dde2fe485d2127f2a3861c3184cc882ba3764eb/hfmodels.json)
 selects `LFM2.5-1.2B-Instruct_int4_gpu.litertlm`, SHA-256
-`36f7f0221bcc42c75291da1d7e3422901024a5b06b9bfa3c02d7feface04f70a`.
+`8d3a4d73e121166ad377e9c51148d38ee383c223661f4219e01f22a0fe1d4a1a`.
 The GPU language profile uses a 4,096-token context and the default 256-token output cap.
-This pins the same file and profile as the device record; it does not follow later card
-edits or the bundled catalog's older fallback revision. A GPU failure is reported by
+This pins the file and profile the bundled catalog pins; it does not follow later card
+edits. A GPU failure is reported by
 `RequireProfile("gpu")`; a CPU retry is a separate configuration.
 
 In Android Studio Logcat, select your app and the `first-reply` / `hfmodels` tags.
@@ -120,6 +122,8 @@ release, all passing on the Pixel 8a above. It used release code `046da93` via t
 project dependency; the published 0.1.1 sources and runtime/build settings match that code.
 The later release catalog adds verification records. These documentation changes reuse
 that run; they do not constitute another device run or an independent user's success.
+That run was at revision `f45d8d8`. On 2026-11-11 `ChatDeviceCheck` loaded this model at revision `8dde2fe`,
+the one pinned above, with LiteRT-LM 0.19.1 on a Pixel 11 Pro, and passed the same steps.
 The function above was compiled verbatim in the existing sample against Maven Central
 0.1.1 on 2026-09-09; that compilation did not run the app or repeat native inference.
 The runtime reports GPU initialization but no per-operation execution report. This check

@@ -25,7 +25,7 @@ withContext(NonCancellable) { chat.closeAndJoin() }
 
 The SDK runs on LiteRT-LM, Google's on-device runtime. It downloads the model at a fixed commit, resumes a broken download and checks each file's sha256. Then it picks a backend the device can run. Cancelling the stream stops the model, and `closeAndJoin()` waits for the native side to finish.
 
-The current release is 0.2.0, and the API may still change before 1.0. I verified chat on a Pixel 8a, and typed decisions and voice on a Galaxy S26.
+The current release is 0.3.0, and the API may still change before 1.0. I verified chat on a Pixel 8a, and typed decisions and voice on a Galaxy S26.
 
 ## Add it
 
@@ -41,7 +41,7 @@ android {
         ndk { abiFilters += "arm64-v8a" }
     }
 }
-dependencies { implementation("io.github.john-rocky.hfmodels:hfmodels-litertlm:0.2.0") }
+dependencies { implementation("io.github.john-rocky.hfmodels:hfmodels-litertlm:0.3.0") }
 ```
 
 From 0.3.0 your app also needs Kotlin 2.3.0 or newer. Android Gradle Plugin 9.3.1 has Kotlin 2.2.10 built in, which is too old. With that plugin, put `classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.3.21")` in the root buildscript.
@@ -63,7 +63,7 @@ The SDK can load a model if its repo has an `hfmodels.json` file or its own cata
 
 ## Classify text
 
-A decision model reads a text and answers a question with fixed options. It returns a probability for each option instead of generating text. Add `io.github.john-rocky.hfmodels:hfmodels-litert:0.2.0`, and set `android.uniquePackageNames=false` in `gradle.properties`:
+A decision model reads a text and answers a question with fixed options. It returns a probability for each option instead of generating text. Add `io.github.john-rocky.hfmodels:hfmodels-litert:0.3.0`, and set `android.uniquePackageNames=false` in `gradle.properties`:
 
 ```kotlin
 val model = models.fromPretrained(
@@ -89,7 +89,7 @@ One question took a median of 54 ms on a Galaxy S26's GPU with that model.
 
 ## Voice
 
-`VoiceLoop` is an offline voice assistant. It transcribes a spoken request, lets the chat model call the phone's clock and calendar, and speaks the answer. Add `io.github.john-rocky.hfmodels:hfmodels-voice:0.2.0`, set `android.uniquePackageNames=false` in `gradle.properties`, and declare the permissions listed on [the voice page](docs/voice.md):
+`VoiceLoop` is an offline voice assistant. It transcribes a spoken request, lets the chat model call the phone's clock and calendar, and speaks the answer. Add `io.github.john-rocky.hfmodels:hfmodels-voice:0.3.0`, set `android.uniquePackageNames=false` in `gradle.properties`, and declare the permissions listed on [the voice page](docs/voice.md):
 
 ```kotlin
 val asr = HfModels(app).fromPretrained(

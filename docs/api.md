@@ -29,7 +29,7 @@ import io.github.johnrocky.hfmodels.speech.Transcriber      // 0.2.0: also Trans
 import io.github.johnrocky.hfmodels.speech.Speaker          // 0.2.0: also SpeechAudio, SpeechTiming
 import io.github.johnrocky.hfmodels.voice.VoiceLoop         // 0.2.0, module hfmodels-voice: also VoiceLoopConfig, Endpointer, SentenceSplitter, MicSource, SpeechPlayer
 import io.github.johnrocky.hfmodels.voice.ToolRunner        // 0.2.0: also VoiceTool, ToolParam, ToolArgs, PhoneTools, ToolFormat, ToolEvent, TurnTiming
-// runtime types that cross the SDK boundary (LiteRT-LM 0.16.1, brought in as an `api` dependency)
+// runtime types that cross the SDK boundary (LiteRT-LM 0.19.1, brought in as an `api` dependency)
 import com.google.ai.edge.litertlm.Contents
 import com.google.ai.edge.litertlm.Content
 import com.google.ai.edge.litertlm.ConversationConfig
@@ -150,7 +150,7 @@ session.stream(Message.tool(Contents.of(answers))).collect { m -> append(m.text)
 - A `Message.tool(…)` whose contents are not all `Content.ToolResponse` fails with `INVALID_INPUT` before any native call, and the session stays READY.
 - `extraContext` (values the chat template reads, such as `tools` and `enable_thinking` for a template that lists the tools itself) passes through. `enableResponseFormat` and `loraConfig` are still refused with `UNSUPPORTED_CONFIGURATION`; on 0.1.2 and earlier `tools` is refused too.
 
-## Runtime types an app touches (LiteRT-LM 0.16.1)
+## Runtime types an app touches (LiteRT-LM 0.19.1)
 
 ```kotlin
 Contents.of(text: String): Contents                 // the usual prompt
@@ -160,7 +160,7 @@ val Contents.contents: List<Content>
 class Content.Text(val text: String) : Content
 class Content.ImageBytes(val bytes: ByteArray) : Content   // only when InputKind.IMAGE is in enabledInputs (UNSUPPORTED_INPUT otherwise)
 
-ConversationConfig(systemInstruction: Contents = ..., initialMessages: List<Message> = emptyList(), ..., channels: List<Channel>? = null, thinkingConfig: ThinkingConfig? = null)   // named arguments; the rest at their defaults
+ConversationConfig(systemInstruction: Contents? = null, initialMessages: List<Message> = emptyList(), ..., channels: List<Channel>? = null, thinkingConfig: ThinkingConfig? = null)   // named arguments; the rest at their defaults
 ConversationConfig(..., tools: List<ToolProvider> = emptyList(), extraContext: Map<String, Any> = emptyMap())   // 0.2.0 passes tools (0.1.2 refuses them); automaticToolCalling is always passed as false
 Message.user(text: String); Message.model(text: String); Message.system(text: String)                     // for initialMessages (your own transcript after a cancel)
 Message.tool(contents: Contents)                                                                          // 0.2.0: Contents.of(Content.ToolResponse(...), ...), one per call answered
@@ -169,7 +169,7 @@ val Message.contents: Contents
 val Message.channels: Map<String, String>   // the piece of a declared channel's content this chunk carries, keyed by name ("thought" for every catalogued model); incremental like the text, so append; empty on chunks that carry none
 val Message.toolCalls: List<ToolCall>       // 0.2.0: the calls the runtime parsed from this chunk (empty for a bundle whose calls it does not parse)
 class ToolCall(val name: String, val arguments: Map<String, Any?>)
-class Content.ToolResponse(val name: String, val response: Any)
+class Content.ToolResponse(val name: String, val response: Any?)
 fun tool(tool: OpenApiTool): ToolProvider   // com.google.ai.edge.litertlm.tool
 interface OpenApiTool { fun getToolDescriptionJsonString(): String; fun execute(paramsJsonString: String): String }   // the description is the OpenAI-style `function` object; execute is never called (automaticToolCalling is off)
 Channel(channelName: String, start: String, end: String)   // a channel definition, only if you override ConversationConfig.channels
@@ -198,7 +198,7 @@ A reasoning model streams its thinking between markers (`<think>` … `</think>`
 A decision model answers typed questions about a state without generating text: one forward per question (one per request on a family that packs a request's questions), probabilities back. The request and answer forms are the `/v1/systemone` ones (`state`, `questions` with `type` / `instructions` / `criteria`; answers with `choice` / `score` / `noul`, `probabilities`, `confidence`), so a request written for a server is handed to the phone unchanged. The models are decision encoders run by LiteRT's `CompiledModel` (`com.google.ai.edge.litert`, classic `.tflite`): the `laya` family (`convaiinnovations/laya`, English and multilingual; `litert-community/laya-LiteRT`) and, from 0.2.0, the `julia` family (`SupersonicLabs/Julia-1`, mmBERT-small, multilingual; `litert-community/Julia-1-LiteRT`), the `gliner2_decide` family (`fastino/GLiNER2.5-Decide`, DeBERTa-v3-large, English; `litert-community/GLiNER2.5-Decide-LiteRT`), the `gliclass` family (`knowledgator/gliclass-edge-v3.0`, ModernBERT, English; `litert-community/GLiClass-Edge-v3.0-LiteRT`) and the `deberta_decision` family (the DeBERTa-v3-large decision checkpoint of Mithril, formerly Kotoba Cloud, English; `litert-community/Open-Decision-DeBERTa-v3-Large-LiteRT`). This lives in its own module because the litert AAR adds about 9 MB of native code and needs `android.uniquePackageNames=false` on AGP 9 (litert 2.2.0 and litert-api 2.2.0 share a namespace); a chat-only app does not pay for it.
 
 ```kotlin
-// app/build.gradle.kts: implementation("io.github.john-rocky.hfmodels:hfmodels-litert:0.2.0")   // brings hfmodels-core and litert 2.2.0
+// app/build.gradle.kts: implementation("io.github.john-rocky.hfmodels:hfmodels-litert:0.3.0")   // brings hfmodels-core and litert 2.2.0
 // gradle.properties:   android.uniquePackageNames=false
 import io.github.johnrocky.hfmodels.litert.EncoderDecisions      // the Task, where Tasks.Chat goes
 import io.github.johnrocky.hfmodels.decide.TypedDecisions        // the model
@@ -271,7 +271,7 @@ data class DecisionTiming(stateMs: Double, questionMs: List<Double>, totalMs: Do
 The phone hears a request, acts on it with its own tools and answers aloud, offline. Three models, each loaded by its own `HfModels` (one client holds one native model; the clients share the store): a transcriber (`Transcribe`, speech to text), the chat model with tools (`Tasks.Chat`) and a speaker (`Speak`, text to speech). `Transcribe` and `Speak` are in `hfmodels-litert` (their interfaces, `Transcriber` and `Speaker`, in core's `speech` package); the loop and the tools are in `hfmodels-voice`, which depends on `hfmodels-litert` and `hfmodels-litertlm` as `api`, so its one line brings all four modules, and like every `hfmodels-litert` app the app needs `android.uniquePackageNames=false` on AGP 9. 0.1.2 and earlier have none of it. The speech models are `litert-community/Zipformer-medium-CR-CTC-LiteRT` and `litert-community/kitten-tts-nano-0.8` (both English), loaded by id: each repo carries `hfmodels.json` (Zipformer from commit fa063a88, Kitten from 2c5b198f, which also added the four G2P files under `g2p/`, copies of `litert-community/Matcha-TTS` files and the model's symbol table), and the bundled catalog pins those commits ("Descriptor" below). A load by id resolves the branch over the network the first time and binds the id to that commit; later loads use the binding, offline too. On a Galaxy S26 on 2026-10-05 both ids loaded that way (over LTE, then in airplane mode through the binding), the transcribe and speak gates passed pinned at these commits with the repos' own `hfmodels.json`, and `samples/voice` in airplane mode loaded both from the bundled catalog's entries and answered a typed request for the time aloud. The phone downloaded none of their files (the stores held them already); the download from the Hub ran through the same resolver and store on a Mac's JVM, every sha256 matching (`docs/voice.md`). `VoiceDeviceCheck` and the alarm, timer and calendar tools have not run at these commits. The measured numbers in `docs/voice.md` come from 2026-10-03 runs that passed a development descriptor with the same variants and files at the commit before (7732ad6c, d4662d89) and imported every speech file from a local copy (sha256-checked against the descriptor). The chat model is any `ChatModel` (`VoiceLoopConfig.toolFormat` says how its calls travel); the measured one is `litert-community/gemma-4-E2B-it-litert-lm` from the bundled catalog.
 
 ```kotlin
-// app/build.gradle.kts: implementation("io.github.john-rocky.hfmodels:hfmodels-voice:0.2.0")   // brings hfmodels-litert (LiteRT 2.2.0), hfmodels-litertlm, hfmodels-core
+// app/build.gradle.kts: implementation("io.github.john-rocky.hfmodels:hfmodels-voice:0.3.0")   // brings hfmodels-litert (LiteRT 2.2.0), hfmodels-litertlm, hfmodels-core
 // gradle.properties:   android.uniquePackageNames=false
 // AndroidManifest.xml: RECORD_AUDIO (MicSource); com.android.alarm.permission.SET_ALARM, READ_CALENDAR, WRITE_CALENDAR (PhoneTools); the modules declare none of them
 import io.github.johnrocky.hfmodels.litert.Speak

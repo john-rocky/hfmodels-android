@@ -3,7 +3,7 @@
 The third thing the SDK runs: the phone hears a request, does it with its own tools and answers aloud, with no network.
 
 ```kotlin
-// implementation("io.github.john-rocky.hfmodels:hfmodels-voice:0.2.0")   (+ android.uniquePackageNames=false, see docs/api.md "Voice")
+// implementation("io.github.john-rocky.hfmodels:hfmodels-voice:0.3.0")   (+ android.uniquePackageNames=false, see docs/api.md "Voice")
 val asr = HfModels(app).fromPretrained(ModelRef("litert-community/Zipformer-medium-CR-CTC-LiteRT"), Transcribe)
 val tts = HfModels(app).fromPretrained(ModelRef("litert-community/kitten-tts-nano-0.8"), Speak)
 val chat = HfModels(app).fromPretrained(ModelRef("litert-community/gemma-4-E2B-it-litert-lm"), Tasks.Chat)

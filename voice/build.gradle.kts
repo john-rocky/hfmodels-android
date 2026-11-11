@@ -45,7 +45,7 @@ dependencies {
 mavenPublishing {
     publishToMavenCentral()
     signAllPublications()
-    coordinates("io.github.john-rocky.hfmodels", "hfmodels-voice", project.findProperty("hfmodelsVersion") as String? ?: "0.2.0")
+    coordinates("io.github.john-rocky.hfmodels", "hfmodels-voice", project.findProperty("hfmodelsVersion") as String? ?: "0.3.0")
     pom {
         name.set("hfmodels-voice")
         description.set("hfmodels voice loop: endpointing over microphone audio, the transcript to a LiteRT-LM chat model with tool calls, the phone's tools (the time, alarms and timers in the Clock app, events in the app's own calendar) and the answer spoken sentence by sentence by the LiteRT speaker and played")

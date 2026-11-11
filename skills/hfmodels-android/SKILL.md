@@ -15,17 +15,17 @@ Scope: an app that already exists, a model that is registered (its repo carries 
 
 ## Step 0: versions and the API, from the files, never from memory
 
-- Dependency: `io.github.john-rocky.hfmodels:hfmodels-litertlm:0.2.0` from Maven Central (newest: <https://central.sonatype.com/artifact/io.github.john-rocky.hfmodels/hfmodels-litertlm>; inside the SDK repository the pins are `gradle.properties` and the verified combinations `tested-runtime-matrix.json`). The Kotlin package is `io.github.johnrocky.hfmodels` (no hyphen; the Maven group has one).
-- It brings LiteRT-LM 0.16.1 and kotlinx-coroutines 1.11.0 as `api` dependencies — do not add or pin them yourself, and do not add `com.google.ai.edge.litert:litert` unless the app uses LiteRT's CompiledModel (that AAR needs `android.uniquePackageNames=false` on AGP 9).
+- Dependency: `io.github.john-rocky.hfmodels:hfmodels-litertlm:0.3.0` from Maven Central (newest: <https://central.sonatype.com/artifact/io.github.john-rocky.hfmodels/hfmodels-litertlm>; inside the SDK repository the pins are `gradle.properties` and the verified combinations `tested-runtime-matrix.json`). The Kotlin package is `io.github.johnrocky.hfmodels` (no hyphen; the Maven group has one).
+- It brings LiteRT-LM 0.19.1 and kotlinx-coroutines 1.11.0 as `api` dependencies — do not add or pin them yourself, and do not add `com.google.ai.edge.litert:litert` unless the app uses LiteRT's CompiledModel (that AAR needs `android.uniquePackageNames=false` on AGP 9).
 - `docs/api.md` is the complete public surface with imports and signatures, including the four runtime types an app touches (`Contents`, `Content`, `ConversationConfig`, `Message`). Read it instead of unzipping the sources jar or running `javap` on the runtime — there is nothing else to find.
-- **Voice**: `io.github.john-rocky.hfmodels:hfmodels-voice:0.2.0` from Maven Central (brings `hfmodels-litert` and `hfmodels-litertlm`; the app needs `android.uniquePackageNames=false`). 0.1.2 and older have no voice.
+- **Voice**: `io.github.john-rocky.hfmodels:hfmodels-voice:0.3.0` from Maven Central (brings `hfmodels-litert` and `hfmodels-litertlm`; the app needs `android.uniquePackageNames=false`). 0.1.2 and older have no voice.
 
 Ids that work today without touching the model repo: `catalog/entries/*.json` — the table in `docs/models.md` says which profiles were verified on which device; only those rows count as "works". Thinking models (Qwen3, DeepSeek-R1-Distill, `*-Thinking`): 0.1.0 has no thinking-channel handling, so on 0.1.0 say so and offer a catalogued instruct model instead of forcing one through `descriptorJson`; from 0.1.1 the catalog carries them and the reasoning arrives in `m.channels["thought"]` while `m.text` is the answer (`docs/api.md`, "Thinking models" — read it before touching one).
 
 ## Traps: your training data is stale here
 
 - `org.tensorflow:tensorflow-lite*` and Interpreter-style APIs are the TFLite era; LLM inference is `com.google.ai.edge.litertlm` and the SDK wraps it.
-- Applying `org.jetbrains.kotlin.android` on AGP 9 or newer is a hard error; Kotlin is built in.
+- Applying `org.jetbrains.kotlin.android` on AGP 9 or newer is a hard error; Kotlin is built in. The app needs Kotlin 2.3.0 or newer, and AGP 9.3.1's built-in Kotlin is 2.2.10: put `buildscript { dependencies { classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.3.21") } }` at the top of the root `build.gradle.kts`, above `plugins {}`. An app that applies `org.jetbrains.kotlin.plugin.compose` gives it the same version.
 - `Engine`, `Conversation`, `sendMessageAsync` are behind the SDK. Do not call them directly: the runtime's Flow drops `trySend` results and has an empty `awaitClose`, so a cancelled collector alone does not stop decoding; the SDK's `ChatSession.stream` does.
 - A cancelled session is not reusable (the runtime documents the state as poisoned). After Stop, `createConversation()` again; keep your own transcript if you want history (`initialMessages`).
 - R8: the SDK's consumer rules keep what the runtime's JNI looks up by name. Do not add `-keep` rules for the runtime yourself, and do not strip the SDK's.
@@ -156,6 +156,7 @@ Screen: a Load button + status text, a scrolling transcript, an input row with S
 | Symptom | Cause, fix |
 |---|---|
 | `The 'org.jetbrains.kotlin.android' plugin is no longer required` | standalone Kotlin plugin on AGP 9: remove it |
+| `Module was compiled with an incompatible version of Kotlin. The binary version of its metadata is 2.4.0` | AGP's built-in Kotlin is older than 2.3.0: put `buildscript { dependencies { classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.3.21") } }` at the top of the root `build.gradle.kts`, above `plugins {}` |
 | `Could not resolve io.github.john-rocky.hfmodels:...` | repository missing (`mavenCentral()` / the local repo this session names), or a guessed version or group: re-read Step 0 |
 | `MODEL_NOT_REGISTERED` | the id has no `hfmodels.json` and no catalog entry: pick a catalogued id or ask the publisher |
 | `STORAGE_FULL` before any download | not enough free space for the file plus 256 MiB: free space, or `models.evict(plan)` |

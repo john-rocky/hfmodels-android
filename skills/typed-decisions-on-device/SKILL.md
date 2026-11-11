@@ -64,7 +64,7 @@ The chat question is the one in the request above, asked of 30 labelled chat sen
 ## With the hfmodels SDK (five lines)
 
 ```kotlin
-// implementation("io.github.john-rocky.hfmodels:hfmodels-litert:0.2.0") + android.uniquePackageNames=false in gradle.properties
+// implementation("io.github.john-rocky.hfmodels:hfmodels-litert:0.3.0") + android.uniquePackageNames=false in gradle.properties
 // (these families came in with 0.2.0; 0.1.2 on Maven Central carries laya only)
 val models = HfModels(applicationContext)
 val model = models.fromPretrained(ModelRef("litert-community/GLiNER2.5-Decide-LiteRT"), EncoderDecisions)   // download, sha256, compile: GPU FP32, CPU fallback
