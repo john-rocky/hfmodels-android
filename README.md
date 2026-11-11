@@ -44,6 +44,8 @@ android {
 dependencies { implementation("io.github.john-rocky.hfmodels:hfmodels-litertlm:0.2.0") }
 ```
 
+From 0.3.0 your app also needs Kotlin 2.3.0 or newer. Android Gradle Plugin 9.3.1 has Kotlin 2.2.10 built in, which is too old. With that plugin, put `classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.3.21")` in the root buildscript.
+
 The first example downloads Gemma 4, which is 2.6 GB. [The walkthrough](docs/getting-started.md) starts with the smaller [LFM2.5-1.2B-Instruct](https://huggingface.co/litert-community/LFM2.5-1.2B-Instruct), a 736 MB download, and ends with what to check if the first reply fails.
 
 ## Models
