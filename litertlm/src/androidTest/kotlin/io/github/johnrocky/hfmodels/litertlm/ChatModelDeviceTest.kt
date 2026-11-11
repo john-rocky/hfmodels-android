@@ -26,6 +26,7 @@ import io.github.johnrocky.hfmodels.ModelRef
 import io.github.johnrocky.hfmodels.NetworkPolicy
 import io.github.johnrocky.hfmodels.Tasks
 import java.io.File
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelAndJoin
@@ -290,6 +291,27 @@ class ChatModelDeviceTest {
             result("tool_calls", "model=$repo profile=${model.info.profileId} prompt=${q(TOOL_PROMPT)} calls=${calls.map { "${it.name}${it.arguments}" }} chunks=$chunks call_turn_ms=$callMs " +
                 "text_beside_calls=${q(said.toString())} executed_by_runtime=$executedByRuntime reply_chunks=${reply.chunks} reply_ms=${reply.totalMs} reply=${q(reply.text)}")
         } finally { model.closeAndJoin() }
+    }
+
+    /**
+     * f's order made certain: the collector stops at chunk 5 and goes on only after the model's close has returned, so the
+     * flow ends after close wrote CLOSED. The session stays CLOSED.
+     */
+    @Test fun j_closeWhileTheCollectorIsBehindStaysClosed() = runBlocking {
+        val model = load()
+        val s = model.createConversation(ConversationConfig(systemInstruction = Contents.of(SYSTEM)))
+        var n = 0
+        val goOn = CompletableDeferred<Unit>()
+        val job = launch(Dispatchers.Default) { runCatching { s.stream(Contents.of(Content.Text(LONG_PROMPT))).collect { n++; if (n == 5) goOn.await() } } }
+        withTimeout(120_000) { while (n < 5) delay(20) }
+        withContext(Dispatchers.IO) { model.closeAndJoin() }
+        val atClose = s.state
+        goOn.complete(Unit)
+        withTimeout(30_000) { job.join() }
+        val afterFlow = s.state
+        result("close_while_collector_behind", "chunks_at_close=$n state_at_close=$atClose state_after_flow=$afterFlow")
+        assertEquals("state when closeAndJoin returned", SessionState.CLOSED, atClose)
+        assertEquals("state after the flow ended", SessionState.CLOSED, afterFlow)
     }
 
     // ---- helpers ----

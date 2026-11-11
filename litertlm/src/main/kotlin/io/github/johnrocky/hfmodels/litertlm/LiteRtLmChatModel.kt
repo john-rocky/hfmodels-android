@@ -180,8 +180,12 @@ internal class LiteRtLmChatModel(
     }
 
     private inner class Session(private val conv: Conversation) : ChatSession {
-        @Volatile override var state: SessionState = SessionState.READY
-            private set
+        /**
+         * Close writes CLOSING and CLOSED itself; every other step goes through [advance] or a compare-and-set, which leave
+         * those two alone, so a generation that ends after close began never turns a closed session INVALID or READY.
+         */
+        private val current = AtomicReference(SessionState.READY)
+        override val state: SessionState get() = current.get()
         private val closedDeferred = CompletableDeferred<Unit>()
         /** Completed by the runtime's onDone/onError of the generation in flight. */
         @Volatile private var nativeDone: CompletableDeferred<Unit>? = null
@@ -200,7 +204,7 @@ internal class LiteRtLmChatModel(
             checkUsable()
             validateInputs(message)   // READY is kept on failure
             if (!generating.compareAndSet(null, this@Session)) throw ModelException(ErrorCode.MODEL_BUSY, "another generation is running on ${info.repoId}; one at a time per model")
-            state = SessionState.GENERATING
+            advance(SessionState.GENERATING)
             cancelRequested = false
             val done = CompletableDeferred<Unit>().also { nativeDone = it }
             val channel = Channel<Message>(capacity = streamBufferChunks)
@@ -249,11 +253,12 @@ internal class LiteRtLmChatModel(
                 // Never release the model's generation slot before the runtime confirmed it stopped.
                 withContext(NonCancellable) { withTimeoutOrNull(NATIVE_STOP_MS) { done.await() } ?: markUnusable("generation did not stop within ${NATIVE_STOP_MS} ms") }
                 generating.compareAndSet(this@Session, null)
-                state = when {
+                // A close that began meanwhile has the last word: CLOSING, then CLOSED.
+                advance(when {
                     unusable != null -> SessionState.INVALID
                     completedNormally && !cancelRequested -> SessionState.READY
                     else -> SessionState.INVALID
-                }
+                })
                 if (failure != null && failure !is CancellationException) host.log.w("generation ended: ${failure.message}")
             }
             }
@@ -262,7 +267,7 @@ internal class LiteRtLmChatModel(
         private fun cancelNative(why: String) {
             if (cancelRequested) return
             cancelRequested = true
-            if (state == SessionState.GENERATING) state = SessionState.CANCELLING
+            current.compareAndSet(SessionState.GENERATING, SessionState.CANCELLING)
             runCatching { conv.cancelProcess() }.onFailure { host.log.w("cancelProcess ($why): ${it.message}") }
         }
 
@@ -280,7 +285,7 @@ internal class LiteRtLmChatModel(
             if (closedDeferred.isCompleted) return
             withContext(NonCancellable) {
                 if (state == SessionState.GENERATING) cancelNative("close()")
-                state = SessionState.CLOSING
+                current.set(SessionState.CLOSING)
                 val pending = nativeDone
                 if (pending != null && !pending.isCompleted) {
                     withTimeoutOrNull(NATIVE_STOP_MS) { pending.await() } ?: markUnusable("session close: generation did not stop within ${NATIVE_STOP_MS} ms")
@@ -289,9 +294,14 @@ internal class LiteRtLmChatModel(
                     withContext(nativeDispatcher) { runCatching { conv.close() }.onFailure { if (it !is IllegalStateException) host.log.w("conversation close: ${it.message}") } }
                 }
                 sessions.remove(this@Session)
-                state = SessionState.CLOSED
+                current.set(SessionState.CLOSED)
                 closedDeferred.complete(Unit)
             }
+        }
+
+        /** A generation's step. Once close has begun only close moves the state, so [next] is dropped then. */
+        private fun advance(next: SessionState) {
+            current.getAndUpdate { if (it == SessionState.CLOSING || it == SessionState.CLOSED) it else next }
         }
     }
 
