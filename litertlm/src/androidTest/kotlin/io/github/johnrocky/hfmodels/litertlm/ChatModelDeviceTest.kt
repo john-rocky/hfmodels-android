@@ -26,6 +26,9 @@ import io.github.johnrocky.hfmodels.ModelRef
 import io.github.johnrocky.hfmodels.NetworkPolicy
 import io.github.johnrocky.hfmodels.Tasks
 import java.io.File
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -56,7 +59,9 @@ import org.junit.runners.MethodSorters
  * Check i (tools) loads its own model: argument toolModel `functiongemma` (default; FunctionGemma 270M
  * mobile-actions, catalog/dev descriptor as a test-APK asset, file /data/local/tmp/hfmodels/llm/mobile_actions_q8_ekv1024.litertlm)
  * or `gemma4` (Gemma 4 E2B, the bundled catalog's entry, file /data/local/tmp/gemma-4-E2B-it.litertlm); toolPath and
- * toolBackend (cpu | gpu) override the file and the backend.
+ * toolBackend (cpu | gpu) override the file and the backend. FunctionGemma gets the developer message, the seven tools
+ * and a calendar request of Google's mobile-actions set (with "You are a phone assistant." and an alarm tool it answered
+ * in text on 2026-11-11); Gemma 4 gets an alarm tool.
  */
 @RunWith(AndroidJUnit4::class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -265,30 +270,37 @@ class ChatModelDeviceTest {
         val model = models.fromPretrained(ref, Tasks.Chat, toolOpts)
         try {
             var executedByRuntime = 0
-            val alarm = object : OpenApiTool {
-                override fun getToolDescriptionJsonString() = ALARM_TOOL
+            fun recorded(json: String) = tool(object : OpenApiTool {
+                override fun getToolDescriptionJsonString() = json
                 override fun execute(paramsJsonString: String): String { executedByRuntime++; return "{}" }
-            }
+            })
+            // FunctionGemma mobile-actions (the Gallery's Mobile Actions model) gets the form of Google's mobile-actions set
+            // (google/mobile-actions): its developer message, its seven tools and a calendar request from its eval split.
+            // Gemma 4 gets an alarm tool.
+            val system = if (gemma4) "You are a phone assistant." else fgDeveloperMessage()
+            val tools = if (gemma4) listOf(recorded(ALARM_TOOL)) else FG_TOOLS.map { recorded(it) }
+            val prompt = if (gemma4) TOOL_PROMPT else FG_PROMPT
+            val expected = if (gemma4) "set_alarm" else "create_calendar_event"
             // automaticToolCalling = true is asked for and overridden: the SDK hands the calls to the app.
-            val s = model.createConversation(ConversationConfig(systemInstruction = Contents.of("You are a phone assistant."), tools = listOf(tool(alarm)), automaticToolCalling = true))
+            val s = model.createConversation(ConversationConfig(systemInstruction = Contents.of(system), tools = tools, automaticToolCalling = true))
             try { collect(s.stream(Message.tool(Contents.of(Content.Text("not a tool response"))))); fail() } catch (e: ModelException) { assertEquals(ErrorCode.INVALID_INPUT, e.code) }
             assertEquals("input failure keeps READY", SessionState.READY, s.state)
             val calls = ArrayList<ToolCall>()
             val said = StringBuilder()
             var chunks = 0
             val t0 = SystemClock.elapsedRealtime()
-            withTimeout(120_000) { s.stream(Contents.of(Content.Text(TOOL_PROMPT))).collect { m -> chunks++; calls += m.toolCalls; said.append(textOf(m)) } }
+            withTimeout(120_000) { s.stream(Contents.of(Content.Text(prompt))).collect { m -> chunks++; calls += m.toolCalls; said.append(textOf(m)) } }
             val callMs = SystemClock.elapsedRealtime() - t0
             // On the record before the checks: a model that answers in text instead is a finding, not only a failure.
-            result("tool_call_turn", "model=$repo profile=${model.info.profileId} prompt=${q(TOOL_PROMPT)} calls=${calls.map { "${it.name}${it.arguments}" }} chunks=$chunks ms=$callMs text=${q(said.toString())} executed_by_runtime=$executedByRuntime")
-            assertTrue("expected a set_alarm call, got calls=$calls text='$said'", calls.any { it.name == "set_alarm" })
+            result("tool_call_turn", "model=$repo profile=${model.info.profileId} prompt=${q(prompt)} calls=${calls.map { "${it.name}${it.arguments}" }} chunks=$chunks ms=$callMs text=${q(said.toString())} executed_by_runtime=$executedByRuntime")
+            assertTrue("expected a $expected call, got calls=$calls text='$said'", calls.any { it.name == expected })
             assertEquals("the runtime ran the tool itself", 0, executedByRuntime)
             assertEquals(SessionState.READY, s.state)
-            val answer = Message.tool(Contents.of(calls.map { Content.ToolResponse(it.name, mapOf("result" to "Alarm set for 07:30")) }))
+            val answer = Message.tool(Contents.of(calls.map { Content.ToolResponse(it.name, mapOf("result" to if (gemma4) "Alarm set for 07:30" else "Event added")) }))
             val reply = collect(s.stream(answer))
             assertEquals(0, executedByRuntime)
             s.closeAndJoin()
-            result("tool_calls", "model=$repo profile=${model.info.profileId} prompt=${q(TOOL_PROMPT)} calls=${calls.map { "${it.name}${it.arguments}" }} chunks=$chunks call_turn_ms=$callMs " +
+            result("tool_calls", "model=$repo profile=${model.info.profileId} prompt=${q(prompt)} calls=${calls.map { "${it.name}${it.arguments}" }} chunks=$chunks call_turn_ms=$callMs " +
                 "text_beside_calls=${q(said.toString())} executed_by_runtime=$executedByRuntime reply_chunks=${reply.chunks} reply_ms=${reply.totalMs} reply=${q(reply.text)}")
         } finally { model.closeAndJoin() }
     }
@@ -345,6 +357,27 @@ class ChatModelDeviceTest {
         const val FG_DESCRIPTOR = "litert-community__functiongemma-270m-ft-mobile-actions.hfmodels.json"
         const val TOOL_PROMPT = "Set an alarm for 7:30 in the morning."
         const val ALARM_TOOL = """{"name": "set_alarm", "description": "Sets an alarm on this phone.", "parameters": {"type": "object", "properties": {"hour": {"type": "integer", "description": "Hour in 24-hour time (0-23)."}, "minute": {"type": "integer", "description": "Minute (0-59)."}}, "required": ["hour", "minute"]}}"""
+        // Google's mobile-actions set (google/mobile-actions, dataset.jsonl at e920309b), "designed to train lightweight
+        // models (such as FunctionGemma 270M)" for Android's system tools: one request of its eval split that asks for
+        // create_calendar_event alone, and the seven tools of its first row as they are written there.
+        const val FG_PROMPT = "Please schedule a calendar event titled 'Q3 Budget Sync-up' for next Monday at 11:30 AM."
+        val FG_TOOLS = listOf(
+            """{"name": "turn_off_flashlight", "description": "Turns the flashlight off.", "parameters": {"type": "OBJECT", "properties": {}}}""",
+            """{"name": "open_wifi_settings", "description": "Opens the Wi-Fi settings.", "parameters": {"type": "OBJECT", "properties": {}}}""",
+            """{"name": "create_calendar_event", "description": "Creates a new calendar event.", "parameters": {"type": "OBJECT", "properties": {"title": {"type": "STRING", "description": "The title of the event."}, "datetime": {"type": "STRING", "description": "The date and time of the event in the format YYYY-MM-DDTHH:MM:SS."}}, "required": ["title", "datetime"]}}""",
+            """{"name": "show_map", "description": "Shows a location on the map.", "parameters": {"type": "OBJECT", "properties": {"query": {"type": "STRING", "description": "The location to search for. May be the name of a place, a business, or an address."}}, "required": ["query"]}}""",
+            """{"name": "send_email", "description": "Sends an email.", "parameters": {"type": "OBJECT", "properties": {"subject": {"type": "STRING", "description": "The subject of the email."}, "body": {"type": "STRING", "description": "The body of the email."}, "to": {"type": "STRING", "description": "The email address of the recipient."}}, "required": ["to", "subject"]}}""",
+            """{"name": "turn_on_flashlight", "description": "Turns the flashlight on.", "parameters": {"type": "OBJECT", "properties": {}}}""",
+            """{"name": "create_contact", "description": "Creates a contact in the phone's contact list.", "parameters": {"type": "OBJECT", "properties": {"first_name": {"type": "STRING", "description": "The first name of the contact."}, "last_name": {"type": "STRING", "description": "The last name of the contact."}, "phone_number": {"type": "STRING", "description": "The phone number of the contact."}, "email": {"type": "STRING", "description": "The email address of the contact."}}, "required": ["first_name", "last_name"]}}""",
+        )
+
+        /** The mobile-actions set's developer message (every row has this form), with this phone's local date and time. */
+        fun fgDeveloperMessage(): String {
+            val now = LocalDateTime.now()
+            return "Current date and time given in YYYY-MM-DDTHH:MM:SS format: ${now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))}\n" +
+                "Day of week is ${now.format(DateTimeFormatter.ofPattern("EEEE", Locale.US))}\n" +
+                "You are a model that can do function calling with the following functions\n"
+        }
         val REF = ModelRef("litert-community/Qwen2.5-1.5B-Instruct", revision = "60257f9f0000000000000000000000000000000000".take(40).padEnd(40, '0'))
         // The q8 bundle as published (sha256 / bytes from the Hub's LFS metadata, 2026-11-11). The commit is a placeholder for
         // this offline test; A3 generates the real descriptor with the real commit.
