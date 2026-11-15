@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Lines (a) to (g) of round 3b for one take, from the files only (registered in ROUND3.md and ROUND3b.md before the
+"""Lines (a) to (g) of round 3b for one take, from the files only (registered before the
 takes; (g) came with round 3b).
 
   K/venv/bin/python -I K/scripts/take_lines.py --raw <raw.mp4> --run <take run.json> --wavs q01_a.wav[,q13_a.wav]

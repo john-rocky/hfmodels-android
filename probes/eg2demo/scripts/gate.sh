@@ -27,7 +27,7 @@
 #   1. the hold is ours (HOLD_FILE's pid = $OUT/hold_sleeper.pid, alive); its start time sets the frame: no step starts
 #      25 min after it (the rest is written as CARRY_OVER), a running step is stopped at 28 min;
 #   2. install, grant RECORD_AUDIO, one start so the app makes files/{album,queries,mic} (a dir made by adb shell under
-#      files/ is shell-owned 2770 and the app cannot enter it: memory sdcard-app-files-push);
+#      files/ is shell-owned 2770 and the app cannot enter it);
 #   3. push every file INTO those dirs (never a dir push), each file's sha256 on the phone checked against the Mac's;
 #   4. per leg: wait up to 10 min for thermal status 0, every CPU policy uncapped and the GPU uncapped (state logged),
 #      force-stop, launch with the leg's extras plus `--es run_queries all --es run_texts all --es text_prefix all
@@ -46,7 +46,7 @@
 #                                               SHOTS_BACKEND (gpu|npu), SHOTS_READY_ONLY (0)
 # Dry run without a phone: ADB_SHIM=K/scripts/dryrun_adb_shim.zsh OUT_DIR=<dir> HOLD_FILE=<fake hold> MODELS_DIR=<dir>
 #   DRY_FAST=1 gate.sh <steps...>
-# Every adb call goes through dev() (grep the file for a bare adb before a run: memory adb-run-script-traps).
+# Every adb call goes through dev() (grep the file for a bare adb before a run).
 set -u
 HERE=${0:A:h}
 K=${HERE:h}
@@ -163,7 +163,7 @@ finish() {  # $1 = exit status: the steps not run as CARRY_OVER, the end state, 
 stop() {  # $1 = exit status, $2 = why
   echo "## $(date '+%T') STOP $2 (held $(held) s)" >> $LOG
   if (( $1 == 4 )); then
-    echo "## $(date '+%T') the phone left adb: a reboot is a hard stop for this bundle (memory s26-reboot-at-engine-start-hard-stop); read /proc/uptime when it is back" >> $LOG
+    echo "## $(date '+%T') the phone left adb: a reboot is a hard stop for this bundle; read /proc/uptime when it is back" >> $LOG
     grep -E "^## ([0-9:]+ )?(STEP|STOP)" $LOG | tail -24
     exit 4
   fi

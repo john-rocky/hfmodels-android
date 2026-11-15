@@ -25,7 +25,7 @@
 #     env: MODE=file|mic, LAUNCH_EXTRAS, OUT_DIR, DELAY_MS (500), GAP_MS (2500), COOL_LIMIT_S (600), HOLD_PID_FILE
 # Exit status 1 when the app logged ERROR, a RESULT is missing, or a step's limit ran out (the files are still collected).
 # Dry run without a phone: ADB_SHIM=K/scripts/dryrun_adb_shim.zsh OUT_DIR=<dir> HOLD_FILE=<fake hold> take.sh …
-# Every adb call goes through dev() (grep the file for a bare adb before a run: memory adb-run-script-traps).
+# Every adb call goes through dev() (grep the file for a bare adb before a run).
 set -u
 HERE=${0:A:h}
 K=${HERE:h}

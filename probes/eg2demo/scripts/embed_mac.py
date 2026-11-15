@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Mac scoring of the demo's line: spoken query -> album photo with EmbeddingGemma 2 740M (LiteRT-LM 0.18.0 Python).
 
-  ~/code/standup/tools/quiet/quiet_wait.py -- K/venv/bin/python -I K/scripts/embed_mac.py [--backend gpu|cpu]
+  K/venv/bin/python -I K/scripts/embed_mac.py [--backend gpu|cpu]
       [--also-cpu] [--tag <name>]
 
 One engine on the base bundle (models/PATHS.json): backend GPU when it initializes, else CPU; the vision encoder on the
@@ -20,7 +20,7 @@ Also: the norm of one image, one clip and one text embedded with normalize=None 
 every call (a busy Mac: reference only, never a card or post number), and with --also-cpu the same inputs on a CPU
 engine with cos(GPU, CPU) and max|delta| per input (the model card warns that float16 activations degrade the model).
 
-The pre-registered line (ROUND1.md, written before this ran): audio -> photo, voice A, top-1 >= 16/20 and
+The pre-registered line (written before this ran): audio -> photo, voice A, top-1 >= 16/20 and
 top-3 >= 19/20 -> candidate A goes on (round 2). Voice B is a reference table.
 """
 import argparse

@@ -3,7 +3,7 @@
 
 The take starts on the lock screen (bright). The app's first frame is the first frame after 1 s whose mean luma is
 below LUMA_CUT. The next ~0.9 s are the launch over the lock screen settling — a black splash, a fade-in, the system
-navigation bar drawn over the footer, an empty status bar (memory keyguard-background-cpuset-demo-trap; the rule is
+navigation bar drawn over the footer, an empty status bar (the rule is
 bonsai_image_work/demo/check_media.py `find_settled`, same phone, same screen size). The cut is the first frame from
 the app's first frame on with the status bar icons drawn (the airplane-mode icon is part of the evidence) and no
 navigation bar in it or in any later frame of the first WINDOW_S seconds. Frames are read at 1/SCALE size.

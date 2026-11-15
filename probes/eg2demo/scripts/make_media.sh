@@ -17,7 +17,7 @@
 #   <stem>_audio.json       where each clip was placed and why, line (e) per clip (place_audio.py); <stem>_pill.log the
 #                           pill colour of every raw frame
 # End: screenrecord writes a frame only when the screen changes, so the last frame is held to 3.0 s after it appeared
-# (tpad, then fps=30:round=up, then trim: memory screenrecord-cut-drops-last-frame). Nothing on screen is edited.
+# (tpad, then fps=30:round=up, then trim). Nothing on screen is edited.
 # Sound: screenrecord records none. Each clip is the file the phone played (K/fixtures/queries/<name>), resampled to
 # 48 kHz, delayed to its placement in the trimmed timeline (adelay, whole samples), mixed unscaled with the others (they
 # never overlap), copied to both channels, padded with silence to the picture's exact length and muxed with it (picture

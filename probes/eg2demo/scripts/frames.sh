@@ -4,8 +4,8 @@
 # litertlm-convert/kev_work/demo/frames.sh; only the output path changed.
 #   frames.sh <video.mp4> <tag> [columns 6] [thumb width 270]
 # Frames are picked by index from the decoded stream (n = 0, n = N/2, n = N-1), never with -sseof: screenrecord's raw
-# file is variable frame rate and -sseof returns the frame before the last change (memory
-# keyguard-background-cpuset-demo-trap). The contact sheet takes the frame shown at each whole second (fps=1) and tiles
+# file is variable frame rate and -sseof returns the frame before the last change.
+# The contact sheet takes the frame shown at each whole second (fps=1) and tiles
 # them COLS wide, row by row: thumbnail k (from 0, left to right, top to bottom) is second k (this ffmpeg has no
 # drawtext, so the times are in frames.txt, not on the picture).
 set -eu
