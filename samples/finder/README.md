@@ -45,7 +45,7 @@ The recipes are `src/main/assets/recipes.json`: 60 made-up entries under common 
 
 ## How well the questions work
 
-Before this app was written, the five questions were scored on 40 made-up requests with hand-written answers, 200 answers in all (round 18 of the typed-decisions sieve; the requests and answers are `src/androidTest/assets/f1_filter.jsonl`). GLiNER2.5-Decide `s128_wfp16` on a Mac (the model card's Python host, LiteRT 2.1.6 on the CPU, 2026-10-04) gave the hand-written answer on 191 of the 200. On 31 of the 40 requests all five answers were right. Of the 123 answers that should have stayed unset, 4 set a filter. The Mac host's answers and probabilities are `src/androidTest/assets/gliner_f1_v1.jsonl`.
+Before this app was written, the five questions were scored on 40 made-up requests with hand-written answers, 200 answers in all (the typed-decisions sieve; the requests and answers are `src/androidTest/assets/f1_filter.jsonl`). GLiNER2.5-Decide `s128_wfp16` on a Mac (the model card's Python host, LiteRT 2.1.6 on the CPU, 2026-10-04) gave the hand-written answer on 191 of the 200. On 31 of the 40 requests all five answers were right. Of the 123 answers that should have stayed unset, 4 set a filter. The Mac host's answers and probabilities are `src/androidTest/assets/gliner_f1_v1.jsonl`.
 
 The nine misses, by kind:
 

@@ -93,7 +93,7 @@ A screen that shows the decisions themselves (a list of sentences sorted into bi
 2. Score the feature's questions before the app exists: 40 made-up inputs with hand-written answers, thresholds written down first (field accuracy ≥ 90 %, every field right on ≥ 75 % of the inputs, a filter set on an input that named none ≤ 5 %, an action taken on chit-chat ≤ 1 in 10). The Mac host of the model's card is enough; the phone gave the same answers on all 200 fields in the finder check.
 3. Look at three screenshots (before, after the first input, after the second) before recording: the input, what it set and why each row stayed must be readable without a caption.
 
-The finder sample passed all three on 2026-10-05 and was approved at first sight; the earlier sorted-chat sample had passed an accuracy-only sieve and was rejected. Records: `samples/finder/README.md`, the sieve's `PREREG.md` in the lane's assets.
+The finder sample passed all three on 2026-10-05 and was approved at first sight; the earlier sorted-chat sample had passed an accuracy-only sieve and was rejected. Records: `samples/finder/README.md`, the sieve's `PREREG.md`, which is kept outside this repository.
 
 ## Pitfalls
 
