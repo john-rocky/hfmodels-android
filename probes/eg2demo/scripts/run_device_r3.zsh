@@ -4,8 +4,8 @@
 # first is put back at the end), then
 #   PHASE=A  gate.sh npu2 shots (PUSH_MODE=missing, KEEP_FILES=1): the NPU leg, its verdict and the photos' backend
 #            (photos_backend.txt), the three screenshots; then the line "A_DONE" in this script's output; then gate.sh
-#            mic (SKIP_SETUP=1, gate_mic.log) while the supervisor reads the screenshots; then wait up to GO_WAIT_S
-#            (600) from A_DONE for $OUT/go_takes (written by the worker after the supervisor's go) or $OUT/stop_now;
+#            mic (SKIP_SETUP=1, gate_mic.log) while the screenshots are checked; then wait up to GO_WAIT_S
+#            (600) from A_DONE for $OUT/go_takes (written when the takes may start) or $OUT/stop_now;
 #            the takes after a go; no go in time: release, exit 10 (the takes go to a later PHASE=B hold);
 #   PHASE=B  the takes only.
 # Takes (TAKES, default "t1:q01_a.wav t2:q01_a.wav,q13_a.wav"): MODE=file take.sh, LAUNCH_EXTRAS for the backend in

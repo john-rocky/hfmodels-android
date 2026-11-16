@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Round 3's NPU leg judged by the launch's rule, and the photos' backend for the shots and the takes.
+"""Round 3's NPU leg judged by the rule below, and the photos' backend for the shots and the takes.
 
   K/venv/bin/python -I K/scripts/npu_pick.py --run <npu2 run.json> --logcat <npu2_app_logcat.log> \
       --gpu <round 2 gpu run.json> --cpu <round 2 cpu run.json> --out <npu2_summary.txt>      -> prints npu or gpu
 
-"Loaded on the NPU" needs all three (launch, 2026-10-08): no `QnnDsp <E>` line in the app's logcat, 103 result rows
+"Loaded on the NPU" needs all three: no `QnnDsp <E>` line in the app's logcat, 103 result rows
 without an error (43 clips + 60 texts), and the NPU's timings unlike the other backends' (a run that silently fell back
 would time like the GPU or the CPU): the per-photo median of the index more than 15 % away from both round 2's GPU and
 CPU medians, and the text median more than 15 % away from the GPU's. The photos go on the NPU only when it loaded AND

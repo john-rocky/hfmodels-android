@@ -5,8 +5,8 @@
 #   PHASE=A  gate.sh shots (PUSH_MODE=missing, KEEP_FILES=1, SHOTS_BACKEND=gpu, SHOTS_READY_ONLY=1): install -r, the
 #            files on the phone listed by name (only missing ones pushed), one GPU launch with --ez reindex true and the
 #            READY screenshot shot1_ready.png; then the line "A_DONE" with the file counts and the LAYOUT px in this
-#            script's output; then wait up to GO_WAIT_S (600) from A_DONE for $OUT/go_takes (written by the worker after
-#            the supervisor's go) or $OUT/stop_now; the takes after a go; no go in time: release, exit 10 (the takes go
+#            script's output; then wait up to GO_WAIT_S (600) from A_DONE for $OUT/go_takes (written when the takes may
+#            start) or $OUT/stop_now; the takes after a go; no go in time: release, exit 10 (the takes go
 #            to a later PHASE=B hold);
 #   PHASE=B  the takes only.
 # Takes (TAKES, default "t1:q01_a.wav t2:q01_a.wav,q13_a.wav"): MODE=file take.sh with the base bundle on the GPU (the

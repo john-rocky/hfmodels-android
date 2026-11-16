@@ -4,7 +4,7 @@ macOS voices (A = Samantha, en_US; B = Daniel, en_GB), plus 3 decoys (voice A on
 
   K/venv/bin/python -I K/scripts/make_queries.py            writes fixtures/queries/q<NN>_a.wav, q<NN>_b.wav,
                                                            d<NN>_a.wav and fixtures/queries.json
-  K/venv/bin/python -I K/scripts/make_queries.py --rev 2   the one allowed rewording (launch D): REWORDED sentences
+  K/venv/bin/python -I K/scripts/make_queries.py --rev 2   the one allowed rewording: REWORDED sentences
                                                            as q<NN>_a2.wav (voice A only), the first files kept
 
 Per clip: `say -v <voice> -r 170 -o <tmp>.aiff "<text>"` -> `ffmpeg -ar 16000 -ac 1 -c:a pcm_s16le` -> ONE linear
@@ -61,7 +61,7 @@ QUERIES = [
     ("q19", "umbrella_rain", "an umbrella in the rain"),
     ("q20", "autumn_leaves", "red autumn leaves on a tree"),
 ]
-# The launch's one allowed rewording, used only after the first sentences missed the line: query id -> sentence.
+# The one allowed rewording, used only after the first sentences missed the line: query id -> sentence.
 REWORDED = {
 }
 DECOYS = [

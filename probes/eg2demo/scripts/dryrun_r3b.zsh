@@ -1,6 +1,6 @@
 #!/bin/zsh
 # Dry run of run_device_r3b.zsh without a phone (dryrun_r3.zsh pointed at the round 3b wrapper): a fresh dir, a fake
-# hold file (free, so queue_cli takes it at once), two tiny stand-in bundles, the adb shim. The supervisor's go is a file
+# hold file (free, so queue_cli takes it at once), two tiny stand-in bundles, the adb shim. The go is a file
 # written GO seconds after the wrapper prints A_DONE ("none": never, the 10 min path with a short GO_WAIT_S). DRY_*,
 # PHASE, GO_WAIT_S and FAKE_HELD_S pass through.
 #   K/scripts/dryrun_r3b.zsh <out dir> [GO seconds | none]

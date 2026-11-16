@@ -2,7 +2,7 @@
 """Each answer card's state in every frame of a take, read from the video's pixels (pill_track.py of
 qwen3_asr17_work/demo, generalised from one pill to N cards).
 
-The app writes into its run JSON a `layout` block (provisional shape; lane D and the supervisor settle it):
+The app writes into its run JSON a `layout` block (provisional shape):
     "layout": {"screen_px": [1080, 2340],
                "palette": {"pending": "#5F6368", "running": "#1565C0", "done": "#2E7D32"},
                "cards": [{"qid": "team", "indicator_px": {"left": 60, "top": 1210, "width": 28, "height": 28}}, ...]}

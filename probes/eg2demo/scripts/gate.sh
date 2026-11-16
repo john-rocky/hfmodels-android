@@ -322,7 +322,7 @@ leg() {
   { echo "## state after $LEG"; state; } >> $LOG 2>&1
   step_line $LEG "$STATUS: $(grep -c 'RESULT ' $OUT/${LEG}_demo.log 2>/dev/null) RESULT lines${FOUND:+; $FOUND}"
   if [[ $LEG == npu2 ]]; then
-    # The launch's rule (no QnnDsp <E>, 103 RESULT rows, NPU timings unlike the GPU's and CPU's) and the photos' backend.
+    # The NPU loading rule (no QnnDsp <E>, 103 RESULT rows, NPU timings unlike the GPU's and CPU's) and the photos' backend.
     local -a rj; rj=(${OUT}/npu2_eg2-demo-*.json(N))
     $K/venv/bin/python -I $HERE/npu_pick.py --run "${rj[-1]:-}" --logcat $OUT/npu2_app_logcat.log \
       --gpu ${GPU_REF_JSON:-$K/out/device/gpu_eg2-demo-1791398317210.json} \

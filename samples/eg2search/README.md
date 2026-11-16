@@ -35,7 +35,7 @@ Push after the first start: the app creates its files dir, and a directory made 
 | backbone (the encoder's output to the 768-d vector, for a clip and for a photo) | GPU |
 | photo encoder | GPU |
 
-"audio → vector" on the screen is the audio encoder and the backbone together. The audio encoder stays on the CPU: on the Galaxy S26 on 2026-10-08 a spoken query took 104 ms with it on the CPU and 125 ms on the GPU (median of 43 clips, `probes/eg2demo/ROUND2.md`). `--es backend`, `--es vision_backend` and `--es audio_backend` (`cpu`, `gpu`, `npu`) change them.
+"audio → vector" on the screen is the audio encoder and the backbone together. The audio encoder stays on the CPU: on the Galaxy S26 on 2026-10-08 a spoken query took 104 ms with it on the CPU and 125 ms on the GPU (median of 43 clips). `--es backend`, `--es vision_backend` and `--es audio_backend` (`cpu`, `gpu`, `npu`) change them.
 
 ## What it showed on the Galaxy S26 (2026-10-09)
 

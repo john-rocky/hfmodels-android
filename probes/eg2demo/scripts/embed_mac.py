@@ -111,7 +111,7 @@ def run(kind, model, album_files, queries, decoys, texts, tag):
     """All inputs on one engine; returns (record, vectors)."""
     eng, init_ms = make_engine(kind, model)
     rec = {"backend": kind.upper(), "vision_backend": kind.upper(), "audio_backend": "CPU", "init_ms": round(init_ms, 1)}
-    # normalize=None: what the C++ default gives (the launch could not tell from the API docs).
+    # normalize=None: what the C++ default gives (the API docs do not say).
     dflt = EmbeddingOptions(output_size=DIM)
     rec["default_options_norms"] = {
         "image": round(float(np.linalg.norm(embed(eng, Content.ImageFile(album_files[0]), dflt)[0])), 5),
@@ -174,7 +174,7 @@ def main():
     try:
         rec, vec = run(kind, model, album_files, queries, decoys, texts, tag)
         fallback = None
-    except Exception as e:  # noqa: BLE001 - the launch: GPU when it initializes, else CPU
+    except Exception as e:  # noqa: BLE001 - GPU when it initializes, else CPU
         if kind != "gpu":
             raise
         fallback = repr(e)
