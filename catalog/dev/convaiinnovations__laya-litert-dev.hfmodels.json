@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "model_id": "convaiinnovations/laya",
-  "$comment": "DEVELOPMENT descriptor. The tokenizer and config files are the publisher's at commit 1c5edc17; the litert/*.tflite graphs are the conversion's local outputs (CPU-parity-checked on 2026-09-21, not published on the Hub yet), imported by side-load. Not in the bundled catalog. Replaced by the published repo's own hfmodels.json when the graphs ship. 2026-09-29: the published graphs were replaced by fp16-safe rewrites (fp32-exact; LayerNorm power-of-two pre-scale, -1e4 masks), so every graph that litert-community/laya-LiteRT publishes carries the published sha256 here (commit bca6002de867804dfb98d04568d9089cca44a1f0); en_s256_wfp16 is not published and keeps the older local graph. The npu profiles (ml_s256_wfp16, en_s256_fp32) are the ones the S26 NPU gate runs.",
+  "$comment": "DEVELOPMENT descriptor. The tokenizer and config files are the publisher's at commit 1c5edc17; the litert/*.tflite graphs are the conversion's local outputs (CPU-parity-checked on 2026-09-21, not published on the Hub yet), imported by side-load. Not in the bundled catalog. Replaced by the published repo's own hfmodels.json when the graphs ship. 2026-09-29: the published graphs were replaced by fp16-safe rewrites (fp32-exact; LayerNorm power-of-two pre-scale, -1e4 masks), so every graph that litert-community/laya-LiteRT publishes carries the published sha256 here (commit bca6002de867804dfb98d04568d9089cca44a1f0); en_s256_wfp16 is not published and keeps the older local graph. The npu profiles (ml_s256_wfp16, en_s256_fp32) are the ones the S26 NPU device test runs.",
   "tasks": [
     "decide"
   ],
@@ -304,8 +304,8 @@
           "id": "config",
           "role": "processor_config",
           "path": "litert/laya_ml_calibration.json",
-          "bytes": 9156,
-          "sha256": "80e148c68154b607e7bb66446f064b1fe5da649e1074c917b25e02551a566f2c"
+          "bytes": 9074,
+          "sha256": "357d2b81bce58dfdcf7ac48386cfea912d6cf90509715e4ce546c071f05e5e82"
         }
       ],
       "default_profile": "gpu",
@@ -698,8 +698,8 @@
           "id": "config",
           "role": "processor_config",
           "path": "litert/laya_ml_calibration.json",
-          "bytes": 9156,
-          "sha256": "80e148c68154b607e7bb66446f064b1fe5da649e1074c917b25e02551a566f2c"
+          "bytes": 9074,
+          "sha256": "357d2b81bce58dfdcf7ac48386cfea912d6cf90509715e4ce546c071f05e5e82"
         }
       ],
       "default_profile": "gpu",
@@ -846,8 +846,8 @@
           "id": "config",
           "role": "processor_config",
           "path": "litert/laya_ml_calibration.json",
-          "bytes": 9156,
-          "sha256": "80e148c68154b607e7bb66446f064b1fe5da649e1074c917b25e02551a566f2c"
+          "bytes": 9074,
+          "sha256": "357d2b81bce58dfdcf7ac48386cfea912d6cf90509715e4ce546c071f05e5e82"
         }
       ],
       "default_profile": "gpu",
